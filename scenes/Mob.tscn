@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8qhqey2vbhkc"]
+
+[ext_resource type="Script" uid="uid://cn5qov8dvf8d2" path="res://scripts/Mob.gd" id="1_sup6k"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
+size = Vector2(24, 24)
+
+[node name="Mob" type="CharacterBody2D" groups=["mobs"]]
+script = ExtResource("1_sup6k")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.7346365, 0.103573315, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_k85i5")

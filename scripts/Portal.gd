@@ -15,4 +15,5 @@ func _on_body_entered(body: Node) -> void:
 		push_error("GameManager not found in group 'game_manager'.")
 		return
 
-	gm.load_zone(target_scene, target_spawn_name)
+	# ВАЖНО: отложенный вызов, чтобы не ломать физику в body_entered
+	gm.call_deferred("load_zone", target_scene, target_spawn_name)

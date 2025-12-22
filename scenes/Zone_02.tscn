@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://vw0l7rj1osth"]
+[gd_scene load_steps=6 format=3 uid="uid://vw0l7rj1osth"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://scripts/Portal.gd" id="1_ofs7d"]
+[ext_resource type="PackedScene" uid="uid://c8qhqey2vbhkc" path="res://scenes/Mob.tscn" id="2_uwe1b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -60,3 +61,6 @@ offset_top = -60.0
 offset_right = 60.0
 offset_bottom = 60.0
 color = Color(0.20392157, 0.2627451, 1, 0.34509805)
+
+[node name="Mob_01" parent="." instance=ExtResource("2_uwe1b")]
+position = Vector2(-300, 0)
