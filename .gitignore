@@ -1,8 +1,13 @@
-# Godot 4+ specific ignores
+# Godot
 .godot/
-/android/
 .import/
-*.tmp
+
+# Logs
 *.log
+
+# OS
 .DS_Store
 Thumbs.db
+
+# Temporary
+*.tmp
