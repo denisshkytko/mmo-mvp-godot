@@ -1,33 +1,77 @@
 extends CharacterBody2D
 
-@export var speed: float = 200.0
+@export var move_speed: float = 220.0
+
+# Combat (MVP auto-attack)
+@export var attack_range: float = 70.0
+@export var attack_damage: int = 25
+@export var attack_cooldown: float = 0.8
+
+var inventory: Inventory
+var _attack_timer: float = 0.0
+
+func _ready() -> void:
+	print("PLAYER READY")
+	inventory = Inventory.new()
+
 
 func _physics_process(_delta: float) -> void:
-	var input_vector := Vector2(
+	# Movement via default Godot actions (arrows, and WASD if you mapped them to ui_*)
+	var input_dir := Vector2(
 		Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
 		Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 	)
 
-	if input_vector.length() > 1.0:
-		input_vector = input_vector.normalized()
+	if input_dir.length() > 0.0:
+		input_dir = input_dir.normalized()
 
-	velocity = input_vector * speed
+	velocity = input_dir * move_speed
 	move_and_slide()
 
-# TEMP: debug attack for Stage 5.3 (will be replaced by real auto-attack + targeting)
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("attack"):
-		print("ATTACK pressed")
-		_try_attack()
+
+func _process(delta: float) -> void:
+	# Auto-attack (только если кулдаун прошёл)
+	_attack_timer -= delta
+	if _attack_timer > 0.0:
+		return
+
+	var target := _find_nearest_mob_in_range()
+	if target == null:
+		return
+
+	target.take_damage(attack_damage)
+	_attack_timer = attack_cooldown
 
 
-func _try_attack() -> void:
-	var mobs = get_tree().get_nodes_in_group("mobs")
-	print("mobs found:", mobs.size())
+func _find_nearest_mob_in_range() -> Node2D:
+	var mobs := get_tree().get_nodes_in_group("mobs")
+	var best: Node2D = null
+	var best_dist: float = attack_range
 
 	for mob in mobs:
 		if mob is Node2D:
-			var dist = global_position.distance_to(mob.global_position)
-			if dist < 60:
-				mob.take_damage(25)
-				break
+			var d := global_position.distance_to(mob.global_position)
+			if d <= best_dist:
+				best_dist = d
+				best = mob
+
+	return best
+
+func add_gold(amount: int) -> void:
+	if inventory == null:
+		return
+	inventory.add_gold(amount)
+
+func add_item(item_id: String, amount: int) -> int:
+	if inventory == null:
+		return amount
+	return inventory.add_item(item_id, amount)
+
+func get_inventory_snapshot() -> Dictionary:
+	if inventory == null:
+		return {"gold": 0, "slots": []}
+
+	return {
+		"gold": inventory.gold,
+		"slots": inventory.slots
+	}

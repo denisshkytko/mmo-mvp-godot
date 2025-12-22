@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://cw0c4yynas2h1"]
+[gd_scene load_steps=7 format=3 uid="uid://cw0c4yynas2h1"]
 
 [ext_resource type="PackedScene" uid="uid://rwedipw6jwwn" path="res://scenes/Player.tscn" id="1_elqb8"]
 [ext_resource type="PackedScene" uid="uid://8eogwafoag68" path="res://scenes/Zone_01.tscn" id="2_rvslj"]
 [ext_resource type="Script" uid="uid://f3eu0mi82ub7" path="res://scripts/Game_manager.gd" id="3_0bbpv"]
+[ext_resource type="PackedScene" uid="uid://bq1obwgfdui1f" path="res://scenes/InventoryUI.tscn" id="4_rarhs"]
+[ext_resource type="PackedScene" uid="uid://cyfwx2chmt82i" path="res://scenes/LootUI.tscn" id="5_vcsgt"]
+[ext_resource type="Script" uid="uid://65yhursyacwe" path="res://scripts/LootUI.gd" id="6_c01mt"]
 
 [node name="Main" type="Node2D"]
 
@@ -16,3 +19,8 @@
 
 [node name="GameManager" type="Node2D" parent="World" groups=["game_manager"]]
 script = ExtResource("3_0bbpv")
+
+[node name="InventoryUi" parent="." instance=ExtResource("4_rarhs")]
+
+[node name="LootUi" parent="." groups=["loot_ui"] instance=ExtResource("5_vcsgt")]
+script = ExtResource("6_c01mt")
