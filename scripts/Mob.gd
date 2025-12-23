@@ -7,6 +7,8 @@ extends CharacterBody2D
 @export var stop_distance: float = 45.0
 @export var max_hp: int = 100
 @export var corpse_scene: PackedScene
+@export var xp_reward: int = 3
+
 
 var current_hp: int
 var player: Node2D
@@ -62,6 +64,10 @@ func die() -> void:
 		corpse.loot_gold = 3
 		corpse.loot_item_id = "loot_token"
 		corpse.loot_item_count = 2
+
+	var player := get_tree().get_first_node_in_group("player")
+	if player != null and player.has_method("add_xp"):
+		player.add_xp(xp_reward)
 
 	queue_free()
 

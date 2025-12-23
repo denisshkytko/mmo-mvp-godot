@@ -8,6 +8,9 @@ extends CharacterBody2D
 @export var attack_cooldown: float = 0.8
 
 var inventory: Inventory
+var level: int = 1
+var xp: int = 0
+var xp_to_next: int = 10
 var _attack_timer: float = 0.0
 
 func _ready() -> void:
@@ -57,21 +60,42 @@ func _find_nearest_mob_in_range() -> Node2D:
 
 	return best
 
+
 func add_gold(amount: int) -> void:
 	if inventory == null:
 		return
 	inventory.add_gold(amount)
+
 
 func add_item(item_id: String, amount: int) -> int:
 	if inventory == null:
 		return amount
 	return inventory.add_item(item_id, amount)
 
+
 func get_inventory_snapshot() -> Dictionary:
 	if inventory == null:
 		return {"gold": 0, "slots": []}
-
 	return {
 		"gold": inventory.gold,
 		"slots": inventory.slots
 	}
+
+
+func add_xp(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	xp += amount
+	print("XP:", xp, "/", xp_to_next)
+
+	while xp >= xp_to_next:
+		xp -= xp_to_next
+		level += 1
+		xp_to_next = _calc_xp_to_next(level)
+		print("LEVEL UP! level:", level, "next:", xp_to_next, "xp carry:", xp)
+
+
+func _calc_xp_to_next(new_level: int) -> int:
+	# простой рост: 10, 15, 20, 25...
+	return 10 + (new_level - 1) * 5

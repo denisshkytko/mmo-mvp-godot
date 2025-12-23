@@ -67,4 +67,10 @@ color = Color(0.20392157, 0.2627451, 1, 0.34509805)
 position = Vector2(300, 0)
 
 [node name="Mob_02" parent="." instance=ExtResource("2_bajtg")]
-position = Vector2(272, 73)
+position = Vector2(1224, 3)
+
+[node name="Mob_03" parent="." instance=ExtResource("2_bajtg")]
+position = Vector2(722, -65)
+
+[node name="Mob_04" parent="." instance=ExtResource("2_bajtg")]
+position = Vector2(720, 101)
