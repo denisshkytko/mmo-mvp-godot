@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://f3eu0mi82ub7" path="res://scripts/Game_manager.gd" id="3_0bbpv"]
 [ext_resource type="PackedScene" uid="uid://bq1obwgfdui1f" path="res://scenes/InventoryUI.tscn" id="4_rarhs"]
 [ext_resource type="PackedScene" uid="uid://cyfwx2chmt82i" path="res://scenes/LootUI.tscn" id="5_vcsgt"]
-[ext_resource type="Script" uid="uid://65yhursyacwe" path="res://scripts/LootUI.gd" id="6_c01mt"]
+[ext_resource type="PackedScene" uid="uid://167bw0aqye6e" path="res://scenes/HUD.tscn" id="6_c01mt"]
 
 [node name="Main" type="Node2D"]
 
@@ -20,7 +20,8 @@
 [node name="GameManager" type="Node2D" parent="World" groups=["game_manager"]]
 script = ExtResource("3_0bbpv")
 
-[node name="InventoryUi" parent="." instance=ExtResource("4_rarhs")]
+[node name="Hud" parent="." instance=ExtResource("6_c01mt")]
 
 [node name="LootUi" parent="." groups=["loot_ui"] instance=ExtResource("5_vcsgt")]
-script = ExtResource("6_c01mt")
+
+[node name="InventoryUi" parent="." instance=ExtResource("4_rarhs")]
