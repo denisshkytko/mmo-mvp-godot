@@ -56,15 +56,3 @@ func add_item(item_id: String, amount: int) -> int:
 		remaining -= to_add2
 
 	return remaining
-
-func debug_dump() -> void:
-	print("---- INVENTORY ----")
-	print("Gold:", gold)
-	for i in range(SLOT_COUNT):
-		var slot_v: Variant = slots[i]
-		if slot_v == null:
-			print(i, ": empty")
-		else:
-			var slot: Dictionary = slot_v as Dictionary
-			print(i, ": ", String(slot.get("id", "")), " x", int(slot.get("count", 0)))
-	print("-------------------")

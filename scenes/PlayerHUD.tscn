@@ -1,0 +1,182 @@
+[gd_scene load_steps=6 format=3 uid="uid://bopn065cb76jj"]
+
+[ext_resource type="Script" uid="uid://i4tqiu7sld1a" path="res://scripts/Player_hud.gd" id="1_0kcyj"]
+
+[sub_resource type="FontFile" id="FontFile_p0abl"]
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+
+[sub_resource type="FontFile" id="FontFile_0kcyj"]
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+
+[sub_resource type="FontFile" id="FontFile_uhx4l"]
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+
+[sub_resource type="FontFile" id="FontFile_fjqji"]
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+
+[node name="PlayerHud" type="CanvasLayer"]
+script = ExtResource("1_0kcyj")
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(170, 80)
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 190.0
+offset_bottom = 100.0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+custom_minimum_size = Vector2(160, 80)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+custom_minimum_size = Vector2(160, 70)
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Header" type="HBoxContainer" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(150, 20)
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontFile_p0abl")
+theme_override_font_sizes/font_size = 12
+text = "Player"
+vertical_alignment = 1
+
+[node name="LevelLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 1
+theme_override_fonts/font = SubResource("FontFile_0kcyj")
+theme_override_font_sizes/font_size = 12
+text = "lvl 1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="HpRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="HpBack" type="ColorRect" parent="Panel/Margin/VBox/HpRow"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 2
+color = Color(0.38039216, 0.38039216, 0.38039216, 0.6117647)
+
+[node name="HpFill" type="ColorRect" parent="Panel/Margin/VBox/HpRow/HpBack"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 20.0
+color = Color(0.76799667, 0.11027265, 0, 1)
+
+[node name="HpText" type="Label" parent="Panel/Margin/VBox/HpRow/HpBack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontFile_uhx4l")
+theme_override_font_sizes/font_size = 12
+text = "100/100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ManaRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="ManaBack" type="ColorRect" parent="Panel/Margin/VBox/ManaRow"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(0.38039216, 0.38039216, 0.38039216, 0.6117647)
+
+[node name="ManaFill" type="ColorRect" parent="Panel/Margin/VBox/ManaRow/ManaBack"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 14.0
+color = Color(9.1448426e-05, 0.31573004, 0.91293776, 1)
+
+[node name="ManaText" type="Label" parent="Panel/Margin/VBox/ManaRow/ManaBack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontFile_fjqji")
+theme_override_font_sizes/font_size = 12
+text = "100/100"
+horizontal_alignment = 1
+vertical_alignment = 1

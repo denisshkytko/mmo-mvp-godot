@@ -6,12 +6,16 @@
 script = ExtResource("1_qpvh6")
 
 [node name="Root" type="Control" parent="."]
+custom_minimum_size = Vector2(600, 20)
 layout_mode = 3
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -80.0
+offset_left = 288.0
+offset_top = -38.0
+offset_right = -264.0
+offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -24,11 +28,17 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="XpBar" type="Control" parent="Root/BarPanel"]
-anchors_preset = 0
-offset_left = 80.0
-offset_top = 16.0
-offset_right = 1136.0
-offset_bottom = 64.0
+custom_minimum_size = Vector2(580, 10)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Back" type="ColorRect" parent="Root/BarPanel/XpBar"]
 layout_mode = 1
@@ -55,24 +65,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 14
 text = "0/10"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="LevelBadge" type="Panel" parent="Root/BarPanel"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 64.0
-offset_bottom = 64.0
-
-[node name="LevelLabel" type="Label" parent="Root/BarPanel/LevelBadge"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1
