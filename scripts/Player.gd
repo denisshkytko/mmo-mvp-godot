@@ -12,6 +12,11 @@ extends CharacterBody2D
 @export var skill_1_damage_multiplier: float = 2.0
 @export var skill_1_mana_cost: int = 12
 
+# Skill 2 (self-heal)
+@export var skill_2_cooldown: float = 6.0
+@export var skill_2_mana_cost: int = 18
+@export var skill_2_heal_amount: int = 35   # плоское лечение (потом можно сделать % или от spellpower)
+
 var inventory: Inventory
 
 # Progression
@@ -19,19 +24,20 @@ var level: int = 1
 var xp: int = 0
 var xp_to_next: int = 10
 
-# Stats (MVP)
+# Stats
 var max_hp: int = 100
 var current_hp: int = 100
 var attack: int = 10
 var defense: int = 2
 
-# Mana (MVP)
+# Mana
 var max_mana: int = 60
 var mana: int = 60
 
 # Timers
 var _attack_timer: float = 0.0
 var _skill_1_timer: float = 0.0
+var _skill_2_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -58,10 +64,14 @@ func _process(delta: float) -> void:
 	# cooldown timers
 	_attack_timer = max(0.0, _attack_timer - delta)
 	_skill_1_timer = max(0.0, _skill_1_timer - delta)
+	_skill_2_timer = max(0.0, _skill_2_timer - delta)
 
-	# keyboard hotkey (optional; UI button will call try_cast_skill_1)
+	# keyboard hotkeys
 	if Input.is_action_just_pressed("skill_1"):
 		try_cast_skill_1()
+
+	if Input.is_action_just_pressed("skill_2"):
+		try_cast_skill_2()
 
 	# Auto-attack: only if cooldown ready and target exists and is in range
 	if _attack_timer > 0.0:
@@ -89,7 +99,6 @@ func get_attack_damage() -> int:
 func try_cast_skill_1() -> void:
 	if _skill_1_timer > 0.0:
 		return
-
 	if mana < skill_1_mana_cost:
 		return
 
@@ -102,6 +111,27 @@ func try_cast_skill_1() -> void:
 
 	mana = max(0, mana - skill_1_mana_cost)
 	_skill_1_timer = skill_1_cooldown
+
+
+func try_cast_skill_2() -> void:
+	# Self heal
+	if _skill_2_timer > 0.0:
+		return
+	if mana < skill_2_mana_cost:
+		return
+	if current_hp >= max_hp:
+		return  # не тратим ману, если фулл хп
+
+	current_hp = min(max_hp, current_hp + skill_2_heal_amount)
+	mana = max(0, mana - skill_2_mana_cost)
+	_skill_2_timer = skill_2_cooldown
+
+
+func get_skill_1_cooldown_left() -> float:
+	return _skill_1_timer
+
+func get_skill_2_cooldown_left() -> float:
+	return _skill_2_timer
 
 
 func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
@@ -138,7 +168,6 @@ func add_xp(amount: int) -> void:
 		return
 
 	xp += amount
-
 	while xp >= xp_to_next:
 		xp -= xp_to_next
 		level += 1
@@ -154,7 +183,6 @@ func _recalculate_stats_for_level() -> void:
 	max_hp = 100 + (level - 1) * 15
 	attack = 10 + (level - 1) * 3
 	defense = 2 + (level - 1) * 1
-
 	max_mana = 60 + (level - 1) * 8
 
 	# MVP: full restore on level up
@@ -206,3 +234,15 @@ func _get_current_target() -> Node2D:
 		return t as Node2D
 
 	return null
+
+
+func take_damage(raw_damage: int) -> void:
+	var dmg: int = max(1, raw_damage - defense)
+	current_hp = max(0, current_hp - dmg)
+
+	if current_hp <= 0:
+		_on_death()
+
+func _on_death() -> void:
+	current_hp = max_hp
+	mana = max_mana

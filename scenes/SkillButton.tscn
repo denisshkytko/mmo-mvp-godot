@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://q4rlomitc8hh" path="res://scripts/Skill_button.gd" id="1_bxu38"]
 
 [node name="SkillButton" type="CanvasLayer"]
-script = ExtResource("1_bxu38")
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3
@@ -24,6 +23,7 @@ custom_minimum_size = Vector2(72, 72)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("1_bxu38")
 
 [node name="RangeOverlay" type="ColorRect" parent="Root/Skill1"]
 layout_mode = 1
@@ -83,5 +83,105 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 22
 text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ManaCostText" type="Label" parent="Root/Skill1/Inner"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -20.0
+offset_right = 30.0
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Skill2" type="Panel" parent="Root"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = -92.0
+offset_right = -20.0
+offset_bottom = 72.0
+script = ExtResource("1_bxu38")
+skill_index = 2
+
+[node name="RangeOverlay" type="ColorRect" parent="Root/Skill2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Inner" type="Control" parent="Root/Skill2"]
+anchors_preset = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 66.0
+offset_bottom = 66.0
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Root/Skill2/Inner"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="CooldownOverlay" type="ColorRect" parent="Root/Skill2/Inner"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.078431375, 0.078431375, 0.078431375, 0.49803922)
+
+[node name="CooldownTextShadow" type="Label" parent="Root/Skill2/Inner"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CooldownText" type="Label" parent="Root/Skill2/Inner"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ManaCostText" type="Label" parent="Root/Skill2/Inner"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -20.0
+offset_right = 30.0
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "100"
 horizontal_alignment = 1
 vertical_alignment = 1
