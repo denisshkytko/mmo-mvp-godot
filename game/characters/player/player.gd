@@ -39,6 +39,8 @@ var defense: int = 2
 var max_mana: int = 60
 var mana: int = 60
 
+var is_dead: bool = false
+
 # --- Components ---
 @onready var c_stats: PlayerStats = $Components/Stats as PlayerStats
 @onready var c_buffs: PlayerBuffs = $Components/Buffs as PlayerBuffs
@@ -63,6 +65,11 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	if is_dead:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+		
 	var input_dir := Vector2(
 		Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
 		Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
@@ -137,3 +144,15 @@ func add_xp(amount: int) -> void:
 # Damage API
 func take_damage(raw_damage: int) -> void:
 	c_stats.take_damage(raw_damage)
+
+func respawn_now() -> void:
+	# телепорт на ближайший graveyard
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm != null and gm.has_method("get_nearest_graveyard_position"):
+		global_position = gm.call("get_nearest_graveyard_position", global_position)
+
+	# восстановить HP/ману
+	current_hp = max_hp
+	mana = max_mana
+
+	is_dead = false

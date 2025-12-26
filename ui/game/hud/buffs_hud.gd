@@ -1,5 +1,5 @@
 extends CanvasLayer
-class_name BuffsUI
+class_name BuffsHUD
 
 @export var buff_icon_scene: PackedScene
 @export var buffs_per_row: int = 7

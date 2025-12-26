@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=3 uid="uid://f40u57vm40tt"]
+
+[ext_resource type="Script" uid="uid://fo77jc2pi6d4" path="res://ui/flow/character_select_ui.gd" id="1_fpjqy"]
+[ext_resource type="PackedScene" uid="uid://dg6fkxddowx6" path="res://ui/flow/CreateCharacterHUD.tscn" id="1_opyui"]
+[ext_resource type="PackedScene" uid="uid://c6qtdmbb5804r" path="res://ui/flow/CharacterSelectHUD.tscn" id="2"]
+
+[node name="CharacterSelectUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fpjqy")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(576, 560)
+layout_mode = 2
+
+[node name="CreateCharacterHUD" parent="HBoxContainer/CenterContainer" instance=ExtResource("1_opyui")]
+custom_minimum_size = Vector2(250, 160)
+layout_mode = 2
+
+[node name="CharacterSelectHUD" parent="HBoxContainer" instance=ExtResource("2")]
+custom_minimum_size = Vector2(576, 560)
+layout_mode = 2

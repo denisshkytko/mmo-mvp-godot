@@ -55,6 +55,10 @@ func take_damage(raw_damage: int) -> void:
 		_on_death()
 
 func _on_death() -> void:
-	# оставляем как простой MVP-респаун (если у тебя уже есть отдельная логика смерти — сюда её потом подключим)
-	p.current_hp = p.max_hp
-	p.mana = p.max_mana
+	# 1) помечаем игрока мёртвым (останавливаем движение/атаки)
+	p.is_dead = true
+
+	# 2) показываем окно респавна (RespawnUi в GameUI)
+	var respawn_ui: Node = get_tree().get_first_node_in_group("respawn_ui")
+	if respawn_ui != null and respawn_ui.has_method("open"):
+		respawn_ui.call("open", p, 3.0) # 3 секунды ожидания (можешь поменять)

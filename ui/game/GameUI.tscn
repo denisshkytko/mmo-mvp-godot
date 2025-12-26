@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bq1obwgfdui1f" path="res://ui/game/hud/InventoryHUD.tscn" id="7_eb4up"]
 [ext_resource type="PackedScene" uid="uid://cyfwx2chmt82i" path="res://ui/game/hud/LootHUD.tscn" id="8_vphlp"]
 
-[node name="GameUi" type="CanvasLayer"]
+[node name="GameUI" type="CanvasLayer"]
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3
@@ -17,22 +17,22 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Hud" parent="Root" instance=ExtResource("1_rs8we")]
+[node name="XpHUD" parent="Root" instance=ExtResource("1_rs8we")]
 
 [node name="SkillButton" parent="Root" instance=ExtResource("2_qdv4i")]
 
-[node name="BuffsUi" parent="Root" instance=ExtResource("3_wemh1")]
+[node name="BuffsHUD" parent="Root" instance=ExtResource("3_wemh1")]
 offset = Vector2(1072, 20)
 transform = Transform2D(1, 0, 0, 1, 1072, 20)
 
-[node name="TargetUi" parent="Root" instance=ExtResource("4_3pola")]
+[node name="TargetHUD" parent="Root" instance=ExtResource("4_3pola")]
 
-[node name="PlayerHud" parent="Root" instance=ExtResource("5_oxeu7")]
+[node name="PlayerHUD" parent="Root" instance=ExtResource("5_oxeu7")]
 
-[node name="RespawnUi" parent="Root" instance=ExtResource("6_h0xnn")]
+[node name="RespawnHUD" parent="Root" instance=ExtResource("6_h0xnn")]
 offset = Vector2(476, 285)
 transform = Transform2D(1, 0, 0, 1, 476, 285)
 
-[node name="InventoryUi" parent="Root" instance=ExtResource("7_eb4up")]
+[node name="InventoryHUD" parent="Root" instance=ExtResource("7_eb4up")]
 
-[node name="LootUi" parent="Root" groups=["loot_ui"] instance=ExtResource("8_vphlp")]
+[node name="LootHUD" parent="Root" groups=["loot_ui"] instance=ExtResource("8_vphlp")]

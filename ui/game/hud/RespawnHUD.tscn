@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ba4oiq6wvwvu6" path="res://ui/game/hud/respawn_hud.gd" id="1_tn2th"]
 
-[node name="RespawnUi" type="CanvasLayer" groups=["respawn_ui"]]
+[node name="RespawnHUD" type="CanvasLayer" groups=["respawn_ui"]]
 script = ExtResource("1_tn2th")
 
 [node name="Panel" type="Panel" parent="."]

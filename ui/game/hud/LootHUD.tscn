@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://65yhursyacwe" path="res://ui/game/hud/loot_hud.gd" id="1_784ee"]
 
-[node name="LootUi" type="CanvasLayer"]
+[node name="LootHUD" type="CanvasLayer"]
 script = ExtResource("1_784ee")
 
 [node name="Panel" type="Panel" parent="."]

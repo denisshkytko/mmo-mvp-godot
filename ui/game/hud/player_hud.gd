@@ -19,20 +19,28 @@ func _process(_delta: float) -> void:
 		_player = get_tree().get_first_node_in_group("player")
 		return
 
-	name_label.text = "player"
+	var n: String = "Player"
+	if has_node("/root/AppState"):
+		var d: Dictionary = get_node("/root/AppState").get("selected_character_data")
+		if d is Dictionary and d.has("name"):
+			n = String(d.get("name", "Player"))
+	name_label.text = n
 
 	# Level
-	if "level" in _player:
-		level_label.text = "lv %d" % int(_player.level)
+	var lvl_v: Variant = _player.get("level")
+	if lvl_v != null:
+		level_label.text = "lv %d" % int(lvl_v)
 	else:
 		level_label.text = ""
 
 	# HP
-	if ("current_hp" in _player) and ("max_hp" in _player):
-		var cur_hp: int = int(_player.current_hp)
-		var mx_hp: int = max(1, int(_player.max_hp))
-		hp_text.text = "%d/%d" % [cur_hp, mx_hp]
+	var cur_hp_v: Variant = _player.get("current_hp")
+	var mx_hp_v: Variant = _player.get("max_hp")
+	if cur_hp_v != null and mx_hp_v != null:
+		var cur_hp: int = int(cur_hp_v)
+		var mx_hp: int = max(1, int(mx_hp_v))
 
+		hp_text.text = "%d/%d" % [cur_hp, mx_hp]
 		hp_bar.max_value = mx_hp
 		hp_bar.value = cur_hp
 	else:
@@ -41,11 +49,13 @@ func _process(_delta: float) -> void:
 		hp_bar.value = 1
 
 	# Mana
-	if ("mana" in _player) and ("max_mana" in _player):
-		var cur_m: int = int(_player.mana)
-		var mx_m: int = max(1, int(_player.max_mana))
-		mana_text.text = "%d/%d" % [cur_m, mx_m]
+	var cur_m_v: Variant = _player.get("mana")
+	var mx_m_v: Variant = _player.get("max_mana")
+	if cur_m_v != null and mx_m_v != null:
+		var cur_m: int = int(cur_m_v)
+		var mx_m: int = max(1, int(mx_m_v))
 
+		mana_text.text = "%d/%d" % [cur_m, mx_m]
 		mana_bar.max_value = mx_m
 		mana_bar.value = cur_m
 	else:

@@ -65,25 +65,37 @@ func _update_cooldown() -> void:
 	var total: float = 0.0
 
 	if skill_index == 1:
-		if not _player.has_method("get_skill_1_cooldown_left") or not ("skill_1_cooldown" in _player):
+		if not _player.has_method("get_skill_1_cooldown_left"):
+			_hide_cd()
+			return
+		var total_v: Variant = _player.get("skill_1_cooldown")
+		if total_v == null:
 			_hide_cd()
 			return
 		left = float(_player.call("get_skill_1_cooldown_left"))
-		total = max(0.001, float(_player.skill_1_cooldown))
+		total = max(0.001, float(total_v))
 
 	elif skill_index == 2:
-		if not _player.has_method("get_skill_2_cooldown_left") or not ("skill_2_cooldown" in _player):
+		if not _player.has_method("get_skill_2_cooldown_left"):
+			_hide_cd()
+			return
+		var total_v2: Variant = _player.get("skill_2_cooldown")
+		if total_v2 == null:
 			_hide_cd()
 			return
 		left = float(_player.call("get_skill_2_cooldown_left"))
-		total = max(0.001, float(_player.skill_2_cooldown))
+		total = max(0.001, float(total_v2))
 
 	elif skill_index == 3:
-		if not _player.has_method("get_skill_3_cooldown_left") or not ("skill_3_cooldown" in _player):
+		if not _player.has_method("get_skill_3_cooldown_left"):
+			_hide_cd()
+			return
+		var total_v3: Variant = _player.get("skill_3_cooldown")
+		if total_v3 == null:
 			_hide_cd()
 			return
 		left = float(_player.call("get_skill_3_cooldown_left"))
-		total = max(0.001, float(_player.skill_3_cooldown))
+		total = max(0.001, float(total_v3))
 
 	if left <= 0.0:
 		_hide_cd()
@@ -98,7 +110,6 @@ func _update_cooldown() -> void:
 	var ratio: float = clamp(left / total, 0.0, 1.0)
 	overlay.size.y = h * ratio
 	overlay.position.y = 0.0
-
 
 func _hide_cd() -> void:
 	overlay.visible = false
@@ -126,35 +137,42 @@ func _is_target_out_of_range() -> bool:
 	if t == null or not (t is Node2D) or not is_instance_valid(t):
 		return false
 
-	if not ("skill_1_range" in _player):
+	var r_v: Variant = _player.get("skill_1_range")
+	if r_v == null:
 		return false
 
 	var dist: float = _player.global_position.distance_to((t as Node2D).global_position)
-	return dist > float(_player.skill_1_range)
+	return dist > float(r_v)
 
 func _update_mana_cost() -> void:
 	if mana_cost_text == null or _player == null:
 		return
-	if not ("mana" in _player):
+
+	var cur_mana_v: Variant = _player.get("mana")
+	if cur_mana_v == null:
 		mana_cost_text.text = ""
 		return
 
-	var cur_mana: int = int(_player.mana)
+	var cur_mana: int = int(cur_mana_v)
 	var cost: int = 0
 
 	if skill_index == 1:
-		if "skill_1_mana_cost" in _player:
-			cost = int(_player.skill_1_mana_cost)
+		var c1: Variant = _player.get("skill_1_mana_cost")
+		if c1 != null:
+			cost = int(c1)
 	elif skill_index == 2:
-		if "skill_2_mana_cost" in _player:
-			cost = int(_player.skill_2_mana_cost)
+		var c2: Variant = _player.get("skill_2_mana_cost")
+		if c2 != null:
+			cost = int(c2)
 	elif skill_index == 3:
-		if "skill_3_mana_cost" in _player:
-			cost = int(_player.skill_3_mana_cost)
+		var c3: Variant = _player.get("skill_3_mana_cost")
+		if c3 != null:
+			cost = int(c3)
 
 	mana_cost_text.text = str(cost)
 
+	# Важно: цвета можно оставить как были (это чисто визуал)
 	if cur_mana >= cost:
-		mana_cost_text.modulate = Color(0.35, 0.7, 1.0, 1.0)  # blue
+		mana_cost_text.modulate = Color(0.35, 0.7, 1.0, 1.0)
 	else:
-		mana_cost_text.modulate = Color(1.0, 0.25, 0.25, 1.0)  # red
+		mana_cost_text.modulate = Color(1.0, 0.25, 0.25, 1.0)

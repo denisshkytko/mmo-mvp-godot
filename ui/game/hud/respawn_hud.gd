@@ -1,5 +1,5 @@
 extends CanvasLayer
-class_name RespawnUI
+class_name RespawnHUD
 
 @onready var panel: Panel = $Panel
 @onready var title_label: Label = $Panel/VBox/TitleLabel

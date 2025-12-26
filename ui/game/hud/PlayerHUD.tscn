@@ -73,7 +73,7 @@ cache/0/16/0/underline_position = 0.0
 cache/0/16/0/underline_thickness = 0.0
 cache/0/16/0/scale = 1.0
 
-[node name="PlayerHud" type="CanvasLayer"]
+[node name="PlayerHUD" type="CanvasLayer"]
 script = ExtResource("1_0kcyj")
 
 [node name="Panel" type="Panel" parent="."]

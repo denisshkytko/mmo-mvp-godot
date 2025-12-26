@@ -17,12 +17,13 @@ func _process(_delta: float) -> void:
 		player = get_tree().get_first_node_in_group("player")
 		return
 
-	# ожидаем, что у player есть xp и xp_to_next
-	if not (("xp" in player) and ("xp_to_next" in player)):
+	var cur_v: Variant = player.get("xp")
+	var need_v: Variant = player.get("xp_to_next")
+	if cur_v == null or need_v == null:
 		return
 
-	var cur: int = int(player.xp)
-	var need: int = max(1, int(player.xp_to_next))
+	var cur: int = int(cur_v)
+	var need: int = max(1, int(need_v))
 
 	xp_text.text = "%d/%d" % [cur, need]
 

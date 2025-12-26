@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="mmo_mvp"
-run/main_scene="uid://cw0c4yynas2h1"
+run/main_scene="res://ui/flow/LoginUI.tscn"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
+
+[autoload]
+
+AppState="*res://core/managers/app_state.gd"
+SaveSystem="*res://core/save/save_system.gd"
 
 [input]
 

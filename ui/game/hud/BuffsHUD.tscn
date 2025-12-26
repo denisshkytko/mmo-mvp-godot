@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dvh76jb2amt8r" path="res://ui/game/hud/buffs_hud.gd" id="1_7ixm2"]
 [ext_resource type="PackedScene" uid="uid://dhvh5p8pi2mtm" path="res://ui/game/hud/BuffIcon.tscn" id="2_hd7in"]
 
-[node name="BuffsUi" type="CanvasLayer"]
+[node name="BuffsHUD" type="CanvasLayer"]
 script = ExtResource("1_7ixm2")
 buff_icon_scene = ExtResource("2_hd7in")
 
