@@ -15,7 +15,13 @@ extends CharacterBody2D
 # Skill 2 (self-heal)
 @export var skill_2_cooldown: float = 6.0
 @export var skill_2_mana_cost: int = 18
-@export var skill_2_heal_amount: int = 35   # плоское лечение (потом можно сделать % или от spellpower)
+@export var skill_2_heal_amount: int = 35
+
+# Skill 3 (attack buff)
+@export var skill_3_cooldown: float = 20.0
+@export var skill_3_mana_cost: int = 25
+@export var skill_3_duration_sec: float = 600.0 # 10 minutes
+@export var skill_3_attack_bonus: int = 6
 
 var inventory: Inventory
 
@@ -38,14 +44,17 @@ var mana: int = 60
 var _attack_timer: float = 0.0
 var _skill_1_timer: float = 0.0
 var _skill_2_timer: float = 0.0
+var _skill_3_timer: float = 0.0
 
+# Buffs
+# id -> {"time_left": float, "data": Dictionary}
+var _buffs: Dictionary = {}
 
 func _ready() -> void:
 	inventory = Inventory.new()
 	_recalculate_stats_for_level()
 	current_hp = max_hp
 	mana = max_mana
-
 
 func _physics_process(_delta: float) -> void:
 	var input_dir := Vector2(
@@ -59,19 +68,22 @@ func _physics_process(_delta: float) -> void:
 	velocity = input_dir * move_speed
 	move_and_slide()
 
-
 func _process(delta: float) -> void:
 	# cooldown timers
 	_attack_timer = max(0.0, _attack_timer - delta)
 	_skill_1_timer = max(0.0, _skill_1_timer - delta)
 	_skill_2_timer = max(0.0, _skill_2_timer - delta)
+	_skill_3_timer = max(0.0, _skill_3_timer - delta)
+
+	_update_buffs(delta)
 
 	# keyboard hotkeys
 	if Input.is_action_just_pressed("skill_1"):
 		try_cast_skill_1()
-
 	if Input.is_action_just_pressed("skill_2"):
 		try_cast_skill_2()
+	if Input.is_action_just_pressed("skill_3"):
+		try_cast_skill_3()
 
 	# Auto-attack: only if cooldown ready and target exists and is in range
 	if _attack_timer > 0.0:
@@ -88,10 +100,13 @@ func _process(delta: float) -> void:
 	_apply_damage_to_target(target, get_attack_damage())
 	_attack_timer = attack_cooldown
 
-
 func get_attack_damage() -> int:
-	return attack
-
+	var bonus: int = 0
+	for k in _buffs.keys():
+		var e: Dictionary = _buffs[k] as Dictionary
+		var data: Dictionary = e.get("data", {}) as Dictionary
+		bonus += int(data.get("attack_bonus", 0))
+	return attack + bonus
 
 # -----------------------
 # Skill API
@@ -112,27 +127,28 @@ func try_cast_skill_1() -> void:
 	mana = max(0, mana - skill_1_mana_cost)
 	_skill_1_timer = skill_1_cooldown
 
-
 func try_cast_skill_2() -> void:
-	# Self heal
 	if _skill_2_timer > 0.0:
 		return
 	if mana < skill_2_mana_cost:
 		return
 	if current_hp >= max_hp:
-		return  # не тратим ману, если фулл хп
+		return
 
 	current_hp = min(max_hp, current_hp + skill_2_heal_amount)
 	mana = max(0, mana - skill_2_mana_cost)
 	_skill_2_timer = skill_2_cooldown
 
+func try_cast_skill_3() -> void:
+	if _skill_3_timer > 0.0:
+		return
+	if mana < skill_3_mana_cost:
+		return
 
-func get_skill_1_cooldown_left() -> float:
-	return _skill_1_timer
+	add_or_refresh_buff("atk_buff_1", skill_3_duration_sec, {"attack_bonus": skill_3_attack_bonus})
 
-func get_skill_2_cooldown_left() -> float:
-	return _skill_2_timer
-
+	mana = max(0, mana - skill_3_mana_cost)
+	_skill_3_timer = skill_3_cooldown
 
 func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
@@ -140,6 +156,41 @@ func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 	if target.has_method("take_damage"):
 		target.call("take_damage", dmg)
 
+# -----------------------
+# Buff API (for BuffsUI + icons)
+# -----------------------
+func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {}) -> void:
+	if id == "":
+		return
+	_buffs[id] = {"time_left": duration_sec, "data": data}
+
+func remove_buff(id: String) -> void:
+	if _buffs.has(id):
+		_buffs.erase(id)
+
+func _update_buffs(delta: float) -> void:
+	if _buffs.is_empty():
+		return
+
+	var to_remove: Array[String] = []
+	for k in _buffs.keys():
+		var e: Dictionary = _buffs[k] as Dictionary
+		var t: float = float(e.get("time_left", 0.0)) - delta
+		if t <= 0.0:
+			to_remove.append(String(k))
+		else:
+			e["time_left"] = t
+			_buffs[k] = e
+
+	for k in to_remove:
+		_buffs.erase(k)
+
+func get_buffs_snapshot() -> Array:
+	var arr: Array = []
+	for k in _buffs.keys():
+		var e: Dictionary = _buffs[k] as Dictionary
+		arr.append({"id": String(k), "time_left": float(e.get("time_left", 0.0))})
+	return arr
 
 # -----------------------
 # Inventory API (Corpse loot uses this)
@@ -159,7 +210,6 @@ func get_inventory_snapshot() -> Dictionary:
 		return {"gold": 0, "slots": []}
 	return {"gold": inventory.gold, "slots": inventory.slots}
 
-
 # -----------------------
 # XP / Leveling API (Mob uses this)
 # -----------------------
@@ -174,10 +224,8 @@ func add_xp(amount: int) -> void:
 		xp_to_next = _calc_xp_to_next(level)
 		_recalculate_stats_for_level()
 
-
 func _calc_xp_to_next(new_level: int) -> int:
 	return 10 + (new_level - 1) * 5
-
 
 func _recalculate_stats_for_level() -> void:
 	max_hp = 100 + (level - 1) * 15
@@ -185,10 +233,8 @@ func _recalculate_stats_for_level() -> void:
 	defense = 2 + (level - 1) * 1
 	max_mana = 60 + (level - 1) * 8
 
-	# MVP: full restore on level up
 	current_hp = max_hp
 	mana = max_mana
-
 
 # -----------------------
 # Target helpers
@@ -196,7 +242,6 @@ func _recalculate_stats_for_level() -> void:
 func _get_skill_target_in_range() -> Node2D:
 	var gm := get_tree().get_first_node_in_group("game_manager")
 
-	# 1) If current target exists and in skill range -> use it
 	if gm != null and gm.has_method("get_target"):
 		var t = gm.call("get_target")
 		if t != null and t is Node2D and is_instance_valid(t):
@@ -204,7 +249,6 @@ func _get_skill_target_in_range() -> Node2D:
 			if dist <= skill_1_range:
 				return t as Node2D
 
-	# 2) Otherwise pick nearest mob in skill range
 	var mobs := get_tree().get_nodes_in_group("mobs")
 	var best: Node2D = null
 	var best_dist: float = skill_1_range
@@ -217,12 +261,10 @@ func _get_skill_target_in_range() -> Node2D:
 				best_dist = d
 				best = m
 
-	# 3) If found - set as target
 	if best != null and gm != null and gm.has_method("set_target"):
 		gm.call("set_target", best)
 
 	return best
-
 
 func _get_current_target() -> Node2D:
 	var gm := get_tree().get_first_node_in_group("game_manager")
@@ -235,11 +277,9 @@ func _get_current_target() -> Node2D:
 
 	return null
 
-
 func take_damage(raw_damage: int) -> void:
 	var dmg: int = max(1, raw_damage - defense)
 	current_hp = max(0, current_hp - dmg)
-
 	if current_hp <= 0:
 		_on_death()
 

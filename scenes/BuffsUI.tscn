@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://t455gf4vm737"]
+
+[ext_resource type="Script" uid="uid://dvh76jb2amt8r" path="res://scripts/Buffs_ui.gd" id="1_7ixm2"]
+[ext_resource type="PackedScene" uid="uid://dhvh5p8pi2mtm" path="res://scenes/BuffIcon.tscn" id="2_hd7in"]
+
+[node name="BuffsUi" type="CanvasLayer"]
+script = ExtResource("1_7ixm2")
+buff_icon_scene = ExtResource("2_hd7in")
+
+[node name="Panel" type="Panel" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 60.0
+offset_bottom = 60.0
+
+[node name="Grid" type="GridContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2

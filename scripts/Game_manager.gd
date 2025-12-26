@@ -163,3 +163,30 @@ func _is_world_pos_visible(world_pos: Vector2) -> bool:
 	var half_size: Vector2 = vp.get_visible_rect().size * 0.5 * cam.zoom
 	var rect := Rect2(cam.global_position - half_size, half_size * 2.0)
 	return rect.has_point(world_pos)
+
+
+func get_nearest_graveyard_position(from_world_pos: Vector2) -> Vector2:
+	var graveyards := get_tree().get_nodes_in_group("graveyards")
+
+	var best_pos: Vector2 = from_world_pos
+	var best_dist: float = INF
+
+	for g in graveyards:
+		if g == null:
+			continue
+
+		# Если это наша сцена Graveyard с методом
+		if g.has_method("get_spawn_position"):
+			var p: Vector2 = g.call("get_spawn_position")
+			var d: float = from_world_pos.distance_to(p)
+			if d < best_dist:
+				best_dist = d
+				best_pos = p
+		elif g is Node2D:
+			var p2: Vector2 = (g as Node2D).global_position
+			var d2: float = from_world_pos.distance_to(p2)
+			if d2 < best_dist:
+				best_dist = d2
+				best_pos = p2
+
+	return best_pos

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://6lf4c54hdjyr"]
+
+[ext_resource type="Script" uid="uid://bk3kh0k3lb51t" path="res://scripts/Spawner.gd" id="1_qcsvw"]
+[ext_resource type="PackedScene" uid="uid://c8qhqey2vbhkc" path="res://scenes/Mob.tscn" id="2_5y6d2"]
+
+[node name="Spawner" type="Node2D"]
+script = ExtResource("1_qcsvw")
+mob_scene = ExtResource("2_5y6d2")
+respawn_seconds = 10.0
+behavior = 1
+leash_distance = 660.0

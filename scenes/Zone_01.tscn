@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://8eogwafoag68"]
+[gd_scene load_steps=8 format=3 uid="uid://8eogwafoag68"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://scripts/Portal.gd" id="1_25g3u"]
 [ext_resource type="PackedScene" uid="uid://c8qhqey2vbhkc" path="res://scenes/Mob.tscn" id="2_bajtg"]
+[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://scenes/Spawner.tscn" id="3_7rgpn"]
+[ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://scenes/Graveyard.tscn" id="3_ah0r0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -63,14 +65,48 @@ offset_right = 60.0
 offset_bottom = 60.0
 color = Color(0.20392157, 0.2627451, 1, 0.34509805)
 
-[node name="Mob_01" parent="." instance=ExtResource("2_bajtg")]
-position = Vector2(300, 0)
+[node name="Graveyard" parent="." instance=ExtResource("3_ah0r0")]
+position = Vector2(-1077, -619)
 
-[node name="Mob_02" parent="." instance=ExtResource("2_bajtg")]
-position = Vector2(1224, 3)
+[node name="Spawner" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-1172, 4)
+mob_scene = ExtResource("2_bajtg")
+level_max = 2
+behavior = 0
+patrol_radius = 220.0
+patrol_pause_seconds = 1.0
 
-[node name="Mob_03" parent="." instance=ExtResource("2_bajtg")]
-position = Vector2(722, -65)
+[node name="Spawner2" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-652, 585)
+mob_scene = ExtResource("2_bajtg")
+level_max = 2
+patrol_pause_seconds = 1.0
 
-[node name="Mob_04" parent="." instance=ExtResource("2_bajtg")]
-position = Vector2(720, 101)
+[node name="Spawner3" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(510, 615)
+mob_scene = ExtResource("2_bajtg")
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner4" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(1158, -9)
+mob_scene = ExtResource("2_bajtg")
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner5" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(436, -755)
+mob_scene = ExtResource("2_bajtg")
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner6" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-493, -736)
+mob_scene = ExtResource("2_bajtg")
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner7" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-6, 630)
+mob_scene = ExtResource("2_bajtg")
+patrol_pause_seconds = 1.0

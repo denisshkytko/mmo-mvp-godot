@@ -20,7 +20,6 @@ color = Color(0.14901961, 0.12941177, 1, 1)
 shape = SubResource("RectangleShape2D_5q5h1")
 
 [node name="Camera" type="Camera2D" parent="."]
-zoom = Vector2(1.2, 1.2)
 limit_left = -2000
 limit_top = -1200
 limit_right = 2000

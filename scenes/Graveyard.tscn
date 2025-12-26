@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://clp8k5d1jg7hp"]
+
+[ext_resource type="Script" uid="uid://l2bx7lb7iaey" path="res://scripts/Graveyard.gd" id="1_5r8i4"]
+
+[node name="Graveyard" type="Node2D" groups=["graveyards"]]
+script = ExtResource("1_5r8i4")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
