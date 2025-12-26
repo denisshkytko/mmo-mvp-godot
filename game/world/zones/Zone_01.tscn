@@ -50,7 +50,7 @@ position = Vector2(1700, 0)
 [node name="ExitToZone02" type="Area2D" parent="."]
 position = Vector2(1800, 0)
 script = ExtResource("1_25g3u")
-target_scene = "res://scenes/Zone_02.tscn"
+target_zone_path = "uid://vw0l7rj1osth"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToZone02"]
 visible = false

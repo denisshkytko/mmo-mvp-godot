@@ -190,3 +190,32 @@ func get_nearest_graveyard_position(from_world_pos: Vector2) -> Vector2:
 				best_pos = p2
 
 	return best_pos
+
+# Preferred API: accept PackedScene directly (safer than string paths).
+func load_zone_scene(zone_scene: PackedScene, spawn_name: String = "SpawnPoint") -> void:
+	if zone_scene == null:
+		push_error("Zone scene is null.")
+		return
+	call_deferred("_load_zone_scene_deferred", zone_scene, spawn_name)
+
+func _load_zone_scene_deferred(zone_scene: PackedScene, spawn_name: String) -> void:
+	# Удаляем текущую зону
+	for child in zone_container.get_children():
+		child.queue_free()
+
+	# Создаём новую
+	var new_zone: Node2D = zone_scene.instantiate() as Node2D
+	zone_container.add_child(new_zone)
+
+	# Спавним игрока
+	var spawn: Node = new_zone.get_node_or_null(spawn_name)
+	if spawn is Marker2D:
+		player.global_position = (spawn as Marker2D).global_position
+	else:
+		var default_spawn: Node = new_zone.get_node_or_null("SpawnPoint")
+		if default_spawn is Marker2D:
+			player.global_position = (default_spawn as Marker2D).global_position
+		else:
+			player.global_position = new_zone.global_position
+
+	clear_target()

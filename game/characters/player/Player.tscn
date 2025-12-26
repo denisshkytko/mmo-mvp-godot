@@ -1,6 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://rwedipw6jwwn"]
+[gd_scene load_steps=8 format=3 uid="uid://rwedipw6jwwn"]
 
 [ext_resource type="Script" uid="uid://bat5o7j41jp0r" path="res://game/characters/player/player.gd" id="1_p0vlq"]
+[ext_resource type="Script" uid="uid://chlq040cx6wia" path="res://game/characters/player/components/player_stats.gd" id="2_dcag1"]
+[ext_resource type="Script" uid="uid://4ojiq7pms004" path="res://game/characters/player/components/player_buffs.gd" id="3_w0lke"]
+[ext_resource type="Script" uid="uid://c6a1aiarg3hly" path="res://game/characters/player/components/player_combat.gd" id="4_cmlqd"]
+[ext_resource type="Script" uid="uid://ci7uwg4kea5rj" path="res://game/characters/player/components/player_skills.gd" id="5_dh85s"]
+[ext_resource type="Script" uid="uid://ytmhmr63eges" path="res://game/characters/player/components/player_inventory_component.gd" id="6_bvo31"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5q5h1"]
 size = Vector2(24, 24)
@@ -8,6 +13,20 @@ size = Vector2(24, 24)
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
 script = ExtResource("1_p0vlq")
+move_speed = null
+attack_range = null
+attack_cooldown = null
+skill_1_range = null
+skill_1_cooldown = null
+skill_1_damage_multiplier = null
+skill_1_mana_cost = null
+skill_2_cooldown = null
+skill_2_mana_cost = null
+skill_2_heal_amount = null
+skill_3_cooldown = null
+skill_3_mana_cost = null
+skill_3_duration_sec = null
+skill_3_attack_bonus = null
 
 [node name="Visual" type="ColorRect" parent="."]
 offset_left = -16.0
@@ -26,3 +45,20 @@ limit_right = 2000
 limit_bottom = 1200
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
+
+[node name="Components" type="Node" parent="."]
+
+[node name="Stats" type="Node" parent="Components"]
+script = ExtResource("2_dcag1")
+
+[node name="Buffs" type="Node" parent="Components"]
+script = ExtResource("3_w0lke")
+
+[node name="Combat" type="Node" parent="Components"]
+script = ExtResource("4_cmlqd")
+
+[node name="Skills" type="Node" parent="Components"]
+script = ExtResource("5_dh85s")
+
+[node name="Inventory" type="Node" parent="Components"]
+script = ExtResource("6_bvo31")

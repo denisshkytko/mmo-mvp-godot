@@ -65,24 +65,24 @@ func _update_cooldown() -> void:
 	var total: float = 0.0
 
 	if skill_index == 1:
-		if not (("_skill_1_timer" in _player) and ("skill_1_cooldown" in _player)):
+		if not _player.has_method("get_skill_1_cooldown_left") or not ("skill_1_cooldown" in _player):
 			_hide_cd()
 			return
-		left = float(_player._skill_1_timer)
+		left = float(_player.call("get_skill_1_cooldown_left"))
 		total = max(0.001, float(_player.skill_1_cooldown))
 
 	elif skill_index == 2:
-		if not (("_skill_2_timer" in _player) and ("skill_2_cooldown" in _player)):
+		if not _player.has_method("get_skill_2_cooldown_left") or not ("skill_2_cooldown" in _player):
 			_hide_cd()
 			return
-		left = float(_player._skill_2_timer)
+		left = float(_player.call("get_skill_2_cooldown_left"))
 		total = max(0.001, float(_player.skill_2_cooldown))
 
 	elif skill_index == 3:
-		if not (("_skill_3_timer" in _player) and ("skill_3_cooldown" in _player)):
+		if not _player.has_method("get_skill_3_cooldown_left") or not ("skill_3_cooldown" in _player):
 			_hide_cd()
 			return
-		left = float(_player._skill_3_timer)
+		left = float(_player.call("get_skill_3_cooldown_left"))
 		total = max(0.001, float(_player.skill_3_cooldown))
 
 	if left <= 0.0:
@@ -94,11 +94,11 @@ func _update_cooldown() -> void:
 	cd_text.text = s
 	cd_text_shadow.text = s
 
-	# заливка кулдауна сверху вниз
 	var h: float = inner.size.y
 	var ratio: float = clamp(left / total, 0.0, 1.0)
 	overlay.size.y = h * ratio
 	overlay.position.y = 0.0
+
 
 func _hide_cd() -> void:
 	overlay.visible = false
