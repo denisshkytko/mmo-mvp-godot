@@ -1,0 +1,104 @@
+[gd_scene load_steps=7 format=3 uid="uid://8eogwafoag68"]
+
+[ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
+[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/Spawner.tscn" id="3_7rgpn"]
+[ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_ah0r0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
+size = Vector2(4000, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ah0r0"]
+size = Vector2(40, 2400)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_25g3u"]
+size = Vector2(120, 120)
+
+[node name="Zone_01" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -2000.0
+offset_top = -1200.0
+offset_right = 2000.0
+offset_bottom = 1200.0
+color = Color(0.30407822, 0.5387897, 0.09257879, 1)
+
+[node name="Walls" type="StaticBody2D" parent="."]
+
+[node name="WallTop" type="CollisionShape2D" parent="Walls"]
+position = Vector2(0, -1200)
+shape = SubResource("RectangleShape2D_bajtg")
+debug_color = Color(0.05446948, 0.06360627, 0.054370105, 0.41960785)
+
+[node name="WallBottom" type="CollisionShape2D" parent="Walls"]
+position = Vector2(0, 1200)
+shape = SubResource("RectangleShape2D_bajtg")
+debug_color = Color(0.05446948, 0.06360627, 0.054370105, 0.41960785)
+
+[node name="WallLeft" type="CollisionShape2D" parent="Walls"]
+position = Vector2(-2000, 0)
+shape = SubResource("RectangleShape2D_ah0r0")
+debug_color = Color(1.02277845e-07, 0.068394236, 0.08760249, 0.41960785)
+
+[node name="WallRight" type="CollisionShape2D" parent="Walls"]
+position = Vector2(2000, 0)
+shape = SubResource("RectangleShape2D_ah0r0")
+debug_color = Color(1.02277845e-07, 0.068394236, 0.08760249, 0.41960785)
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(1700, 0)
+
+[node name="ExitToZone02" type="Area2D" parent="."]
+position = Vector2(1800, 0)
+script = ExtResource("1_25g3u")
+target_scene = "res://scenes/Zone_02.tscn"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToZone02"]
+visible = false
+shape = SubResource("RectangleShape2D_25g3u")
+debug_color = Color(0.70628047, 0.07076057, 0.61411655, 0.41960785)
+
+[node name="DebugVisual" type="ColorRect" parent="ExitToZone02"]
+offset_left = -60.0
+offset_top = -60.0
+offset_right = 60.0
+offset_bottom = 60.0
+color = Color(0.20392157, 0.2627451, 1, 0.34509805)
+
+[node name="Graveyard" parent="." instance=ExtResource("3_ah0r0")]
+position = Vector2(-1077, -619)
+
+[node name="Spawner" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-1172, 4)
+level_max = 2
+behavior = 0
+patrol_radius = 220.0
+patrol_pause_seconds = 1.0
+
+[node name="Spawner2" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-652, 585)
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner3" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(510, 615)
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner4" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(1158, -9)
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner5" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(436, -755)
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner6" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-493, -736)
+level_max = 2
+patrol_pause_seconds = 1.0
+
+[node name="Spawner7" parent="." instance=ExtResource("3_7rgpn")]
+position = Vector2(-6, 630)
+patrol_pause_seconds = 1.0

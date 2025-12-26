@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcu1lfgrbfvt5"]
+
+[ext_resource type="Script" uid="uid://bckvh6aela0ko" path="res://ui/game/hud/target_hud.gd" id="1_vx1m2"]
+
+[node name="TargetUi" type="CanvasLayer"]
+script = ExtResource("1_vx1m2")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -356.0
+offset_top = 20.0
+offset_right = -216.0
+offset_bottom = 80.0
+grow_horizontal = 2
+
+[node name="NameLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 14
+text = "Mob_name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HpBack" type="ColorRect" parent="Panel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -35.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.26657522, 0.2665752, 0.2665752, 1)
+
+[node name="HpFill" type="ColorRect" parent="Panel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -35.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.8096855, 0.12669769, 0.12613973, 1)
+
+[node name="HpText" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -35.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 14
+text = "100/100"
+horizontal_alignment = 1
+vertical_alignment = 1

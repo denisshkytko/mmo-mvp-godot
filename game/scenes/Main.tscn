@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://cw0c4yynas2h1"]
+
+[ext_resource type="PackedScene" uid="uid://8eogwafoag68" path="res://game/world/zones/Zone_01.tscn" id="1_ml1q1"]
+[ext_resource type="PackedScene" uid="uid://rwedipw6jwwn" path="res://game/characters/player/Player.tscn" id="2_pxvbe"]
+[ext_resource type="Script" uid="uid://f3eu0mi82ub7" path="res://core/managers/game_manager.gd" id="3_0j7pm"]
+[ext_resource type="PackedScene" uid="uid://csbowtuv1xh0o" path="res://ui/game/GameUI.tscn" id="4_a1pqa"]
+
+[node name="Main" type="Node2D"]
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="ZoneContainer" type="Node2D" parent="World"]
+
+[node name="Zone_01" parent="World/ZoneContainer" instance=ExtResource("1_ml1q1")]
+
+[node name="Player" parent="World" instance=ExtResource("2_pxvbe")]
+
+[node name="GameManager" type="Node2D" parent="World" groups=["game_manager"]]
+script = ExtResource("3_0j7pm")
+
+[node name="GameUi" parent="." instance=ExtResource("4_a1pqa")]
