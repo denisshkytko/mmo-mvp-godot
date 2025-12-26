@@ -5,12 +5,112 @@ extends Node
 var player: Node2D
 var current_target: Node = null
 
+# --- Save/Load runtime ---
+var current_zone_path: String = ""
+var _pending_override_pos: Vector2 = Vector2.ZERO
+var _has_override_pos: bool = false
+
+var _save_debounce: Timer
+var _autosave: Timer
+var _save_pending: bool = false
+
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as Node2D
 	if player == null:
 		push_error("Player not found in group 'player'.")
 		return
+
+	# --- save timers ---
+	_save_debounce = Timer.new()
+	_save_debounce.one_shot = true
+	_save_debounce.wait_time = 0.6
+	add_child(_save_debounce)
+	_save_debounce.timeout.connect(_flush_save)
+
+	_autosave = Timer.new()
+	_autosave.one_shot = false
+	_autosave.wait_time = 20.0
+	add_child(_autosave)
+	_autosave.timeout.connect(_autosave_tick)
+	_autosave.start()
+
+	# --- load character state into world ---
+	_load_character_into_world()
+
+
+func _load_character_into_world() -> void:
+	if not has_node("/root/AppState"):
+		return
+
+	var data: Dictionary = AppState.selected_character_data
+	if data.is_empty():
+		# Защиты ты просил отложить — просто ничего не делаем.
+		return
+
+	# 1) Зона: всегда берём из data["zone"], по умолчанию Zone_01 (у тебя это уже записывается при создании)
+	var zone_path: String = String(data.get("zone", "res://game/world/zones/Zone_01.tscn"))
+	if zone_path == "":
+		zone_path = "res://game/world/zones/Zone_01.tscn"
+
+	current_zone_path = zone_path
+
+	# 2) Позиция: применяем ТОЛЬКО если она не (0,0) — иначе это “первый вход”
+	var pos_v: Variant = data.get("pos", null)
+	_has_override_pos = false
+	_pending_override_pos = Vector2.ZERO
+	if pos_v is Dictionary:
+		var pos_d: Dictionary = pos_v as Dictionary
+		var x: float = float(pos_d.get("x", 0.0))
+		var y: float = float(pos_d.get("y", 0.0))
+		if not (is_zero_approx(x) and is_zero_approx(y)):
+			_has_override_pos = true
+			_pending_override_pos = Vector2(x, y)
+
+	# 3) Загружаем зону
+	load_zone(zone_path, "SpawnPoint")
+
+	# 4) Применяем статы/инвентарь
+	if player.has_method("apply_character_data"):
+		player.call("apply_character_data", data)
+
+	# 5) Сохраним состояние входа (debounce)
+	request_save("enter_world")
+
+
+# ---------------------------
+# Save API (debounced)
+# ---------------------------
+func request_save(reason: String) -> void:
+	_save_pending = true
+	_save_debounce.start()
+
+func _flush_save() -> void:
+	if not _save_pending:
+		return
+	_save_pending = false
+	_do_save_now()
+
+func _autosave_tick() -> void:
+	request_save("autosave")
+
+func _do_save_now() -> void:
+	if not has_node("/root/AppState"):
+		return
+	if AppState.selected_character_id == "":
+		return
+	if player == null or not is_instance_valid(player):
+		return
+	if not player.has_method("export_character_data"):
+		return
+
+	var data: Dictionary = player.call("export_character_data")
+
+	# зона
+	if current_zone_path != "":
+		data["zone"] = current_zone_path
+
+	AppState.save_selected_character(data)
 
 
 # ---------------------------
@@ -21,7 +121,10 @@ func load_zone(zone_scene_path: String, spawn_name: String = "SpawnPoint") -> vo
 		push_error("Zone path is empty.")
 		return
 
-	# Wait a frame so physics flushing doesn't explode (we already use this pattern)
+	current_zone_path = zone_scene_path
+	request_save("zone_change")
+
+	# Wait a frame so physics flushing doesn't explode
 	call_deferred("_load_zone_deferred", zone_scene_path, spawn_name)
 
 
@@ -49,6 +152,11 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 			player.global_position = (default_spawn as Marker2D).global_position
 		else:
 			player.global_position = new_zone.global_position
+
+	# Override position if saved (not first entry)
+	if _has_override_pos:
+		player.global_position = _pending_override_pos
+		_has_override_pos = false
 
 	# Optional: target becomes invalid when changing zones
 	clear_target()
@@ -79,7 +187,6 @@ func get_target() -> Node:
 	return current_target
 
 
-
 func clear_target() -> void:
 	current_target = null
 
@@ -98,7 +205,7 @@ func _input(event: InputEvent) -> void:
 			screen_pos = mb.position
 			pressed = true
 
-	# Touch (Emulate Touch From Mouse or mobile)
+	# Touch
 	elif event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
 		if st.pressed:
@@ -123,8 +230,6 @@ func _screen_to_world(screen_pos: Vector2) -> Vector2:
 
 
 func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
-	
-		
 	var vp: Viewport = get_viewport()
 	var space_state: PhysicsDirectSpaceState2D = vp.world_2d.direct_space_state
 
@@ -134,7 +239,6 @@ func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
 	params.collide_with_bodies = true
 	params.collision_mask = 0xFFFFFFFF
 
-	# Typed array to avoid "cannot infer type" issues when warnings are errors
 	var hits: Array[Dictionary] = space_state.intersect_point(params, 32)
 	if hits.is_empty():
 		return null
@@ -144,7 +248,6 @@ func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
 		if collider_obj == null:
 			continue
 
-		# Если клик попал в Area2D, она может быть TargetHitbox
 		var node: Node = collider_obj as Node
 		while node != null:
 			if node.is_in_group("mobs"):
@@ -175,7 +278,6 @@ func get_nearest_graveyard_position(from_world_pos: Vector2) -> Vector2:
 		if g == null:
 			continue
 
-		# Если это наша сцена Graveyard с методом
 		if g.has_method("get_spawn_position"):
 			var p: Vector2 = g.call("get_spawn_position")
 			var d: float = from_world_pos.distance_to(p)
@@ -191,6 +293,7 @@ func get_nearest_graveyard_position(from_world_pos: Vector2) -> Vector2:
 
 	return best_pos
 
+
 # Preferred API: accept PackedScene directly (safer than string paths).
 func load_zone_scene(zone_scene: PackedScene, spawn_name: String = "SpawnPoint") -> void:
 	if zone_scene == null:
@@ -198,16 +301,14 @@ func load_zone_scene(zone_scene: PackedScene, spawn_name: String = "SpawnPoint")
 		return
 	call_deferred("_load_zone_scene_deferred", zone_scene, spawn_name)
 
+
 func _load_zone_scene_deferred(zone_scene: PackedScene, spawn_name: String) -> void:
-	# Удаляем текущую зону
 	for child in zone_container.get_children():
 		child.queue_free()
 
-	# Создаём новую
 	var new_zone: Node2D = zone_scene.instantiate() as Node2D
 	zone_container.add_child(new_zone)
 
-	# Спавним игрока
 	var spawn: Node = new_zone.get_node_or_null(spawn_name)
 	if spawn is Marker2D:
 		player.global_position = (spawn as Marker2D).global_position
@@ -219,3 +320,14 @@ func _load_zone_scene_deferred(zone_scene: PackedScene, spawn_name: String) -> v
 			player.global_position = new_zone.global_position
 
 	clear_target()
+
+
+func save_now() -> void:
+	if has_method("_do_save_now"):
+		call("_do_save_now")
+		return
+	if has_method("_flush_save"):
+		call("_flush_save")
+		return
+	if has_method("request_save"):
+		request_save("save_now")

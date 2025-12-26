@@ -46,4 +46,9 @@ func _on_respawn_pressed() -> void:
 func _force_respawn() -> void:
 	if _player != null and is_instance_valid(_player) and _player.has_method("respawn_now"):
 		_player.call("respawn_now")
+
+		var gm: Node = get_tree().get_first_node_in_group("game_manager")
+		if gm != null and gm.has_method("request_save"):
+			gm.call("request_save", "respawn")
+
 	close()

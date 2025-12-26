@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfogpoavpomnd"]
+
+[ext_resource type="Script" uid="uid://6xqbe46xy5et" path="res://ui/game/hud/menu_hud.gd" id="1_ft3am"]
+
+[node name="MenuHud" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ft3am")
+
+[node name="MenuButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 35)
+layout_mode = 0
+offset_left = 1077.0
+offset_top = 595.0
+offset_right = 1137.0
+offset_bottom = 630.0
+text = "Menu"
+
+[node name="Panel" type="Panel" parent="."]
+visible = false
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 0
+offset_left = 551.0
+offset_top = 220.0
+offset_right = 651.0
+offset_bottom = 320.0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+
+[node name="ExitWorldButton" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "Exit World"
+
+[node name="ExitGameButton" type="Button" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "Exit Game"

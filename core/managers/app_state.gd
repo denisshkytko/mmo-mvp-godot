@@ -100,3 +100,18 @@ func delete_character(char_id: String) -> bool:
 		selected_character_id = ""
 		selected_character_data = {}
 	return ok
+
+
+func save_selected_character(data: Dictionary) -> void:
+	if selected_character_id == "":
+		return
+	if not has_node("/root/SaveSystem"):
+		return
+
+	# гарантируем id
+	data["id"] = selected_character_id
+
+	SaveSystem.save_character_full(data)
+
+	# обновляем кэш в памяти, чтобы UI/мир читали актуальные данные
+	selected_character_data = data

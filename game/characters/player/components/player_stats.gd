@@ -58,7 +58,21 @@ func _on_death() -> void:
 	# 1) помечаем игрока мёртвым (останавливаем движение/атаки)
 	p.is_dead = true
 
-	# 2) показываем окно респавна (RespawnUi в GameUI)
+	get_tree().call_group("mobs", "on_player_died")
+
+	# 2) сбрасываем бафы
+	if p != null and p.c_buffs != null:
+		p.c_buffs.clear_all()
+
+	# 3) сброс таргета + запрос сейва
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm != null:
+		if gm.has_method("clear_target"):
+			gm.call("clear_target")
+		if gm.has_method("request_save"):
+			gm.call("request_save", "death")
+
+	# 4) показываем окно респавна (RespawnUi в GameUI)
 	var respawn_ui: Node = get_tree().get_first_node_in_group("respawn_ui")
 	if respawn_ui != null and respawn_ui.has_method("open"):
 		respawn_ui.call("open", p, 3.0) # 3 секунды ожидания (можешь поменять)

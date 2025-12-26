@@ -120,6 +120,14 @@ func _physics_process(delta: float) -> void:
 	if _dead:
 		return
 
+	# Если игрок мёртв — немедленно прекращаем бой и уходим домой
+	if player != null and is_instance_valid(player):
+		if "is_dead" in player and bool(player.get("is_dead")):
+			_attack_timer = 0.0
+			_force_chase_timer = 0.0
+			_state = AIState.RETURN
+			velocity = Vector2.ZERO
+
 	_attack_timer = max(0.0, _attack_timer - delta)
 	_force_chase_timer = max(0.0, _force_chase_timer - delta)
 
@@ -326,3 +334,11 @@ func _update_hp_bar() -> void:
 		return
 	var ratio: float = clamp(float(current_hp) / float(max_hp), 0.0, 1.0)
 	hp_fill.size.x = 36.0 * ratio
+
+
+func on_player_died() -> void:
+	# Сразу прекращаем бой и возвращаемся домой
+	_attack_timer = 0.0
+	_force_chase_timer = 0.0
+	_state = AIState.RETURN
+	velocity = Vector2.ZERO

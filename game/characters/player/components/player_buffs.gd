@@ -46,8 +46,10 @@ func get_buffs_snapshot() -> Array:
 		arr.append({
 			"id": id,
 			"time_left": float(entry.get("time_left", 0.0)),
+			"data": entry.get("data", {}) as Dictionary
 		})
 	return arr
+
 
 func get_attack_bonus_total() -> int:
 	var bonus: int = 0
@@ -66,3 +68,27 @@ func is_invulnerable() -> bool:
 		if bool(data.get("invulnerable", false)):
 			return true
 	return false
+
+
+func apply_buffs_snapshot(arr: Array) -> void:
+	_buffs.clear()
+
+	for v in arr:
+		if not (v is Dictionary):
+			continue
+
+		var d: Dictionary = v as Dictionary
+		var id: String = String(d.get("id", ""))
+		if id == "":
+			continue
+
+		var left: float = float(d.get("time_left", 0.0))
+		if left <= 0.0:
+			continue
+
+		var data: Dictionary = d.get("data", {}) as Dictionary
+		_buffs[id] = {"time_left": left, "data": data}
+
+
+func clear_all() -> void:
+	_buffs.clear()

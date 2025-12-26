@@ -83,6 +83,9 @@ func _physics_process(_delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if is_dead:
+		return
+
 	c_buffs.tick(delta)
 	c_skills.tick(delta)
 	c_combat.tick(delta)
@@ -125,20 +128,34 @@ func get_buffs_snapshot() -> Array:
 	return c_buffs.get_buffs_snapshot()
 
 
-# Inventory API (Corpse loot uses this)
 func add_gold(amount: int) -> void:
 	c_inv.add_gold(amount)
 
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm != null and gm.has_method("request_save"):
+		gm.call("request_save", "gold")
+
+
 func add_item(item_id: String, amount: int) -> int:
-	return c_inv.add_item(item_id, amount)
+	var remaining: int = c_inv.add_item(item_id, amount)
+
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm != null and gm.has_method("request_save"):
+		gm.call("request_save", "item")
+
+	return remaining
+
+
+func add_xp(amount: int) -> void:
+	c_stats.add_xp(amount)
+
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm != null and gm.has_method("request_save"):
+		gm.call("request_save", "xp")
+
 
 func get_inventory_snapshot() -> Dictionary:
 	return c_inv.get_inventory_snapshot()
-
-
-# XP / Leveling API
-func add_xp(amount: int) -> void:
-	c_stats.add_xp(amount)
 
 
 # Damage API
@@ -155,4 +172,62 @@ func respawn_now() -> void:
 	current_hp = max_hp
 	mana = max_mana
 
+	# бафы не переносятся через смерть/респавн
+	c_buffs.clear_all()
+
 	is_dead = false
+
+
+func apply_character_data(d: Dictionary) -> void:
+	# имя/класс здесь не трогаем (они живут в сейве и UI), но статы/прогресс применяем
+	level = int(d.get("level", level))
+	xp = int(d.get("xp", xp))
+	xp_to_next = int(d.get("xp_to_next", xp_to_next))
+
+	max_hp = int(d.get("max_hp", max_hp))
+	current_hp = int(d.get("current_hp", current_hp))
+	attack = int(d.get("attack", attack))
+	defense = int(d.get("defense", defense))
+
+	max_mana = int(d.get("max_mana", max_mana))
+	mana = int(d.get("mana", mana))
+
+	# inventory snapshot
+	var inv_v: Variant = d.get("inventory", null)
+	if inv_v is Dictionary:
+		c_inv.apply_inventory_snapshot(inv_v as Dictionary)
+
+	var buffs_v: Variant = d.get("buffs", [])
+	if buffs_v is Array:
+		c_buffs.apply_buffs_snapshot(buffs_v as Array)
+
+	# защита от “вошёл мёртвым”
+	is_dead = false
+
+
+func export_character_data() -> Dictionary:
+	# берём основу из AppState (там id/name/class и т.д.)
+	var base: Dictionary = AppState.selected_character_data.duplicate(true)
+
+	base["level"] = level
+	base["xp"] = xp
+	base["xp_to_next"] = xp_to_next
+
+	base["max_hp"] = max_hp
+	base["current_hp"] = current_hp
+	base["attack"] = attack
+	base["defense"] = defense
+
+	base["max_mana"] = max_mana
+	base["mana"] = mana
+
+	# inventory
+	base["inventory"] = c_inv.get_inventory_snapshot()
+
+	# position
+	base["pos"] = {"x": float(global_position.x), "y": float(global_position.y)}	
+
+	# buffs
+	base["buffs"] = c_buffs.get_buffs_snapshot()
+
+	return base
