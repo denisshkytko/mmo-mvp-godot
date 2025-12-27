@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://nas2p81wwe7r"]
+
+[ext_resource type="Script" uid="uid://b8nktpjaxj3dy" path="res://game/characters/mobs/projectiles/homing_projectile.gd" id="1_opowe"]
+[ext_resource type="Texture2D" uid="uid://dpk1lcys7sc8o" path="res://icon.svg" id="1_xwjd8"]
+
+[node name="HomingProjectile" type="Node2D"]
+script = ExtResource("1_opowe")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_xwjd8")

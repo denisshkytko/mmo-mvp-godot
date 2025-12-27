@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://8eogwafoag68"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
-[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/Spawner.tscn" id="3_7rgpn"]
+[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/NAMSpawner.tscn" id="3_7rgpn"]
 [ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_ah0r0"]
-[ext_resource type="Script" uid="uid://6sv2ohdhcpxy" path="res://game/world/spawners/spawner_group.gd" id="3_rjbcs"]
+[ext_resource type="Script" uid="uid://6sv2ohdhcpxy" path="res://game/world/spawners/nam_spawner_group.gd" id="3_rjbcs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -68,49 +68,29 @@ color = Color(0.20392157, 0.2627451, 1, 0.34509805)
 [node name="Graveyard" parent="." instance=ExtResource("3_ah0r0")]
 position = Vector2(-1077, -619)
 
-[node name="SpawnersGroup" type="Node2D" parent="."]
+[node name="NamSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("3_rjbcs")
-mob_id = "slime"
-loot_table_id = "lt_slime_low"
-level_min = 1
 level_max = 2
-aggro_radius = 250.0
+attack_mode = 1
 leash_distance = 1000.0
+behavior = 1
 patrol_radius = 350.0
 patrol_pause_seconds = 3.0
 
-[node name="Spawner" parent="SpawnersGroup" instance=ExtResource("3_7rgpn")]
-position = Vector2(-1172, 4)
-level_max = 2
-behavior = 0
-patrol_radius = 220.0
-patrol_pause_seconds = 1.0
+[node name="NAMSpawner" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+position = Vector2(-905, -434)
 
-[node name="Spawner2" parent="SpawnersGroup" instance=ExtResource("3_7rgpn")]
-position = Vector2(-652, 585)
-level_max = 2
-patrol_pause_seconds = 1.0
+[node name="NAMSpawner2" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+position = Vector2(-24, -685)
 
-[node name="Spawner3" parent="SpawnersGroup" instance=ExtResource("3_7rgpn")]
-position = Vector2(510, 615)
-level_max = 2
-patrol_pause_seconds = 1.0
+[node name="NAMSpawner3" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+position = Vector2(782, -354)
 
-[node name="Spawner4" parent="SpawnersGroup" instance=ExtResource("3_7rgpn")]
-position = Vector2(1158, -9)
-level_max = 2
-patrol_pause_seconds = 1.0
+[node name="NAMSpawner4" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+position = Vector2(776, 428)
 
-[node name="Spawner5" parent="SpawnersGroup" instance=ExtResource("3_7rgpn")]
-position = Vector2(436, -755)
-level_max = 2
-patrol_pause_seconds = 1.0
+[node name="NAMSpawner5" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+position = Vector2(-24, 698)
 
-[node name="Spawner6" parent="SpawnersGroup" instance=ExtResource("3_7rgpn")]
-position = Vector2(-493, -736)
-level_max = 2
-patrol_pause_seconds = 1.0
-
-[node name="Spawner7" parent="SpawnersGroup" instance=ExtResource("3_7rgpn")]
-position = Vector2(-6, 630)
-patrol_pause_seconds = 1.0
+[node name="NAMSpawner6" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+position = Vector2(-979, 392)

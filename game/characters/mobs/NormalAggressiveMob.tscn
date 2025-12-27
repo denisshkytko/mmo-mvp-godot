@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://c8qhqey2vbhkc"]
+[gd_scene load_steps=8 format=3 uid="uid://c8qhqey2vbhkc"]
 
 [ext_resource type="Script" uid="uid://cvfcjvpmn6mum" path="res://game/characters/mobs/normal_aggressive_mob.gd" id="1_tamd3"]
+[ext_resource type="PackedScene" uid="uid://nas2p81wwe7r" path="res://game/characters/mobs/projectiles/HomingProjectile.tscn" id="2_8u31h"]
 [ext_resource type="Script" uid="uid://dv1banbiwsk4u" path="res://game/characters/mobs/normal_aggressive_mob_ai.gd" id="2_bknh3"]
 [ext_resource type="Script" uid="uid://bhbt685cxtod3" path="res://game/characters/mobs/normal_aggressive_mob_combat.gd" id="3_8u31h"]
 [ext_resource type="Script" uid="uid://dgcctk2ufrluw" path="res://game/characters/mobs/normal_aggressive_mob_stats.gd" id="4_q1mdw"]
@@ -14,24 +15,7 @@ size = Vector2(32, 32)
 [node name="NormalAggressiveMob" type="CharacterBody2D" groups=["mobs"]]
 motion_mode = 1
 script = ExtResource("1_tamd3")
-aggro_radius = null
-base_xp = null
-xp_per_level = null
-melee_base_attack = null
-melee_attack_per_level = null
-melee_base_max_hp = null
-melee_base_defense = null
-melee_defense_per_level = null
-melee_stop_distance = null
-melee_attack_range = null
-melee_attack_cooldown = null
-ranged_base_attack = null
-ranged_attack_per_level = null
-ranged_base_max_hp = null
-ranged_base_defense = null
-ranged_defense_per_level = null
-ranged_attack_range = null
-ranged_attack_cooldown = null
+ranged_projectile_scene = ExtResource("2_8u31h")
 
 [node name="TargetMarker" type="ColorRect" parent="."]
 offset_left = -22.0
