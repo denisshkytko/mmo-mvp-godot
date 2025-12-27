@@ -1,0 +1,83 @@
+[gd_scene load_steps=7 format=3 uid="uid://c8qhqey2vbhkc"]
+
+[ext_resource type="Script" uid="uid://cvfcjvpmn6mum" path="res://game/characters/mobs/normal_aggressive_mob.gd" id="1_tamd3"]
+[ext_resource type="Script" uid="uid://dv1banbiwsk4u" path="res://game/characters/mobs/normal_aggressive_mob_ai.gd" id="2_bknh3"]
+[ext_resource type="Script" uid="uid://bhbt685cxtod3" path="res://game/characters/mobs/normal_aggressive_mob_combat.gd" id="3_8u31h"]
+[ext_resource type="Script" uid="uid://dgcctk2ufrluw" path="res://game/characters/mobs/normal_aggressive_mob_stats.gd" id="4_q1mdw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
+size = Vector2(24, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ex06h"]
+size = Vector2(32, 32)
+
+[node name="NormalAggressiveMob" type="CharacterBody2D" groups=["mobs"]]
+motion_mode = 1
+script = ExtResource("1_tamd3")
+aggro_radius = null
+base_xp = null
+xp_per_level = null
+melee_base_attack = null
+melee_attack_per_level = null
+melee_base_max_hp = null
+melee_base_defense = null
+melee_defense_per_level = null
+melee_stop_distance = null
+melee_attack_range = null
+melee_attack_cooldown = null
+ranged_base_attack = null
+ranged_attack_per_level = null
+ranged_base_max_hp = null
+ranged_base_defense = null
+ranged_defense_per_level = null
+ranged_attack_range = null
+ranged_attack_cooldown = null
+
+[node name="TargetMarker" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = 13.0
+offset_right = 22.0
+offset_bottom = 19.0
+color = Color(1, 0, 0, 0.5411765)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.7346365, 0.103573315, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_k85i5")
+
+[node name="UI" type="Node2D" parent="."]
+
+[node name="HpBack" type="ColorRect" parent="UI"]
+offset_left = -18.0
+offset_top = -30.0
+offset_right = 18.0
+offset_bottom = -24.0
+color = Color(0, 0, 0, 0.88235295)
+
+[node name="HpFill" type="ColorRect" parent="UI"]
+offset_left = -18.0
+offset_top = -30.0
+offset_right = 18.0
+offset_bottom = -24.0
+color = Color(1, 0.02745098, 0.007843138, 1)
+
+[node name="TargetHitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]
+shape = SubResource("RectangleShape2D_ex06h")
+
+[node name="Components" type="Node" parent="."]
+
+[node name="AI" type="Node" parent="Components"]
+script = ExtResource("2_bknh3")
+
+[node name="Combat" type="Node" parent="Components"]
+script = ExtResource("3_8u31h")
+
+[node name="Stats" type="Node" parent="Components"]
+script = ExtResource("4_q1mdw")

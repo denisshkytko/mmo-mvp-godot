@@ -12,6 +12,7 @@ class_name SpawnerGroup
 @export var leash_distance: float = -1.0
 @export var patrol_radius: float = -1.0
 @export var patrol_pause_seconds: float = -1.0
+@export_enum("Melee", "Ranged") var attack_mode: int = -1
 
 func _ready() -> void:
 	_apply_to_children()
@@ -35,7 +36,9 @@ func _apply_to_children() -> void:
 			s.level_min = level_min
 		if level_max > 0 and s.level_max <= 0:
 			s.level_max = level_max
-
+		
+		if attack_mode >= 0:
+			s.attack_mode = attack_mode
 		# behavior всегда задаётся через enum-поле behavior (0 Guard / 1 Patrol)
 		s.behavior = behavior
 

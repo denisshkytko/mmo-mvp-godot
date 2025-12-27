@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://vw0l7rj1osth"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_p4n78"]
-[ext_resource type="PackedScene" uid="uid://c8qhqey2vbhkc" path="res://game/characters/mobs/Mob.tscn" id="2_557ad"]
+[ext_resource type="PackedScene" uid="uid://c8qhqey2vbhkc" path="res://game/characters/mobs/NormalAggressiveMob.tscn" id="2_557ad"]
 [ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_m7f8a"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
