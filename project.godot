@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 
 AppState="*res://core/managers/app_state.gd"
 SaveSystem="*res://core/save/save_system.gd"
+DataDB="*res://core/data/data_db.gd"
+LootSystem="*res://core/data/loot_system.gd"
 
 [input]
 

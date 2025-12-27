@@ -1,0 +1,14 @@
+{
+  "slime": {
+	"name": "Slime",
+	"base_max_hp": 50,
+	"hp_per_level": 12,
+	"base_attack": 8,
+	"attack_per_level": 2,
+	"base_defense": 1,
+	"defense_per_level": 1,
+	"strength_multiplier": 0.9,
+	"xp_base": 2,
+	"xp_per_level": 1
+  }
+}

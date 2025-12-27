@@ -54,6 +54,9 @@ var force_chase_seconds: float = 0.6
 @export var corpse_scene: PackedScene
 @export var xp_reward: int = 0
 
+var loot_table_id: String = ""
+var mob_id: String = "slime"
+
 var max_hp: int = 50
 var current_hp: int = 50
 var defense: int = 1
@@ -300,10 +303,17 @@ func _die() -> void:
 			get_parent().add_child(corpse)
 			corpse.global_position = global_position
 
-			# MVP loot
-			corpse.loot_gold = 3
-			corpse.loot_item_id = "loot_token"
-			corpse.loot_item_count = 2
+			# Data-driven loot
+			var table_id := loot_table_id
+			if table_id == "":
+				table_id = "lt_slime_low"
+
+			var loot: Dictionary = LootSystem.generate_loot(table_id, mob_level)
+			if corpse.has_method("set_loot_v2"):
+				corpse.call("set_loot_v2", loot)
+			else:
+				# fallback на старый формат (если ещё не обновил corpse.gd)
+				corpse.loot_gold = int(loot.get("gold", 0))
 
 	# 2) Give XP
 	var p := get_tree().get_first_node_in_group("player")

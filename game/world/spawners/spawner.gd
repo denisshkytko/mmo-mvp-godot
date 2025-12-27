@@ -4,6 +4,9 @@ class_name Spawner
 @export var mob_scene: PackedScene
 @export var respawn_seconds: float = 6.0
 
+@export var mob_id: String = "slime"
+@export var loot_table_id: String = "lt_slime_low"
+
 @export var level_min: int = 1
 @export var level_max: int = 1
 
@@ -73,6 +76,14 @@ func _spawn_now() -> void:
 		lvl = level_min
 
 	mob.mob_level = lvl
+
+	# Применяем mob profile из DataDB (статы/параметры)
+	if mob.has_method("apply_mob_profile"):
+		mob.call("apply_mob_profile", mob_id)
+
+	# Привязываем таблицу лута (на уровне спавнера)
+	if "loot_table_id" in mob:
+		mob.set("loot_table_id", loot_table_id)
 
 	# Подписываемся на смерть (получим corpse)
 	if not mob.died.is_connected(_on_mob_died):

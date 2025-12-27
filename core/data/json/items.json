@@ -1,0 +1,5 @@
+{
+  "loot_token": { "name": "Loot Token", "type": "material", "stack_max": 99, "sell_price": 1, "buy_price": 0, "icon": "" },
+  "rusty_sword": { "name": "Rusty Sword", "type": "junk", "stack_max": 1, "sell_price": 8, "buy_price": 0, "icon": "" },
+  "healing_potion": { "name": "Healing Potion", "type": "consumable", "stack_max": 10, "sell_price": 3, "buy_price": 10, "icon": "" }
+}

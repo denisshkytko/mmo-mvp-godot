@@ -81,7 +81,7 @@ func _load_character_into_world() -> void:
 # ---------------------------
 # Save API (debounced)
 # ---------------------------
-func request_save(reason: String) -> void:
+func request_save(_reason: String) -> void:
 	_save_pending = true
 	_save_debounce.start()
 

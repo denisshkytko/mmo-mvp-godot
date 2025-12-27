@@ -30,11 +30,11 @@ func refresh_list() -> void:
 	for c in chars:
 		var d: Dictionary = c as Dictionary
 		var id: String = String(d.get("id", ""))
-		var name: String = String(d.get("name", "Unnamed"))
+		var char_name: String = String(d.get("name", "Unnamed"))
 		var lvl: int = int(d.get("level", 1))
 
 		var cls: String = String(d.get("class", "paladin"))
-		list.add_item("%s — %s (lv %d)" % [name, cls, lvl])
+		list.add_item("%s — %s (lv %d)" % [char_name, cls, lvl])
 		list.set_item_metadata(list.item_count - 1, id)
 
 	if list.item_count > 0:

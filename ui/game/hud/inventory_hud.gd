@@ -36,4 +36,11 @@ func _refresh() -> void:
 		if slot == null:
 			label.text = ""
 		else:
-			label.text = "%s x%d" % [String(slot.get("id", "")), int(slot.get("count", 0))]
+			var id := String(slot.get("id", ""))
+			var item_name := id
+			if has_node("/root/DataDB"):
+				var db := get_node("/root/DataDB")
+				item_name = db.get_item_name(id)
+			else:
+				name = id
+			label.text = "%s x%d" % [item_name, int(slot.get("count", 0))]

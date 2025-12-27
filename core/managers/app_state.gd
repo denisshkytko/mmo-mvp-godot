@@ -51,13 +51,13 @@ func select_character(char_id: String) -> bool:
 	selected_character_data = full
 	return true
 
-func create_character(name: String, class_id: String) -> String:
+func create_character(char_name: String, class_id: String) -> String:
 	if not has_node("/root/SaveSystem"):
 		return ""
 
 	var id := "char_%d_%d" % [int(Time.get_unix_time_from_system()), randi_range(1000, 9999)]
 
-	var clean_name := name.strip_edges()
+	var clean_name := char_name.strip_edges()
 	if clean_name == "":
 		clean_name = "Hero"
 
