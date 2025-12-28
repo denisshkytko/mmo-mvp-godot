@@ -11,7 +11,6 @@ func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player")
 
 func _process(_delta: float) -> void:
-	# toggle inventory with I (ui_cancel often Esc; we’ll define our own action later)
 	if Input.is_action_just_pressed("ui_inventory"):
 		panel.visible = not panel.visible
 
@@ -32,15 +31,20 @@ func _refresh() -> void:
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		var label: Label = slot_panel.get_node("Text") as Label
 
-		var slot = slots[i]
+		var slot: Variant = slots[i]  # ВАЖНО: не inference от Variant
 		if slot == null:
 			label.text = ""
-		else:
-			var id := String(slot.get("id", ""))
-			var item_name := id
-			if has_node("/root/DataDB"):
-				var db := get_node("/root/DataDB")
-				item_name = db.get_item_name(id)
-			else:
-				name = id
-			label.text = "%s x%d" % [item_name, int(slot.get("count", 0))]
+			continue
+
+		var id: String = String((slot as Dictionary).get("id", ""))
+		if id == "":
+			label.text = ""
+			continue
+
+		var item_name: String = id
+		if has_node("/root/DataDB"):
+			var db: Node = get_node("/root/DataDB")
+			if db != null and db.has_method("get_item_name"):
+				item_name = String(db.call("get_item_name", id))
+
+		label.text = "%s x%d" % [item_name, int((slot as Dictionary).get("count", 0))]

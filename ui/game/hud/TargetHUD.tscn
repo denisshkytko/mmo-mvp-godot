@@ -15,12 +15,22 @@ offset_right = -216.0
 offset_bottom = 80.0
 grow_horizontal = 2
 
+[node name="RelationBg" type="ColorRect" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="NameLabel" type="Label" parent="Panel"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 23.0
 grow_horizontal = 2
+theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 14
 text = "Mob_name"
 horizontal_alignment = 1
@@ -66,6 +76,7 @@ offset_right = -5.0
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 14
 text = "100/100"
 horizontal_alignment = 1

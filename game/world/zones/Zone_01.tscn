@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://8eogwafoag68"]
+[gd_scene load_steps=12 format=3 uid="uid://8eogwafoag68"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
 [ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/NAMSpawner.tscn" id="3_7rgpn"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://6sv2ohdhcpxy" path="res://game/world/spawners/nam_spawner_group.gd" id="3_rjbcs"]
 [ext_resource type="Script" uid="uid://4ojd5qeh2u7m" path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
 [ext_resource type="PackedScene" uid="uid://dxrlj1d0atyod" path="res://game/world/spawners/NNMSpawner.tscn" id="6_vraby"]
+[ext_resource type="PackedScene" uid="uid://v3mfef3xc5rm" path="res://game/world/spawners/FNPCSpawner.tscn" id="7_82kis"]
+[ext_resource type="Script" uid="uid://by7jhcepgjjbs" path="res://game/world/spawners/fnpc_spawner_group.gd" id="7_nldw7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -107,8 +109,43 @@ patrol_radius = 300.0
 [node name="NNMSpawner" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
 position = Vector2(353, 296)
 
-[node name="NNMSpawner2" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
-position = Vector2(-4, -418)
-
 [node name="NNMSpawner3" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
-position = Vector2(-551, 277)
+position = Vector2(-480, 289)
+
+[node name="NNMSpawner2" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
+position = Vector2(-15.999999, -318)
+
+[node name="FNPCSpawnersGroup" type="Node2D" parent="."]
+script = ExtResource("7_nldw7")
+level_min = 5
+level_max = 5
+
+[node name="FNPCSpawner" parent="FNPCSpawnersGroup" instance=ExtResource("7_82kis")]
+position = Vector2(-1659, -163)
+
+[node name="FNPCSpawnersGroup2" type="Node2D" parent="."]
+script = ExtResource("7_nldw7")
+faction_id = "red"
+level_min = 5
+level_max = 5
+
+[node name="FNPCSpawner" parent="FNPCSpawnersGroup2" instance=ExtResource("7_82kis")]
+position = Vector2(-1275, -159)
+
+[node name="FNPCSpawnersGroup3" type="Node2D" parent="."]
+script = ExtResource("7_nldw7")
+faction_id = "yellow"
+level_min = 5
+level_max = 5
+
+[node name="FNPCSpawner" parent="FNPCSpawnersGroup3" instance=ExtResource("7_82kis")]
+position = Vector2(-1663, 213)
+
+[node name="FNPCSpawnersGroup4" type="Node2D" parent="."]
+script = ExtResource("7_nldw7")
+faction_id = "green"
+level_min = 5
+level_max = 5
+
+[node name="FNPCSpawner" parent="FNPCSpawnersGroup4" instance=ExtResource("7_82kis")]
+position = Vector2(-1575, 192)

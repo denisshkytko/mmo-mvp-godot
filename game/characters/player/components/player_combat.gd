@@ -35,16 +35,27 @@ func get_attack_damage() -> int:
 		bonus = buffs.get_attack_bonus_total()
 	return p.attack + bonus
 
+
 func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 
-	# если цель умеет принимать урон с указанием атакующего — используем это
-	if target.has_method("take_damage_from"):
-		target.call("take_damage_from", dmg, p)
+	# faction gate
+	var attacker_faction := "blue"
+	if p != null and p.has_method("get_faction_id"):
+		attacker_faction = String(p.call("get_faction_id"))
+
+	var target_faction := ""
+	if target.has_method("get_faction_id"):
+		target_faction = String(target.call("get_faction_id"))
+
+	if not FactionRules.can_attack(attacker_faction, target_faction, true):
 		return
 
-	if target.has_method("take_damage"):
+	# наносим урон, обязательно через take_damage_from если есть
+	if target.has_method("take_damage_from"):
+		target.call("take_damage_from", dmg, p)
+	elif target.has_method("take_damage"):
 		target.call("take_damage", dmg)
 
 

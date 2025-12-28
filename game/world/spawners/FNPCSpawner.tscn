@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://v3mfef3xc5rm"]
+
+[ext_resource type="Script" uid="uid://pifuel4gabpb" path="res://game/world/spawners/fnpc_spawner.gd" id="1_ch7of"]
+
+[node name="FNPCSpawner" type="Node2D"]
+script = ExtResource("1_ch7of")

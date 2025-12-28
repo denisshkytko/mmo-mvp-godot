@@ -24,6 +24,8 @@ class_name Player
 @export var skill_3_duration_sec: float = 600.0
 @export var skill_3_attack_bonus: int = 6
 
+var faction_id: String = "blue"
+
 # --- Public “state” fields (HUD/UI читает их напрямую) ---
 var inventory: Inventory = null
 
@@ -50,6 +52,7 @@ var is_dead: bool = false
 
 
 func _ready() -> void:
+	add_to_group("faction_units")
 	# setup components
 	c_stats.setup(self)
 	c_buffs.setup(self)
@@ -191,6 +194,7 @@ func apply_character_data(d: Dictionary) -> void:
 
 	max_mana = int(d.get("max_mana", max_mana))
 	mana = int(d.get("mana", mana))
+	faction_id = String(d.get("faction", faction_id))
 
 	# inventory snapshot
 	var inv_v: Variant = d.get("inventory", null)
@@ -209,6 +213,7 @@ func export_character_data() -> Dictionary:
 	# берём основу из AppState (там id/name/class и т.д.)
 	var base: Dictionary = AppState.selected_character_data.duplicate(true)
 
+	base["faction"] = faction_id
 	base["level"] = level
 	base["xp"] = xp
 	base["xp_to_next"] = xp_to_next
@@ -231,3 +236,7 @@ func export_character_data() -> Dictionary:
 	base["buffs"] = c_buffs.get_buffs_snapshot()
 
 	return base
+
+
+func get_faction_id() -> String:
+	return faction_id

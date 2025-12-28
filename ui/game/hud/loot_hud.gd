@@ -93,6 +93,13 @@ func _refresh() -> void:
 	if "loot_gold" in _corpse:
 		gold = int(_corpse.get("loot_gold"))
 
+	# ✅ Если лута нет — помечаем труп пустым и закрываем окно
+	if (gold <= 0) and (slots == null or slots.is_empty()):
+		if _corpse.has_method("mark_looted"):
+			_corpse.call("mark_looted")
+		close()
+		return
+
 	# Собираем view + карту соответствий
 	# view_map[i] = {"type":"gold"} или {"type":"item","slot_index":int}
 	_view_map.clear()
@@ -124,7 +131,7 @@ func _refresh() -> void:
 		var label: Label = slot_panel.get_node("Text") as Label
 		var b: Button = slot_panel.get_node("Button") as Button
 
-		# пусто → скрываем
+		# пустой UI-слот → скрываем
 		if i >= _view_map.size():
 			slot_panel.visible = false
 			if label != null:
@@ -166,10 +173,6 @@ func _refresh() -> void:
 			if b != null:
 				b.disabled = true
 
-	# Если лута не осталось — закрываем
-	if (gold <= 0) and (slots == null or slots.is_empty()):
-		close()
-
 
 func _on_slot_pressed(index: int) -> void:
 	if _corpse == null or _player == null:
@@ -177,61 +180,74 @@ func _on_slot_pressed(index: int) -> void:
 	if index < 0 or index >= _view_map.size():
 		return
 
-	# Достаём актуальные данные из трупа
+	# кешируем ссылку на труп
+	var corpse: Node = _corpse
+
+	# текущие данные
 	var gold: int = 0
-	if "loot_gold" in _corpse:
-		gold = int(_corpse.get("loot_gold"))
+	if "loot_gold" in corpse:
+		gold = int(corpse.get("loot_gold"))
 
 	var slots: Array = []
-	if "loot_slots" in _corpse:
-		slots = _corpse.get("loot_slots") as Array
+	if "loot_slots" in corpse:
+		var v: Variant = corpse.get("loot_slots")
+		if v is Array:
+			slots = v as Array
+		else:
+			slots = []
 
 	var map_d: Dictionary = _view_map[index] as Dictionary
-	var t := String(map_d.get("type", ""))
+	var t: String = String(map_d.get("type", ""))
 
 	if t == "gold":
 		# забираем только золото
 		if gold > 0 and _player.has_method("add_gold"):
 			_player.call("add_gold", gold)
-		_corpse.set("loot_gold", 0)
+		corpse.set("loot_gold", 0)
 
 	elif t == "item":
 		# забираем только 1 item-slot
 		var si: int = int(map_d.get("slot_index", -1))
 		if si >= 0 and si < slots.size():
 			var item_d: Dictionary = slots[si] as Dictionary
-			var id := String(item_d.get("id", ""))
-			var count := int(item_d.get("count", 0))
+			var id: String = String(item_d.get("id", ""))
+			var count: int = int(item_d.get("count", 0))
 
 			if id != "" and count > 0 and _player.has_method("add_item"):
 				_player.call("add_item", id, count)
 
 			# удаляем этот слот из loot_slots
 			slots.remove_at(si)
-			_corpse.set("loot_slots", slots)
+			corpse.set("loot_slots", slots)
 
-	# Обновляем UI, окно не закрываем
-	_refresh()
+	# ✅ пересчитываем после изменений (чтобы не использовать старые переменные)
+	var gold_after: int = 0
+	if "loot_gold" in corpse:
+		gold_after = int(corpse.get("loot_gold"))
 
-	# Если лута не осталось — закрываем и помечаем труп пустым
-	if _corpse == null or not is_instance_valid(_corpse):
+	var slots_after: Array = []
+	if "loot_slots" in corpse:
+		var vv: Variant = corpse.get("loot_slots")
+		if vv is Array:
+			slots_after = vv as Array
+		else:
+			slots_after = []
+
+	# ✅ главное условие: считаем труп пустым по его реальной логике (has_loot),
+	# а не по slots_after.is_empty(), потому что в slots могут лежать неотображаемые записи
+	var empty_now: bool = false
+	if corpse.has_method("has_loot"):
+		empty_now = not bool(corpse.call("has_loot"))
+	else:
+		empty_now = (gold_after <= 0) and (slots_after == null or slots_after.is_empty())
+
+	if empty_now:
+		if corpse.has_method("mark_looted"):
+			corpse.call("mark_looted")
 		close()
 		return
 
-	var g_v: Variant = _corpse.get("loot_gold")
-	var g: int = 0
-	if g_v != null:
-		g = int(g_v)
-
-	var s_v: Variant = _corpse.get("loot_slots")
-	var s: Array = []
-	if s_v is Array:
-		s = s_v as Array
-
-	if g <= 0 and s.size() == 0:
-		if _corpse.has_method("mark_looted"):
-			_corpse.call("mark_looted")
-		close()
+	_refresh()
 
 
 func _on_loot_all_pressed() -> void:

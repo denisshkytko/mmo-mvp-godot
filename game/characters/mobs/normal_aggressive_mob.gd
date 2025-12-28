@@ -35,7 +35,7 @@ const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn"
 var xp_reward: int = 0
 
 var regen_active: bool = false
-const REGEN_PCT_PER_SEC: float = 0.05
+const REGEN_PCT_PER_SEC: float = 0.02
 # ------------------------------------------------------------
 # Параметры двух состояний (без dropdown-скрытия)
 # ------------------------------------------------------------
@@ -64,12 +64,23 @@ const REGEN_PCT_PER_SEC: float = 0.05
 # ------------------------------------------------------------
 var player: Node2D = null
 
+var faction_id: String = "aggressive_mob"
+var current_target: Node2D = null
+
+var first_attacker: Node2D = null
+var last_attacker: Node2D = null
+
+var loot_owner_player_id: int = 0
+
+
 func _ready() -> void:
+	add_to_group("faction_units")
 	player = get_tree().get_first_node_in_group("player") as Node2D
 
-	if c_ai != null:
-		if not c_ai.leash_return_started.is_connected(_on_leash_return_started):
-			c_ai.leash_return_started.connect(_on_leash_return_started)
+	if c_ai != null and c_ai.has_signal("leash_return_started"):
+		var cb := Callable(self, "_on_leash_return_started")
+		if not c_ai.leash_return_started.is_connected(cb):
+			c_ai.leash_return_started.connect(cb)
 
 	if home_position == Vector2.ZERO:
 		home_position = global_position
@@ -93,6 +104,16 @@ func _physics_process(delta: float) -> void:
 	if c_stats.is_dead:
 		return
 
+	if current_target == null or not is_instance_valid(current_target):
+		current_target = _pick_target()
+	else:
+		# если цель стала не-hostile — сбрасываем
+		var tf := ""
+		if current_target.has_method("get_faction_id"):
+			tf = String(current_target.call("get_faction_id"))
+		if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
+			current_target = null
+
 	# реген после leash-return, продолжается даже в idle/patrol пока не станет full hp
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
 		var heal_amount: int = int(round(float(c_stats.max_hp) * REGEN_PCT_PER_SEC * delta))
@@ -108,8 +129,10 @@ func _physics_process(delta: float) -> void:
 
 	_apply_mode_to_components()
 
-	c_combat.tick(delta, self, player, c_stats.attack_value)
-	c_ai.tick(delta, self, player, c_combat)
+	c_ai.tick(delta, self, current_target, c_combat)
+
+	if current_target != null and is_instance_valid(current_target):
+		c_combat.tick(delta, self, current_target, c_stats.attack_value)
 
 # ------------------------------------------------------------
 # Called by Spawner
@@ -128,7 +151,13 @@ func apply_spawn_init(
 	loot_table_id_in: String
 ) -> void:
 	# Эти поля должны выставляться до расчётов/AI
-	mob_id = mob_id_in
+
+	# ⚠️ ВАЖНО:
+	# NamSpawnerGroup передаёт mob_id_in = ""
+	# поэтому НЕ затираем mob_id, если пришло пустое значение
+	if mob_id_in != "":
+		mob_id = mob_id_in
+
 	loot_table_id = loot_table_id_in
 
 	apply_spawn_settings(
@@ -141,8 +170,9 @@ func apply_spawn_init(
 		speed_in
 	)
 
-	set_attack_mode(attack_mode_in)
+	# уровень/режим атаки выставляем как было
 	set_level(level_in)
+	attack_mode = attack_mode_in
 
 
 func apply_spawn_settings(
@@ -183,19 +213,28 @@ func set_level(level: int) -> void:
 # Public API
 # ------------------------------------------------------------
 func take_damage(raw_damage: int) -> void:
+	take_damage_from(raw_damage, null)
+
+func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 	if c_stats.is_dead:
 		return
 
+	_set_loot_owner_if_first(attacker)
+
+	if first_attacker == null and attacker != null and is_instance_valid(attacker):
+		first_attacker = attacker
+	if attacker != null and is_instance_valid(attacker):
+		last_attacker = attacker
+
 	var died_now: bool = c_stats.apply_damage(raw_damage)
 	c_stats.update_hp_bar(hp_fill)
-	regen_active = false
-	
-	c_ai.on_took_damage(self)
 
 	if died_now:
 		_die()
 
+
 func on_player_died() -> void:
+	_clear_loot_owner()
 	c_combat.reset_combat()
 	c_ai.force_return()
 	velocity = Vector2.ZERO
@@ -242,12 +281,22 @@ func _die() -> void:
 		return
 	c_stats.is_dead = true
 
+
 	var corpse: Corpse = null
 	var inst := CORPSE_SCENE.instantiate()
 	corpse = inst as Corpse
 	if corpse != null:
 		get_parent().add_child(corpse)
 		corpse.global_position = global_position
+
+		if corpse != null and corpse.has_method("set_loot_owner_player"):
+			var owner_player: Node = get_tree().get_first_node_in_group("player")
+			# owner только если текущий id совпадает с игроком
+			if owner_player != null and owner_player.get_instance_id() == loot_owner_player_id:
+				corpse.call("set_loot_owner_player", owner_player)
+			else:
+				corpse.call("set_loot_owner_player", null)
+
 
 		var table_id: String = loot_table_id
 		if table_id == "":
@@ -259,7 +308,7 @@ func _die() -> void:
 		else:
 			corpse.loot_gold = int(loot.get("gold", 0))
 
-	var p := get_tree().get_first_node_in_group("player")
+	var p: Node = get_tree().get_first_node_in_group("player")
 	if p != null and p.has_method("add_xp"):
 		p.add_xp(_get_xp_reward())
 
@@ -279,4 +328,57 @@ func _get_xp_reward() -> int:
 
 
 func _on_leash_return_started() -> void:
+	# бой сбросился → права на лут больше нет
+	_clear_loot_owner()
 	regen_active = true
+
+
+func get_faction_id() -> String:
+	return faction_id
+
+
+func _pick_target() -> Node2D:
+	# выбираем ближайшую враждебную цель в агро-радиусе
+	var best: Node2D = null
+	var best_d := INF
+
+	var units := get_tree().get_nodes_in_group("faction_units")
+	for u in units:
+		if u == self:
+			continue
+		if not (u is Node2D):
+			continue
+		var n := u as Node2D
+		if not is_instance_valid(n):
+			continue
+		if "is_dead" in n and bool(n.get("is_dead")):
+			continue
+
+		# faction check
+		var tf := ""
+		if n.has_method("get_faction_id"):
+			tf = String(n.call("get_faction_id"))
+		var rel := FactionRules.relation(faction_id, tf)
+		if rel != FactionRules.Relation.HOSTILE:
+			continue
+
+		var d := global_position.distance_to(n.global_position)
+		if d <= aggro_radius and d < best_d:
+			best_d = d
+			best = n
+
+	return best
+
+
+func _set_loot_owner_if_first(attacker: Node2D) -> void:
+	if loot_owner_player_id != 0:
+		return
+	if attacker == null or not is_instance_valid(attacker):
+		return
+	if not attacker.is_in_group("player"):
+		return
+	loot_owner_player_id = attacker.get_instance_id()
+
+
+func _clear_loot_owner() -> void:
+	loot_owner_player_id = 0

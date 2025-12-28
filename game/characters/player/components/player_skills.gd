@@ -47,11 +47,21 @@ func try_cast_skill_1() -> void:
 		return
 
 	var dmg: int = int(round(float(p.get_attack_damage()) * p.skill_1_damage_multiplier))
+	var attacker_faction := "blue"
+	if p != null and p.has_method("get_faction_id"):
+		attacker_faction = String(p.call("get_faction_id"))
+
+	var target_faction := ""
+	if target.has_method("get_faction_id"):
+		target_faction = String(target.call("get_faction_id"))
+
+	if not FactionRules.can_attack(attacker_faction, target_faction, true):
+		return
+
 	if target.has_method("take_damage_from"):
 		target.call("take_damage_from", dmg, p)
 	elif target.has_method("take_damage"):
 		target.call("take_damage", dmg)
-
 
 	p.mana = max(0, p.mana - p.skill_1_mana_cost)
 	_skill_1_timer = p.skill_1_cooldown

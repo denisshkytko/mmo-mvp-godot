@@ -35,7 +35,7 @@ var aggressor: Node2D = null
 
 # реген
 var regen_active: bool = false
-const REGEN_PCT_PER_SEC: float = 0.05
+const REGEN_PCT_PER_SEC: float = 0.02
 
 # ---------------------------
 # ПРЕСЕТЫ СТАТОВ ПО BODY SIZE

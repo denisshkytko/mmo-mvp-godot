@@ -68,8 +68,8 @@ func create_character(char_name: String, class_id: String) -> String:
 	var data := {
 		"id": id,
 		"name": clean_name,
+		"faction": "blue",
 		"class": clean_class,
-
 		"level": 1,
 		"xp": 0,
 		"xp_to_next": 10,
