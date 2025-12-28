@@ -47,8 +47,11 @@ func try_cast_skill_1() -> void:
 		return
 
 	var dmg: int = int(round(float(p.get_attack_damage()) * p.skill_1_damage_multiplier))
-	if target.has_method("take_damage"):
+	if target.has_method("take_damage_from"):
+		target.call("take_damage_from", dmg, p)
+	elif target.has_method("take_damage"):
 		target.call("take_damage", dmg)
+
 
 	p.mana = max(0, p.mana - p.skill_1_mana_cost)
 	_skill_1_timer = p.skill_1_cooldown

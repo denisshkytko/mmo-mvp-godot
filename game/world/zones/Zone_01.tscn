@@ -1,9 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://8eogwafoag68"]
+[gd_scene load_steps=10 format=3 uid="uid://8eogwafoag68"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
 [ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/NAMSpawner.tscn" id="3_7rgpn"]
 [ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_ah0r0"]
 [ext_resource type="Script" uid="uid://6sv2ohdhcpxy" path="res://game/world/spawners/nam_spawner_group.gd" id="3_rjbcs"]
+[ext_resource type="Script" uid="uid://4ojd5qeh2u7m" path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
+[ext_resource type="PackedScene" uid="uid://dxrlj1d0atyod" path="res://game/world/spawners/NNMSpawner.tscn" id="6_vraby"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -68,7 +70,7 @@ color = Color(0.20392157, 0.2627451, 1, 0.34509805)
 [node name="Graveyard" parent="." instance=ExtResource("3_ah0r0")]
 position = Vector2(-1077, -619)
 
-[node name="NamSpawnersGroup" type="Node2D" parent="."]
+[node name="NAMSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("3_rjbcs")
 level_max = 2
 attack_mode = 1
@@ -77,20 +79,36 @@ behavior = 1
 patrol_radius = 350.0
 patrol_pause_seconds = 3.0
 
-[node name="NAMSpawner" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+[node name="NAMSpawner" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
 position = Vector2(-905, -434)
 
-[node name="NAMSpawner2" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+[node name="NAMSpawner2" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
 position = Vector2(-24, -685)
 
-[node name="NAMSpawner3" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+[node name="NAMSpawner3" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
 position = Vector2(782, -354)
 
-[node name="NAMSpawner4" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+[node name="NAMSpawner4" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
 position = Vector2(776, 428)
 
-[node name="NAMSpawner5" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+[node name="NAMSpawner5" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
 position = Vector2(-24, 698)
 
-[node name="NAMSpawner6" parent="NamSpawnersGroup" instance=ExtResource("3_7rgpn")]
+[node name="NAMSpawner6" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
 position = Vector2(-979, 392)
+
+[node name="NNMSpawnersGroup" type="Node2D" parent="."]
+script = ExtResource("5_qbm0w")
+level_max = 5
+body_size = 2
+behavior = 1
+patrol_radius = 300.0
+
+[node name="NNMSpawner" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
+position = Vector2(353, 296)
+
+[node name="NNMSpawner2" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
+position = Vector2(-4, -418)
+
+[node name="NNMSpawner3" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
+position = Vector2(-551, 277)

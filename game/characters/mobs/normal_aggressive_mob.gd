@@ -34,6 +34,8 @@ const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn"
 # Награда опыта
 var xp_reward: int = 0
 
+var regen_active: bool = false
+const REGEN_PCT_PER_SEC: float = 0.05
 # ------------------------------------------------------------
 # Параметры двух состояний (без dropdown-скрытия)
 # ------------------------------------------------------------
@@ -65,6 +67,10 @@ var player: Node2D = null
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as Node2D
 
+	if c_ai != null:
+		if not c_ai.leash_return_started.is_connected(_on_leash_return_started):
+			c_ai.leash_return_started.connect(_on_leash_return_started)
+
 	if home_position == Vector2.ZERO:
 		home_position = global_position
 
@@ -86,6 +92,16 @@ func _process(_delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if c_stats.is_dead:
 		return
+
+	# реген после leash-return, продолжается даже в idle/patrol пока не станет full hp
+	if regen_active and c_stats.current_hp < c_stats.max_hp:
+		var heal_amount: int = int(round(float(c_stats.max_hp) * REGEN_PCT_PER_SEC * delta))
+		if heal_amount <= 0:
+			heal_amount = 1
+		c_stats.current_hp = min(c_stats.max_hp, c_stats.current_hp + heal_amount)
+		c_stats.update_hp_bar(hp_fill)
+	elif regen_active and c_stats.current_hp >= c_stats.max_hp:
+		regen_active = false
 
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as Node2D
@@ -172,7 +188,8 @@ func take_damage(raw_damage: int) -> void:
 
 	var died_now: bool = c_stats.apply_damage(raw_damage)
 	c_stats.update_hp_bar(hp_fill)
-
+	regen_active = false
+	
 	c_ai.on_took_damage(self)
 
 	if died_now:
@@ -259,3 +276,7 @@ func _get_xp_reward() -> int:
 		return xp_reward
 
 	return base_xp + mob_level * xp_per_level
+
+
+func _on_leash_return_started() -> void:
+	regen_active = true

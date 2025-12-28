@@ -1,0 +1,65 @@
+[gd_scene load_steps=7 format=3 uid="uid://biceypmivcovo"]
+
+[ext_resource type="Script" uid="uid://cysusd121yqgp" path="res://game/characters/mobs/normal_neutral_mob.gd" id="1_m8kl5"]
+[ext_resource type="Script" uid="uid://c8r5alfj31s1o" path="res://game/characters/mobs/normal_neutral_mob_ai.gd" id="2_hfa2t"]
+[ext_resource type="Script" uid="uid://d2suhm7gh6avt" path="res://game/characters/mobs/normal_neutral_mob_combat.gd" id="3_t46kp"]
+[ext_resource type="Script" uid="uid://b5xkj4n64em43" path="res://game/characters/mobs/normal_neutral_mob_stats.gd" id="4_rl5hl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
+size = Vector2(24, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ex06h"]
+size = Vector2(32, 32)
+
+[node name="NormalNeutralMob" type="CharacterBody2D" groups=["mobs"]]
+motion_mode = 1
+script = ExtResource("1_m8kl5")
+
+[node name="TargetMarker" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = 13.0
+offset_right = 22.0
+offset_bottom = 19.0
+color = Color(1, 0, 0, 0.5411765)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(1, 1, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_k85i5")
+
+[node name="UI" type="Node2D" parent="."]
+
+[node name="HpBack" type="ColorRect" parent="UI"]
+offset_left = -18.0
+offset_top = -30.0
+offset_right = 18.0
+offset_bottom = -24.0
+color = Color(0, 0, 0, 0.88235295)
+
+[node name="HpFill" type="ColorRect" parent="UI"]
+offset_left = -18.0
+offset_top = -30.0
+offset_right = 18.0
+offset_bottom = -24.0
+color = Color(1, 1, 0, 1)
+
+[node name="TargetHitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]
+shape = SubResource("RectangleShape2D_ex06h")
+
+[node name="Components" type="Node" parent="."]
+
+[node name="AI" type="Node" parent="Components"]
+script = ExtResource("2_hfa2t")
+
+[node name="Combat" type="Node" parent="Components"]
+script = ExtResource("3_t46kp")
+
+[node name="Stats" type="Node" parent="Components"]
+script = ExtResource("4_rl5hl")

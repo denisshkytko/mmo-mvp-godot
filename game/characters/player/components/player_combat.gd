@@ -38,8 +38,15 @@ func get_attack_damage() -> int:
 func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
 		return
+
+	# если цель умеет принимать урон с указанием атакующего — используем это
+	if target.has_method("take_damage_from"):
+		target.call("take_damage_from", dmg, p)
+		return
+
 	if target.has_method("take_damage"):
 		target.call("take_damage", dmg)
+
 
 func _get_current_target() -> Node2D:
 	var gm: Node = p.get_tree().get_first_node_in_group("game_manager")

@@ -1,12 +1,13 @@
 extends Node
-class_name NormalAggresiveMobAI
+class_name NormalNeutralMobAI
+
+signal leash_return_started
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
 
 var behavior: int = Behavior.GUARD
 var speed: float = 120.0
-var aggro_radius: float = 260.0
 var leash_distance: float = 420.0
 var patrol_radius: float = 140.0
 var patrol_pause_seconds: float = 1.5
@@ -18,11 +19,9 @@ var _patrol_target: Vector2 = Vector2.ZERO
 var _has_patrol_target: bool = false
 var _patrol_wait: float = 0.0
 
-# RETURN → re-aggro if damaged
+# RETURN → ре-агро если снова ударили (и ещё в leash)
 var _force_chase_timer: float = 0.0
 var force_chase_seconds: float = 0.6
-signal leash_return_started
-
 
 func reset_to_idle() -> void:
 	_state = AIState.IDLE
@@ -30,45 +29,38 @@ func reset_to_idle() -> void:
 	_patrol_wait = 0.0
 	_force_chase_timer = 0.0
 
+func is_chasing() -> bool:
+	return _state == AIState.CHASE
 
-func force_return() -> void:
-	_state = AIState.RETURN
-	_force_chase_timer = 0.0
-	emit_signal("leash_return_started")
+func is_returning() -> bool:
+	return _state == AIState.RETURN
 
-
-func tick(delta: float, owner: CharacterBody2D, player: Node2D, combat: NormalAggresiveMobCombat) -> void:
+func tick(delta: float, owner: CharacterBody2D, target: Node2D, combat: NormalNeutralMobCombat, aggressive: bool) -> void:
 	_force_chase_timer = max(0.0, _force_chase_timer - delta)
 
-	# 1) Главное правило выключения CHASE: leash_distance
+	# нейтрал вообще не гонится, если не aggressive
+	if not aggressive:
+		if _state == AIState.RETURN:
+			_do_return(delta, owner)
+			return
+		_do_idle(delta, owner)
+		return
+
+	# aggressive = true → CHASE/RETURN логика как у агрессивного
 	var dist_to_home: float = owner.global_position.distance_to(home_position)
 	if _state == AIState.CHASE and dist_to_home > leash_distance:
 		_state = AIState.RETURN
 		emit_signal("leash_return_started")
 
-
-	# 2) RETURN
 	if _state == AIState.RETURN:
 		_do_return(delta, owner)
 		return
 
-	# 3) Включаем CHASE, только когда игрок впервые вошёл в агро-радиус
-	if _state != AIState.CHASE:
-		if player != null and is_instance_valid(player):
-			var dist_to_player: float = owner.global_position.distance_to(player.global_position)
-			if dist_to_player <= aggro_radius:
-				_state = AIState.CHASE
-
-	# 4) CHASE (НЕ выключается от выхода игрока из агро-радиуса)
-	if _state == AIState.CHASE:
-		_do_chase(delta, owner, player, combat)
-		return
-
-	# 5) IDLE
-	_do_idle(delta, owner)
+	_state = AIState.CHASE
+	_do_chase(owner, target, combat)
 
 func on_took_damage(owner: CharacterBody2D) -> void:
-	# Ре-агр во время RETURN, но только если всё ещё в leash
+	# если возвращаемся — можем снова начать CHASE только если ещё в leash
 	if _state == AIState.RETURN:
 		var dist_home: float = owner.global_position.distance_to(home_position)
 		if dist_home <= leash_distance:
@@ -76,6 +68,11 @@ func on_took_damage(owner: CharacterBody2D) -> void:
 			_state = AIState.CHASE
 	else:
 		_state = AIState.CHASE
+
+func force_return() -> void:
+	_state = AIState.RETURN
+	_force_chase_timer = 0.0
+	emit_signal("leash_return_started")
 
 func _do_idle(delta: float, owner: CharacterBody2D) -> void:
 	if behavior == Behavior.PATROL:
@@ -112,19 +109,20 @@ func _do_patrol(delta: float, owner: CharacterBody2D) -> void:
 	owner.velocity = (_patrol_target - owner.global_position).normalized() * speed
 	owner.move_and_slide()
 
-func _do_chase(_delta: float, owner: CharacterBody2D, player: Node2D, combat: NormalAggresiveMobCombat) -> void:
-	if player == null or not is_instance_valid(player):
-		_state = AIState.IDLE
+func _do_chase(owner: CharacterBody2D, target: Node2D, combat: NormalNeutralMobCombat) -> void:
+	if target == null or not is_instance_valid(target):
+		_state = AIState.RETURN
+		emit_signal("leash_return_started")
 		owner.velocity = Vector2.ZERO
 		owner.move_and_slide()
 		return
 
-	var to_player: Vector2 = player.global_position - owner.global_position
-	var dist: float = to_player.length()
+	var to_target: Vector2 = target.global_position - owner.global_position
+	var dist: float = to_target.length()
 
 	var stop_distance: float = combat.get_stop_distance()
 	if dist > stop_distance:
-		owner.velocity = to_player.normalized() * speed
+		owner.velocity = to_target.normalized() * speed
 		owner.move_and_slide()
 		return
 
@@ -132,7 +130,7 @@ func _do_chase(_delta: float, owner: CharacterBody2D, player: Node2D, combat: No
 	owner.move_and_slide()
 
 func _do_return(delta: float, owner: CharacterBody2D) -> void:
-	# Если во время RETURN получили урон и всё ещё в leash — снова CHASE
+	# если во время RETURN получили урон и всё ещё в leash — снова CHASE
 	if _force_chase_timer > 0.0:
 		var dist_home: float = owner.global_position.distance_to(home_position)
 		if dist_home <= leash_distance:
