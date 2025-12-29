@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dxrlj1d0atyod"]
-
-[ext_resource type="Script" uid="uid://dntcw76st34oy" path="res://game/world/spawners/nnm_spawner.gd" id="1_khqsq"]
-
-[node name="NNMSpawner" type="Node2D"]
-script = ExtResource("1_khqsq")

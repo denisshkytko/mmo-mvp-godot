@@ -1,12 +1,12 @@
 [gd_scene load_steps=12 format=3 uid="uid://8eogwafoag68"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
-[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/NAMSpawner.tscn" id="3_7rgpn"]
+[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/SpawnPoint.tscn" id="3_7rgpn"]
 [ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_ah0r0"]
 [ext_resource type="Script" uid="uid://6sv2ohdhcpxy" path="res://game/world/spawners/nam_spawner_group.gd" id="3_rjbcs"]
 [ext_resource type="Script" uid="uid://4ojd5qeh2u7m" path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
-[ext_resource type="PackedScene" uid="uid://dxrlj1d0atyod" path="res://game/world/spawners/NNMSpawner.tscn" id="6_vraby"]
-[ext_resource type="PackedScene" uid="uid://v3mfef3xc5rm" path="res://game/world/spawners/FNPCSpawner.tscn" id="7_82kis"]
+[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/SpawnPoint.tscn" id="6_vraby"]
+[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/SpawnPoint.tscn" id="7_82kis"]
 [ext_resource type="Script" uid="uid://by7jhcepgjjbs" path="res://game/world/spawners/fnpc_spawner_group.gd" id="7_nldw7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]

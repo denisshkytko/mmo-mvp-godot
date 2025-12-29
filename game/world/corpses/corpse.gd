@@ -101,8 +101,12 @@ func _process(delta: float) -> void:
 	if _range_check_timer <= 0.0:
 		_range_check_timer = 0.1
 
-		var p: Node = get_tree().get_first_node_in_group("player")
-		_player_cached = p as Node2D
+		# Не дергаем get_first_node_in_group() постоянно.
+		# Для текущего прототипа игрок один, поэтому достаточно обновлять
+		# кеш только если ссылка отсутствует или стала невалидной.
+		if _player_cached == null or not is_instance_valid(_player_cached):
+			var p: Node = get_tree().get_first_node_in_group("player")
+			_player_cached = p as Node2D
 
 		if _player_cached != null and is_instance_valid(_player_cached):
 			var dist: float = global_position.distance_to(_player_cached.global_position)

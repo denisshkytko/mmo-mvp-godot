@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name Player
 
+const NodeCache := preload("res://core/runtime/node_cache.gd")
+
 @export var move_speed: float = 220.0
 
 # Auto-attack
@@ -131,30 +133,31 @@ func get_buffs_snapshot() -> Array:
 	return c_buffs.get_buffs_snapshot()
 
 
+func _get_game_manager() -> Node:
+	return NodeCache.get_game_manager(get_tree())
+
+
+func _request_save(kind: String) -> void:
+	var gm: Node = _get_game_manager()
+	if gm != null and gm.has_method("request_save"):
+		gm.call("request_save", kind)
+
+
 func add_gold(amount: int) -> void:
 	c_inv.add_gold(amount)
-
-	var gm: Node = get_tree().get_first_node_in_group("game_manager")
-	if gm != null and gm.has_method("request_save"):
-		gm.call("request_save", "gold")
+	_request_save("gold")
 
 
 func add_item(item_id: String, amount: int) -> int:
 	var remaining: int = c_inv.add_item(item_id, amount)
-
-	var gm: Node = get_tree().get_first_node_in_group("game_manager")
-	if gm != null and gm.has_method("request_save"):
-		gm.call("request_save", "item")
+	_request_save("item")
 
 	return remaining
 
 
 func add_xp(amount: int) -> void:
 	c_stats.add_xp(amount)
-
-	var gm: Node = get_tree().get_first_node_in_group("game_manager")
-	if gm != null and gm.has_method("request_save"):
-		gm.call("request_save", "xp")
+	_request_save("xp")
 
 
 func get_inventory_snapshot() -> Dictionary:
@@ -167,7 +170,7 @@ func take_damage(raw_damage: int) -> void:
 
 func respawn_now() -> void:
 	# телепорт на ближайший graveyard
-	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	var gm: Node = _get_game_manager()
 	if gm != null and gm.has_method("get_nearest_graveyard_position"):
 		global_position = gm.call("get_nearest_graveyard_position", global_position)
 

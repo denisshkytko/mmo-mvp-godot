@@ -1,6 +1,13 @@
 extends CharacterBody2D
 class_name NormalAggresiveMob
 
+const LootRights := preload("res://core/loot/loot_rights.gd")
+const NodeCache := preload("res://core/runtime/node_cache.gd")
+const FactionTargeting := preload("res://core/faction/faction_targeting.gd")
+const RegenHelper := preload("res://core/combat/regen_helper.gd")
+const DeathPipeline := preload("res://core/world/death_pipeline.gd")
+const TargetMarkerHelper := preload("res://core/ui/target_marker_helper.gd")
+
 signal died(corpse: Corpse)
 
 @onready var hp_fill: ColorRect = $"UI/HpFill"
@@ -15,10 +22,12 @@ enum AttackMode { MELEE, RANGED }
 # ------------------------------------------------------------
 # ДЕФОЛТЫ "на всякий случай" (могут переопределяться спавнером)
 # ------------------------------------------------------------
-@export_group("Common Defaults (optional)")
-@export var aggro_radius: float = 260.0
+@export_group("Common")
 @export var base_xp: int = 5
 @export var xp_per_level: int = 2
+@export var move_speed: float = 120.0
+@export var aggro_radius: float = 260.0
+@export var leash_distance: float = 420.0
 
 # Эти поля выставляет спавнер
 var mob_id: String = "slime"
@@ -64,6 +73,8 @@ const REGEN_PCT_PER_SEC: float = 0.02
 # ------------------------------------------------------------
 var player: Node2D = null
 
+
+
 var faction_id: String = "aggressive_mob"
 var current_target: Node2D = null
 
@@ -75,7 +86,7 @@ var loot_owner_player_id: int = 0
 
 func _ready() -> void:
 	add_to_group("faction_units")
-	player = get_tree().get_first_node_in_group("player") as Node2D
+	player = NodeCache.get_player(get_tree()) as Node2D
 
 	if c_ai != null and c_ai.has_signal("leash_return_started"):
 		var cb := Callable(self, "_on_leash_return_started")
@@ -85,20 +96,23 @@ func _ready() -> void:
 	if home_position == Vector2.ZERO:
 		home_position = global_position
 
+	# If the mob is placed manually in the scene, apply Common params to AI.
+	if c_ai != null:
+		c_ai.home_position = home_position
+		c_ai.aggro_radius = aggro_radius
+		c_ai.leash_distance = leash_distance
+		c_ai.speed = move_speed
+
 	_apply_mode_to_components()
 	c_stats.recalculate_for_level(mob_level)
 	c_stats.update_hp_bar(hp_fill)
 
 func _process(_delta: float) -> void:
-	if target_marker == null:
-		return
-
-	var gm: Node = get_tree().get_first_node_in_group("game_manager")
-	var is_target: bool = false
-	if gm != null and gm.has_method("get_target"):
-		is_target = (gm.call("get_target") == self)
-
-	target_marker.visible = is_target
+	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
+	var is_aggro_on_player: bool = false
+	if current_target != null and is_instance_valid(current_target):
+		is_aggro_on_player = current_target.is_in_group("player")
+	TargetMarkerHelper.set_marker_visible(target_marker, is_aggro_on_player)
 
 func _physics_process(delta: float) -> void:
 	if c_stats.is_dead:
@@ -114,18 +128,15 @@ func _physics_process(delta: float) -> void:
 		if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
 			current_target = null
 
-	# реген после leash-return, продолжается даже в idle/patrol пока не станет full hp
+	# реген после leash-return, продолжается пока HP не станет full
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
-		var heal_amount: int = int(round(float(c_stats.max_hp) * REGEN_PCT_PER_SEC * delta))
-		if heal_amount <= 0:
-			heal_amount = 1
-		c_stats.current_hp = min(c_stats.max_hp, c_stats.current_hp + heal_amount)
+		c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
 		c_stats.update_hp_bar(hp_fill)
-	elif regen_active and c_stats.current_hp >= c_stats.max_hp:
-		regen_active = false
+		if c_stats.current_hp >= c_stats.max_hp:
+			regen_active = false
 
 	if player == null or not is_instance_valid(player):
-		player = get_tree().get_first_node_in_group("player") as Node2D
+		player = NodeCache.get_player(get_tree()) as Node2D
 
 	_apply_mode_to_components()
 
@@ -189,11 +200,13 @@ func apply_spawn_settings(
 
 	if c_ai != null:
 		c_ai.behavior = behavior_in
-		c_ai.aggro_radius = aggro_radius_in
-		c_ai.leash_distance = leash_distance_in
+		# Common params are defined on the mob itself (Inspector: Common)
+		c_ai.aggro_radius = aggro_radius
+		c_ai.leash_distance = leash_distance
 		c_ai.patrol_radius = patrol_radius_in
 		c_ai.patrol_pause_seconds = patrol_pause_in
-		c_ai.speed = speed_in
+		c_ai.speed = move_speed
+
 		c_ai.home_position = home_position
 		c_ai.reset_to_idle()
 
@@ -219,7 +232,7 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 	if c_stats.is_dead:
 		return
 
-	_set_loot_owner_if_first(attacker)
+	loot_owner_player_id = LootRights.capture_first_player_hit(loot_owner_player_id, attacker)
 
 	if first_attacker == null and attacker != null and is_instance_valid(attacker):
 		first_attacker = attacker
@@ -234,7 +247,7 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 
 
 func on_player_died() -> void:
-	_clear_loot_owner()
+	loot_owner_player_id = LootRights.clear_owner()
 	c_combat.reset_combat()
 	c_ai.force_return()
 	velocity = Vector2.ZERO
@@ -281,41 +294,13 @@ func _die() -> void:
 		return
 	c_stats.is_dead = true
 
-
-	var corpse: Corpse = null
-	var inst := CORPSE_SCENE.instantiate()
-	corpse = inst as Corpse
-	if corpse != null:
-		get_parent().add_child(corpse)
-		corpse.global_position = global_position
-
-		if corpse != null and corpse.has_method("set_loot_owner_player"):
-			var owner_player: Node = get_tree().get_first_node_in_group("player")
-			# owner только если текущий id совпадает с игроком
-			if owner_player != null and owner_player.get_instance_id() == loot_owner_player_id:
-				corpse.call("set_loot_owner_player", owner_player)
-			else:
-				corpse.call("set_loot_owner_player", null)
-
-
-		var table_id: String = loot_table_id
-		if table_id == "":
-			table_id = "lt_slime_low"
-
-		var loot: Dictionary = LootSystem.generate_loot(table_id, mob_level)
-		if corpse.has_method("set_loot_v2"):
-			corpse.call("set_loot_v2", loot)
-		else:
-			corpse.loot_gold = int(loot.get("gold", 0))
-
-	var p: Node = get_tree().get_first_node_in_group("player")
-	if p != null and p.has_method("add_xp"):
-		p.add_xp(_get_xp_reward())
-
-	var gm := get_tree().get_first_node_in_group("game_manager")
-	if gm != null and gm.has_method("get_target") and gm.has_method("clear_target"):
-		if gm.call("get_target") == self:
-			gm.call("clear_target")
+	var corpse: Corpse = DeathPipeline.die_and_spawn(
+		self,
+		loot_owner_player_id,
+		_get_xp_reward(),
+		loot_table_id,
+		mob_level
+	)
 
 	emit_signal("died", corpse)
 	queue_free()
@@ -329,7 +314,7 @@ func _get_xp_reward() -> int:
 
 func _on_leash_return_started() -> void:
 	# бой сбросился → права на лут больше нет
-	_clear_loot_owner()
+	loot_owner_player_id = LootRights.clear_owner()
 	regen_active = true
 
 
@@ -338,47 +323,13 @@ func get_faction_id() -> String:
 
 
 func _pick_target() -> Node2D:
-	# выбираем ближайшую враждебную цель в агро-радиусе
-	var best: Node2D = null
-	var best_d := INF
-
-	var units := get_tree().get_nodes_in_group("faction_units")
-	for u in units:
-		if u == self:
-			continue
-		if not (u is Node2D):
-			continue
-		var n := u as Node2D
-		if not is_instance_valid(n):
-			continue
-		if "is_dead" in n and bool(n.get("is_dead")):
-			continue
-
-		# faction check
-		var tf := ""
-		if n.has_method("get_faction_id"):
-			tf = String(n.call("get_faction_id"))
-		var rel := FactionRules.relation(faction_id, tf)
-		if rel != FactionRules.Relation.HOSTILE:
-			continue
-
-		var d := global_position.distance_to(n.global_position)
-		if d <= aggro_radius and d < best_d:
-			best_d = d
-			best = n
-
-	return best
+	return FactionTargeting.pick_hostile_target(self, faction_id, aggro_radius)
 
 
 func _set_loot_owner_if_first(attacker: Node2D) -> void:
-	if loot_owner_player_id != 0:
-		return
-	if attacker == null or not is_instance_valid(attacker):
-		return
-	if not attacker.is_in_group("player"):
-		return
-	loot_owner_player_id = attacker.get_instance_id()
+	# legacy wrapper (оставлено, чтобы не ломать возможные внешние вызовы)
+	loot_owner_player_id = LootRights.capture_first_player_hit(loot_owner_player_id, attacker)
 
 
 func _clear_loot_owner() -> void:
-	loot_owner_player_id = 0
+	loot_owner_player_id = LootRights.clear_owner()
