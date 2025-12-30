@@ -1,8 +1,8 @@
 extends RefCounted
 class_name DeathPipeline
 
-const LootRights := preload("res://core/loot/loot_rights.gd")
-const NodeCache := preload("res://core/runtime/node_cache.gd")
+const LOOT_RIGHTS := preload("res://core/loot/loot_rights.gd")
+const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 
 # ------------------------------------------------------------
@@ -45,7 +45,7 @@ static func apply_loot_to_corpse(corpse: Corpse, loot_table_id: String, level: i
 static func clear_if_targeted(self_node: Node) -> void:
 	if self_node == null or not is_instance_valid(self_node):
 		return
-	var gm := NodeCache.get_game_manager(self_node.get_tree())
+	var gm := NODE_CACHE.get_game_manager(self_node.get_tree())
 	if gm != null and gm.has_method("get_target") and gm.has_method("clear_target"):
 		if gm.call("get_target") == self_node:
 			gm.call("clear_target")
@@ -54,8 +54,8 @@ static func clear_if_targeted(self_node: Node) -> void:
 static func grant_xp_if_owner(loot_owner_player_id: int, xp_amount: int, tree: SceneTree) -> void:
 	if xp_amount <= 0:
 		return
-	var p := NodeCache.get_player(tree)
-	if LootRights.can_reward_xp(loot_owner_player_id, p) and p != null and p.has_method("add_xp"):
+	var p := NODE_CACHE.get_player(tree)
+	if LOOT_RIGHTS.can_reward_xp(loot_owner_player_id, p) and p != null and p.has_method("add_xp"):
 		p.call("add_xp", xp_amount)
 
 
@@ -71,7 +71,7 @@ static func die_and_spawn(
 
 	var corpse := spawn_corpse(self_node.get_parent(), self_node.global_position)
 	if corpse != null:
-		LootRights.apply_owner_to_corpse(corpse, loot_owner_player_id)
+		LOOT_RIGHTS.apply_owner_to_corpse(corpse, loot_owner_player_id)
 		apply_loot_to_corpse(corpse, loot_table_id, level)
 
 	grant_xp_if_owner(loot_owner_player_id, xp_amount, self_node.get_tree())

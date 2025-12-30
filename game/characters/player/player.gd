@@ -9,22 +9,49 @@ const NodeCache := preload("res://core/runtime/node_cache.gd")
 @export var attack_range: float = 70.0
 @export var attack_cooldown: float = 0.8
 
-# Skill 1 (single-target)
-@export var skill_1_range: float = 120.0
-@export var skill_1_cooldown: float = 3.0
-@export var skill_1_damage_multiplier: float = 2.0
-@export var skill_1_mana_cost: int = 12
+# Combat state (used for HP regen rule: HP regenerates only out of combat)
+@export_group("Combat")
+@export var out_of_combat_delay: float = 4.0
+var _last_combat_time_sec: float = -999999.0
 
-# Skill 2 (self-heal)
-@export var skill_2_cooldown: float = 6.0
-@export var skill_2_mana_cost: int = 18
-@export var skill_2_heal_amount: int = 35
+func mark_in_combat() -> void:
+	_last_combat_time_sec = float(Time.get_ticks_msec()) / 1000.0
 
-# Skill 3 (attack buff)
-@export var skill_3_cooldown: float = 20.0
-@export var skill_3_mana_cost: int = 25
-@export var skill_3_duration_sec: float = 600.0
-@export var skill_3_attack_bonus: int = 6
+func is_out_of_combat() -> bool:
+	var now_sec := float(Time.get_ticks_msec()) / 1000.0
+	return (now_sec - _last_combat_time_sec) >= out_of_combat_delay
+
+# Primary stats are tuned per-character on the Player node (as you requested).
+# Internally they are applied to the PlayerStats component.
+@export_group("Primary Stats (Level 1)")
+@export var base_str: int = 10
+@export var base_agi: int = 10
+@export var base_end: int = 10
+@export var base_int: int = 10
+@export var base_per: int = 10
+
+@export_group("Primary Growth (Per Level)")
+@export var str_per_level: int = 1
+@export var agi_per_level: int = 1
+@export var end_per_level: int = 1
+@export var int_per_level: int = 1
+@export var per_per_level: int = 1
+
+# Skills (NOT exported — чтобы не засорять инспектор на Player)
+var skill_1_range: float = 120.0
+var skill_1_cooldown: float = 3.0
+var skill_1_damage_multiplier: float = 2.0
+var skill_1_mana_cost: int = 12
+
+var skill_2_cooldown: float = 6.0
+var skill_2_mana_cost: int = 18
+var skill_2_heal_amount: int = 35
+
+var skill_3_cooldown: float = 20.0
+var skill_3_mana_cost: int = 25
+var skill_3_duration_sec: float = 600.0
+var skill_3_attack_bonus: int = 6
+
 
 var faction_id: String = "blue"
 
@@ -56,6 +83,18 @@ var is_dead: bool = false
 func _ready() -> void:
 	add_to_group("faction_units")
 	# setup components
+	# push primary tuning from Player root into Stats component
+	c_stats.base_str = base_str
+	c_stats.base_agi = base_agi
+	c_stats.base_end = base_end
+	c_stats.base_int = base_int
+	c_stats.base_per = base_per
+	c_stats.str_per_level = str_per_level
+	c_stats.agi_per_level = agi_per_level
+	c_stats.end_per_level = end_per_level
+	c_stats.int_per_level = int_per_level
+	c_stats.per_per_level = per_per_level
+
 	c_stats.setup(self)
 	c_buffs.setup(self)
 	c_combat.setup(self)
@@ -91,9 +130,14 @@ func _process(delta: float) -> void:
 	if is_dead:
 		return
 
-	c_buffs.tick(delta)
-	c_skills.tick(delta)
-	c_combat.tick(delta)
+	if c_buffs != null:
+		c_buffs.tick(delta)
+	if c_stats != null:
+		c_stats.tick(delta)
+	if c_skills != null:
+		c_skills.tick(delta)
+	if c_combat != null:
+		c_combat.tick(delta)
 
 
 # -----------------------
@@ -131,6 +175,13 @@ func remove_buff(id: String) -> void:
 
 func get_buffs_snapshot() -> Array:
 	return c_buffs.get_buffs_snapshot()
+
+
+# CharacterHUD reads this if present
+func get_stats_snapshot() -> Dictionary:
+	if c_stats != null:
+		return c_stats.get_stats_snapshot()
+	return {}
 
 
 func _get_game_manager() -> Node:
@@ -197,6 +248,10 @@ func apply_character_data(d: Dictionary) -> void:
 
 	max_mana = int(d.get("max_mana", max_mana))
 	mana = int(d.get("mana", mana))
+
+	# Primary stats (new system, backward compatible)
+	if c_stats != null:
+		c_stats.apply_primary_data(d)
 	faction_id = String(d.get("faction", faction_id))
 
 	# inventory snapshot
@@ -207,6 +262,14 @@ func apply_character_data(d: Dictionary) -> void:
 	var buffs_v: Variant = d.get("buffs", [])
 	if buffs_v is Array:
 		c_buffs.apply_buffs_snapshot(buffs_v as Array)
+
+	# Derived stats must be recalculated after primaries + buffs are in place
+	if c_stats != null:
+		c_stats.recalculate_for_level(false)
+
+	# Recalculate derived stats after primaries + buffs are applied
+	if c_stats != null:
+		c_stats.recalculate_for_level(false)
 
 	# защита от “вошёл мёртвым”
 	is_dead = false
@@ -228,6 +291,10 @@ func export_character_data() -> Dictionary:
 
 	base["max_mana"] = max_mana
 	base["mana"] = mana
+
+	# Primary stats (saved)
+	if c_stats != null:
+		base.merge(c_stats.export_primary_data(), true)
 
 	# inventory
 	base["inventory"] = c_inv.get_inventory_snapshot()

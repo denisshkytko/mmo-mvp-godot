@@ -48,25 +48,49 @@ const REGEN_PCT_PER_SEC: float = 0.02
 # ------------------------------------------------------------
 # Параметры двух состояний (без dropdown-скрытия)
 # ------------------------------------------------------------
-@export_group("Melee Mode")
-@export var melee_base_attack: int = 8
-@export var melee_attack_per_level: int = 2
-@export var melee_base_max_hp: int = 50
+@export_group("Характеристики: Aggressive Mob (Melee)")
+@export_subgroup("Базовые характеристики")
+@export var melee_base_str: int = 11
+@export var melee_base_agi: int = 0
+@export var melee_base_end: int = 4
+@export var melee_base_int: int = 0
+@export var melee_base_per: int = 0
 @export var melee_base_defense: int = 1
 @export var melee_defense_per_level: int = 1
+@export var melee_base_magic_resist: int = 0
+@export var melee_magic_resist_per_level: int = 0
 @export var melee_stop_distance: float = 45.0
 @export var melee_attack_range: float = 55.0
 @export var melee_attack_cooldown: float = 1.2
 
-@export_group("Ranged Mode")
-@export var ranged_base_attack: int = 7
-@export var ranged_attack_per_level: int = 2
-@export var ranged_base_max_hp: int = 44
+@export_subgroup("Рост базовых характеристик")
+@export var melee_str_per_level: int = 3
+@export var melee_agi_per_level: int = 0
+@export var melee_end_per_level: int = 1
+@export var melee_int_per_level: int = 0
+@export var melee_per_per_level: int = 0
+
+@export_group("Характеристики: Aggressive Mob (Ranged)")
+@export_subgroup("Базовые характеристики")
+@export var ranged_base_str: int = 10
+@export var ranged_base_agi: int = 2
+@export var ranged_base_end: int = 3
+@export var ranged_base_int: int = 0
+@export var ranged_base_per: int = 1
 @export var ranged_base_defense: int = 1
 @export var ranged_defense_per_level: int = 1
+@export var ranged_base_magic_resist: int = 0
+@export var ranged_magic_resist_per_level: int = 0
 @export var ranged_attack_range: float = 220.0
 @export var ranged_attack_cooldown: float = 1.5
-@export var ranged_projectile_scene: PackedScene = null # пока instant-hit
+@export var ranged_projectile_scene: PackedScene = null
+
+@export_subgroup("Рост базовых характеристик")
+@export var ranged_str_per_level: int = 3
+@export var ranged_agi_per_level: int = 0
+@export var ranged_end_per_level: int = 1
+@export var ranged_int_per_level: int = 0
+@export var ranged_per_per_level: int = 0
 
 # ------------------------------------------------------------
 # Runtime
@@ -143,7 +167,9 @@ func _physics_process(delta: float) -> void:
 	c_ai.tick(delta, self, current_target, c_combat)
 
 	if current_target != null and is_instance_valid(current_target):
-		c_combat.tick(delta, self, current_target, c_stats.attack_value)
+		var snap: Dictionary = c_stats.get_stats_snapshot()
+		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
+		c_combat.tick(delta, self, current_target, c_stats.attack_value, aspct)
 
 # ------------------------------------------------------------
 # Called by Spawner
@@ -277,17 +303,23 @@ func _apply_mode_to_components() -> void:
 	c_stats.mob_level = mob_level
 
 	if attack_mode == AttackMode.MELEE:
-		c_stats.base_attack = melee_base_attack
-		c_stats.attack_per_level = melee_attack_per_level
-		c_stats.base_max_hp = melee_base_max_hp
-		c_stats.base_defense = melee_base_defense
-		c_stats.defense_per_level = melee_defense_per_level
+		c_stats.setup_primary_profile(
+			{"str": melee_base_str, "agi": melee_base_agi, "end": melee_base_end, "int": melee_base_int, "per": melee_base_per},
+			{"str": melee_str_per_level, "agi": melee_agi_per_level, "end": melee_end_per_level, "int": melee_int_per_level, "per": melee_per_per_level},
+			melee_base_defense,
+			melee_defense_per_level,
+			melee_base_magic_resist,
+			melee_magic_resist_per_level
+		)
 	else:
-		c_stats.base_attack = ranged_base_attack
-		c_stats.attack_per_level = ranged_attack_per_level
-		c_stats.base_max_hp = ranged_base_max_hp
-		c_stats.base_defense = ranged_base_defense
-		c_stats.defense_per_level = ranged_defense_per_level
+		c_stats.setup_primary_profile(
+			{"str": ranged_base_str, "agi": ranged_base_agi, "end": ranged_base_end, "int": ranged_base_int, "per": ranged_base_per},
+			{"str": ranged_str_per_level, "agi": ranged_agi_per_level, "end": ranged_end_per_level, "int": ranged_int_per_level, "per": ranged_per_per_level},
+			ranged_base_defense,
+			ranged_defense_per_level,
+			ranged_base_magic_resist,
+			ranged_magic_resist_per_level
+		)
 
 func _die() -> void:
 	if c_stats.is_dead:

@@ -64,7 +64,7 @@ func try_cast_skill_1() -> void:
 		target.call("take_damage", dmg)
 
 	p.mana = max(0, p.mana - p.skill_1_mana_cost)
-	_skill_1_timer = p.skill_1_cooldown
+	_skill_1_timer = _get_effective_skill_cooldown(p.skill_1_cooldown)
 
 
 func try_cast_skill_2() -> void:
@@ -77,7 +77,7 @@ func try_cast_skill_2() -> void:
 
 	p.current_hp = min(p.max_hp, p.current_hp + p.skill_2_heal_amount)
 	p.mana = max(0, p.mana - p.skill_2_mana_cost)
-	_skill_2_timer = p.skill_2_cooldown
+	_skill_2_timer = _get_effective_skill_cooldown(p.skill_2_cooldown)
 
 
 func try_cast_skill_3() -> void:
@@ -96,7 +96,22 @@ func try_cast_skill_3() -> void:
 		)
 
 	p.mana = max(0, p.mana - p.skill_3_mana_cost)
-	_skill_3_timer = p.skill_3_cooldown
+	_skill_3_timer = _get_effective_skill_cooldown(p.skill_3_cooldown)
+
+
+func _get_effective_skill_cooldown(base_cd: float) -> float:
+	# Skill cooldowns are reduced ONLY by SpeedRating (secondary).
+	# Formula: final_cd = base_cd / (1 + cooldown_reduction_pct/100)
+	if p == null:
+		return base_cd
+	var snap: Dictionary = {}
+	if p.has_method("get_stats_snapshot"):
+		snap = p.call("get_stats_snapshot") as Dictionary
+	var cd_red_pct: float = float(snap.get("cooldown_reduction_pct", 0.0))
+	var mult: float = 1.0 + (cd_red_pct / 100.0)
+	if mult <= 0.01:
+		mult = 0.01
+	return base_cd / mult
 
 
 func _get_skill_1_target_in_range() -> Node2D:

@@ -59,33 +59,69 @@ const REGEN_PCT_PER_SEC: float = 0.02
 
 
 # -----------------------------
-# Inspector presets (понятные вкладки)
-# (оставляем значения простыми, без сокращений в логике — но переменные так, чтобы было читаемо)
+# Характеристики (как ты просил: сворачиваемые секции + базовые + рост)
 # -----------------------------
-@export_group("Civilian: Base Stats")
-@export var civilian_base_attack: int = 4
-@export var civilian_attack_per_level: int = 1
-@export var civilian_base_max_hp: int = 35
-@export var civilian_max_hp_per_level: int = 7
+
+@export_group("Характеристики: Мирный житель")
+@export_subgroup("Базовые характеристики")
+@export var civilian_base_str: int = 6
+@export var civilian_base_agi: int = 0
+@export var civilian_base_end: int = 4
+@export var civilian_base_int: int = 0
+@export var civilian_base_per: int = 0
 @export var civilian_base_defense: int = 1
+@export var civilian_base_magic_resist: int = 0
+@export var civilian_base_attack_range: float = 55.0
+@export var civilian_base_attack_cooldown: float = 1.3
+@export_subgroup("Рост базовых характеристик")
+@export var civilian_str_per_level: int = 1
+@export var civilian_agi_per_level: int = 0
+@export var civilian_end_per_level: int = 1
+@export var civilian_int_per_level: int = 0
+@export var civilian_per_per_level: int = 0
 @export var civilian_defense_per_level: int = 1
+@export var civilian_magic_resist_per_level: int = 0
 
-@export_group("Fighter: Base Stats")
-@export var fighter_base_attack: int = 7
-@export var fighter_attack_per_level: int = 2
-@export var fighter_base_max_hp: int = 65
-@export var fighter_max_hp_per_level: int = 12
+@export_group("Характеристики: Боец")
+@export_subgroup("Базовые характеристики")
+@export var fighter_base_str: int = 11
+@export var fighter_base_agi: int = 0
+@export var fighter_base_end: int = 6
+@export var fighter_base_int: int = 0
+@export var fighter_base_per: int = 1
 @export var fighter_base_defense: int = 3
+@export var fighter_base_magic_resist: int = 0
+@export var fighter_base_attack_range: float = 55.0
+@export var fighter_base_attack_cooldown: float = 1.2
+@export_subgroup("Рост базовых характеристик")
+@export var fighter_str_per_level: int = 2
+@export var fighter_agi_per_level: int = 0
+@export var fighter_end_per_level: int = 1
+@export var fighter_int_per_level: int = 0
+@export var fighter_per_per_level: int = 0
 @export var fighter_defense_per_level: int = 1
+@export var fighter_magic_resist_per_level: int = 0
 
-@export_group("Mage: Base Stats")
-@export var mage_base_attack: int = 8
-@export var mage_attack_per_level: int = 2
-@export var mage_base_max_hp: int = 50
-@export var mage_max_hp_per_level: int = 10
+@export_group("Характеристики: Маг")
+@export_subgroup("Базовые характеристики")
+@export var mage_base_str: int = 6
+@export var mage_base_agi: int = 0
+@export var mage_base_end: int = 4
+@export var mage_base_int: int = 8
+@export var mage_base_per: int = 1
 @export var mage_base_defense: int = 2
-@export var mage_defense_per_level: int = 1
+@export var mage_base_magic_resist: int = 2
+@export var mage_base_attack_range: float = 260.0
+@export var mage_base_attack_cooldown: float = 1.6
 @export var mage_projectile_scene: PackedScene
+@export_subgroup("Рост базовых характеристик")
+@export var mage_str_per_level: int = 1
+@export var mage_agi_per_level: int = 0
+@export var mage_end_per_level: int = 1
+@export var mage_int_per_level: int = 2
+@export var mage_per_per_level: int = 0
+@export var mage_defense_per_level: int = 1
+@export var mage_magic_resist_per_level: int = 1
 
 func _ready() -> void:
 	add_to_group("faction_units")
@@ -151,20 +187,30 @@ func apply_spawn_init(
 	# presets + combat mode
 	match fighter_type:
 		FighterType.CIVILIAN:
-			c_stats.apply_preset(
-				civilian_base_attack, civilian_attack_per_level,
-				civilian_base_max_hp, civilian_max_hp_per_level,
-				civilian_base_defense, civilian_defense_per_level
+			c_stats.apply_primary_preset(
+				{"str": civilian_base_str, "agi": civilian_base_agi, "end": civilian_base_end, "int": civilian_base_int, "per": civilian_base_per},
+				{"str": civilian_str_per_level, "agi": civilian_agi_per_level, "end": civilian_end_per_level, "int": civilian_int_per_level, "per": civilian_per_per_level},
+				civilian_base_defense,
+				civilian_defense_per_level,
+				civilian_base_magic_resist,
+				civilian_magic_resist_per_level
 			)
 			c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
+			c_combat.melee_attack_range = civilian_base_attack_range
+			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
 		FighterType.MAGE:
-			c_stats.apply_preset(
-				mage_base_attack, mage_attack_per_level,
-				mage_base_max_hp, mage_max_hp_per_level,
-				mage_base_defense, mage_defense_per_level
+			c_stats.apply_primary_preset(
+				{"str": mage_base_str, "agi": mage_base_agi, "end": mage_base_end, "int": mage_base_int, "per": mage_base_per},
+				{"str": mage_str_per_level, "agi": mage_agi_per_level, "end": mage_end_per_level, "int": mage_int_per_level, "per": mage_per_per_level},
+				mage_base_defense,
+				mage_defense_per_level,
+				mage_base_magic_resist,
+				mage_magic_resist_per_level
 			)
 			c_combat.attack_mode = FactionNPCCombat.AttackMode.RANGED
+			c_combat.ranged_attack_range = mage_base_attack_range
+			c_combat.ranged_cooldown = mage_base_attack_cooldown
 
 			var proj: PackedScene = projectile_scene_in
 			if proj == null:
@@ -172,12 +218,17 @@ func apply_spawn_init(
 			c_combat.ranged_projectile_scene = proj
 
 		_:
-			c_stats.apply_preset(
-				fighter_base_attack, fighter_attack_per_level,
-				fighter_base_max_hp, fighter_max_hp_per_level,
-				fighter_base_defense, fighter_defense_per_level
+			c_stats.apply_primary_preset(
+				{"str": fighter_base_str, "agi": fighter_base_agi, "end": fighter_base_end, "int": fighter_base_int, "per": fighter_base_per},
+				{"str": fighter_str_per_level, "agi": fighter_agi_per_level, "end": fighter_end_per_level, "int": fighter_int_per_level, "per": fighter_per_per_level},
+				fighter_base_defense,
+				fighter_defense_per_level,
+				fighter_base_magic_resist,
+				fighter_magic_resist_per_level
 			)
 			c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
+			c_combat.melee_attack_range = fighter_base_attack_range
+			c_combat.melee_cooldown = fighter_base_attack_cooldown
 
 	c_stats.recalc(npc_level)
 	c_stats.current_hp = c_stats.max_hp
@@ -245,7 +296,9 @@ func _physics_process(delta: float) -> void:
 
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
-		c_combat.tick(delta, self, current_target, c_stats.attack_value)
+		var snap: Dictionary = c_stats.get_stats_snapshot()
+		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
+		c_combat.tick(delta, self, current_target, c_stats.attack_value, aspct)
 
 
 func _pick_target() -> Node2D:

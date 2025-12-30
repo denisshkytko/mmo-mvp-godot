@@ -50,39 +50,87 @@ const REGEN_PCT_PER_SEC: float = 0.02
 
 # ---------------------------
 # ПРЕСЕТЫ СТАТОВ ПО BODY SIZE
-# (без выпадающего “динамического скрытия”, просто группы параметров)
 # ---------------------------
-@export_group("Body SMALL")
-@export var small_base_attack: int = 4
-@export var small_attack_per_level: int = 1
-@export var small_base_max_hp: int = 25
-@export var small_hp_per_level: int = 6
+
+@export_group("Характеристики: Туловище SMALL")
+@export_subgroup("Базовые характеристики")
+@export var small_base_str: int = 6
+@export var small_base_agi: int = 0
+@export var small_base_end: int = 3
+@export var small_base_int: int = 0
+@export var small_base_per: int = 0
 @export var small_base_defense: int = 1
+@export var small_base_magic_resist: int = 0
+@export var small_base_attack_range: float = 55.0
+@export var small_base_attack_cooldown: float = 1.3
+@export_subgroup("Рост базовых характеристик")
+@export var small_str_per_level: int = 1
+@export var small_agi_per_level: int = 0
+@export var small_end_per_level: int = 1
+@export var small_int_per_level: int = 0
+@export var small_per_per_level: int = 0
 @export var small_defense_per_level: int = 1
+@export var small_magic_resist_per_level: int = 0
 
-@export_group("Body MEDIUM")
-@export var medium_base_attack: int = 6
-@export var medium_attack_per_level: int = 1
-@export var medium_base_max_hp: int = 40
-@export var medium_hp_per_level: int = 8
+@export_group("Характеристики: Туловище MEDIUM")
+@export_subgroup("Базовые характеристики")
+@export var medium_base_str: int = 8
+@export var medium_base_agi: int = 0
+@export var medium_base_end: int = 5
+@export var medium_base_int: int = 0
+@export var medium_base_per: int = 0
 @export var medium_base_defense: int = 1
+@export var medium_base_magic_resist: int = 0
+@export var medium_base_attack_range: float = 55.0
+@export var medium_base_attack_cooldown: float = 1.2
+@export_subgroup("Рост базовых характеристик")
+@export var medium_str_per_level: int = 1
+@export var medium_agi_per_level: int = 0
+@export var medium_end_per_level: int = 1
+@export var medium_int_per_level: int = 0
+@export var medium_per_per_level: int = 0
 @export var medium_defense_per_level: int = 1
+@export var medium_magic_resist_per_level: int = 0
 
-@export_group("Body LARGE")
-@export var large_base_attack: int = 8
-@export var large_attack_per_level: int = 2
-@export var large_base_max_hp: int = 65
-@export var large_hp_per_level: int = 12
+@export_group("Характеристики: Туловище LARGE")
+@export_subgroup("Базовые характеристики")
+@export var large_base_str: int = 11
+@export var large_base_agi: int = 0
+@export var large_base_end: int = 7
+@export var large_base_int: int = 0
+@export var large_base_per: int = 0
 @export var large_base_defense: int = 2
+@export var large_base_magic_resist: int = 0
+@export var large_base_attack_range: float = 60.0
+@export var large_base_attack_cooldown: float = 1.5
+@export_subgroup("Рост базовых характеристик")
+@export var large_str_per_level: int = 2
+@export var large_agi_per_level: int = 0
+@export var large_end_per_level: int = 1
+@export var large_int_per_level: int = 0
+@export var large_per_per_level: int = 0
 @export var large_defense_per_level: int = 1
+@export var large_magic_resist_per_level: int = 0
 
-@export_group("Body HUMANOID")
-@export var humanoid_base_attack: int = 7
-@export var humanoid_attack_per_level: int = 2
-@export var humanoid_base_max_hp: int = 50
-@export var humanoid_hp_per_level: int = 10
+@export_group("Характеристики: Туловище HUMANOID")
+@export_subgroup("Базовые характеристики")
+@export var humanoid_base_str: int = 10
+@export var humanoid_base_agi: int = 0
+@export var humanoid_base_end: int = 5
+@export var humanoid_base_int: int = 0
+@export var humanoid_base_per: int = 1
 @export var humanoid_base_defense: int = 2
+@export var humanoid_base_magic_resist: int = 0
+@export var humanoid_base_attack_range: float = 55.0
+@export var humanoid_base_attack_cooldown: float = 1.2
+@export_subgroup("Рост базовых характеристик")
+@export var humanoid_str_per_level: int = 2
+@export var humanoid_agi_per_level: int = 0
+@export var humanoid_end_per_level: int = 1
+@export var humanoid_int_per_level: int = 0
+@export var humanoid_per_per_level: int = 0
 @export var humanoid_defense_per_level: int = 1
+@export var humanoid_magic_resist_per_level: int = 0
 
 func _ready() -> void:
 	if home_position == Vector2.ZERO:
@@ -123,7 +171,9 @@ func _physics_process(delta: float) -> void:
 
 	# атака только если агрессивен
 	if is_aggressive and aggressor != null and is_instance_valid(aggressor):
-		c_combat.tick(delta, self, aggressor, c_stats.attack_value)
+		var snap: Dictionary = c_stats.get_stats_snapshot()
+		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
+		c_combat.tick(delta, self, aggressor, c_stats.attack_value, aspct)
 
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"
@@ -182,21 +232,55 @@ func _apply_to_components() -> void:
 		c_ai.speed = move_speed
 		c_ai.leash_distance = leash_distance
 
-	# melee параметры (общие)
-	c_combat.melee_stop_distance = 45.0
-	c_combat.melee_attack_range = 55.0
-	c_combat.melee_cooldown = 1.2
-
-	# применяем пресет статов по размеру
+	# melee параметры + пресет статов по размеру
+	# (для NeutralMob — «туловище» задаёт и боевые тайминги)
 	match body_size:
 		BodySize.SMALL:
-			c_stats.apply_body_preset(small_base_attack, small_attack_per_level, small_base_max_hp, small_hp_per_level, small_base_defense, small_defense_per_level)
+			c_combat.melee_attack_range = small_base_attack_range
+			c_combat.melee_cooldown = small_base_attack_cooldown
+			c_stats.apply_body_preset(
+				{"str": small_base_str, "agi": small_base_agi, "end": small_base_end, "int": small_base_int, "per": small_base_per},
+				{"str": small_str_per_level, "agi": small_agi_per_level, "end": small_end_per_level, "int": small_int_per_level, "per": small_per_per_level},
+				small_base_defense,
+				small_defense_per_level,
+				small_base_magic_resist,
+				small_magic_resist_per_level
+			)
 		BodySize.MEDIUM:
-			c_stats.apply_body_preset(medium_base_attack, medium_attack_per_level, medium_base_max_hp, medium_hp_per_level, medium_base_defense, medium_defense_per_level)
+			c_combat.melee_attack_range = medium_base_attack_range
+			c_combat.melee_cooldown = medium_base_attack_cooldown
+			c_stats.apply_body_preset(
+				{"str": medium_base_str, "agi": medium_base_agi, "end": medium_base_end, "int": medium_base_int, "per": medium_base_per},
+				{"str": medium_str_per_level, "agi": medium_agi_per_level, "end": medium_end_per_level, "int": medium_int_per_level, "per": medium_per_per_level},
+				medium_base_defense,
+				medium_defense_per_level,
+				medium_base_magic_resist,
+				medium_magic_resist_per_level
+			)
 		BodySize.LARGE:
-			c_stats.apply_body_preset(large_base_attack, large_attack_per_level, large_base_max_hp, large_hp_per_level, large_base_defense, large_defense_per_level)
+			c_combat.melee_attack_range = large_base_attack_range
+			c_combat.melee_cooldown = large_base_attack_cooldown
+			c_stats.apply_body_preset(
+				{"str": large_base_str, "agi": large_base_agi, "end": large_base_end, "int": large_base_int, "per": large_base_per},
+				{"str": large_str_per_level, "agi": large_agi_per_level, "end": large_end_per_level, "int": large_int_per_level, "per": large_per_per_level},
+				large_base_defense,
+				large_defense_per_level,
+				large_base_magic_resist,
+				large_magic_resist_per_level
+			)
 		_:
-			c_stats.apply_body_preset(humanoid_base_attack, humanoid_attack_per_level, humanoid_base_max_hp, humanoid_hp_per_level, humanoid_base_defense, humanoid_defense_per_level)
+			c_combat.melee_attack_range = humanoid_base_attack_range
+			c_combat.melee_cooldown = humanoid_base_attack_cooldown
+			c_stats.apply_body_preset(
+				{"str": humanoid_base_str, "agi": humanoid_base_agi, "end": humanoid_base_end, "int": humanoid_base_int, "per": humanoid_base_per},
+				{"str": humanoid_str_per_level, "agi": humanoid_agi_per_level, "end": humanoid_end_per_level, "int": humanoid_int_per_level, "per": humanoid_per_per_level},
+				humanoid_base_defense,
+				humanoid_defense_per_level,
+				humanoid_base_magic_resist,
+				humanoid_magic_resist_per_level
+			)
+
+	c_combat.melee_stop_distance = 45.0
 
 	c_stats.recalculate_for_level(mob_level)
 

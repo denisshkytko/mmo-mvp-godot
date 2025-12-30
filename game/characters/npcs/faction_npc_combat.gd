@@ -1,6 +1,8 @@
 extends Node
 class_name FactionNPCCombat
 
+const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+
 enum AttackMode { MELEE, RANGED }
 
 var attack_mode: int = AttackMode.MELEE
@@ -18,7 +20,7 @@ var _t: float = 0.0
 func reset() -> void:
 	_t = 0.0
 
-func tick(delta: float, actor: Node2D, target: Node2D, dmg: int) -> void:
+func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack_speed_pct: float = 0.0) -> void:
 	_t = max(0.0, _t - delta)
 
 	if target == null or not is_instance_valid(target):
@@ -27,6 +29,12 @@ func tick(delta: float, actor: Node2D, target: Node2D, dmg: int) -> void:
 		return
 
 	var dist: float = actor.global_position.distance_to(target.global_position)
+	var speed_mult: float = 1.0 + max(0.0, attack_speed_pct) / 100.0
+	if speed_mult < 0.1:
+		speed_mult = 0.1
+	var dmg: int = int(round(float(attack_power) * STAT_CONST.AP_DAMAGE_SCALAR))
+	if dmg < 1:
+		dmg = 1
 
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _t <= 0.0:
@@ -34,7 +42,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, dmg: int) -> void:
 				target.call("take_damage_from", dmg, actor)
 			elif target.has_method("take_damage"):
 				target.call("take_damage", dmg)
-			_t = melee_cooldown
+			_t = melee_cooldown / speed_mult
 		return
 
 	# RANGED
@@ -49,7 +57,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, dmg: int) -> void:
 					proj.global_position = actor.global_position
 					if proj.has_method("setup"):
 						proj.call("setup", target, dmg, actor)
-		_t = ranged_cooldown
+		_t = ranged_cooldown / speed_mult
 
 func stop_distance() -> float:
 	return melee_stop_distance if attack_mode == AttackMode.MELEE else ranged_attack_range

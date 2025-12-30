@@ -39,6 +39,19 @@ func _ready() -> void:
 	_load_character_into_world()
 
 
+# Godot can store scene references as uid://... in some situations (or old saves).
+# We keep saves stable by converting unknown UIDs back to a real path.
+func _sanitize_zone_path(zone_scene_path: String) -> String:
+	if zone_scene_path == null:
+		return "res://game/world/zones/Zone_01.tscn"
+	var p: String = String(zone_scene_path)
+	if p.begins_with("uid://"):
+		# If .godot cache was deleted (recommended), UID mapping may be missing.
+		# Fall back to default zone instead of crashing.
+		return "res://game/world/zones/Zone_01.tscn"
+	return p
+
+
 func _load_character_into_world() -> void:
 	if not has_node("/root/AppState"):
 		return
@@ -50,6 +63,7 @@ func _load_character_into_world() -> void:
 
 	# 1) Зона: всегда берём из data["zone"], по умолчанию Zone_01 (у тебя это уже записывается при создании)
 	var zone_path: String = String(data.get("zone", "res://game/world/zones/Zone_01.tscn"))
+	zone_path = _sanitize_zone_path(zone_path)
 	if zone_path == "":
 		zone_path = "res://game/world/zones/Zone_01.tscn"
 
