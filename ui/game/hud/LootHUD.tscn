@@ -5,6 +5,24 @@
 [node name="LootHUD" type="CanvasLayer"]
 script = ExtResource("1_784ee")
 
+[node name="TooltipPanel" type="Panel" parent="."]
+visible = false
+z_index = 50
+custom_minimum_size = Vector2(360, 0)
+
+[node name="Text" type="RichTextLabel" parent="TooltipPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = -10.0
+offset_bottom = -8.0
+bbcode_enabled = false
+fit_content = true
+autowrap_mode = 2
+
 [node name="Panel" type="Panel" parent="."]
 custom_minimum_size = Vector2(260, 360)
 anchors_preset = 4

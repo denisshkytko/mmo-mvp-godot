@@ -1,0 +1,57 @@
+[gd_resource type="Resource" script_class="LootProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/loot/loot_profile.gd" id="1"]
+
+[resource]
+mode = 2
+# Humanoid neutrals: gold + junk, small chance empty corpse
+gold_enabled = true
+gold_chance = 1.0
+gold_min_base = 0
+gold_min_per_level = 1
+gold_max_base = 2
+gold_max_per_level = 2
+
+junk_enabled = true
+junk_band = 0
+junk_guaranteed_slots = 0
+junk_max_slots = 2
+junk_extra_slot_chance = 0.6
+junk_stack_min = 1
+junk_stack_max = 2
+
+materials_enabled = false
+materials_band = 0
+materials_guaranteed_slots = 0
+materials_max_slots = 0
+materials_extra_slot_chance = 0.0
+materials_stack_min = 1
+materials_stack_max = 1
+
+consumables_enabled = false
+consumables_band = 0
+consumables_guaranteed_slots = 0
+consumables_max_slots = 0
+consumables_extra_slot_chance = 0.0
+consumables_stack_min = 1
+consumables_stack_max = 1
+
+bags_enabled = false
+bags_band = 0
+bags_guaranteed_slots = 0
+bags_max_slots = 0
+bags_extra_slot_chance = 0.0
+
+equipment_enabled = false
+equipment_band_min = 0
+equipment_band_max = 0
+equipment_guaranteed_slots = 0
+equipment_max_slots = 0
+equipment_extra_slot_chance = 0.0
+w_common = 0.0
+w_uncommon = 0.0
+w_rare = 0.0
+w_epic = 0.0
+w_legendary = 0.0
+
+max_same_item_duplicates = 2

@@ -2,12 +2,13 @@ extends "res://game/world/spawners/base_spawner_group.gd"
 class_name NamSpawnerGroup
 
 const MOB_SCENE: PackedScene = preload("res://game/characters/mobs/NormalAggressiveMob.tscn")
+const LootProfile = preload("res://core/loot/loot_profile.gd")
 
 enum Behavior { GUARD, PATROL }
 enum AttackMode { MELEE, RANGED }
 
 @export_group("Mob Setup")
-@export var loot_table_id: String = "lt_slime_low"
+@export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_aggressive_default.tres") as LootProfile
 @export var level_min: int = 1
 @export var level_max: int = 1
 @export_enum("Melee", "Ranged") var attack_mode: int = AttackMode.MELEE
@@ -48,5 +49,5 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		level,
 		attack_mode,
 		"",              # mob_id больше не используется
-		loot_table_id
+		loot_profile
 	)

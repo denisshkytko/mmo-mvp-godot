@@ -181,16 +181,27 @@ func loot_all_to_player(player_node: Node) -> void:
 		player_node.call("add_gold", loot_gold)
 	loot_gold = 0
 
+	var kept: Array = []
 	if loot_slots != null and loot_slots.size() > 0 and player_node.has_method("add_item"):
 		for s in loot_slots:
-			if s is Dictionary and String((s as Dictionary).get("type", "")) == "item":
-				var id := String((s as Dictionary).get("id", ""))
-				var count := int((s as Dictionary).get("count", 0))
-				if id != "" and count > 0:
-					player_node.call("add_item", id, count)
+			if not (s is Dictionary):
+				continue
+			var sd: Dictionary = s as Dictionary
+			if String(sd.get("type", "")) != "item":
+				continue
+			var id := String(sd.get("id", ""))
+			var count := int(sd.get("count", 0))
+			if id == "" or count <= 0:
+				continue
+			# add_item returns how many did NOT fit.
+			var remaining: int = int(player_node.call("add_item", id, count))
+			if remaining > 0:
+				sd["count"] = remaining
+				kept.append(sd)
 
-	loot_slots = []
-	mark_looted()
+	loot_slots = kept
+	if not has_loot():
+		mark_looted()
 
 
 func mark_looted() -> void:

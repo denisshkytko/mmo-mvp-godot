@@ -22,6 +22,9 @@ offset_bottom = 40.0
 [node name="XpHUD" parent="Root" instance=ExtResource("1_rs8we")]
 
 [node name="SkillButton" parent="Root" instance=ExtResource("2_qdv4i")]
+offset = Vector2(320, 320)
+scale = Vector2(0.5, 0.5)
+transform = Transform2D(0.5, 0, 0, 0.5, 320, 320)
 
 [node name="BuffsHUD" parent="Root" instance=ExtResource("3_wemh1")]
 offset = Vector2(1072, 20)

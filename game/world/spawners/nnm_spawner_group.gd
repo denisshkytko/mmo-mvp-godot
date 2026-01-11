@@ -7,7 +7,8 @@ enum Behavior { GUARD, PATROL }
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 
 @export_group("Neutral Setup")
-@export var loot_table_id: String = "lt_neutral_low"
+@export var loot_profile_animals: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
+@export var loot_profile_humanoids: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_humanoid_default.tres") as LootProfile
 @export var level_min: int = 1
 @export var level_max: int = 1
 @export_enum("Small", "Medium", "Large", "Humanoid") var body_size: int = BodySize.MEDIUM
@@ -31,6 +32,13 @@ func _compute_level() -> int:
 
 
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
+	var chosen_profile: LootProfile = loot_profile_animals
+	if body_size == NormalNeutralMob.BodySize.HUMANOID:
+		chosen_profile = loot_profile_humanoids
+	if chosen_profile == null:
+		# Safety: never spawn a neutral mob without a loot profile.
+		chosen_profile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
+
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
@@ -42,5 +50,5 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		level,
 		body_size,
 		skin_id,
-		loot_table_id
+		chosen_profile
 	)

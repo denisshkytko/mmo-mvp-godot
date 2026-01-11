@@ -39,6 +39,18 @@ func _ready() -> void:
 	_load_character_into_world()
 
 
+func _exit_tree() -> void:
+	# Ensure we don't lose the last known zone/position/stats when leaving the world scene.
+	# This is especially important when the player exits to menu or the window closes.
+	save_now()
+
+
+func _notification(what: int) -> void:
+	# Catch OS-level close requests (Alt+F4 / window close button)
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		save_now()
+
+
 # Godot can store scene references as uid://... in some situations (or old saves).
 # We keep saves stable by converting unknown UIDs back to a real path.
 func _sanitize_zone_path(zone_scene_path: String) -> String:

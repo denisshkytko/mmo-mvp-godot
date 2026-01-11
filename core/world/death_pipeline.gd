@@ -29,13 +29,14 @@ static func spawn_corpse(parent: Node, world_pos: Vector2) -> Corpse:
 	return corpse
 
 
-static func apply_loot_to_corpse(corpse: Corpse, loot_table_id: String, level: int) -> void:
+static func apply_loot_to_corpse(corpse: Corpse, level: int, loot_profile: Resource, loot_context: Dictionary = {}) -> void:
 	if corpse == null or not is_instance_valid(corpse):
 		return
-	var table_id := loot_table_id
-	if table_id == "":
-		table_id = "lt_slime_low"
-	var loot: Dictionary = LootSystem.generate_loot(table_id, level)
+	# Единственный механизм лута: LootProfile (пресеты из res://core/loot/profiles).
+	# Если профиль не задан — лут не генерируем.
+	if loot_profile == null:
+		return
+	var loot: Dictionary = LootSystem.generate_loot_from_profile(loot_profile, level, loot_context)
 	if corpse.has_method("set_loot_v2"):
 		corpse.call("set_loot_v2", loot)
 	else:
@@ -63,16 +64,22 @@ static func die_and_spawn(
 	self_node: Node2D,
 	loot_owner_player_id: int,
 	xp_amount: int,
-	loot_table_id: String,
-	level: int
+	level: int,
+	loot_profile: Resource = null,
+	loot_context: Dictionary = {}
 ) -> Corpse:
 	if self_node == null or not is_instance_valid(self_node):
 		return null
 
 	var corpse := spawn_corpse(self_node.get_parent(), self_node.global_position)
 	if corpse != null:
+		# 1) Назначаем owner-игрока (любой узел из группы "player").
 		LOOT_RIGHTS.apply_owner_to_corpse(corpse, loot_owner_player_id)
-		apply_loot_to_corpse(corpse, loot_table_id, level)
+		# 2) Если owner НЕ игрок (owner id не соответствует ни одному игроку) —
+		#    лут не генерируем вообще (экономим ресурсы и избегаем "мертвого" лута).
+		var owner_node: Node = LOOT_RIGHTS.get_player_by_instance_id(self_node.get_tree(), loot_owner_player_id)
+		if owner_node != null:
+			apply_loot_to_corpse(corpse, level, loot_profile, loot_context)
 
 	grant_xp_if_owner(loot_owner_player_id, xp_amount, self_node.get_tree())
 	clear_if_targeted(self_node)

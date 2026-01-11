@@ -31,7 +31,7 @@ enum AttackMode { MELEE, RANGED }
 
 # Эти поля выставляет спавнер
 var mob_id: String = "slime"
-var loot_table_id: String = "lt_slime_low"
+var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_aggressive_default.tres") as LootProfile
 var mob_level: int = 1
 var attack_mode: int = AttackMode.MELEE
 
@@ -185,7 +185,7 @@ func apply_spawn_init(
 	level_in: int,
 	attack_mode_in: int,
 	mob_id_in: String,
-	loot_table_id_in: String
+	loot_profile_in: LootProfile = null
 ) -> void:
 	# Эти поля должны выставляться до расчётов/AI
 
@@ -195,7 +195,8 @@ func apply_spawn_init(
 	if mob_id_in != "":
 		mob_id = mob_id_in
 
-	loot_table_id = loot_table_id_in
+	if loot_profile_in != null:
+		loot_profile = loot_profile_in
 
 	apply_spawn_settings(
 		spawn_pos,
@@ -330,8 +331,9 @@ func _die() -> void:
 		self,
 		loot_owner_player_id,
 		_get_xp_reward(),
-		loot_table_id,
-		mob_level
+		mob_level,
+		loot_profile,
+		{ "mob_kind": "aggressive" }
 	)
 
 	emit_signal("died", corpse)

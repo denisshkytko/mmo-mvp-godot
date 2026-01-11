@@ -1,116 +1,190 @@
-[gd_scene load_steps=12 format=3 ]
-[ext_resource type="Script"  path="res://game/world/portals/portal.gd" id="1_25g3u"]
-[ext_resource type="PackedScene"  path="res://game/world/spawners/SpawnPoint.tscn" id="3_7rgpn"]
-[ext_resource type="PackedScene"  path="res://game/world/graveyards/Graveyard.tscn" id="3_ah0r0"]
-[ext_resource type="Script"  path="res://game/world/spawners/nam_spawner_group.gd" id="3_rjbcs"]
-[ext_resource type="Script"  path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
-[ext_resource type="PackedScene"  path="res://game/world/spawners/SpawnPoint.tscn" id="6_vraby"]
-[ext_resource type="PackedScene"  path="res://game/world/spawners/SpawnPoint.tscn" id="7_82kis"]
-[ext_resource type="Script"  path="res://game/world/spawners/fnpc_spawner_group.gd" id="7_nldw7"]
+[gd_scene load_steps=18 format=3 uid="uid://bxfersnuyd5an"]
+
+[ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
+[ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_ah0r0"]
+[ext_resource type="Script" uid="uid://cef067g646w3x" path="res://game/world/spawners/nam_spawner_group.gd" id="3_rjbcs"]
+[ext_resource type="Script" uid="uid://15la571x5002" path="res://core/loot/loot_profile.gd" id="4_82kis"]
+[ext_resource type="Script" uid="uid://bxeo6tvunc012" path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
+[ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/SpawnPoint.tscn" id="7_82kis"]
+[ext_resource type="Script" uid="uid://ceudd21vg5y8b" path="res://game/world/spawners/fnpc_spawner_group.gd" id="7_nldw7"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ah0r0"]
 size = Vector2(40, 2400)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_25g3u"]
 size = Vector2(120, 120)
+
+[sub_resource type="Resource" id="Resource_nldw7"]
+script = ExtResource("4_82kis")
+metadata/_custom_type_script = "uid://15la571x5002"
+
+[sub_resource type="Resource" id="Resource_hfd65"]
+script = ExtResource("4_82kis")
+mode = 1
+metadata/_custom_type_script = "uid://15la571x5002"
+
+[sub_resource type="Resource" id="Resource_gbxao"]
+script = ExtResource("4_82kis")
+mode = 2
+metadata/_custom_type_script = "uid://15la571x5002"
+
+[sub_resource type="Resource" id="Resource_b1gjl"]
+script = ExtResource("4_82kis")
+mode = 3
+metadata/_custom_type_script = "uid://15la571x5002"
+
+[sub_resource type="Resource" id="Resource_ecawj"]
+script = ExtResource("4_82kis")
+mode = 3
+metadata/_custom_type_script = "uid://15la571x5002"
+
+[sub_resource type="Resource" id="Resource_g6f5m"]
+script = ExtResource("4_82kis")
+mode = 3
+metadata/_custom_type_script = "uid://15la571x5002"
+
+[sub_resource type="Resource" id="Resource_1orgs"]
+script = ExtResource("4_82kis")
+mode = 3
+metadata/_custom_type_script = "uid://15la571x5002"
+
 [node name="Zone_01" type="Node2D"]
+
 [node name="Floor" type="ColorRect" parent="."]
 offset_left = -2000.0
 offset_top = -1200.0
 offset_right = 2000.0
 offset_bottom = 1200.0
 color = Color(0.30407822, 0.5387897, 0.09257879, 1)
+
 [node name="Walls" type="StaticBody2D" parent="."]
+
 [node name="WallTop" type="CollisionShape2D" parent="Walls"]
 position = Vector2(0, -1200)
 shape = SubResource("RectangleShape2D_bajtg")
 debug_color = Color(0.05446948, 0.06360627, 0.054370105, 0.41960785)
+
 [node name="WallBottom" type="CollisionShape2D" parent="Walls"]
 position = Vector2(0, 1200)
 shape = SubResource("RectangleShape2D_bajtg")
 debug_color = Color(0.05446948, 0.06360627, 0.054370105, 0.41960785)
+
 [node name="WallLeft" type="CollisionShape2D" parent="Walls"]
 position = Vector2(-2000, 0)
 shape = SubResource("RectangleShape2D_ah0r0")
 debug_color = Color(1.02277845e-07, 0.068394236, 0.08760249, 0.41960785)
+
 [node name="WallRight" type="CollisionShape2D" parent="Walls"]
 position = Vector2(2000, 0)
 shape = SubResource("RectangleShape2D_ah0r0")
 debug_color = Color(1.02277845e-07, 0.068394236, 0.08760249, 0.41960785)
+
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(1700, 0)
+
 [node name="ExitToZone02" type="Area2D" parent="."]
 position = Vector2(1800, 0)
 script = ExtResource("1_25g3u")
-target_zone_path = "uid://vw0l7rj1osth"
+target_zone_path = "res://game/world/zones/Zone_02.tscn"
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToZone02"]
 visible = false
 shape = SubResource("RectangleShape2D_25g3u")
 debug_color = Color(0.70628047, 0.07076057, 0.61411655, 0.41960785)
+
 [node name="DebugVisual" type="ColorRect" parent="ExitToZone02"]
 offset_left = -60.0
 offset_top = -60.0
 offset_right = 60.0
 offset_bottom = 60.0
 color = Color(0.20392157, 0.2627451, 1, 0.34509805)
+
 [node name="Graveyard" parent="." instance=ExtResource("3_ah0r0")]
 position = Vector2(-1077, -619)
+
 [node name="NAMSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("3_rjbcs")
+loot_profile = SubResource("Resource_nldw7")
 level_max = 2
 attack_mode = 1
-leash_distance = 1000.0
 behavior = 1
 patrol_radius = 350.0
 patrol_pause_seconds = 3.0
-[node name="NAMSpawner" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
+
+[node name="NAMSpawner" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-905, -434)
-[node name="NAMSpawner2" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
+
+[node name="NAMSpawner2" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-24, -685)
-[node name="NAMSpawner3" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
+
+[node name="NAMSpawner3" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(782, -354)
-[node name="NAMSpawner4" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
+
+[node name="NAMSpawner4" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(776, 428)
-[node name="NAMSpawner5" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
+
+[node name="NAMSpawner5" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-24, 698)
-[node name="NAMSpawner6" parent="NAMSpawnersGroup" instance=ExtResource("3_7rgpn")]
+
+[node name="NAMSpawner6" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-979, 392)
+
 [node name="NNMSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("5_qbm0w")
+loot_profile_animals = SubResource("Resource_hfd65")
+loot_profile_humanoids = SubResource("Resource_gbxao")
 level_max = 5
 body_size = 2
 behavior = 1
 patrol_radius = 300.0
-[node name="NNMSpawner" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
+
+[node name="NNMSpawner" parent="NNMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(353, 296)
-[node name="NNMSpawner3" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
+
+[node name="NNMSpawner3" parent="NNMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-480, 289)
-[node name="NNMSpawner2" parent="NNMSpawnersGroup" instance=ExtResource("6_vraby")]
+
+[node name="NNMSpawner2" parent="NNMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-15.999999, -318)
+
 [node name="FNPCSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
+loot_profile = SubResource("Resource_b1gjl")
 level_min = 5
 level_max = 5
+
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-1659, -163)
+
 [node name="FNPCSpawnersGroup2" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 faction_id = "red"
+loot_profile = SubResource("Resource_ecawj")
 level_min = 5
 level_max = 5
+
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup2" instance=ExtResource("7_82kis")]
 position = Vector2(-1275, -159)
+
 [node name="FNPCSpawnersGroup3" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 faction_id = "yellow"
+loot_profile = SubResource("Resource_g6f5m")
 level_min = 5
 level_max = 5
+
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup3" instance=ExtResource("7_82kis")]
 position = Vector2(-1663, 213)
+
 [node name="FNPCSpawnersGroup4" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 faction_id = "green"
+loot_profile = SubResource("Resource_1orgs")
 level_min = 5
 level_max = 5
+
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup4" instance=ExtResource("7_82kis")]
 position = Vector2(-1575, 192)

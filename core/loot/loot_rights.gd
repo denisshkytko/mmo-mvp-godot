@@ -16,10 +16,15 @@ static func capture_first_player_hit(current_owner_player_id: int, attacker: Nod
 	# Некорректный атакующий
 	if attacker == null or not is_instance_valid(attacker):
 		return current_owner_player_id
-	# Право получает только игрок
-	if not attacker.is_in_group("player"):
-		return current_owner_player_id
-	return attacker.get_instance_id()
+	# Право получает только игрок.
+	# Важно: attacker может быть хитбоксом/снарядом/дочерним узлом игрока,
+	# поэтому поднимаемся по родителям и ищем узел из группы "player".
+	var n: Node = attacker
+	while n != null:
+		if n.is_in_group("player"):
+			return n.get_instance_id()
+		n = n.get_parent()
+	return current_owner_player_id
 
 
 static func clear_owner() -> int:
@@ -34,11 +39,24 @@ static func apply_owner_to_corpse(corpse: Node, owner_player_id: int) -> void:
 	if not corpse.has_method("set_loot_owner_player"):
 		return
 
-	var p: Node = corpse.get_tree().get_first_node_in_group("player")
-	if p != null and is_instance_valid(p) and p.get_instance_id() == owner_player_id:
-		corpse.call("set_loot_owner_player", p)
-	else:
-		corpse.call("set_loot_owner_player", null)
+	# В мультиплеере игроков может быть несколько.
+	# Корректный owner — это ЛЮБОЙ узел из группы "player" с совпадающим instance_id.
+	var p: Node = get_player_by_instance_id(corpse.get_tree(), owner_player_id)
+	corpse.call("set_loot_owner_player", p)
+
+
+static func get_player_by_instance_id(tree: SceneTree, player_id: int) -> Node:
+	if tree == null:
+		return null
+	if player_id == 0:
+		return null
+	var players: Array = tree.get_nodes_in_group("player")
+	for n in players:
+		if n is Node and is_instance_valid(n):
+			var pn: Node = n as Node
+			if pn.get_instance_id() == player_id:
+				return pn
+	return null
 
 
 static func can_reward_xp(owner_player_id: int, player: Node) -> bool:

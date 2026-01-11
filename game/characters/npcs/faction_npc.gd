@@ -1,6 +1,7 @@
 extends CharacterBody2D
 class_name FactionNPC
 
+@export var default_loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 const LootRights := preload("res://core/loot/loot_rights.gd")
 const NodeCache := preload("res://core/runtime/node_cache.gd")
 const FactionTargeting := preload("res://core/faction/faction_targeting.gd")
@@ -34,7 +35,7 @@ var retaliation_target_id: int = 0
 var retaliation_active: bool = false
 
 var npc_level: int = 1
-var loot_table_id: String = ""
+var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 
 var home_position: Vector2 = Vector2.ZERO
 var current_target: Node2D = null
@@ -158,7 +159,7 @@ func apply_spawn_init(
 	patrol_pause_in: float,
 	speed_in: float,
 	level_in: int,
-	loot_table_in: String,
+	loot_profile_in: LootProfile,
 	projectile_scene_in: PackedScene
 ) -> void:
 	home_position = spawn_pos
@@ -169,7 +170,7 @@ func apply_spawn_init(
 	fighter_type = fighter_in
 	interaction_type = interaction_in
 	npc_level = max(1, level_in)
-	loot_table_id = loot_table_in
+	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
 
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
@@ -339,12 +340,17 @@ func _die() -> void:
 		return
 	c_stats.is_dead = true
 
+	var p: LootProfile = loot_profile
+	if p == null:
+		p = default_loot_profile
+
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
 		loot_owner_player_id,
 		(base_xp + npc_level * xp_per_level),
-		loot_table_id,
-		npc_level
+		npc_level,
+		p,
+		{ "mob_kind": "faction_npc" }
 	)
 
 	emit_signal("died", corpse)

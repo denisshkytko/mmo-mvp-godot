@@ -28,7 +28,7 @@ enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 # размер тела выбирается спавнером
 var body_size: int = BodySize.MEDIUM
 var mob_level: int = 1
-var loot_table_id: String = "lt_neutral_low"
+var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
 var skin_id: String = ""
 
 var home_position: Vector2 = Vector2.ZERO
@@ -197,12 +197,13 @@ func apply_spawn_init(
 	level_in: int,
 	body_size_in: int,
 	skin_id_in: String,
-	loot_table_id_in: String
+	loot_profile_in: LootProfile = null
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
 	skin_id = skin_id_in
-	loot_table_id = loot_table_id_in
+	if loot_profile_in != null:
+		loot_profile = loot_profile_in
 	# Common params (speed/leash/aggro) are configured on the mob itself.
 	mob_level = max(1, level_in)
 	body_size = body_size_in
@@ -340,8 +341,13 @@ func _die() -> void:
 		self,
 		loot_owner_player_id,
 		(base_xp + mob_level * xp_per_level),
-		loot_table_id,
-		mob_level
+		mob_level,
+		loot_profile,
+		{
+			"mob_kind": "neutral",
+			"body_size": body_size,
+			"is_humanoid": body_size == BodySize.HUMANOID,
+		}
 	)
 
 	emit_signal("died", corpse)

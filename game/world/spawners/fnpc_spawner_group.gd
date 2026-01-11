@@ -13,7 +13,7 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export_enum("Civilian", "Fighter", "Mage") var fighter_type: int = FighterType.FIGHTER
 @export_enum("None", "Merchant", "Quest", "Trainer") var interaction_type: int = InteractionType.NONE
 
-@export var loot_table_id: String = "lt_guard_low"
+@export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 @export var level_min: int = 1
 @export var level_max: int = 1
 
@@ -49,6 +49,6 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		patrol_pause_seconds,
 		-1.0, # move_speed is defined on the NPC itself
 		level,
-		loot_table_id,
+		loot_profile,
 		DEFAULT_PROJECTILE
 	)

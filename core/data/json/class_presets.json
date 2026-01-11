@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "generated_at": "2025-12-30T19:29:56.597887Z",
+  "notes": "Class presets: base primary stats at level 1 and integer growth per level. Tuning-friendly; adjust freely.",
+  "classes": [
+    {
+      "id": "warrior",
+      "name": "Warrior",
+      "archetype": "tank_or_dps",
+      "base_primary": {
+        "STR": 8,
+        "AGI": 4,
+        "END": 7,
+        "INT": 1,
+        "PER": 3
+      },
+      "growth_primary_per_level": {
+        "STR": 3,
+        "AGI": 2,
+        "END": 3,
+        "INT": 1,
+        "PER": 1
+      },
+      "primary_priority": [
+        "STR",
+        "END",
+        "AGI",
+        "PER",
+        "INT"
+      ],
+      "secondary_focus": [
+        "Defense",
+        "AttackPower",
+        "HPRegen",
+        "SpeedRating",
+        "CritChanceRating"
+      ]
+    },
+    {
+      "id": "paladin",
+      "name": "Paladin",
+      "archetype": "tank_dps_or_healer",
+      "base_primary": {
+        "STR": 7,
+        "AGI": 2,
+        "END": 6,
+        "INT": 5,
+        "PER": 2
+      },
+      "growth_primary_per_level": {
+        "STR": 3,
+        "AGI": 1,
+        "END": 2,
+        "INT": 3,
+        "PER": 1
+      },
+      "primary_priority": [
+        "STR",
+        "INT",
+        "END",
+        "PER",
+        "AGI"
+      ],
+      "secondary_focus": [
+        "Defense",
+        "MagicResist",
+        "AttackPower",
+        "SpellPower",
+        "ManaRegen"
+      ]
+    },
+    {
+      "id": "mage",
+      "name": "Mage",
+      "archetype": "dps",
+      "base_primary": {
+        "STR": 1,
+        "AGI": 2,
+        "END": 3,
+        "INT": 9,
+        "PER": 5
+      },
+      "growth_primary_per_level": {
+        "STR": 1,
+        "AGI": 1,
+        "END": 2,
+        "INT": 4,
+        "PER": 2
+      },
+      "primary_priority": [
+        "INT",
+        "PER",
+        "END",
+        "AGI",
+        "STR"
+      ],
+      "secondary_focus": [
+        "SpellPower",
+        "ManaRegen",
+        "SpeedRating",
+        "CritChanceRating",
+        "CritDamageRating"
+      ]
+    },
+    {
+      "id": "priest",
+      "name": "Priest",
+      "archetype": "dps_or_healer",
+      "base_primary": {
+        "STR": 1,
+        "AGI": 1,
+        "END": 5,
+        "INT": 8,
+        "PER": 4
+      },
+      "growth_primary_per_level": {
+        "STR": 1,
+        "AGI": 1,
+        "END": 2,
+        "INT": 3,
+        "PER": 3
+      },
+      "primary_priority": [
+        "INT",
+        "PER",
+        "END",
+        "AGI",
+        "STR"
+      ],
+      "secondary_focus": [
+        "SpellPower",
+        "ManaRegen",
+        "MagicResist",
+        "HPRegen",
+        "CritChanceRating"
+      ]
+    },
+    {
+      "id": "hunter",
+      "name": "Hunter",
+      "archetype": "ranged_dps",
+      "base_primary": {
+        "STR": 2,
+        "AGI": 9,
+        "END": 5,
+        "INT": 1,
+        "PER": 6
+      },
+      "growth_primary_per_level": {
+        "STR": 1,
+        "AGI": 4,
+        "END": 2,
+        "INT": 1,
+        "PER": 2
+      },
+      "primary_priority": [
+        "AGI",
+        "PER",
+        "END",
+        "STR",
+        "INT"
+      ],
+      "secondary_focus": [
+        "AttackPower",
+        "CritChanceRating",
+        "CritDamageRating",
+        "SpeedRating"
+      ]
+    },
+    {
+      "id": "shaman",
+      "name": "Shaman",
+      "archetype": "tank_dps_or_healer",
+      "base_primary": {
+        "STR": 5,
+        "AGI": 2,
+        "END": 6,
+        "INT": 7,
+        "PER": 2
+      },
+      "growth_primary_per_level": {
+        "STR": 2,
+        "AGI": 1,
+        "END": 3,
+        "INT": 3,
+        "PER": 1
+      },
+      "primary_priority": [
+        "INT",
+        "END",
+        "STR",
+        "PER",
+        "AGI"
+      ],
+      "secondary_focus": [
+        "SpellPower",
+        "ManaRegen",
+        "HPRegen",
+        "Defense",
+        "MagicResist"
+      ]
+    }
+  ]
+}

@@ -40,6 +40,21 @@ func apply_inventory_snapshot(snapshot: Dictionary) -> void:
 	inventory.slots.resize(Inventory.SLOT_COUNT)
 	for i in range(Inventory.SLOT_COUNT):
 		if i < slots_arr.size():
-			inventory.slots[i] = slots_arr[i]
+			var v: Variant = slots_arr[i]
+			# Sanitize legacy loot/unknown items.
+			if v is Dictionary:
+				var d: Dictionary = v as Dictionary
+				var id: String = String(d.get("id", ""))
+				if id == "" or id == "loot_token":
+					inventory.slots[i] = null
+				else:
+					# Drop items that are no longer in DataDB (old/removed).
+					var db := get_node_or_null("/root/DataDB")
+					if db != null and db.has_method("has_item") and not bool(db.call("has_item", id)):
+						inventory.slots[i] = null
+					else:
+						inventory.slots[i] = d
+			else:
+				inventory.slots[i] = null
 		else:
 			inventory.slots[i] = null

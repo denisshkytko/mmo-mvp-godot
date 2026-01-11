@@ -1,20 +1,43 @@
 extends Node
 
-const ITEMS_PATH := "res://core/data/json/items.json"
+const ITEMS_PATH := "res://core/data/json/items_db_1500_v6.json"
 const MOBS_PATH := "res://core/data/json/mobs.json"
-const LOOT_TABLES_PATH := "res://core/data/json/loot_tables.json"
 
 var items: Dictionary = {}
 var mobs: Dictionary = {}
-var loot_tables: Dictionary = {}
 
 func _ready() -> void:
 	_reload_all()
 
 func _reload_all() -> void:
-	items = _load_json_dict(ITEMS_PATH)
+	# Единственный источник предметов: items_db_1500_v6.json
+	items = _load_items_any_schema(ITEMS_PATH)
 	mobs = _load_json_dict(MOBS_PATH)
-	loot_tables = _load_json_dict(LOOT_TABLES_PATH)
+
+
+func _load_items_any_schema(path: String) -> Dictionary:
+	# Supports two schemas:
+	# 1) Legacy: { "item_id": {..}, ... }
+	# 2) New: { "meta": {...}, "items": [ {"id": "...", ...}, ... ] }
+	var parsed: Dictionary = _load_json_dict(path)
+	if parsed.is_empty():
+		return {}
+
+	if parsed.has("items") and (parsed["items"] is Array):
+		var out: Dictionary = {}
+		var arr: Array = parsed["items"] as Array
+		for v in arr:
+			if not (v is Dictionary):
+				continue
+			var d: Dictionary = v as Dictionary
+			var id: String = String(d.get("id", ""))
+			if id == "":
+				continue
+			out[id] = d
+		return out
+
+	# Legacy
+	return parsed
 
 func _load_json_dict(path: String) -> Dictionary:
 	var f := FileAccess.open(path, FileAccess.READ)
@@ -59,11 +82,4 @@ func get_mob(id: String) -> Dictionary:
 		return mobs[id] as Dictionary
 	return {}
 
-# --- Loot helpers ---
-func has_loot_table(id: String) -> bool:
-	return loot_tables.has(id)
 
-func get_loot_table(id: String) -> Dictionary:
-	if loot_tables.has(id):
-		return loot_tables[id] as Dictionary
-	return {}
