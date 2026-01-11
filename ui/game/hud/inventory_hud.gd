@@ -95,9 +95,9 @@ func show_bag_full(text: String = "Bag is full") -> void:
 
 func _format_money_bronze(total_bronze: int) -> String:
 	var bronze: int = max(total_bronze, 0)
-	var gold: int = bronze / 10000
+	var gold: int = int(bronze / 10000)
 	bronze -= gold * 10000
-	var silver: int = bronze / 100
+	var silver: int = int(bronze / 100)
 	bronze -= silver * 100
 	var parts: Array[String] = []
 	if gold > 0:

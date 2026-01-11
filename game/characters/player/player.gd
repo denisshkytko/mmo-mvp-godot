@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Player
 
-const NodeCache := preload("res://core/runtime/node_cache.gd")
+## NodeCache is a global helper (class_name). Avoid shadowing.
 
 @export var move_speed: float = 220.0
 

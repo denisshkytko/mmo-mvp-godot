@@ -1,12 +1,8 @@
 extends CharacterBody2D
 class_name NormalAggresiveMob
 
-const LootRights := preload("res://core/loot/loot_rights.gd")
-const NodeCache := preload("res://core/runtime/node_cache.gd")
-const FactionTargeting := preload("res://core/faction/faction_targeting.gd")
-const RegenHelper := preload("res://core/combat/regen_helper.gd")
-const DeathPipeline := preload("res://core/world/death_pipeline.gd")
-const TargetMarkerHelper := preload("res://core/ui/target_marker_helper.gd")
+## These helpers are registered as global classes (class_name).
+## Avoid shadowing them with local constants.
 
 signal died(corpse: Corpse)
 
@@ -216,11 +212,11 @@ func apply_spawn_init(
 func apply_spawn_settings(
 	spawn_pos: Vector2,
 	behavior_in: int,
-	aggro_radius_in: float,
-	leash_distance_in: float,
+	_aggro_radius_in: float,
+	_leash_distance_in: float,
 	patrol_radius_in: float,
 	patrol_pause_in: float,
-	speed_in: float
+	_speed_in: float
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos

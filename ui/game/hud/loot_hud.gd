@@ -13,7 +13,7 @@ extends CanvasLayer
 @onready var close_button: Button = $Panel/CloseButton
 
 @onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_text: RichTextLabel = $TooltipPanel/Text
+@onready var tooltip_text: Label = $TooltipPanel/Text
 
 var _corpse: Node = null
 var _player: Node = null
@@ -25,6 +25,15 @@ var _range_check_timer: float = 0.0
 var _icon_cache: Dictionary = {} # icon_path -> Texture2D
 
 
+# --- Draggable window state (Loot Panel) ---
+const _UI_CFG_PATH := "user://ui_state.cfg"
+const _UI_SECTION := "LootHUD"
+const _UI_KEY_PANEL_POS := "panel_pos"
+
+var _dragging := false
+var _drag_offset := Vector2.ZERO
+
+
 func _as_corpse(n: Node) -> Corpse:
 	# Prefer typed access to Corpse vars. Relying on `"var" in obj` is brittle
 	# for script vars that are not exported/stored as properties.
@@ -34,13 +43,13 @@ func _as_corpse(n: Node) -> Corpse:
 func _ready() -> void:
 	panel.visible = false
 	tooltip_panel.visible = false
-	tooltip_text.bbcode_enabled = false
-	tooltip_text.fit_content = true
+	# Prevent RichTextLabel from keeping an old scroll/offset between hover updates.
+	# (This was the root cause of the "text keeps drifting upward" bug.)
+	_reset_tooltip_scroll()
 	tooltip_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	# Make tooltip positioning stable and readable	
-	tooltip_panel.top_level = true
+	# Make tooltip styling stable and readable
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0, 0, 0, 0.85)
 	sb.border_width_left = 1
@@ -71,6 +80,13 @@ func _ready() -> void:
 			b.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	panel.mouse_exited.connect(_hide_tooltip)
+
+
+	# Draggable loot window (only when clicking on the panel background / title area)
+	panel.gui_input.connect(_on_panel_gui_input)
+	_load_panel_position()
+	_clamp_panel_to_viewport()
+	_position_tooltip_beside_panel()
 
 
 func _process(delta: float) -> void:
@@ -108,15 +124,15 @@ func _process(delta: float) -> void:
 
 	_refresh()
 
-
 func open_for_corpse(corpse: Node) -> void:
 	if panel.visible and _corpse == corpse:
 		return
 	_corpse = corpse
 	panel.visible = true
 	_range_check_timer = 0.0
+	_clamp_panel_to_viewport()
+	_position_tooltip_beside_panel()
 	_refresh()
-
 
 func close() -> void:
 	panel.visible = false
@@ -134,6 +150,76 @@ func toggle_for_corpse(corpse: Node) -> void:
 func is_looting_corpse(corpse: Node) -> bool:
 	return panel.visible and _corpse == corpse
 
+
+
+# -----------------------------------------------------------------------------
+# Draggable Loot Panel + position persistence
+# -----------------------------------------------------------------------------
+
+func _load_panel_position() -> void:
+	var cf := ConfigFile.new()
+	var err := cf.load(_UI_CFG_PATH)
+	if err != OK:
+		return
+	var v: Variant = cf.get_value(_UI_SECTION, _UI_KEY_PANEL_POS, null)
+	if v is Vector2:
+		panel.global_position = v
+
+func _save_panel_position() -> void:
+	var cf := ConfigFile.new()
+	# Ignore load errors; we always write a fresh file.
+	cf.load(_UI_CFG_PATH)
+	cf.set_value(_UI_SECTION, _UI_KEY_PANEL_POS, panel.global_position)
+	cf.save(_UI_CFG_PATH)
+
+func _clamp_panel_to_viewport() -> void:
+	var vp := get_viewport()
+	if vp == null:
+		return
+	var screen := vp.get_visible_rect().size
+	# Keep the loot window fully within the visible screen.
+	var sz := panel.size
+	var gp := panel.global_position
+	gp.x = clamp(gp.x, 0.0, max(0.0, screen.x - sz.x))
+	gp.y = clamp(gp.y, 0.0, max(0.0, screen.y - sz.y))
+	panel.global_position = gp
+
+
+func _mark_input_handled() -> void:
+	# loot_hud.gd is not necessarily a Control, so we can't call accept_event().
+	# Mark input as handled via the viewport.
+	var vp := get_viewport()
+	if vp != null:
+		vp.set_input_as_handled()
+
+func _on_panel_gui_input(event: InputEvent) -> void:
+	if not panel.visible:
+		return
+
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		var mb := event as InputEventMouseButton
+		if mb.pressed:
+			# Start dragging only when clicking on the panel background or title label,
+			# not on interactive controls (buttons, scroll area, slots).
+			var hovered := get_viewport().gui_get_hovered_control()
+			if hovered == panel or (hovered != null and hovered.name == "Title" and hovered.get_parent() == panel):
+				_dragging = true
+				_drag_offset = panel.global_position - get_viewport().get_mouse_position()
+				_mark_input_handled()
+		else:
+			if _dragging:
+				_dragging = false
+				_clamp_panel_to_viewport()
+				_save_panel_position()
+				_position_tooltip_beside_panel()
+				_mark_input_handled()
+
+	elif event is InputEventMouseMotion and _dragging:
+		var mouse := get_viewport().get_mouse_position()
+		panel.global_position = mouse + _drag_offset
+		_clamp_panel_to_viewport()
+		_position_tooltip_beside_panel()
+		_mark_input_handled()
 
 func _refresh() -> void:
 	if _corpse == null:
@@ -255,9 +341,10 @@ func _get_icon(path: String) -> Texture2D:
 			var w: int = img.get_width()
 			var h: int = img.get_height()
 			if w > target or h > target:
-				var scale: float = min(float(target) / float(w), float(target) / float(h))
-				var nw: int = max(1, int(round(w * scale)))
-				var nh: int = max(1, int(round(h * scale)))
+				# Do not shadow CanvasLayer.scale (warning treated as error in this project).
+				var icon_scale: float = min(float(target) / float(w), float(target) / float(h))
+				var nw: int = max(1, int(round(w * icon_scale)))
+				var nh: int = max(1, int(round(h * icon_scale)))
 				img.resize(nw, nh, Image.INTERPOLATE_LANCZOS)
 				out = ImageTexture.create_from_image(img)
 	_icon_cache[path] = out
@@ -335,7 +422,6 @@ func _on_slot_pressed(view_index: int) -> void:
 
 	_refresh()
 
-
 func _on_loot_all_pressed() -> void:
 	_hide_tooltip()
 	if _corpse == null or _player == null:
@@ -403,61 +489,57 @@ func _show_tooltip_for_view(view_index: int) -> void:
 		_hide_tooltip()
 		return
 
-	tooltip_text.text = text_out
+	# Update tooltip text in a way that fully resets internal state.
+	# Setting .text alone can keep previous scroll offset in some Godot versions.
+	if tooltip_text.has_method("clear"):
+		tooltip_text.call("clear")
+	# Also clear plain text field to fully reset internal state.
+	tooltip_text.text = ""
+	if tooltip_text.has_method("add_text"):
+		tooltip_text.call("add_text", text_out)
+	else:
+		tooltip_text.text = text_out
+
 	tooltip_panel.visible = true
-	_ensure_tooltip_size()
-	_position_tooltip_beside_panel()
+	# Defer layout + scroll reset to the next frame so the control has updated its content
+	# (prevents "text walks upward" across repeated hovers).
+	call_deferred("_apply_tooltip_layout")
 
 
 func _hide_tooltip() -> void:
 	tooltip_panel.visible = false
+	_reset_tooltip_scroll()
 
 
-func _ensure_tooltip_size() -> void:
-	# Make the tooltip panel expand to the full text height (no "thin strip").
-	# We size the RichTextLabel first, then size the panel with padding.
-	var padding := Vector2(16.0, 14.0)
-	var min_w := 360.0
+func _apply_tooltip_layout() -> void:
+	# Fixed width tooltip; height grows to fit text.
+	var width: float = 360.0
+	tooltip_panel.size = Vector2(width, 10)
+	tooltip_panel.custom_minimum_size = Vector2(width, 0)
 
-	tooltip_text.fit_content = true
-	tooltip_text.custom_minimum_size = Vector2(min_w - padding.x, 0.0)
-	# Force layout update
-	tooltip_text.reset_size()
-	var h := tooltip_text.get_content_height()
-	if h <= 0.0:
-		# Fallback for the first frame after text update
-		h = tooltip_text.get_combined_minimum_size().y
-	tooltip_text.custom_minimum_size.y = h
+	# Ensure the label wraps within the tooltip width.
+	tooltip_text.autowrap_mode = TextServer.AUTOWRAP_WORD
+	tooltip_text.custom_minimum_size = Vector2(width - 20.0, 0)
 
-	var panel_size := tooltip_text.custom_minimum_size + padding
-	panel_size.x = max(panel_size.x, min_w)
-	panel_size.y = max(panel_size.y, 44.0)
-	tooltip_panel.custom_minimum_size = panel_size
-	tooltip_panel.size = panel_size
+	# Ask Godot for the wrapped text height and apply padding.
+	var label_size: Vector2 = tooltip_text.get_combined_minimum_size()
+	var height: float = max(32.0, float(label_size.y) + 16.0)
+	tooltip_panel.size = Vector2(width, height)
 
+	_position_tooltip_beside_panel()
+
+func _reset_tooltip_scroll() -> void:
+	# Label tooltip has no scroll.
+	pass
 
 func _position_tooltip_beside_panel() -> void:
-	var vp := get_viewport()
-	if vp == null:
+	# Tooltip is anchored to the loot window: to the right with a small gap,
+	# aligned by the top edge. Tooltip is allowed to go off-screen.
+	if not tooltip_panel.visible:
 		return
-	var screen: Vector2 = vp.get_visible_rect().size
-
-	# Use the LootHUD panel's global rect for stable positioning
 	var pr := panel.get_global_rect()
-	var pos := pr.position + Vector2(pr.size.x + 12.0, 0.0)
-
-	var size := tooltip_panel.size
-	if size.x <= 0.0 or size.y <= 0.0:
-		size = tooltip_panel.get_combined_minimum_size()
-
-	# If right side doesn't fit, place on the left
-	if pos.x + size.x > screen.x:
-		pos.x = max(0.0, pr.position.x - size.x - 12.0)
-	# Clamp vertical position
-	if pos.y + size.y > screen.y:
-		pos.y = max(8.0, screen.y - size.y - 8.0)
-	pos.y = clamp(pos.y, 8.0, max(8.0, screen.y - size.y - 8.0))
-
+	var gap := 8.0
+	var pos := pr.position + Vector2(pr.size.x + gap, 0.0)
 	tooltip_panel.global_position = pos
 
 
@@ -474,6 +556,43 @@ func _build_item_tooltip_text(item: Dictionary) -> String:
 	if t != "":
 		lines.append("Type: " + t + ("  (" + r + ")" if r != "" else ""))
 	lines.append("Required level: " + str(rl))
+
+	# Base gear stats (armor/weapon)
+	if t == "armor":
+		var a: Variant = item.get("armor", {})
+		if a is Dictionary and not (a as Dictionary).is_empty():
+			var ad: Dictionary = a as Dictionary
+			lines.append("")
+			lines.append("Armor:")
+			if ad.has("slot"):
+				lines.append("  Slot: " + str(ad.get("slot")))
+			if ad.has("class"):
+				lines.append("  Class: " + str(ad.get("class")))
+			var pa: int = int(ad.get("physical_armor", 0))
+			var ma: int = int(ad.get("magic_armor", 0))
+			if pa != 0:
+				lines.append("  Physical armor: " + str(pa))
+			if ma != 0:
+				lines.append("  Magic armor: " + str(ma))
+	elif t == "weapon":
+		var w: Variant = item.get("weapon", {})
+		if w is Dictionary and not (w as Dictionary).is_empty():
+			var wd: Dictionary = w as Dictionary
+			lines.append("")
+			lines.append("Weapon:")
+			if wd.has("subtype"):
+				lines.append("  Type: " + str(wd.get("subtype")))
+			var dmg: int = int(wd.get("damage", 0))
+			var interval: float = float(wd.get("attack_interval", 1.0))
+			var handed: int = int(wd.get("handed", 1))
+			if dmg != 0:
+				lines.append("  Damage: " + str(dmg))
+			if interval > 0.0:
+				lines.append("  Speed: " + str(snapped(interval, 0.01)) + "s")
+				var dps: float = float(dmg) / interval if dmg > 0 else 0.0
+				if dps > 0.0:
+					lines.append("  DPS: " + str(snapped(dps, 0.1)))
+			lines.append("  Hands: " + ("2H" if handed >= 2 else "1H"))
 
 	# Equipment stats
 	var stats: Variant = item.get("stats_modifiers", {})
@@ -513,9 +632,9 @@ func _build_item_tooltip_text(item: Dictionary) -> String:
 
 func _format_money_bronze(total_bronze: int) -> String:
 	var bronze: int = max(total_bronze, 0)
-	var gold: int = bronze / 10000
+	var gold: int = int(bronze / 10000)
 	bronze -= gold * 10000
-	var silver: int = bronze / 100
+	var silver: int = int(bronze / 100)
 	bronze -= silver * 100
 	var parts: Array[String] = []
 	if gold > 0:

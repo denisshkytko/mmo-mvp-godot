@@ -1,7 +1,7 @@
 extends Node2D
 class_name BaseSpawnerGroup
 
-const SpawnPoint := preload("res://game/world/spawners/spawn_point.gd")
+## SpawnPoint is a global class (class_name). Avoid shadowing.
 
 @export_group("Respawn")
 @export var respawn_seconds: float = 10.0
@@ -125,7 +125,7 @@ func _get_spawn_scene() -> PackedScene:
 	return null
 
 
-func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
+func _call_apply_spawn_init(_mob: Node, _point: SpawnPoint, _level: int) -> void:
 	pass
 
 

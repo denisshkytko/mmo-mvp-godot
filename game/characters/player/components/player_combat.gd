@@ -1,7 +1,7 @@
 extends Node
 class_name PlayerCombat
 
-const NodeCache := preload("res://core/runtime/node_cache.gd")
+## NodeCache is a global helper (class_name). Avoid shadowing.
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 
 var p: Player = null

@@ -1,7 +1,7 @@
 extends Node
 
-const LootGenerator := preload("res://core/loot/loot_generator.gd")
-const LootProfile := preload("res://core/loot/loot_profile.gd")
+## LootGenerator and LootProfile are registered as global classes (class_name).
+## Avoid shadowing them with local constants to keep the project warning-free.
 
 func generate_loot_from_profile(profile: Resource, mob_level: int, context: Dictionary = {}) -> Dictionary:
 	# Profile is expected to be LootProfile, but we accept Resource to keep call-sites simple.

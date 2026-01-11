@@ -42,11 +42,9 @@ static func generate(profile: LootProfile, level: int, context: Dictionary = {})
 			pass
 
 	# Default "aggressive" mode
-	var gold_slot_used := false
 	if profile.gold_enabled and max_total > 0 and randf() <= profile.gold_chance:
 		out["gold"] = _roll_gold(profile, level)
 		if out["gold"] > 0:
-			gold_slot_used = true
 			max_total -= 1
 
 	# Junk

@@ -2,12 +2,7 @@ extends CharacterBody2D
 class_name FactionNPC
 
 @export var default_loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
-const LootRights := preload("res://core/loot/loot_rights.gd")
-const NodeCache := preload("res://core/runtime/node_cache.gd")
-const FactionTargeting := preload("res://core/faction/faction_targeting.gd")
-const RegenHelper := preload("res://core/combat/regen_helper.gd")
-const DeathPipeline := preload("res://core/world/death_pipeline.gd")
-const TargetMarkerHelper := preload("res://core/ui/target_marker_helper.gd")
+## Helpers below are global classes (class_name). Avoid shadowing them.
 
 signal died(corpse: Corpse)
 
@@ -153,11 +148,11 @@ func apply_spawn_init(
 	fighter_in: int,
 	interaction_in: int,
 	behavior_in: int,
-	aggro_radius_in: float,
-	leash_in: float,
+	_aggro_radius_in: float,
+	_leash_in: float,
 	patrol_radius_in: float,
 	patrol_pause_in: float,
-	speed_in: float,
+	_speed_in: float,
 	level_in: int,
 	loot_profile_in: LootProfile,
 	projectile_scene_in: PackedScene

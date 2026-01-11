@@ -2,7 +2,7 @@ extends "res://game/world/spawners/base_spawner_group.gd"
 class_name NamSpawnerGroup
 
 const MOB_SCENE: PackedScene = preload("res://game/characters/mobs/NormalAggressiveMob.tscn")
-const LootProfile = preload("res://core/loot/loot_profile.gd")
+## LootProfile is a global class (class_name). Avoid shadowing.
 
 enum Behavior { GUARD, PATROL }
 enum AttackMode { MELEE, RANGED }

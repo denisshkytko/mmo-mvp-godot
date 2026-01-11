@@ -1,7 +1,7 @@
 extends RefCounted
 class_name CombatReset
 
-const LootRights := preload("res://core/loot/loot_rights.gd")
+## LootRights is a global class (class_name). Keep it unshadowed.
 
 # ------------------------------------------------------------
 # CombatReset
