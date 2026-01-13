@@ -28,13 +28,11 @@ func _run() -> void:
 func _finish() -> void:
 	if _failures.is_empty():
 		print("SMOKE PASS")
-		OS.exit_code = 0
 		quit(0)
 		return
 	print("SMOKE FAIL (%d)" % _failures.size())
 	for msg in _failures:
-		printerr("- " + msg)
-	OS.exit_code = 1
+		print("- " + msg)
 	quit(1)
 
 
