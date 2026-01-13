@@ -11,13 +11,16 @@ var selected_character_data: Dictionary = {}
 # Navigation
 # -------------------------
 func goto_login() -> void:
-	get_tree().change_scene_to_file("res://ui/flow/LoginUI.tscn")
+	push_warning("AppState navigation is deprecated; use FlowRouter")
+	FlowRouter.go_login()
 
 func goto_character_select() -> void:
-	get_tree().change_scene_to_file("res://ui/flow/CharacterSelectUI.tscn")
+	push_warning("AppState navigation is deprecated; use FlowRouter")
+	FlowRouter.go_character_select()
 
 func enter_world() -> void:
-	get_tree().change_scene_to_file("res://game/scenes/Main.tscn")
+	push_warning("AppState navigation is deprecated; use FlowRouter")
+	FlowRouter.go_world()
 
 # -------------------------
 # Auth

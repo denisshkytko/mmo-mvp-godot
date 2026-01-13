@@ -65,7 +65,7 @@ func _on_enter_pressed() -> void:
 
 func _on_logout_pressed() -> void:
 	AppState.logout()
-	AppState.goto_login()
+	FlowRouter.go_login()
 
 
 func _on_delete_pressed() -> void:

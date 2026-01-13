@@ -8,27 +8,27 @@
   2. **Выбор персонажа / создание** — сцена `CharacterSelectUI.tscn`, логика в `ui/flow/character_select_ui.gd`, `ui/flow/character_select_hud.gd`, `ui/flow/create_character_hud.gd`.
   3. **Игровой мир** — сцена `res://game/scenes/Main.tscn`.
 
-- **Переключение сцен** происходит через автолоад `AppState` и метод `get_tree().change_scene_to_file()`:
-  - `goto_login()` → `LoginUI.tscn`.
-  - `goto_character_select()` → `CharacterSelectUI.tscn`.
-  - `enter_world()` → `game/scenes/Main.tscn`.
+- **Переключение сцен** происходит через автолоад `FlowRouter` и метод `get_tree().change_scene_to_file()`:
+  - `go_login()` → `LoginUI.tscn`.
+  - `go_character_select()` → `CharacterSelectUI.tscn`.
+  - `go_world()` → `game/scenes/Main.tscn`.
 - **Точки вызова переходов**:
-  - В логине успешный вход вызывает `AppState.goto_character_select()`.
-  - В Character Select кнопка Enter вызывает `AppState.enter_world()`.
-  - Кнопка Logout в Character Select вызывает `AppState.goto_login()`.
+  - В логине успешный вход вызывает `FlowRouter.go_character_select()`.
+  - В Character Select кнопка Enter вызывает `FlowRouter.go_world()`.
+  - Кнопка Logout в Character Select вызывает `FlowRouter.go_login()`.
 
 ## 1.2 Autoload-синглтоны
 
 ### AppState
 - **Путь к скрипту**: `res://core/managers/app_state.gd` (autoload в `project.godot`).
-- **Назначение**: хранит состояние авторизации и выбора персонажа, предоставляет навигацию между основными сценами.
+- **Назначение**: хранит состояние авторизации и выбора персонажа, без навигации между сценами.
 - **Данные/состояния**:
   - `is_logged_in` — флаг авторизации.
   - `selected_character_id` — id выбранного персонажа.
   - `selected_character_data` — полный словарь данных персонажа.
 - **Использование**:
-  - UI логина вызывает `login()` и `goto_character_select()`.
-  - UI выбора персонажа вызывает `get_characters()`, `select_character()`, `create_character()`, `delete_character()`, `enter_world()`, `goto_login()`.
+  - UI логина вызывает `login()`.
+  - UI выбора персонажа вызывает `get_characters()`, `select_character()`, `create_character()`, `delete_character()`.
   - Менеджер мира (GameManager) читает `selected_character_data` и сохраняет данные через `save_selected_character()`.
 
 ### FlowRouter
@@ -67,6 +67,6 @@
 - **stats/** — вычисление характеристик: `StatConstants` содержит константы формул, `StatCalculator` строит снапшоты статов игрока/мобов и breakdown для UI.
 - **loot/** — генерация лута: `LootGenerator`, `LootProfile`, `LootRights` и профили в `core/loot/profiles/`.
 - **save/** — подсистема сохранения: `SaveSystem` для чтения/записи данных персонажей в JSON.
-- **managers/** — менеджеры состояния: `AppState` управляет навигацией/аккаунтом, `GameManager` загружает персонажа в мир, управляет сменой зон и сохранением.
+- **managers/** — менеджеры состояния: `AppState` управляет состоянием аккаунта/персонажа, `FlowRouter` отвечает за навигацию сцен, `GameManager` загружает персонажа в мир, управляет сменой зон и сохранением.
 - **ui/** — UI-хелперы: `TargetMarkerHelper` управляет видимостью маркера цели.
 - **world/** — логика мира: `DeathPipeline` — единый пайплайн смерти (труп, лут, XP, очистка цели).
