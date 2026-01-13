@@ -7,6 +7,11 @@ const LOOT_PROFILE_PATH := "res://core/loot/profiles/loot_profile_aggressive_def
 var _failures: Array[String] = []
 var _datadb_initialized := false
 
+func _root_node_or_null(abs_path: NodePath) -> Node:
+	if get_root().has_node(abs_path):
+		return get_root().get_node(abs_path)
+	return null
+
 func _init() -> void:
 	randomize()
 	call_deferred("_run")
@@ -41,7 +46,7 @@ func _pass(message: String) -> void:
 
 
 func _test_datadb() -> void:
-	var db := get_node_or_null("/root/DataDB")
+	var db = _root_node_or_null(NodePath("/root/DataDB"))
 	if db == null:
 		_fail("DataDB autoload not found at /root/DataDB.")
 		return
@@ -67,7 +72,7 @@ func _test_datadb() -> void:
 
 
 func _test_save_system() -> void:
-	var save_system := get_node_or_null("/root/SaveSystem")
+	var save_system = _root_node_or_null(NodePath("/root/SaveSystem"))
 	if save_system == null:
 		_fail("SaveSystem autoload not found at /root/SaveSystem.")
 		return
@@ -101,7 +106,7 @@ func _test_save_system() -> void:
 
 
 func _test_loot_system() -> void:
-	var loot_system := get_node_or_null("/root/LootSystem")
+	var loot_system = _root_node_or_null(NodePath("/root/LootSystem"))
 	if loot_system == null:
 		_fail("LootSystem autoload not found at /root/LootSystem.")
 		return
@@ -126,7 +131,7 @@ func _test_loot_system() -> void:
 
 
 func _test_app_state() -> void:
-	var app_state := get_node_or_null("/root/AppState")
+	var app_state = _root_node_or_null(NodePath("/root/AppState"))
 	if app_state == null:
 		_fail("AppState autoload not found at /root/AppState.")
 		return
