@@ -66,15 +66,18 @@ func _flow_state_label(state: int) -> String:
 # -------------------------
 func goto_login() -> void:
 	push_warning("AppState navigation is deprecated; use FlowRouter")
-	FlowRouter.go_login()
+	var flow_router = get_node("/root/FlowRouter")
+	flow_router.go_login()
 
 func goto_character_select() -> void:
 	push_warning("AppState navigation is deprecated; use FlowRouter")
-	FlowRouter.go_character_select()
+	var flow_router = get_node("/root/FlowRouter")
+	flow_router.go_character_select()
 
 func enter_world() -> void:
 	push_warning("AppState navigation is deprecated; use FlowRouter")
-	FlowRouter.go_world()
+	var flow_router = get_node("/root/FlowRouter")
+	flow_router.go_world()
 
 # -------------------------
 # Auth
@@ -96,12 +99,14 @@ func logout() -> void:
 func get_characters() -> Array[Dictionary]:
 	if not has_node("/root/SaveSystem"):
 		return []
-	return SaveSystem.list_characters()
+	var save_system = _save_system()
+	return save_system.list_characters()
 
 func select_character(char_id: String) -> bool:
 	if not has_node("/root/SaveSystem"):
 		return false
-	var full: Dictionary = SaveSystem.load_character_full(char_id)
+	var save_system = _save_system()
+	var full: Dictionary = save_system.load_character_full(char_id)
 	if full.is_empty():
 		return false
 	selected_character_id = char_id
@@ -151,14 +156,16 @@ func create_character(char_name: String, class_id: String) -> String:
 		"inventory": {"gold": 0, "slots": []}
 	}
 
-	SaveSystem.save_character_full(data)
+	var save_system = _save_system()
+	save_system.save_character_full(data)
 	return id
 
 
 func delete_character(char_id: String) -> bool:
 	if not has_node("/root/SaveSystem"):
 		return false
-	var ok: bool = SaveSystem.delete_character(char_id)
+	var save_system = _save_system()
+	var ok: bool = save_system.delete_character(char_id)
 	if selected_character_id == char_id:
 		selected_character_id = ""
 		selected_character_data = {}
@@ -174,7 +181,11 @@ func save_selected_character(data: Dictionary) -> void:
 	# гарантируем id
 	data["id"] = selected_character_id
 
-	SaveSystem.save_character_full(data)
+	var save_system = _save_system()
+	save_system.save_character_full(data)
 
 	# обновляем кэш в памяти, чтобы UI/мир читали актуальные данные
 	selected_character_data = data
+
+func _save_system() -> Node:
+	return get_node("/root/SaveSystem")

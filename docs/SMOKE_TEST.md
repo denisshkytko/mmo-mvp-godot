@@ -30,3 +30,23 @@
 7. **Inventory/HUD**
    - Шаг: Открыть инвентарь после входа в мир.
    - Ожидаемый результат: Inventory/HUD корректно загружается без ретраев, ошибок и пустых данных после входа в мир.
+
+## Windows: запуск smoke
+
+Используйте PowerShell-скрипт для headless smoke-теста. Возврат кода:
+`SMOKE PASS` → exit code `0`, `SMOKE FAIL` → exit code `1`.
+
+### Через параметр
+
+```powershell
+.\scripts\run_smoke.ps1 -GodotPath "C:\path\to\Godot_v4.5.1-stable_win64.exe"
+echo $LASTEXITCODE
+```
+
+### Через переменную окружения
+
+```powershell
+$env:GODOT_PATH="C:\path\to\Godot_v4.5.1-stable_win64.exe"
+.\scripts\run_smoke.ps1
+echo $LASTEXITCODE
+```
