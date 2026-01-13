@@ -31,6 +31,11 @@
   - UI выбора персонажа вызывает `get_characters()`, `select_character()`, `create_character()`, `delete_character()`, `enter_world()`, `goto_login()`.
   - Менеджер мира (GameManager) читает `selected_character_data` и сохраняет данные через `save_selected_character()`.
 
+### FlowRouter
+- **Путь к скрипту**: `res://core/managers/flow_router.gd` (autoload в `project.godot`).
+- **Назначение**: слой навигации сцен для основных экранов (login, выбор персонажа, игровой мир).
+- **Ответственность**: единая точка переключения сцен через `SceneTree.change_scene_to_file()` без хранения состояния.
+
 ### SaveSystem
 - **Путь к скрипту**: `res://core/save/save_system.gd` (autoload в `project.godot`).
 - **Назначение**: сохранение и загрузка данных персонажей в JSON-файлы в `user://`.

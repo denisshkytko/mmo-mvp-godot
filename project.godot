@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 AppState="*res://core/managers/app_state.gd"
+FlowRouter="*res://core/managers/flow_router.gd"
 SaveSystem="*res://core/save/save_system.gd"
 DataDB="*res://core/data/data_db.gd"
 LootSystem="*res://core/data/loot_system.gd"
