@@ -555,8 +555,8 @@ func _build_item_tooltip_text(item: Dictionary) -> String:
 	var r: String = String(item.get("rarity", ""))
 	var rl: int = int(item.get("required_level", 1))
 	var rarity_col: String = _rarity_color_hex(r, t)
-	var name: String = String(item.get("name", "Item"))
-	lines.append("[color=%s][b]%s[/b][/color]" % [rarity_col, name])
+	var item_name: String = String(item.get("name", "Item"))
+	lines.append("[color=%s][b]%s[/b][/color]" % [rarity_col, item_name])
 	# Don't show rarity line for junk items (keep only type for now).
 	if r != "" and t.to_lower() != "junk":
 		lines.append("Rarity: [color=%s]%s[/color]" % [rarity_col, r])
@@ -711,9 +711,9 @@ func _format_consumable_effects(c: Dictionary) -> Array[String]:
 
 func _format_money_bronze(total_bronze: int) -> String:
 	var bronze: int = max(total_bronze, 0)
-	var gold: int = int(bronze / 10000)
+	var gold: int = bronze // 10000
 	bronze -= gold * 10000
-	var silver: int = int(bronze / 100)
+	var silver: int = bronze // 100
 	bronze -= silver * 100
 	var parts: Array[String] = []
 	if gold > 0:

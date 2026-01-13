@@ -1056,7 +1056,7 @@ func _on_tooltip_use_pressed() -> void:
 	_refresh()
 
 
-func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
+func _show_consumable_fail_toast(reason: String, _item_id: String) -> void:
 	_ensure_support_ui()
 	if _toast_label == null:
 		return

@@ -44,7 +44,6 @@ func _apply_consumable_hots(delta: float) -> void:
 	# Each buff may carry:
 	# hot_hp_per_sec, hot_mp_per_sec, hot_hp_left, hot_mp_left, hot_tick_acc
 	# We tick once per second (accumulator) and stop early if resource reaches max.
-	var changed_any: bool = false
 	for k in _buffs.keys():
 		var id: String = String(k)
 		var entry: Dictionary = _buffs[id] as Dictionary
@@ -70,7 +69,6 @@ func _apply_consumable_hots(delta: float) -> void:
 				if give > 0:
 					p.current_hp += give
 					hp_left -= give
-					changed_any = true
 			# Mana
 			if mp_left > 0 and mp_per > 0 and p.mana < p.max_mana:
 				var need2: int = p.max_mana - p.mana
@@ -79,7 +77,6 @@ func _apply_consumable_hots(delta: float) -> void:
 				if give2 > 0:
 					p.mana += give2
 					mp_left -= give2
-					changed_any = true
 
 		# Stop early if resource is full (even if some total left), per design.
 		var stop_early: bool = false
