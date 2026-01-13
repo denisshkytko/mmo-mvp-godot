@@ -17,6 +17,16 @@
   - В Character Select кнопка Enter вызывает `FlowRouter.go_world()`.
   - Кнопка Logout в Character Select вызывает `FlowRouter.go_login()`.
 
+## 1.1.1 Flow state
+
+- **Назначение**: явное состояние глобального флоу (автолоад `AppState`).
+- **Состояния**: `BOOT`, `LOGIN`, `CHARACTER_SELECT`, `WORLD`.
+- **Где выставляются**:
+  - При старте `AppState` переключает `BOOT -> LOGIN`.
+  - `FlowRouter.go_login()` выставляет `LOGIN`.
+  - `FlowRouter.go_character_select()` выставляет `CHARACTER_SELECT`.
+  - `FlowRouter.go_world()` выставляет `WORLD`.
+
 ## 1.2 Autoload-синглтоны
 
 ### AppState
