@@ -20,13 +20,33 @@ var selected_character_data: Dictionary = {}
 func _ready() -> void:
 	set_state(FlowState.LOGIN)
 
-func set_state(new_state: int) -> void:
+func can_transition(from_state: int, to_state: int) -> bool:
+	match from_state:
+		FlowState.BOOT:
+			return to_state == FlowState.LOGIN
+		FlowState.LOGIN:
+			return to_state == FlowState.CHARACTER_SELECT
+		FlowState.CHARACTER_SELECT:
+			return to_state == FlowState.LOGIN or to_state == FlowState.WORLD
+		FlowState.WORLD:
+			return to_state == FlowState.CHARACTER_SELECT
+		_:
+			return false
+
+func set_state(new_state: int) -> bool:
 	if current_state == new_state:
-		return
+		return false
+	if not can_transition(current_state, new_state):
+		push_warning("[Flow] illegal transition %s -> %s" % [
+			_flow_state_label(current_state),
+			_flow_state_label(new_state)
+		])
+		return false
 	var old_state := current_state
 	current_state = new_state
 	emit_signal("state_changed", old_state, new_state)
 	print("[Flow] %s -> %s" % [_flow_state_label(old_state), _flow_state_label(new_state)])
+	return true
 
 func _flow_state_label(state: int) -> String:
 	match state:
