@@ -92,12 +92,12 @@ func _test_save_system() -> void:
 	else:
 		_pass("SaveSystem save/load OK.")
 
-	var deleted := save_system.delete_character(test_id)
+	var deleted: bool = bool(save_system.delete_character(test_id))
 	if not deleted:
 		_fail("SaveSystem failed to delete test character %s." % test_id)
 		return
 
-	var post_delete := save_system.load_character_full(test_id)
+	var post_delete = save_system.load_character_full(test_id)
 	if not post_delete.is_empty():
 		_fail("SaveSystem cleanup failed for %s." % test_id)
 		return
@@ -141,7 +141,7 @@ func _test_app_state() -> void:
 		return
 
 	if app_state.current_state != AppState.FlowState.LOGIN:
-		var boot_ok := app_state.set_state(AppState.FlowState.LOGIN)
+		var boot_ok: bool = bool(app_state.set_state(AppState.FlowState.LOGIN))
 		if not boot_ok:
 			_fail("AppState failed to transition to LOGIN from %s." % app_state.current_state)
 			return
@@ -158,7 +158,7 @@ func _test_app_state() -> void:
 		_fail("AppState failed WORLD -> CHARACTER_SELECT.")
 		return
 
-	var illegal_ok := app_state.set_state(AppState.FlowState.BOOT)
+	var illegal_ok: bool = bool(app_state.set_state(AppState.FlowState.BOOT))
 	if illegal_ok:
 		_fail("AppState allowed illegal CHARACTER_SELECT -> BOOT transition.")
 		return
