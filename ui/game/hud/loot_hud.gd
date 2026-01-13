@@ -13,7 +13,7 @@ extends CanvasLayer
 @onready var close_button: Button = $Panel/CloseButton
 
 @onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_text: Label = $TooltipPanel/Text
+@onready var tooltip_text: RichTextLabel = $TooltipPanel/Text
 
 var _corpse: Node = null
 var _player: Node = null
@@ -489,16 +489,11 @@ func _show_tooltip_for_view(view_index: int) -> void:
 		_hide_tooltip()
 		return
 
-	# Update tooltip text in a way that fully resets internal state.
-	# Setting .text alone can keep previous scroll offset in some Godot versions.
+	# RichTextLabel: assign BBCode via .text (bbcode_enabled=true).
+	# Clear first to avoid any stale layout.
 	if tooltip_text.has_method("clear"):
 		tooltip_text.call("clear")
-	# Also clear plain text field to fully reset internal state.
-	tooltip_text.text = ""
-	if tooltip_text.has_method("add_text"):
-		tooltip_text.call("add_text", text_out)
-	else:
-		tooltip_text.text = text_out
+	tooltip_text.text = text_out
 
 	tooltip_panel.visible = true
 	# Defer layout + scroll reset to the next frame so the control has updated its content
@@ -522,15 +517,23 @@ func _apply_tooltip_layout() -> void:
 	tooltip_text.custom_minimum_size = Vector2(width - 20.0, 0)
 
 	# Ask Godot for the wrapped text height and apply padding.
-	var label_size: Vector2 = tooltip_text.get_combined_minimum_size()
-	var height: float = max(32.0, float(label_size.y) + 16.0)
+	# RichTextLabel exposes content height.
+	var content_h: float = float(tooltip_text.get_content_height())
+	var height: float = max(32.0, content_h + 16.0)
 	tooltip_panel.size = Vector2(width, height)
 
 	_position_tooltip_beside_panel()
 
 func _reset_tooltip_scroll() -> void:
-	# Label tooltip has no scroll.
-	pass
+	# RichTextLabel can keep a previous scroll offset. Ensure it is reset.
+	if tooltip_text == null:
+		return
+	if tooltip_text.has_method("scroll_to_line"):
+		tooltip_text.call("scroll_to_line", 0)
+	# Also force v_scroll to 0 if the scrollbar exists.
+	var sb := tooltip_text.get_v_scroll_bar() if tooltip_text.has_method("get_v_scroll_bar") else null
+	if sb != null:
+		sb.value = 0
 
 func _position_tooltip_beside_panel() -> void:
 	# Tooltip is anchored to the loot window: to the right with a small gap,
@@ -548,14 +551,27 @@ func _build_item_tooltip_text(item: Dictionary) -> String:
 		return "Unknown item"
 
 	var lines: Array[String] = []
-	lines.append(String(item.get("name", "Item")))
-
 	var t: String = String(item.get("type", ""))
 	var r: String = String(item.get("rarity", ""))
 	var rl: int = int(item.get("required_level", 1))
+	var rarity_col: String = _rarity_color_hex(r, t)
+	var name: String = String(item.get("name", "Item"))
+	lines.append("[color=%s][b]%s[/b][/color]" % [rarity_col, name])
+	# Don't show rarity line for junk items (keep only type for now).
+	if r != "" and t.to_lower() != "junk":
+		lines.append("Rarity: [color=%s]%s[/color]" % [rarity_col, r])
 	if t != "":
-		lines.append("Type: " + t + ("  (" + r + ")" if r != "" else ""))
-	lines.append("Required level: " + str(rl))
+		lines.append("Type: " + t)
+	# Required level (only for usable items; red if player level too low)
+	var show_req: bool = t in ["weapon", "armor", "bag", "food", "drink", "potion", "accessory", "offhand"]
+	if show_req and rl > 0:
+		var p_lvl: int = 0
+		if _player != null and is_instance_valid(_player) and ("level" in _player):
+			p_lvl = int(_player.level)
+		var lvl_line := "Required level: " + str(rl)
+		if p_lvl > 0 and p_lvl < rl:
+			lvl_line = "[color=#ff5555]%s[/color]" % lvl_line
+		lines.append(lvl_line)
 
 	# Base gear stats (armor/weapon)
 	if t == "armor":
@@ -614,13 +630,19 @@ func _build_item_tooltip_text(item: Dictionary) -> String:
 			for k in sd.keys():
 				lines.append("  " + str(k) + ": " + str(sd[k]))
 
-	# Consumable effects
+	# Consumable effects (formatted)
 	var cons: Variant = item.get("consumable", {})
 	if cons is Dictionary and not (cons as Dictionary).is_empty():
-		lines.append("")
-		lines.append("Effects:")
-		for k in (cons as Dictionary).keys():
-			lines.append("  " + str(k) + ": " + str((cons as Dictionary)[k]))
+		var eff_lines: Array[String] = _format_consumable_effects(cons as Dictionary)
+		if eff_lines.size() > 0:
+			lines.append("")
+			lines.append("Effects:")
+			for el in eff_lines:
+				lines.append("  " + el)
+		# Cooldown info (static)
+		var cd_total := _get_consumable_cd_total_for_item(item)
+		if cd_total > 0.0:
+			lines.append("Cooldown: %ds" % int(cd_total))
 
 	# Value
 	var price: int = int(item.get("vendor_price_bronze", 0))
@@ -628,6 +650,63 @@ func _build_item_tooltip_text(item: Dictionary) -> String:
 	lines.append("Value: " + _format_money_bronze(price))
 
 	return "\n".join(lines)
+
+
+func _rarity_color_hex(rarity: String, typ: String) -> String:
+	var r := rarity.to_lower()
+	if r == "" and typ == "junk":
+		r = "junk"
+	match r:
+		"junk":
+			return "#8a8a8a"
+		"common":
+			return "#ffffff"
+		"uncommon":
+			return "#3bdc3b"
+		"rare":
+			return "#4aa3ff"
+		"epic":
+			return "#a335ee"
+		"legendary":
+			return "#ff8000"
+		_:
+			return "#ffffff"
+
+
+func _get_consumable_cd_total_for_item(item: Dictionary) -> float:
+	var typ: String = String(item.get("type", "")).to_lower()
+	if typ == "potion":
+		return 5.0
+	if typ == "food" or typ == "drink":
+		return 10.0
+	return 0.0
+
+
+func _format_consumable_effects(c: Dictionary) -> Array[String]:
+	var out: Array[String] = []
+	var instant: bool = bool(c.get("instant", false))
+	if instant:
+		var hp: int = int(c.get("hp", 0))
+		var mp: int = int(c.get("mp", 0))
+		if hp > 0:
+			out.append("restores %d hp" % hp)
+		if mp > 0:
+			out.append("restores %d mp" % mp)
+	else:
+		var dur: int = int(c.get("duration_sec", 0))
+		var hp_t: int = int(c.get("hp_total", 0))
+		var mp_t: int = int(c.get("mp_total", 0))
+		if hp_t > 0:
+			if dur > 0:
+				out.append("restores %d hp over %ds" % [hp_t, dur])
+			else:
+				out.append("restores %d hp" % hp_t)
+		if mp_t > 0:
+			if dur > 0:
+				out.append("restores %d mp over %ds" % [mp_t, dur])
+			else:
+				out.append("restores %d mp" % mp_t)
+	return out
 
 
 func _format_money_bronze(total_bronze: int) -> String:

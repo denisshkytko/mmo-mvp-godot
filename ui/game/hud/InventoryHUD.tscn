@@ -28,15 +28,16 @@ cache/0/16/0/scale = 1.0
 script = ExtResource("1_wqexf")
 
 [node name="Panel" type="Panel" parent="."]
+visible = false
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -349.0
-offset_top = -467.0
-offset_right = -19.0
-offset_bottom = -102.0
+offset_left = -368.0
+offset_top = -463.0
+offset_right = -38.0
+offset_bottom = -98.0
 grow_horizontal = 0
 grow_vertical = 0
 
@@ -62,291 +63,6 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
 
 [node name="Text" type="Label" parent="Panel/Grid/Slot0"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot1" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot1"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot2" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot2"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot3" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot4" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot4"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot5" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot5"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot6" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot6"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot7" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot7"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot8" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot8"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot9" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot9"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot10" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot10"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot11" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot11"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot12" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot12"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot13" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot13"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot14" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot14"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = SubResource("FontFile_wqexf")
-theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-clip_text = true
-
-[node name="Slot15" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
-
-[node name="Text" type="Label" parent="Panel/Grid/Slot15"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -397,6 +113,81 @@ disabled = true
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 text = "Bag"
+
+[node name="QuickBar" type="VBoxContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1120.0
+offset_top = -230.0
+offset_right = -8.0
+offset_bottom = -94.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Quick0" type="Button" parent="QuickBar"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+
+[node name="Quick1" type="Button" parent="QuickBar"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+
+[node name="Quick2" type="Button" parent="QuickBar"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+
+[node name="Quick3" type="Button" parent="QuickBar"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+
+[node name="Quick4" type="Button" parent="QuickBar"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+
+[node name="InvTooltip" type="Panel" parent="."]
+visible = false
+z_index = 60
+custom_minimum_size = Vector2(300, 0)
+offset_right = 300.0
+offset_bottom = 10.0
+
+[node name="Margin" type="MarginContainer" parent="InvTooltip"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="InvTooltip/Margin"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Text" type="RichTextLabel" parent="InvTooltip/Margin/VBox"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+
+[node name="UseButton" type="Button" parent="InvTooltip/Margin/VBox"]
+layout_mode = 2
+visible = false
+text = "Использовать"
+
 
 [node name="BagFullDialog" type="AcceptDialog" parent="."]
 title = "Inventory"

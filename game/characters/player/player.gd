@@ -72,6 +72,101 @@ var mana: int = 60
 
 var is_dead: bool = false
 
+# --- Consumables (food / drink / potion) ---
+var _consumable_cd_end_sec: Dictionary = {} # kind -> float end time
+
+func _now_sec() -> float:
+	return float(Time.get_ticks_msec()) / 1000.0
+
+func is_consumable_on_cooldown(kind: String) -> bool:
+	if kind == "":
+		return false
+	if not _consumable_cd_end_sec.has(kind):
+		return false
+	return _now_sec() < float(_consumable_cd_end_sec.get(kind, 0.0))
+
+func start_consumable_cooldown(kind: String, seconds: float) -> void:
+	if kind == "" or seconds <= 0.0:
+		return
+	_consumable_cd_end_sec[kind] = _now_sec() + seconds
+
+func try_apply_consumable(item_id: String) -> Dictionary:
+	# Applies the consumable's effect (instant or over-time) WITHOUT removing the item from inventory.
+	# Returns {"ok": bool, "reason": String, "kind": String}
+	if item_id == "" or is_dead:
+		return {"ok": false, "reason": "invalid", "kind": ""}
+	var db := get_node_or_null("/root/DataDB")
+	if db == null or not db.has_method("get_item"):
+		return {"ok": false, "reason": "no_db", "kind": ""}
+	var meta: Dictionary = db.call("get_item", item_id) as Dictionary
+	var typ: String = String(meta.get("type", "")).to_lower()
+	if typ != "food" and typ != "drink" and typ != "potion":
+		return {"ok": false, "reason": "not_consumable", "kind": ""}
+	# Required level gate (for usable items).
+	var req_lvl: int = int(meta.get("required_level", 1))
+	if req_lvl > level:
+		return {"ok": false, "reason": "level", "kind": "" , "required_level": req_lvl}
+	var cons: Dictionary = meta.get("consumable", {}) as Dictionary
+	var kind: String = String(cons.get("kind", typ)).to_lower()
+	if is_consumable_on_cooldown(kind):
+		return {"ok": false, "reason": "cooldown", "kind": kind}
+
+	# Potions use keys hp/mp, while food/drink use hp_total/mp_total.
+	var hp_total: int = int(cons.get("hp_total", cons.get("hp", 0)))
+	var mp_total: int = int(cons.get("mp_total", cons.get("mp", 0)))
+	var instant: bool = bool(cons.get("instant", false))
+	var duration_sec: float = float(cons.get("duration_sec", 0.0))
+
+	# Determine if anything can be applied.
+	var hp_need: int = max(0, max_hp - current_hp)
+	var mp_need: int = max(0, max_mana - mana)
+	var can_hp: bool = hp_total > 0 and hp_need > 0
+	var can_mp: bool = mp_total > 0 and mp_need > 0
+	if not can_hp and not can_mp:
+		# Show which resource is full (best-effort).
+		var r := "full"
+		if hp_total > 0 and mp_total > 0:
+			r = "hpmp_full"
+		elif hp_total > 0:
+			r = "hp_full"
+		elif mp_total > 0:
+			r = "mp_full"
+		return {"ok": false, "reason": r, "kind": kind}
+
+	# Apply effect
+	if instant or duration_sec <= 0.0:
+		if can_hp:
+			var add_hp: int = min(hp_total, hp_need)
+			current_hp = min(max_hp, current_hp + add_hp)
+		if can_mp:
+			var add_mp: int = min(mp_total, mp_need)
+			mana = min(max_mana, mana + add_mp)
+		# Cooldown
+		start_consumable_cooldown(kind, 5.0 if typ == "potion" else 10.0)
+		return {"ok": true, "reason": "", "kind": kind}
+
+	# Over-time: heal/restore once per second, capped by total.
+	var hp_per_sec: int = 0
+	var mp_per_sec: int = 0
+	if hp_total > 0:
+		hp_per_sec = int(ceil(float(hp_total) / max(1.0, duration_sec)))
+	if mp_total > 0:
+		mp_per_sec = int(ceil(float(mp_total) / max(1.0, duration_sec)))
+	# Unique id so multiple consumables can stack.
+	var buff_id: String = "cons_%s_%d" % [item_id, int(Time.get_ticks_msec())]
+	var data := {
+		"consumable": true,
+		"kind": kind,
+		"hot_hp_per_sec": hp_per_sec,
+		"hot_mp_per_sec": mp_per_sec,
+		"hot_hp_left": hp_total,
+		"hot_mp_left": mp_total,
+		"hot_tick_acc": 0.0,
+	}
+	add_or_refresh_buff(buff_id, duration_sec, data)
+	start_consumable_cooldown(kind, 5.0 if typ == "potion" else 10.0)
+	return {"ok": true, "reason": "", "kind": kind}
+
 # --- Components ---
 @onready var c_stats: PlayerStats = $Components/Stats as PlayerStats
 @onready var c_buffs: PlayerBuffs = $Components/Buffs as PlayerBuffs
@@ -179,9 +274,31 @@ func get_buffs_snapshot() -> Array:
 
 # CharacterHUD reads this if present
 func get_stats_snapshot() -> Dictionary:
-	if c_stats != null:
-		return c_stats.get_stats_snapshot()
-	return {}
+	if c_stats == null:
+		return {}
+	var snap: Dictionary = c_stats.get_stats_snapshot()
+	# Add consumable HOT contribution (food/drink buffs) into regen numbers so CharacterHUD shows it.
+	if c_buffs != null and c_buffs.has_method("get_consumable_hot_totals") and snap.has("derived"):
+		var totals: Dictionary = c_buffs.call("get_consumable_hot_totals") as Dictionary
+		var add_hp: float = float(totals.get("hp_per_sec", 0.0))
+		var add_mp: float = float(totals.get("mp_per_sec", 0.0))
+		if add_hp != 0.0 or add_mp != 0.0:
+			var derived: Dictionary = snap.get("derived", {}) as Dictionary
+			derived["hp_regen"] = float(derived.get("hp_regen", 0.0)) + add_hp
+			derived["mana_regen"] = float(derived.get("mana_regen", 0.0)) + add_mp
+			snap["derived"] = derived
+			# Optional breakdown lines
+			var breakdown: Dictionary = snap.get("derived_breakdown", {}) as Dictionary
+			if add_hp != 0.0:
+				var arr: Array = breakdown.get("hp_regen", [])
+				arr.append({"source": "food/drink", "value": add_hp})
+				breakdown["hp_regen"] = arr
+			if add_mp != 0.0:
+				var arr2: Array = breakdown.get("mana_regen", [])
+				arr2.append({"source": "food/drink", "value": add_mp})
+				breakdown["mana_regen"] = arr2
+			snap["derived_breakdown"] = breakdown
+	return snap
 
 
 func _get_game_manager() -> Node:
@@ -214,6 +331,22 @@ func add_xp(amount: int) -> void:
 func get_inventory_snapshot() -> Dictionary:
 	return c_inv.get_inventory_snapshot()
 
+
+func apply_inventory_snapshot(snapshot: Dictionary) -> void:
+	# UI / save helpers: apply inventory slots + equipped bags back to component.
+	if c_inv != null:
+		c_inv.apply_inventory_snapshot(snapshot)
+
+
+
+func try_equip_bag_from_inventory_slot(inv_slot_index: int, bag_index: int) -> bool:
+	return c_inv.try_equip_bag_from_inventory_slot(inv_slot_index, bag_index)
+
+func try_unequip_bag_to_inventory(bag_index: int, preferred_slot_index: int = -1) -> bool:
+	return c_inv.try_unequip_bag_to_inventory(bag_index, preferred_slot_index)
+
+func try_move_or_swap_bag_slots(from_bag_index: int, to_bag_index: int) -> bool:
+	return c_inv.try_move_or_swap_bag_slots(from_bag_index, to_bag_index)
 
 # Damage API
 func take_damage(raw_damage: int) -> void:
