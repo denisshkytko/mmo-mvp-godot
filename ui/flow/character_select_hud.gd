@@ -60,7 +60,7 @@ func _on_enter_pressed() -> void:
 		return
 	var ok: bool = AppState.select_character(_selected_id)
 	if ok:
-		AppState.enter_world()
+		FlowRouter.go_world()
 
 
 func _on_logout_pressed() -> void:
