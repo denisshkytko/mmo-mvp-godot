@@ -33,7 +33,6 @@ func _try_login() -> void:
 
 	if ok:
 		error_label.text = ""
-		if app_state.has_method("goto_character_select"):
-			app_state.call("goto_character_select")
+		FlowRouter.go_character_select()
 	else:
 		error_label.text = "Invalid login or password"
