@@ -66,15 +66,18 @@ func _flow_state_label(state: int) -> String:
 # -------------------------
 func goto_login() -> void:
 	push_warning("AppState navigation is deprecated; use FlowRouter")
-	FlowRouter.go_login()
+	var flow_router = get_node("/root/FlowRouter")
+	flow_router.go_login()
 
 func goto_character_select() -> void:
 	push_warning("AppState navigation is deprecated; use FlowRouter")
-	FlowRouter.go_character_select()
+	var flow_router = get_node("/root/FlowRouter")
+	flow_router.go_character_select()
 
 func enter_world() -> void:
 	push_warning("AppState navigation is deprecated; use FlowRouter")
-	FlowRouter.go_world()
+	var flow_router = get_node("/root/FlowRouter")
+	flow_router.go_world()
 
 # -------------------------
 # Auth
