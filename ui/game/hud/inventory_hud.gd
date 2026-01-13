@@ -795,9 +795,9 @@ func _hide_tooltip() -> void:
 func _resize_tooltip_to_content() -> void:
 	if _tooltip_panel == null or _tooltip_label == null:
 		return
-	# Give theme/layout a frame to settle so the first tooltip doesn't flash a blank panel.
-	_tooltip_panel.queue_sort()
-	_tooltip_label.queue_sort()
+	# Nudge the label to recalc its minimum size before the first measurement.
+	if _tooltip_label.has_method("minimum_size_changed"):
+		_tooltip_label.call_deferred("minimum_size_changed")
 	await get_tree().process_frame
 	var content_h: float = _tooltip_label.get_content_height()
 	var btn_h: float = 0.0
