@@ -1,10 +1,13 @@
 extends Node
 
+signal ready
+
 const ITEMS_PATH := "res://core/data/json/items_db_1500_v6.json"
 const MOBS_PATH := "res://core/data/json/mobs.json"
 
 var items: Dictionary = {}
 var mobs: Dictionary = {}
+var is_ready: bool = false
 
 func _ready() -> void:
 	_reload_all()
@@ -13,6 +16,9 @@ func _reload_all() -> void:
 	# Единственный источник предметов: items_db_1500_v6.json
 	items = _load_items_any_schema(ITEMS_PATH)
 	mobs = _load_json_dict(MOBS_PATH)
+	if not is_ready:
+		is_ready = true
+		emit_signal("ready")
 
 
 func _load_items_any_schema(path: String) -> Dictionary:
@@ -81,5 +87,4 @@ func get_mob(id: String) -> Dictionary:
 	if mobs.has(id):
 		return mobs[id] as Dictionary
 	return {}
-
 
