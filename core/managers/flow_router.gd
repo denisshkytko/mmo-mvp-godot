@@ -1,5 +1,7 @@
 extends Node
 
+class_name FlowRouter
+
 const LOGIN_SCENE: String = "res://ui/flow/LoginUI.tscn"
 const CHARACTER_SELECT_SCENE: String = "res://ui/flow/CharacterSelectUI.tscn"
 const WORLD_SCENE: String = "res://game/scenes/Main.tscn"
