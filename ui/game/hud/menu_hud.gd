@@ -33,7 +33,7 @@ func _save_now() -> void:
 func _exit_world() -> void:
 	_save_now()
 	if has_node("/root/AppState"):
-		AppState.goto_character_select()
+		FlowRouter.go_character_select()
 
 func _exit_game() -> void:
 	_save_now()
