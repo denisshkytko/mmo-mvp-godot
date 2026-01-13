@@ -2,10 +2,44 @@ extends Node
 
 const DEFAULT_ZONE: String = "res://game/world/zones/Zone_01.tscn"
 
+enum FlowState {
+	BOOT,
+	LOGIN,
+	CHARACTER_SELECT,
+	WORLD
+}
+
+signal state_changed(old_state: int, new_state: int)
+
 var is_logged_in: bool = false
+var current_state: int = FlowState.BOOT
 
 var selected_character_id: String = ""
 var selected_character_data: Dictionary = {}
+
+func _ready() -> void:
+	set_state(FlowState.LOGIN)
+
+func set_state(new_state: int) -> void:
+	if current_state == new_state:
+		return
+	var old_state := current_state
+	current_state = new_state
+	emit_signal("state_changed", old_state, new_state)
+	print("[Flow] %s -> %s" % [_flow_state_label(old_state), _flow_state_label(new_state)])
+
+func _flow_state_label(state: int) -> String:
+	match state:
+		FlowState.BOOT:
+			return "BOOT"
+		FlowState.LOGIN:
+			return "LOGIN"
+		FlowState.CHARACTER_SELECT:
+			return "CHARACTER_SELECT"
+		FlowState.WORLD:
+			return "WORLD"
+		_:
+			return "UNKNOWN"
 
 # -------------------------
 # Navigation
