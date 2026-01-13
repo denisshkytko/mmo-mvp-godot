@@ -9,7 +9,7 @@ if (-not $GodotPath -or $GodotPath.Trim() -eq "") {
 
 if (-not $GodotPath -or $GodotPath.Trim() -eq "") {
     Write-Error "Godot path not provided. Use -GodotPath or set GODOT_PATH."
-    exit 1
+    exit 2
 }
 
 $arguments = @("--headless", "--script", "res://tests/run_headless.gd")
