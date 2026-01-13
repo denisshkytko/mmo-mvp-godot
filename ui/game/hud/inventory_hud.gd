@@ -762,7 +762,7 @@ func _show_tooltip_for_slot(slot_index: int) -> void:
 	var count: int = int((v as Dictionary).get("count", 0))
 	var db := get_node_or_null("/root/DataDB")
 	if db != null and not db.is_ready:
-		await db.ready
+		await db.initialized
 	_tooltip_panel.visible = false
 	# Collapse first so an empty background can never flash on first open.
 	_tooltip_panel.custom_minimum_size = Vector2(_tooltip_panel.custom_minimum_size.x, 0)
