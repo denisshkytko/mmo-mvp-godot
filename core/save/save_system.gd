@@ -18,13 +18,40 @@ func _read_json(path: String) -> Variant:
 		return null
 	return JSON.parse_string(f.get_as_text())
 
-func _write_json(path: String, data: Variant) -> void:
+func _atomic_write_json(path: String, data: Variant) -> bool:
 	_ensure_dirs()
-	var f := FileAccess.open(path, FileAccess.WRITE)
+	var tmp_path := path + ".tmp"
+	var f := FileAccess.open(tmp_path, FileAccess.WRITE)
 	if f == null:
-		push_error("Cannot write file: " + path)
-		return
+		push_error("Cannot write file: " + tmp_path)
+		return false
 	f.store_string(JSON.stringify(data, "\t"))
+	var err := f.get_error()
+	f.close()
+	if err != OK:
+		push_error("Cannot write file: " + tmp_path)
+		return false
+
+	var bak_path := path + ".bak"
+	if FileAccess.file_exists(path):
+		if FileAccess.file_exists(bak_path):
+			DirAccess.remove_absolute(bak_path)
+		var bak_err := DirAccess.rename_absolute(path, bak_path)
+		if bak_err != OK:
+			push_error("Cannot backup file: " + path)
+			return false
+
+	var rename_err := DirAccess.rename_absolute(tmp_path, path)
+	if rename_err != OK:
+		push_error("Cannot replace file: " + path)
+		return false
+
+	if FileAccess.file_exists(tmp_path):
+		DirAccess.remove_absolute(tmp_path)
+	return true
+
+func _write_json(path: String, data: Variant) -> void:
+	_atomic_write_json(path, data)
 
 func load_index() -> Dictionary:
 	_ensure_dirs()
