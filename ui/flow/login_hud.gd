@@ -17,6 +17,27 @@ func _ready() -> void:
 	password_edit.text_submitted.connect(func(_t: String) -> void: _try_login())
 
 	username_edit.grab_focus()
+	_connect_app_state()
+
+func _connect_app_state() -> void:
+	var app_state := get_node_or_null("/root/AppState")
+	if app_state == null:
+		return
+	if not app_state.state_changed.is_connected(_on_state_changed):
+		app_state.state_changed.connect(_on_state_changed)
+	_on_state_changed(app_state.current_state, app_state.current_state)
+
+func _on_state_changed(_old_state: int, new_state: int) -> void:
+	if new_state == AppState.FlowState.LOGIN:
+		error_label.text = ""
+		login_button.disabled = false
+		username_edit.editable = true
+		password_edit.editable = true
+		username_edit.grab_focus()
+	else:
+		login_button.disabled = true
+		username_edit.editable = false
+		password_edit.editable = false
 
 func _on_login_pressed() -> void:
 	_try_login()
