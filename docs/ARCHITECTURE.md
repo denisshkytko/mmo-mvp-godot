@@ -33,6 +33,7 @@
   - `FlowRouter.go_login()` выставляет `LOGIN`.
   - `FlowRouter.go_character_select()` выставляет `CHARACTER_SELECT`.
   - `FlowRouter.go_world()` выставляет `WORLD`.
+- **Синхронизация UI**: экраны подписываются на `AppState.state_changed`, чтобы сбрасывать локальные состояния и обновлять UI при возвратах между сценами.
 
 ## 1.2 Autoload-синглтоны
 

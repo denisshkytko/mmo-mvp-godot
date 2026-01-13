@@ -8,6 +8,24 @@ func _ready() -> void:
 		create_hud.connect("character_created", _on_character_created)
 
 	_refresh_visibility()
+	_connect_app_state()
+
+func _connect_app_state() -> void:
+	var app_state := get_node_or_null("/root/AppState")
+	if app_state == null:
+		return
+	if not app_state.state_changed.is_connected(_on_state_changed):
+		app_state.state_changed.connect(_on_state_changed)
+	_on_state_changed(app_state.current_state, app_state.current_state)
+
+func _on_state_changed(_old_state: int, new_state: int) -> void:
+	if new_state == AppState.FlowState.CHARACTER_SELECT:
+		_refresh_visibility()
+		if select_hud != null and select_hud.has_method("reset_transient_ui"):
+			select_hud.call("reset_transient_ui")
+	else:
+		if select_hud != null and select_hud.has_method("reset_transient_ui"):
+			select_hud.call("reset_transient_ui")
 
 func _refresh_visibility() -> void:
 	var chars: Array[Dictionary] = AppState.get_characters()

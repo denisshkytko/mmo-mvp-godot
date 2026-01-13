@@ -43,6 +43,11 @@ func refresh_list() -> void:
 	else:
 		_update_enter_state()
 
+func reset_transient_ui() -> void:
+	_selected_id = ""
+	list.deselect_all()
+	_update_enter_state()
+
 
 func _on_item_selected(index: int) -> void:
 	_selected_id = String(list.get_item_metadata(index))

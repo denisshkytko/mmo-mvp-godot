@@ -10,6 +10,21 @@ func _ready() -> void:
 	menu_button.pressed.connect(_toggle)
 	exit_world.pressed.connect(_exit_world)
 	exit_game.pressed.connect(_exit_game)
+	_connect_app_state()
+
+func _connect_app_state() -> void:
+	var app_state := get_node_or_null("/root/AppState")
+	if app_state == null:
+		return
+	if not app_state.state_changed.is_connected(_on_state_changed):
+		app_state.state_changed.connect(_on_state_changed)
+	_on_state_changed(app_state.current_state, app_state.current_state)
+
+func _on_state_changed(_old_state: int, new_state: int) -> void:
+	if new_state == AppState.FlowState.WORLD:
+		panel.visible = false
+	else:
+		panel.visible = false
 
 func _toggle() -> void:
 	panel.visible = not panel.visible
