@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://core/loot/loot_profile.gd" id="1"]
 
 [resource]
+script = ExtResource("1")
 mode = 0
 # Gold
 gold_enabled = true
