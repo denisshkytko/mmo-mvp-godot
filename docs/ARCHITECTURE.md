@@ -21,6 +21,13 @@
 
 - **Назначение**: явное состояние глобального флоу (автолоад `AppState`).
 - **Состояния**: `BOOT`, `LOGIN`, `CHARACTER_SELECT`, `WORLD`.
+- **Допустимые переходы**:
+  - `BOOT -> LOGIN`
+  - `LOGIN -> CHARACTER_SELECT`
+  - `CHARACTER_SELECT -> LOGIN`
+  - `CHARACTER_SELECT -> WORLD`
+  - `WORLD -> CHARACTER_SELECT`
+- **Guard-проверка**: `AppState.set_state()` проверяет переход через `can_transition()`. Если переход запрещён — состояние не меняется, сцена не переключается, в лог пишется warning.
 - **Где выставляются**:
   - При старте `AppState` переключает `BOOT -> LOGIN`.
   - `FlowRouter.go_login()` выставляет `LOGIN`.
