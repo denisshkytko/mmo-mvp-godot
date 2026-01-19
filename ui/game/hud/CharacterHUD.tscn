@@ -31,6 +31,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+unique_name_in_owner = true
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel"]
 layout_mode = 1
@@ -52,6 +53,7 @@ theme_override_constants/separation = 5
 custom_minimum_size = Vector2(290, 30)
 layout_mode = 2
 text = "Character"
+unique_name_in_owner = true
 
 [node name="ContentRow" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(510, 270)
@@ -64,6 +66,7 @@ custom_minimum_size = Vector2(220, 270)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+unique_name_in_owner = true
 
 [node name="Margin" type="MarginContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel"]
 layout_mode = 1
@@ -440,6 +443,7 @@ z_index = 200
 custom_minimum_size = Vector2(320, 255)
 layout_mode = 2
 fit_content = true
+unique_name_in_owner = true
 
 [node name="TooltipPanel" type="Panel" parent="."]
 visible = false

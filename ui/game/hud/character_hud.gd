@@ -3,10 +3,10 @@ extends Control
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 
 @onready var character_button: Button = $CharacterButton
-@onready var panel: Panel = $Panel
-@onready var title_label: Label = $Panel/MarginContainer/VBoxContainer/TitleLabel
-@onready var stats_text: RichTextLabel = $Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel/StatsScroll/StatsText
-@onready var equipment_panel: Panel = $Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel
+@onready var panel: Panel = %Panel
+@onready var title_label: Label = %TitleLabel
+@onready var stats_text: RichTextLabel = %StatsText
+@onready var equipment_panel: Panel = %EquipmentPanel
 
 @onready var tooltip_panel: Panel = $TooltipPanel
 @onready var tooltip_rich: RichTextLabel = $TooltipPanel/Margin/TooltipText
