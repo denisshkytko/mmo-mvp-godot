@@ -9,17 +9,27 @@ const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 @onready var equipment_panel: Panel = %EquipmentPanel
 
 @onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_rich: RichTextLabel = $TooltipPanel/Margin/TooltipText
+@onready var tooltip_rich: RichTextLabel = $TooltipPanel/Margin/TooltipVBox/TooltipText
+@onready var tooltip_unequip: Button = $TooltipPanel/Margin/TooltipVBox/UnequipButton
 
 var _player: Player = null
 var _breakdown_cache: Dictionary = {}
 var _equipment_slots: Dictionary = {}
 var _icon_cache: Dictionary = {}
 var _tooltip_slot: String = ""
+var _equip_drag_active: bool = false
+var _equip_drag_slot_id: String = ""
+var _equip_drag_item: Dictionary = {}
+var _equip_drag_start_pos: Vector2 = Vector2.ZERO
+var _equip_drag_threshold: float = 8.0
+var _equip_drag_icon: TextureRect = null
 
 func _ready() -> void:
 	add_to_group("character_hud")
 	character_button.pressed.connect(_on_button)
+	set_process(true)
+	if get_viewport() != null:
+		get_viewport().size_changed.connect(_on_viewport_resized)
 
 	stats_text.bbcode_enabled = true
 	stats_text.fit_content = true
@@ -30,6 +40,8 @@ func _ready() -> void:
 	tooltip_rich.fit_content = true
 	tooltip_panel.visible = false
 	tooltip_rich.text = ""
+	if tooltip_unequip != null and not tooltip_unequip.pressed.is_connected(_on_unequip_pressed):
+		tooltip_unequip.pressed.connect(_on_unequip_pressed)
 
 	_player = NODE_CACHE.get_player(get_tree()) as Player
 	if _player != null and _player.c_stats != null:
@@ -40,13 +52,16 @@ func _ready() -> void:
 	_setup_equipment_slots()
 
 	_refresh()
+	call_deferred("_refresh_layout")
 
 func _on_button() -> void:
 	panel.visible = not panel.visible
 	if panel.visible:
+		call_deferred("_refresh_layout")
 		_refresh()
 	else:
 		_hide_tooltip()
+		_end_equip_drag()
 
 func _on_stats_changed(_snapshot: Dictionary) -> void:
 	if panel.visible:
@@ -55,6 +70,10 @@ func _on_stats_changed(_snapshot: Dictionary) -> void:
 func _on_equipment_changed(_snapshot: Dictionary) -> void:
 	if panel.visible:
 		_refresh()
+
+func _process(_delta: float) -> void:
+	if _equip_drag_active:
+		_update_equip_drag_icon()
 
 func _on_meta_hover_started(meta) -> void:
 	if not panel.visible:
@@ -71,10 +90,20 @@ func _on_meta_hover_started(meta) -> void:
 func _on_meta_hover_ended(_meta) -> void:
 	_hide_tooltip()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not _equip_drag_active:
+		return
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed:
+			_finish_equip_drag(mb.global_position)
+
 func _hide_tooltip() -> void:
 	tooltip_panel.visible = false
 	tooltip_rich.text = ""
 	_tooltip_slot = ""
+	if tooltip_unequip != null:
+		tooltip_unequip.visible = false
 
 func _refresh() -> void:
 	_player = NODE_CACHE.get_player(get_tree()) as Player
@@ -98,6 +127,27 @@ func _refresh() -> void:
 		return
 
 	stats_text.text = _format_snapshot(snap)
+
+func _refresh_layout() -> void:
+	if panel == null:
+		return
+	await get_tree().process_frame
+	panel.size = panel.get_combined_minimum_size()
+	_center_panel()
+
+func _center_panel() -> void:
+	if panel == null:
+		return
+	var vp_size: Vector2 = get_viewport().get_visible_rect().size
+	var size: Vector2 = panel.size
+	var pos := (vp_size - size) * 0.5
+	pos.x = clamp(pos.x, 0.0, max(0.0, vp_size.x - size.x))
+	pos.y = clamp(pos.y, 0.0, max(0.0, vp_size.y - size.y))
+	panel.position = pos
+
+func _on_viewport_resized() -> void:
+	if panel != null and panel.visible:
+		call_deferred("_refresh_layout")
 
 func _setup_equipment_slots() -> void:
 	if equipment_panel == null:
@@ -194,7 +244,16 @@ func _on_equipment_slot_gui_input(event: InputEvent, slot_id: String) -> void:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		var mb := event as InputEventMouseButton
 		if mb.pressed:
+			_equip_drag_start_pos = mb.position
 			_toggle_equipment_tooltip(slot_id)
+		else:
+			if _equip_drag_active:
+				_finish_equip_drag(mb.global_position)
+	elif event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _equip_drag_active:
+			var dist := _equip_drag_start_pos.distance_to((event as InputEventMouseMotion).position)
+			if dist >= _equip_drag_threshold:
+				_start_equip_drag(slot_id)
 
 func _toggle_equipment_tooltip(slot_id: String) -> void:
 	if _tooltip_slot == slot_id and tooltip_panel.visible:
@@ -222,6 +281,8 @@ func _show_equipment_tooltip(slot_id: String) -> void:
 	tooltip_panel.visible = true
 	tooltip_rich.text = text
 	_tooltip_slot = slot_id
+	if tooltip_unequip != null:
+		tooltip_unequip.visible = true
 	_position_tooltip()
 
 func _build_item_tooltip_text(item_id: String) -> String:
@@ -272,6 +333,81 @@ func get_equipment_slot_at_global_pos(global_pos: Vector2) -> String:
 		if slot_node.get_global_rect().has_point(global_pos):
 			return slot_id
 	return ""
+
+func _start_equip_drag(slot_id: String) -> void:
+	if _player == null or _player.c_equip == null:
+		return
+	var equip: Dictionary = _player.c_equip.get_equipment_snapshot()
+	var v: Variant = equip.get(slot_id, null)
+	if v == null or not (v is Dictionary):
+		return
+	var item: Dictionary = v as Dictionary
+	if String(item.get("id", "")) == "":
+		return
+	_equip_drag_active = true
+	_equip_drag_slot_id = slot_id
+	_equip_drag_item = item.duplicate(true)
+	_show_equip_drag_icon()
+	_hide_tooltip()
+
+func _finish_equip_drag(global_pos: Vector2) -> void:
+	if not _equip_drag_active:
+		return
+	var handled := _try_drop_equip_to_inventory(global_pos)
+	if not handled:
+		_end_equip_drag()
+
+func _end_equip_drag() -> void:
+	_equip_drag_active = false
+	_equip_drag_slot_id = ""
+	_equip_drag_item = {}
+	_hide_equip_drag_icon()
+
+func _show_equip_drag_icon() -> void:
+	if _equip_drag_icon == null:
+		_equip_drag_icon = TextureRect.new()
+		_equip_drag_icon.name = "EquipDragIcon"
+		_equip_drag_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_equip_drag_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_equip_drag_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		add_child(_equip_drag_icon)
+		_equip_drag_icon.z_index = 999
+	_update_equip_drag_icon()
+	if _equip_drag_icon != null:
+		_equip_drag_icon.visible = true
+
+func _hide_equip_drag_icon() -> void:
+	if _equip_drag_icon != null:
+		_equip_drag_icon.visible = false
+
+func _update_equip_drag_icon() -> void:
+	if _equip_drag_icon == null:
+		return
+	var id: String = String(_equip_drag_item.get("id", ""))
+	_equip_drag_icon.texture = _get_icon_texture(id)
+	_equip_drag_icon.size = Vector2(36, 36)
+	var m := get_viewport().get_mouse_position()
+	_equip_drag_icon.position = m + Vector2(12, 12)
+
+func _try_drop_equip_to_inventory(global_pos: Vector2) -> bool:
+	var inv := get_tree().root.find_child("InventoryHUD", true, false)
+	if inv != null and inv.has_method("try_handle_equipment_drop"):
+		var ok: bool = bool(inv.call("try_handle_equipment_drop", global_pos, _equip_drag_slot_id))
+		if ok:
+			_end_equip_drag()
+		return ok
+	return false
+
+func _on_unequip_pressed() -> void:
+	if _player == null or _player.c_equip == null:
+		return
+	if _tooltip_slot == "":
+		return
+	if _player.c_equip.has_method("try_unequip_to_inventory"):
+		var ok: bool = bool(_player.c_equip.call("try_unequip_to_inventory", _tooltip_slot))
+		if ok:
+			_hide_tooltip()
+			_refresh()
 
 func _fallback_text() -> String:
 	return "HP %d/%d\nMana %d/%d\nAttack %d\nDefense %d" % [

@@ -1497,6 +1497,23 @@ func _get_equipment_slot_under_global(global_pos: Vector2) -> String:
 		return String(hud.call("get_equipment_slot_at_global_pos", global_pos))
 	return ""
 
+func try_handle_equipment_drop(global_pos: Vector2, slot_id: String) -> bool:
+	if not _is_open:
+		return false
+	if player == null or not is_instance_valid(player):
+		return false
+	var inv_slot := _get_slot_index_under_global(global_pos)
+	if inv_slot == -1:
+		return false
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if inv_slot >= slots.size() or slots[inv_slot] != null:
+		return false
+	var equip: Node = player.get_node_or_null("Components/Equipment")
+	if equip != null and equip.has_method("try_unequip_to_inventory"):
+		return bool(equip.call("try_unequip_to_inventory", slot_id, inv_slot))
+	return false
+
 func _drop_into_equipment_slot(slot_id: String) -> bool:
 	var id: String = String(_drag_item.get("id", ""))
 	if not _is_equippable_item(id):

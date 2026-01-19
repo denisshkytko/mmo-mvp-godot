@@ -189,6 +189,35 @@ func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String =
 	_emit_changed(true)
 	return true
 
+func try_unequip_to_inventory(slot_id: String, preferred_slot_index: int = -1) -> bool:
+	if p == null or p.c_inv == null:
+		return false
+	var inventory: Inventory = p.c_inv.inventory
+	if inventory == null:
+		return false
+
+	var item := _get_slot_item(slot_id)
+	if item.is_empty():
+		return false
+
+	inventory.ensure_layout()
+	var slots := inventory.slots
+	var target := -1
+	if preferred_slot_index >= 0 and preferred_slot_index < slots.size() and slots[preferred_slot_index] == null:
+		target = preferred_slot_index
+	else:
+		for i in range(slots.size()):
+			if slots[i] == null:
+				target = i
+				break
+	if target == -1:
+		return false
+
+	slots[target] = item
+	equipment_slots[slot_id] = null
+	_emit_changed(true)
+	return true
+
 func _can_equip_in_slot(meta: Dictionary, target_slot_id: String) -> bool:
 	var typ: String = String(meta.get("type", "")).to_lower()
 	if typ == "armor":
