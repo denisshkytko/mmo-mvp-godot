@@ -66,6 +66,11 @@ stretch_mode = 5
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
+clip_text = true
+
+[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot0/Row"]
+size_flags_vertical = 4
+autowrap_mode = 0
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot0/Row"]
 custom_minimum_size = Vector2(60, 40)
@@ -96,6 +101,11 @@ stretch_mode = 5
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
+clip_text = true
+
+[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot1/Row"]
+size_flags_vertical = 4
+autowrap_mode = 0
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot1/Row"]
 custom_minimum_size = Vector2(60, 40)
@@ -126,6 +136,11 @@ stretch_mode = 5
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
+clip_text = true
+
+[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot2/Row"]
+size_flags_vertical = 4
+autowrap_mode = 0
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot2/Row"]
 custom_minimum_size = Vector2(60, 40)
@@ -156,6 +171,11 @@ stretch_mode = 5
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
+clip_text = true
+
+[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot3/Row"]
+size_flags_vertical = 4
+autowrap_mode = 0
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot3/Row"]
 custom_minimum_size = Vector2(60, 40)
@@ -186,6 +206,11 @@ stretch_mode = 5
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
+clip_text = true
+
+[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot4/Row"]
+size_flags_vertical = 4
+autowrap_mode = 0
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot4/Row"]
 custom_minimum_size = Vector2(60, 40)
@@ -216,6 +241,11 @@ stretch_mode = 5
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
+clip_text = true
+
+[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot5/Row"]
+size_flags_vertical = 4
+autowrap_mode = 0
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot5/Row"]
 custom_minimum_size = Vector2(60, 40)

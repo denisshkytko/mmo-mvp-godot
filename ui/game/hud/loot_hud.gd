@@ -84,12 +84,14 @@ func _ready() -> void:
 			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 			name_label.gui_input.connect(_on_slot_tapped.bind(i))
 			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
+		if count_label != null:
+			count_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+			count_label.mouse_filter = Control.MOUSE_FILTER_STOP
 		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
 		if icon_rect != null:
 			icon_rect.gui_input.connect(_on_slot_tapped.bind(i))
 			icon_rect.mouse_filter = Control.MOUSE_FILTER_STOP
-
-	panel.mouse_exited.connect(_hide_tooltip)
 
 
 	# Draggable loot window (only when clicking on the panel background / title area)
@@ -277,6 +279,7 @@ func _refresh() -> void:
 		if slot_panel == null:
 			continue
 		var label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
 		var take_button: Button = slot_panel.get_node_or_null("Row/TakeButton") as Button
 		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
 
@@ -284,6 +287,8 @@ func _refresh() -> void:
 			slot_panel.visible = false
 			if label != null:
 				label.text = ""
+			if count_label != null:
+				count_label.text = ""
 			if take_button != null:
 				take_button.disabled = true
 			if icon_rect != null:
@@ -303,6 +308,8 @@ func _refresh() -> void:
 		if t == "gold":
 			if label != null:
 				label.text = "Gold: %s" % _format_money_bronze(gold)
+			if count_label != null:
+				count_label.text = ""
 			if take_button != null:
 				take_button.text = "Take"
 				# Optional icon: if you later add a gold item/icon in DB, hook it here.
@@ -329,7 +336,9 @@ func _refresh() -> void:
 						icon_tex = _get_icon(ip)
 
 			if label != null:
-				label.text = "%s x%d" % [item_name, count]
+				label.text = item_name
+			if count_label != null:
+				count_label.text = "x%d" % count
 			if icon_rect != null:
 				icon_rect.texture = icon_tex
 
@@ -529,8 +538,7 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	await get_tree().process_frame
 	_apply_tooltip_layout()
 	# Lock final size before showing to avoid the first-frame resize flicker.
-	await get_tree().process_frame
-	var final_size := tooltip_panel.get_combined_minimum_size()
+	var final_size := tooltip_panel.size
 	tooltip_panel.custom_minimum_size = final_size
 	tooltip_panel.size = final_size
 	_position_tooltip_beside_panel()
