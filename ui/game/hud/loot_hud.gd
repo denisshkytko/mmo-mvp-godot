@@ -17,6 +17,7 @@ extends CanvasLayer
 
 var _corpse: Node = null
 var _player: Node = null
+var _tooltip_view_index: int = -1
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -78,6 +79,9 @@ func _ready() -> void:
 			take_button.mouse_filter = Control.MOUSE_FILTER_STOP
 		var name_label: Label = slot_panel.get_node_or_null("Row/Name") as Label
 		if name_label != null:
+			name_label.clip_text = true
+			name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 			name_label.gui_input.connect(_on_slot_tapped.bind(i))
 			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
 		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
@@ -469,6 +473,10 @@ func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
 	if view_index < 0 or view_index >= _view_map.size():
 		_hide_tooltip()
 		return
+	if tooltip_panel.visible and _tooltip_view_index == view_index:
+		_hide_tooltip()
+		return
+	_hide_tooltip()
 	_show_tooltip_for_view(view_index)
 
 
@@ -520,11 +528,14 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	# Wait for the text layout before sizing, so the tooltip shows at its final size.
 	await get_tree().process_frame
 	_apply_tooltip_layout()
+	_position_tooltip_beside_panel()
 	tooltip_panel.visible = true
+	_tooltip_view_index = view_index
 
 
 func _hide_tooltip() -> void:
 	tooltip_panel.visible = false
+	_tooltip_view_index = -1
 	_reset_tooltip_scroll()
 
 
@@ -544,8 +555,6 @@ func _apply_tooltip_layout() -> void:
 	var height: float = max(32.0, content_h + 16.0)
 	tooltip_panel.size = Vector2(width, height)
 
-	_position_tooltip_beside_panel()
-
 func _reset_tooltip_scroll() -> void:
 	# RichTextLabel can keep a previous scroll offset. Ensure it is reset.
 	if tooltip_text == null:
@@ -558,14 +567,32 @@ func _reset_tooltip_scroll() -> void:
 		sb.value = 0
 
 func _position_tooltip_beside_panel() -> void:
-	# Tooltip is anchored to the loot window: to the right with a small gap,
-	# aligned by the top edge. Tooltip is allowed to go off-screen.
-	if not tooltip_panel.visible:
-		return
+	# Tooltip is anchored beside the loot window, top-aligned, and clamped on screen.
 	var pr := panel.get_global_rect()
+	var vp := get_viewport().get_visible_rect().size
 	var gap := 8.0
-	var pos := pr.position + Vector2(pr.size.x + gap, 0.0)
+	var size := tooltip_panel.size
+	var right_pos := pr.position + Vector2(pr.size.x + gap, 0.0)
+	var left_pos := pr.position + Vector2(-gap - size.x, 0.0)
+	var pos := right_pos
+	if right_pos.x + size.x > vp.x - gap and left_pos.x >= gap:
+		pos = left_pos
+	elif right_pos.x + size.x > vp.x - gap:
+		pos.x = max(gap, vp.x - size.x - gap)
+	pos.y = clamp(pr.position.y, gap, vp.y - size.y - gap)
 	tooltip_panel.global_position = pos
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not panel.visible or not tooltip_panel.visible:
+		return
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			_hide_tooltip()
+	elif event is InputEventScreenTouch:
+		if (event as InputEventScreenTouch).pressed:
+			_hide_tooltip()
 
 
 func _build_item_tooltip_text(item: Dictionary) -> String:

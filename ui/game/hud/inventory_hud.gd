@@ -792,6 +792,18 @@ func _hide_tooltip() -> void:
 	_tooltip_for_slot = -1
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not _is_open or _tooltip_panel == null or not _tooltip_panel.visible:
+		return
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			_hide_tooltip()
+	elif event is InputEventScreenTouch:
+		if (event as InputEventScreenTouch).pressed:
+			_hide_tooltip()
+
+
 func _resize_tooltip_to_content() -> void:
 	if _tooltip_panel == null or _tooltip_label == null:
 		return
@@ -801,7 +813,11 @@ func _resize_tooltip_to_content() -> void:
 	_tooltip_panel.custom_minimum_size = Vector2(width, 0)
 	_tooltip_label.custom_minimum_size = Vector2(width - 20.0, 0)
 	await get_tree().process_frame
-	var content_h: float = _tooltip_label.get_content_height()
+	var label_min := _tooltip_label.get_combined_minimum_size()
+	if label_min.y <= 1.0:
+		await get_tree().process_frame
+		label_min = _tooltip_label.get_combined_minimum_size()
+	var content_h: float = max(float(_tooltip_label.get_content_height()), label_min.y)
 	var btn_h: float = 0.0
 	if _tooltip_use_btn != null and _tooltip_use_btn.visible:
 		btn_h = max(32.0, _tooltip_use_btn.get_combined_minimum_size().y)
