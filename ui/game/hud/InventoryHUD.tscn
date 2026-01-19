@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bq1obwgfdui1f"]
+[gd_scene load_steps=5 format=3 uid="uid://bq1obwgfdui1f"]
 
 [ext_resource type="Script" uid="uid://dv5t17eg8j84f" path="res://ui/game/hud/inventory_hud.gd" id="1_wqexf"]
+[ext_resource type="PackedScene" uid="uid://bhgl2a5rnu6k7" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_0n5q6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wqexf"]
 border_width_left = 2
@@ -146,47 +147,10 @@ layout_mode = 2
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-[node name="InvTooltip" type="Panel" parent="."]
-visible = false
+[node name="InvTooltip" parent="." instance=ExtResource("2_0n5q6")]
 z_index = 60
-custom_minimum_size = Vector2(300, 0)
-offset_right = 300.0
+offset_right = 360.0
 offset_bottom = 10.0
-
-[node name="Margin" type="MarginContainer" parent="InvTooltip"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 8
-
-[node name="VBox" type="VBoxContainer" parent="InvTooltip/Margin"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-
-[node name="Text" type="RichTextLabel" parent="InvTooltip/Margin/VBox"]
-layout_mode = 2
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-autowrap_mode = 3
-
-[node name="UseButton" type="Button" parent="InvTooltip/Margin/VBox"]
-layout_mode = 2
-visible = false
-text = "Использовать"
 
 
 [node name="BagFullDialog" type="AcceptDialog" parent="."]

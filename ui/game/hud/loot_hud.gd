@@ -13,7 +13,7 @@ extends CanvasLayer
 @onready var close_button: Button = $Panel/CloseButton
 
 @onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_text: RichTextLabel = $TooltipPanel/Text
+@onready var tooltip_text: RichTextLabel = $TooltipPanel/Margin/VBox/Text
 
 var _corpse: Node = null
 var _player: Node = null

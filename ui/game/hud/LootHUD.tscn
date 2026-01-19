@@ -1,28 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://cyfwx2chmt82i"]
+[gd_scene load_steps=3 format=3 uid="uid://cyfwx2chmt82i"]
 
 [ext_resource type="Script" uid="uid://65yhursyacwe" path="res://ui/game/hud/loot_hud.gd" id="1_784ee"]
+[ext_resource type="PackedScene" uid="uid://bhgl2a5rnu6k7" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_4g0os"]
 
 [node name="LootHUD" type="CanvasLayer"]
 script = ExtResource("1_784ee")
 
-[node name="TooltipPanel" type="Panel" parent="."]
-visible = false
+[node name="TooltipPanel" parent="." instance=ExtResource("2_4g0os")]
 z_index = 50
-custom_minimum_size = Vector2(360, 0)
-
-[node name="Text" type="RichTextLabel" parent="TooltipPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 8.0
-offset_right = -10.0
-offset_bottom = -8.0
-autowrap_mode = 2
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
 
 [node name="Panel" type="Panel" parent="."]
 custom_minimum_size = Vector2(260, 360)
