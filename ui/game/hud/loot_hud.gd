@@ -18,6 +18,7 @@ extends CanvasLayer
 var _corpse: Node = null
 var _player: Node = null
 var _tooltip_view_index: int = -1
+var _tooltip_seq: int = 0
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -491,6 +492,10 @@ func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
 
 
 func _show_tooltip_for_view(view_index: int) -> void:
+	_tooltip_seq += 1
+	var seq := _tooltip_seq
+	if OS.is_debug_build():
+		print("LootHUD tooltip start seq=", seq, " view=", view_index)
 	if _corpse == null or not is_instance_valid(_corpse):
 		_hide_tooltip()
 		return
@@ -502,6 +507,7 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	var t: String = String(m.get("type", ""))
 
 	var text_out: String = ""
+	var target_view := view_index
 	if t == "gold":
 		var corpse_typed := _as_corpse(_corpse)
 		var gold_amount: int = corpse_typed.loot_gold if corpse_typed != null else (int(_corpse.get("loot_gold")) if ("loot_gold" in _corpse) else 0)
@@ -528,20 +534,36 @@ func _show_tooltip_for_view(view_index: int) -> void:
 		_hide_tooltip()
 		return
 
+	tooltip_panel.visible = false
+	tooltip_panel.custom_minimum_size = Vector2(tooltip_panel.custom_minimum_size.x, 0)
+	tooltip_panel.size = Vector2(tooltip_panel.size.x, 0)
+	tooltip_text.text = ""
+
 	# RichTextLabel: assign BBCode via .text (bbcode_enabled=true).
 	# Clear first to avoid any stale layout.
 	if tooltip_text.has_method("clear"):
 		tooltip_text.call("clear")
 	tooltip_text.text = text_out
 
-	tooltip_panel.visible = false
 	# Warm-up layout while hidden visually so measurements are valid.
 	var prev_modulate := tooltip_panel.modulate
 	tooltip_panel.visible = true
 	tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
 	await get_tree().process_frame
+	if seq != _tooltip_seq or not is_instance_valid(tooltip_panel) or not tooltip_panel.visible or _tooltip_view_index != -1 and _tooltip_view_index != target_view:
+		if OS.is_debug_build():
+			print("LootHUD tooltip cancel seq=", seq, " view=", view_index)
+		return
 	await get_tree().process_frame
+	if seq != _tooltip_seq or not is_instance_valid(tooltip_panel) or not tooltip_panel.visible or _tooltip_view_index != -1 and _tooltip_view_index != target_view:
+		if OS.is_debug_build():
+			print("LootHUD tooltip cancel seq=", seq, " view=", view_index)
+		return
 	await _apply_tooltip_layout()
+	if seq != _tooltip_seq or not is_instance_valid(tooltip_panel) or not tooltip_panel.visible or _tooltip_view_index != -1 and _tooltip_view_index != target_view:
+		if OS.is_debug_build():
+			print("LootHUD tooltip cancel seq=", seq, " view=", view_index)
+		return
 	# Lock final size before showing to avoid the first-frame resize flicker.
 	var final_size := tooltip_panel.size
 	tooltip_panel.custom_minimum_size = final_size
@@ -550,11 +572,14 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	tooltip_panel.modulate = prev_modulate
 	tooltip_panel.visible = true
 	_tooltip_view_index = view_index
+	if OS.is_debug_build():
+		print("LootHUD tooltip shown seq=", seq, " view=", view_index)
 
 
 func _hide_tooltip() -> void:
 	tooltip_panel.visible = false
 	_tooltip_view_index = -1
+	_tooltip_seq += 1
 	_reset_tooltip_scroll()
 
 
