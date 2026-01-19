@@ -1,7 +1,7 @@
 extends CanvasLayer
 class_name RespawnHUD
 
-@onready var panel: Panel = $Root/SafeArea/Content/RespawnPanel
+@onready var panel: PanelContainer = $Root/SafeArea/Content/RespawnPanel
 @onready var title_label: Label = $Root/SafeArea/Content/RespawnPanel/Padding/Content/VBox/TitleLabel
 @onready var timer_label: Label = $Root/SafeArea/Content/RespawnPanel/Padding/Content/VBox/TimerLabel
 @onready var respawn_button: Button = $Root/SafeArea/Content/RespawnPanel/Padding/Content/VBox/RespawnButton

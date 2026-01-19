@@ -3,6 +3,7 @@ extends SceneTree
 const DATAB_DB_TIMEOUT_SEC := 8.0
 const SAVE_TEST_PREFIX := "__smoke__"
 const LOOT_PROFILE_PATH := "res://core/loot/profiles/loot_profile_aggressive_default.tres"
+const LootProfile = preload("res://core/loot/loot_profile.gd")
 
 var _failures: Array[String] = []
 var _datadb_initialized := false
