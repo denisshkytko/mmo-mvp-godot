@@ -486,6 +486,7 @@ func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
 		_hide_tooltip()
 		return
 	_hide_tooltip()
+	_tooltip_view_index = -1
 	_show_tooltip_for_view(view_index)
 
 
