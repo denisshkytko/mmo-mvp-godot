@@ -5,6 +5,34 @@
 [node name="SkillButton" type="CanvasLayer"]
 
 [node name="Root" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SafeArea" type="MarginContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="Control" parent="Root/SafeArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SkillRoot" type="Control" parent="Root/SafeArea/Content"]
 layout_mode = 3
 anchors_preset = 3
 anchor_left = 1.0
@@ -18,14 +46,14 @@ offset_bottom = -110.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Skill1" type="Panel" parent="Root"]
+[node name="Skill1" type="Panel" parent="Root/SafeArea/Content/SkillRoot"]
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_sc74y")
 
-[node name="RangeOverlay" type="ColorRect" parent="Root/Skill1"]
+[node name="RangeOverlay" type="ColorRect" parent="Root/SafeArea/Content/SkillRoot/Skill1"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,7 +62,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Inner" type="Control" parent="Root/Skill1"]
+[node name="Inner" type="Control" parent="Root/SafeArea/Content/SkillRoot/Skill1"]
 anchors_preset = 0
 offset_left = 6.0
 offset_top = 6.0
@@ -42,7 +70,7 @@ offset_right = 66.0
 offset_bottom = 66.0
 mouse_filter = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Skill1/Inner"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/SkillRoot/Skill1/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,7 +79,7 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
 
-[node name="CooldownOverlay" type="ColorRect" parent="Root/Skill1/Inner"]
+[node name="CooldownOverlay" type="ColorRect" parent="Root/SafeArea/Content/SkillRoot/Skill1/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -61,7 +89,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.078431375, 0.078431375, 0.078431375, 0.49803922)
 
-[node name="CooldownTextShadow" type="Label" parent="Root/Skill1/Inner"]
+[node name="CooldownTextShadow" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill1/Inner"]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -74,7 +102,7 @@ text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CooldownText" type="Label" parent="Root/Skill1/Inner"]
+[node name="CooldownText" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill1/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -86,7 +114,7 @@ text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ManaCostText" type="Label" parent="Root/Skill1/Inner"]
+[node name="ManaCostText" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill1/Inner"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -101,7 +129,7 @@ text = "100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Skill2" type="Panel" parent="Root"]
+[node name="Skill2" type="Panel" parent="Root/SafeArea/Content/SkillRoot"]
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 0
 offset_left = -92.0
@@ -110,7 +138,7 @@ offset_bottom = 72.0
 script = ExtResource("1_sc74y")
 skill_index = 2
 
-[node name="RangeOverlay" type="ColorRect" parent="Root/Skill2"]
+[node name="RangeOverlay" type="ColorRect" parent="Root/SafeArea/Content/SkillRoot/Skill2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -119,7 +147,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Inner" type="Control" parent="Root/Skill2"]
+[node name="Inner" type="Control" parent="Root/SafeArea/Content/SkillRoot/Skill2"]
 anchors_preset = 0
 offset_left = 6.0
 offset_top = 6.0
@@ -127,7 +155,7 @@ offset_right = 66.0
 offset_bottom = 66.0
 mouse_filter = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Skill2/Inner"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/SkillRoot/Skill2/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -136,7 +164,7 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
 
-[node name="CooldownOverlay" type="ColorRect" parent="Root/Skill2/Inner"]
+[node name="CooldownOverlay" type="ColorRect" parent="Root/SafeArea/Content/SkillRoot/Skill2/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -146,7 +174,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.078431375, 0.078431375, 0.078431375, 0.49803922)
 
-[node name="CooldownTextShadow" type="Label" parent="Root/Skill2/Inner"]
+[node name="CooldownTextShadow" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill2/Inner"]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -159,7 +187,7 @@ text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CooldownText" type="Label" parent="Root/Skill2/Inner"]
+[node name="CooldownText" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill2/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -171,7 +199,7 @@ text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ManaCostText" type="Label" parent="Root/Skill2/Inner"]
+[node name="ManaCostText" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill2/Inner"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -186,7 +214,7 @@ text = "100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Skill3" type="Panel" parent="Root"]
+[node name="Skill3" type="Panel" parent="Root/SafeArea/Content/SkillRoot"]
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 0
 offset_left = -184.0
@@ -195,7 +223,7 @@ offset_bottom = 72.0
 script = ExtResource("1_sc74y")
 skill_index = 3
 
-[node name="RangeOverlay" type="ColorRect" parent="Root/Skill3"]
+[node name="RangeOverlay" type="ColorRect" parent="Root/SafeArea/Content/SkillRoot/Skill3"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -204,7 +232,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Inner" type="Control" parent="Root/Skill3"]
+[node name="Inner" type="Control" parent="Root/SafeArea/Content/SkillRoot/Skill3"]
 anchors_preset = 0
 offset_left = 6.0
 offset_top = 6.0
@@ -212,7 +240,7 @@ offset_right = 66.0
 offset_bottom = 66.0
 mouse_filter = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Skill3/Inner"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/SkillRoot/Skill3/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -221,7 +249,7 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
 
-[node name="CooldownOverlay" type="ColorRect" parent="Root/Skill3/Inner"]
+[node name="CooldownOverlay" type="ColorRect" parent="Root/SafeArea/Content/SkillRoot/Skill3/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -231,7 +259,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.078431375, 0.078431375, 0.078431375, 0.49803922)
 
-[node name="CooldownTextShadow" type="Label" parent="Root/Skill3/Inner"]
+[node name="CooldownTextShadow" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill3/Inner"]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -244,7 +272,7 @@ text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CooldownText" type="Label" parent="Root/Skill3/Inner"]
+[node name="CooldownText" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill3/Inner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -256,7 +284,7 @@ text = "10"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ManaCostText" type="Label" parent="Root/Skill3/Inner"]
+[node name="ManaCostText" type="Label" parent="Root/SafeArea/Content/SkillRoot/Skill3/Inner"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0

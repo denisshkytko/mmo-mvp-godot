@@ -1,13 +1,13 @@
 extends CanvasLayer
 
-@onready var panel: Panel = $Panel
-@onready var name_label: Label = $Panel/NameLabel
-@onready var hp_fill: ColorRect = $Panel/HpFill
-@onready var hp_text: Label = $Panel/HpText
-@onready var hp_back: ColorRect = $Panel/HpBack
+@onready var panel: Panel = $Root/SafeArea/Content/TargetPanel
+@onready var name_label: Label = $Root/SafeArea/Content/TargetPanel/NameLabel
+@onready var hp_fill: ColorRect = $Root/SafeArea/Content/TargetPanel/HpFill
+@onready var hp_text: Label = $Root/SafeArea/Content/TargetPanel/HpText
+@onready var hp_back: ColorRect = $Root/SafeArea/Content/TargetPanel/HpBack
 
 # добавленный фон (см. шаг 1)
-@onready var relation_bg: ColorRect = $Panel/RelationBg
+@onready var relation_bg: ColorRect = $Root/SafeArea/Content/TargetPanel/RelationBg
 
 var _gm: Node = null
 var _player: Node = null

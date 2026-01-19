@@ -1,21 +1,21 @@
 extends CanvasLayer
 
-@onready var panel: Control = $Panel
-@onready var gold_label: Label = $Panel/GoldLabel
-@onready var grid: GridContainer = $Panel/Grid
+@onready var panel: Control = $Root/SafeArea/Content/InventoryPanel
+@onready var gold_label: Label = $Root/SafeArea/Content/InventoryPanel/GoldLabel
+@onready var grid: GridContainer = $Root/SafeArea/Content/InventoryPanel/Grid
 
-@onready var base_bag_button: Button = $BagBar/BaseBagButton
-@onready var bag_slot1: Button = $BagBar/BagSlot1
-@onready var bag_slot2: Button = $BagBar/BagSlot2
-@onready var bag_slot3: Button = $BagBar/BagSlot3
-@onready var bag_slot4: Button = $BagBar/BagSlot4
+@onready var base_bag_button: Button = $Root/SafeArea/Content/BagBar/BaseBagButton
+@onready var bag_slot1: Button = $Root/SafeArea/Content/BagBar/BagSlot1
+@onready var bag_slot2: Button = $Root/SafeArea/Content/BagBar/BagSlot2
+@onready var bag_slot3: Button = $Root/SafeArea/Content/BagBar/BagSlot3
+@onready var bag_slot4: Button = $Root/SafeArea/Content/BagBar/BagSlot4
 
-@onready var bag_full_dialog: AcceptDialog = $BagFullDialog
+@onready var bag_full_dialog: AcceptDialog = $Root/SafeArea/Content/BagFullDialog
 
 # Tooltip is defined in the scene (like LootHUD), not created dynamically.
-@onready var tooltip_panel_scene: Panel = $InvTooltip
-@onready var tooltip_label_scene: RichTextLabel = $InvTooltip/Margin/VBox/Text
-@onready var tooltip_use_btn_scene: Button = $InvTooltip/Margin/VBox/UseButton
+@onready var tooltip_panel_scene: Panel = $Root/SafeArea/Content/Tooltip
+@onready var tooltip_label_scene: RichTextLabel = $Root/SafeArea/Content/Tooltip/Margin/VBox/Text
+@onready var tooltip_use_btn_scene: Button = $Root/SafeArea/Content/Tooltip/Margin/VBox/UseButton
 
 var player: Node = null
 var _is_open: bool = true
@@ -1799,7 +1799,7 @@ func _ensure_support_ui() -> void:
 
 	# Quick bar is part of the scene (InventoryHUD.tscn) so you can edit it visually.
 	if _quick_bar == null:
-		_quick_bar = get_node_or_null("QuickBar") as VBoxContainer
+		_quick_bar = get_node_or_null("Root/SafeArea/Content/QuickBar") as VBoxContainer
 		if _quick_bar == null:
 			# Fallback (should not happen, but keeps project from breaking if node is removed).
 			_quick_bar = VBoxContainer.new()

@@ -6,10 +6,38 @@
 [node name="LootHUD" type="CanvasLayer"]
 script = ExtResource("1_784ee")
 
-[node name="TooltipPanel" parent="." instance=ExtResource("2_4g0os")]
+[node name="Root" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SafeArea" type="MarginContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="Control" parent="Root/SafeArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Tooltip" parent="Root/SafeArea/Content" instance=ExtResource("2_4g0os")]
 z_index = 50
 
-[node name="Panel" type="Panel" parent="."]
+[node name="LootPanel" type="Panel" parent="Root/SafeArea/Content"]
 custom_minimum_size = Vector2(260, 360)
 anchors_preset = 4
 anchor_top = 0.5
@@ -20,21 +48,21 @@ offset_right = 680.0
 offset_bottom = 54.0
 grow_vertical = 2
 
-[node name="Title" type="Label" parent="Panel"]
+[node name="Title" type="Label" parent="Root/SafeArea/Content/LootPanel"]
 layout_mode = 0
 offset_left = 5.0
 offset_right = 45.0
 offset_bottom = 23.0
 text = "loot"
 
-[node name="Scroll" type="ScrollContainer" parent="Panel"]
+[node name="Scroll" type="ScrollContainer" parent="Root/SafeArea/Content/LootPanel"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 50.0
 offset_right = 240.0
 offset_bottom = 290.0
 
-[node name="Grid" type="GridContainer" parent="Panel/Scroll"]
+[node name="Grid" type="GridContainer" parent="Root/SafeArea/Content/LootPanel/Scroll"]
 custom_minimum_size = Vector2(210, 230)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -42,11 +70,11 @@ size_flags_vertical = 3
 theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 
-[node name="LootSlot0" type="Panel" parent="Panel/Scroll/Grid"]
+[node name="LootSlot0" type="Panel" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot0"]
+[node name="Row" type="HBoxContainer" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot0"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -57,31 +85,31 @@ offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot0/Row"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot0/Row"]
 custom_minimum_size = Vector2(40, 40)
 size_flags_vertical = 4
 stretch_mode = 5
 
-[node name="Name" type="Label" parent="Panel/Scroll/Grid/LootSlot0/Row"]
+[node name="Name" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot0/Row"]
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
 clip_text = true
 
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot0/Row"]
+[node name="Count" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot0/Row"]
 size_flags_vertical = 4
 autowrap_mode = 0
 
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot0/Row"]
+[node name="TakeButton" type="Button" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot0/Row"]
 custom_minimum_size = Vector2(60, 40)
 size_flags_vertical = 4
 text = "Take"
 
-[node name="LootSlot1" type="Panel" parent="Panel/Scroll/Grid"]
+[node name="LootSlot1" type="Panel" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot1"]
+[node name="Row" type="HBoxContainer" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot1"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -92,31 +120,31 @@ offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot1/Row"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot1/Row"]
 custom_minimum_size = Vector2(40, 40)
 size_flags_vertical = 4
 stretch_mode = 5
 
-[node name="Name" type="Label" parent="Panel/Scroll/Grid/LootSlot1/Row"]
+[node name="Name" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot1/Row"]
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
 clip_text = true
 
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot1/Row"]
+[node name="Count" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot1/Row"]
 size_flags_vertical = 4
 autowrap_mode = 0
 
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot1/Row"]
+[node name="TakeButton" type="Button" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot1/Row"]
 custom_minimum_size = Vector2(60, 40)
 size_flags_vertical = 4
 text = "Take"
 
-[node name="LootSlot2" type="Panel" parent="Panel/Scroll/Grid"]
+[node name="LootSlot2" type="Panel" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot2"]
+[node name="Row" type="HBoxContainer" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot2"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -127,31 +155,31 @@ offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot2/Row"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot2/Row"]
 custom_minimum_size = Vector2(40, 40)
 size_flags_vertical = 4
 stretch_mode = 5
 
-[node name="Name" type="Label" parent="Panel/Scroll/Grid/LootSlot2/Row"]
+[node name="Name" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot2/Row"]
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
 clip_text = true
 
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot2/Row"]
+[node name="Count" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot2/Row"]
 size_flags_vertical = 4
 autowrap_mode = 0
 
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot2/Row"]
+[node name="TakeButton" type="Button" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot2/Row"]
 custom_minimum_size = Vector2(60, 40)
 size_flags_vertical = 4
 text = "Take"
 
-[node name="LootSlot3" type="Panel" parent="Panel/Scroll/Grid"]
+[node name="LootSlot3" type="Panel" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot3"]
+[node name="Row" type="HBoxContainer" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot3"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -162,31 +190,31 @@ offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot3/Row"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot3/Row"]
 custom_minimum_size = Vector2(40, 40)
 size_flags_vertical = 4
 stretch_mode = 5
 
-[node name="Name" type="Label" parent="Panel/Scroll/Grid/LootSlot3/Row"]
+[node name="Name" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot3/Row"]
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
 clip_text = true
 
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot3/Row"]
+[node name="Count" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot3/Row"]
 size_flags_vertical = 4
 autowrap_mode = 0
 
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot3/Row"]
+[node name="TakeButton" type="Button" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot3/Row"]
 custom_minimum_size = Vector2(60, 40)
 size_flags_vertical = 4
 text = "Take"
 
-[node name="LootSlot4" type="Panel" parent="Panel/Scroll/Grid"]
+[node name="LootSlot4" type="Panel" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot4"]
+[node name="Row" type="HBoxContainer" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot4"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -197,31 +225,31 @@ offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot4/Row"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot4/Row"]
 custom_minimum_size = Vector2(40, 40)
 size_flags_vertical = 4
 stretch_mode = 5
 
-[node name="Name" type="Label" parent="Panel/Scroll/Grid/LootSlot4/Row"]
+[node name="Name" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot4/Row"]
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
 clip_text = true
 
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot4/Row"]
+[node name="Count" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot4/Row"]
 size_flags_vertical = 4
 autowrap_mode = 0
 
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot4/Row"]
+[node name="TakeButton" type="Button" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot4/Row"]
 custom_minimum_size = Vector2(60, 40)
 size_flags_vertical = 4
 text = "Take"
 
-[node name="LootSlot5" type="Panel" parent="Panel/Scroll/Grid"]
+[node name="LootSlot5" type="Panel" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot5"]
+[node name="Row" type="HBoxContainer" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot5"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -232,27 +260,27 @@ offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot5/Row"]
+[node name="Icon" type="TextureRect" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot5/Row"]
 custom_minimum_size = Vector2(40, 40)
 size_flags_vertical = 4
 stretch_mode = 5
 
-[node name="Name" type="Label" parent="Panel/Scroll/Grid/LootSlot5/Row"]
+[node name="Name" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot5/Row"]
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
 clip_text = true
 
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot5/Row"]
+[node name="Count" type="Label" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot5/Row"]
 size_flags_vertical = 4
 autowrap_mode = 0
 
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot5/Row"]
+[node name="TakeButton" type="Button" parent="Root/SafeArea/Content/LootPanel/Scroll/Grid/LootSlot5/Row"]
 custom_minimum_size = Vector2(60, 40)
 size_flags_vertical = 4
 text = "Take"
 
-[node name="LootAllButton" type="Button" parent="Panel"]
+[node name="LootAllButton" type="Button" parent="Root/SafeArea/Content/LootPanel"]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 300.0
@@ -260,7 +288,7 @@ offset_right = 240.0
 offset_bottom = 340.0
 text = "loot all"
 
-[node name="CloseButton" type="Button" parent="Panel"]
+[node name="CloseButton" type="Button" parent="Root/SafeArea/Content/LootPanel"]
 layout_mode = 0
 offset_left = 180.0
 offset_top = 10.0

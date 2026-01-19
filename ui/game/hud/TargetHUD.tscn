@@ -5,7 +5,35 @@
 [node name="TargetHUD" type="CanvasLayer"]
 script = ExtResource("1_vx1m2")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Root" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SafeArea" type="MarginContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="Control" parent="Root/SafeArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TargetPanel" type="Panel" parent="Root/SafeArea/Content"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -15,7 +43,7 @@ offset_right = -216.0
 offset_bottom = 80.0
 grow_horizontal = 2
 
-[node name="RelationBg" type="ColorRect" parent="Panel"]
+[node name="RelationBg" type="ColorRect" parent="Root/SafeArea/Content/TargetPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,7 +52,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="NameLabel" type="Label" parent="Panel"]
+[node name="NameLabel" type="Label" parent="Root/SafeArea/Content/TargetPanel"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -36,7 +64,7 @@ text = "Mob_name"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HpBack" type="ColorRect" parent="Panel"]
+[node name="HpBack" type="ColorRect" parent="Root/SafeArea/Content/TargetPanel"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -50,7 +78,7 @@ grow_horizontal = 2
 grow_vertical = 0
 color = Color(0.26657522, 0.2665752, 0.2665752, 1)
 
-[node name="HpFill" type="ColorRect" parent="Panel"]
+[node name="HpFill" type="ColorRect" parent="Root/SafeArea/Content/TargetPanel"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -64,7 +92,7 @@ grow_horizontal = 2
 grow_vertical = 0
 color = Color(0.8096855, 0.12669769, 0.12613973, 1)
 
-[node name="HpText" type="Label" parent="Panel"]
+[node name="HpText" type="Label" parent="Root/SafeArea/Content/TargetPanel"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0

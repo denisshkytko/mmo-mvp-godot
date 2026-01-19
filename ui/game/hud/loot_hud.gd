@@ -6,14 +6,14 @@ extends CanvasLayer
 # - "Collect all" and per-row collect
 # - Tooltip panel rendered beside the window (not under mouse)
 
-@onready var panel: Control = $Panel
-@onready var scroll: ScrollContainer = $Panel/Scroll
-@onready var grid: GridContainer = $Panel/Scroll/Grid
-@onready var loot_all_button: Button = $Panel/LootAllButton
-@onready var close_button: Button = $Panel/CloseButton
+@onready var panel: Control = $Root/SafeArea/Content/LootPanel
+@onready var scroll: ScrollContainer = $Root/SafeArea/Content/LootPanel/Scroll
+@onready var grid: GridContainer = $Root/SafeArea/Content/LootPanel/Scroll/Grid
+@onready var loot_all_button: Button = $Root/SafeArea/Content/LootPanel/LootAllButton
+@onready var close_button: Button = $Root/SafeArea/Content/LootPanel/CloseButton
 
-@onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_text: RichTextLabel = $TooltipPanel/Margin/VBox/Text
+@onready var tooltip_panel: Panel = $Root/SafeArea/Content/Tooltip
+@onready var tooltip_text: RichTextLabel = $Root/SafeArea/Content/Tooltip/Margin/VBox/Text
 
 var _corpse: Node = null
 var _player: Node = null

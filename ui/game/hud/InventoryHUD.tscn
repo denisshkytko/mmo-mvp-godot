@@ -28,7 +28,35 @@ cache/0/16/0/scale = 1.0
 [node name="InventoryHUD" type="CanvasLayer"]
 script = ExtResource("1_wqexf")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Root" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SafeArea" type="MarginContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="Control" parent="Root/SafeArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InventoryPanel" type="Panel" parent="Root/SafeArea/Content"]
 visible = false
 anchors_preset = 3
 anchor_left = 1.0
@@ -42,7 +70,7 @@ offset_bottom = -98.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="GoldLabel" type="Label" parent="Panel"]
+[node name="GoldLabel" type="Label" parent="Root/SafeArea/Content/InventoryPanel"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 16.0
@@ -50,7 +78,7 @@ offset_right = 67.0
 offset_bottom = 39.0
 text = "gold: 0"
 
-[node name="Grid" type="GridContainer" parent="Panel"]
+[node name="Grid" type="GridContainer" parent="Root/SafeArea/Content/InventoryPanel"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 50.0
@@ -58,12 +86,12 @@ offset_right = 56.0
 offset_bottom = 90.0
 columns = 4
 
-[node name="Slot0" type="Panel" parent="Panel/Grid"]
+[node name="Slot0" type="Panel" parent="Root/SafeArea/Content/InventoryPanel/Grid"]
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
 
-[node name="Text" type="Label" parent="Panel/Grid/Slot0"]
+[node name="Text" type="Label" parent="Root/SafeArea/Content/InventoryPanel/Grid/Slot0"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,7 +105,7 @@ vertical_alignment = 1
 autowrap_mode = 2
 clip_text = true
 
-[node name="BagBar" type="HBoxContainer" parent="."]
+[node name="BagBar" type="HBoxContainer" parent="Root/SafeArea/Content"]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
@@ -90,32 +118,32 @@ grow_horizontal = 2
 grow_vertical = 0
 alignment = 2
 
-[node name="BagSlot1" type="Button" parent="BagBar"]
+[node name="BagSlot1" type="Button" parent="Root/SafeArea/Content/BagBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 
-[node name="BagSlot2" type="Button" parent="BagBar"]
+[node name="BagSlot2" type="Button" parent="Root/SafeArea/Content/BagBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 
-[node name="BagSlot3" type="Button" parent="BagBar"]
+[node name="BagSlot3" type="Button" parent="Root/SafeArea/Content/BagBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 
-[node name="BagSlot4" type="Button" parent="BagBar"]
+[node name="BagSlot4" type="Button" parent="Root/SafeArea/Content/BagBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 
-[node name="BaseBagButton" type="Button" parent="BagBar"]
+[node name="BaseBagButton" type="Button" parent="Root/SafeArea/Content/BagBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 text = "Bag"
 
-[node name="QuickBar" type="VBoxContainer" parent="."]
+[node name="QuickBar" type="VBoxContainer" parent="Root/SafeArea/Content"]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
@@ -127,32 +155,31 @@ offset_bottom = -94.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="Quick0" type="Button" parent="QuickBar"]
+[node name="QuickSlot0" type="Button" parent="Root/SafeArea/Content/QuickBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-[node name="Quick1" type="Button" parent="QuickBar"]
+[node name="QuickSlot1" type="Button" parent="Root/SafeArea/Content/QuickBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-[node name="Quick2" type="Button" parent="QuickBar"]
+[node name="QuickSlot2" type="Button" parent="Root/SafeArea/Content/QuickBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-[node name="Quick3" type="Button" parent="QuickBar"]
+[node name="QuickSlot3" type="Button" parent="Root/SafeArea/Content/QuickBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-[node name="Quick4" type="Button" parent="QuickBar"]
+[node name="QuickSlot4" type="Button" parent="Root/SafeArea/Content/QuickBar"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-[node name="InvTooltip" parent="." instance=ExtResource("2_0n5q6")]
+[node name="Tooltip" parent="Root/SafeArea/Content" instance=ExtResource("2_0n5q6")]
 z_index = 60
 offset_right = 360.0
 offset_bottom = 10.0
 
-
-[node name="BagFullDialog" type="AcceptDialog" parent="."]
+[node name="BagFullDialog" type="AcceptDialog" parent="Root/SafeArea/Content"]
 title = "Inventory"
 dialog_text = "Bag is full."

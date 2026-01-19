@@ -7,12 +7,40 @@
 script = ExtResource("1_7ixm2")
 buff_icon_scene = ExtResource("2_hd7in")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Root" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SafeArea" type="MarginContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="Control" parent="Root/SafeArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BuffsPanel" type="Panel" parent="Root/SafeArea/Content"]
 self_modulate = Color(1, 1, 1, 0)
 offset_right = 60.0
 offset_bottom = 60.0
 
-[node name="Grid" type="GridContainer" parent="Panel"]
+[node name="Grid" type="GridContainer" parent="Root/SafeArea/Content/BuffsPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

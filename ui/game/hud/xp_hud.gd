@@ -1,8 +1,8 @@
 extends CanvasLayer
 
-@onready var fill: ColorRect = $Root/BarPanel/XpBar/Fill
-@onready var xp_text: Label = $Root/BarPanel/XpBar/XpText
-@onready var xp_bar: Control = $Root/BarPanel/XpBar
+@onready var fill: ColorRect = $Root/SafeArea/Content/BarRoot/BarPanel/XpBar/Fill
+@onready var xp_text: Label = $Root/SafeArea/Content/BarRoot/BarPanel/XpBar/XpText
+@onready var xp_bar: Control = $Root/SafeArea/Content/BarRoot/BarPanel/XpBar
 
 var player: Node = null
 var _full_width: float = 0.0

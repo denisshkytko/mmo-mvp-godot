@@ -1,13 +1,13 @@
 extends CanvasLayer
 
-@onready var name_label: Label = $Panel/Margin/VBox/Header/NameLabel
-@onready var level_label: Label = $Panel/Margin/VBox/Header/LevelLabel
+@onready var name_label: Label = $Root/SafeArea/Content/PlayerPanel/Padding/Content/VBox/Header/NameLabel
+@onready var level_label: Label = $Root/SafeArea/Content/PlayerPanel/Padding/Content/VBox/Header/LevelLabel
 
-@onready var hp_bar: ProgressBar = $Panel/Margin/VBox/HpRow/HpBar
-@onready var hp_text: Label = $Panel/Margin/VBox/HpRow/HpBar/HpText
+@onready var hp_bar: ProgressBar = $Root/SafeArea/Content/PlayerPanel/Padding/Content/VBox/HpRow/HpBar
+@onready var hp_text: Label = $Root/SafeArea/Content/PlayerPanel/Padding/Content/VBox/HpRow/HpBar/HpText
 
-@onready var mana_bar: ProgressBar = $Panel/Margin/VBox/ManaRow/ManaBar
-@onready var mana_text: Label = $Panel/Margin/VBox/ManaRow/ManaBar/ManaText
+@onready var mana_bar: ProgressBar = $Root/SafeArea/Content/PlayerPanel/Padding/Content/VBox/ManaRow/ManaBar
+@onready var mana_text: Label = $Root/SafeArea/Content/PlayerPanel/Padding/Content/VBox/ManaRow/ManaBar/ManaText
 
 var _player: Node = null
 
