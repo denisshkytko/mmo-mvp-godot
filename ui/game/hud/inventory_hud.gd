@@ -769,6 +769,9 @@ func _show_tooltip_for_slot(slot_index: int) -> void:
 	_tooltip_panel.size = Vector2(_tooltip_panel.size.x, 0)
 	_tooltip_label.text = ""
 	var text := _build_tooltip_text(id, count)
+	if String(text).strip_edges().is_empty():
+		_hide_tooltip()
+		return
 	_tooltip_label.text = text
 	# "Use" button (inventory tooltip only)
 	if _tooltip_use_btn != null:
@@ -826,6 +829,11 @@ func _resize_tooltip_to_content() -> void:
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
 	_tooltip_panel.custom_minimum_size = Vector2(width, min_h)
 	_tooltip_panel.size = Vector2(width, min_h)
+	# Finalize size after layout so first show doesn't resize on screen.
+	await get_tree().process_frame
+	var final_size := _tooltip_panel.get_combined_minimum_size()
+	_tooltip_panel.custom_minimum_size = final_size
+	_tooltip_panel.size = final_size
 
 func _position_tooltip_left_of_point(p: Vector2) -> void:
 	if _tooltip_panel == null:
