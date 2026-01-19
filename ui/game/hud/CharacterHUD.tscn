@@ -20,12 +20,12 @@ text = "Character"
 
 [node name="Panel" type="Panel" parent="."]
 visible = false
-custom_minimum_size = Vector2(540, 320)
-layout_mode = 0
-offset_left = 401.0
-offset_top = 175.0
-offset_right = 941.0
-offset_bottom = 495.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 1
@@ -51,11 +51,13 @@ text = "Character"
 [node name="ContentRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(510, 270)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
 [node name="EquipmentPanel" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow"]
 custom_minimum_size = Vector2(220, 270)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Margin" type="MarginContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel"]
@@ -104,94 +106,6 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ChestRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="ChestLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
-layout_mode = 2
-text = "Chest"
-
-[node name="SlotChest" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
-custom_minimum_size = Vector2(36, 36)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow/SlotChest"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LegsRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="LegsLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/LegsRow"]
-layout_mode = 2
-text = "Legs"
-
-[node name="SlotLegs" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/LegsRow"]
-custom_minimum_size = Vector2(36, 36)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/LegsRow/SlotLegs"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="BootsRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="BootsLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/BootsRow"]
-layout_mode = 2
-text = "Boots"
-
-[node name="SlotBoots" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/BootsRow"]
-custom_minimum_size = Vector2(36, 36)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/BootsRow/SlotBoots"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Ring1Row" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="Ring1Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/Ring1Row"]
-layout_mode = 2
-text = "Ring 1"
-
-[node name="SlotRing1" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/Ring1Row"]
-custom_minimum_size = Vector2(36, 36)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/Ring1Row/SlotRing1"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
 [node name="NeckRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
 layout_mode = 2
 theme_override_constants/separation = 4
@@ -214,6 +128,94 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
+[node name="ShouldersLeftRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ShouldersLeftLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow"]
+layout_mode = 2
+text = "Shoulders"
+
+[node name="SlotShoulders" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow/SlotShoulders"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CloakLeftRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CloakLeftLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow"]
+layout_mode = 2
+text = "Cloak"
+
+[node name="SlotCloak" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow/SlotCloak"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChestRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ChestLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
+layout_mode = 2
+text = "Chest"
+
+[node name="SlotChest" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow/SlotChest"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShirtLeftRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ShirtLeftLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow"]
+layout_mode = 2
+text = "Shirt"
+
+[node name="SlotShirt" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow/SlotShirt"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="ClothingDividerColumn" type="Control" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow"]
 custom_minimum_size = Vector2(8, 1)
 layout_mode = 2
@@ -222,72 +224,6 @@ size_flags_vertical = 3
 [node name="ClothingRightColumn" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow"]
 layout_mode = 2
 theme_override_constants/separation = 4
-
-[node name="ShouldersRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="SlotShoulders" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/ShouldersRow"]
-custom_minimum_size = Vector2(36, 36)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/ShouldersRow/SlotShoulders"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="ShouldersLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/ShouldersRow"]
-layout_mode = 2
-text = "Shoulders"
-
-[node name="CloakRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="SlotCloak" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/CloakRow"]
-custom_minimum_size = Vector2(36, 36)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/CloakRow/SlotCloak"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="CloakLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/CloakRow"]
-layout_mode = 2
-text = "Cloak"
-
-[node name="ShirtRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="SlotShirt" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/ShirtRow"]
-custom_minimum_size = Vector2(36, 36)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/ShirtRow/SlotShirt"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="ShirtLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/ShirtRow"]
-layout_mode = 2
-text = "Shirt"
 
 [node name="BracersRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
@@ -333,6 +269,28 @@ stretch_mode = 5
 layout_mode = 2
 text = "Gloves"
 
+[node name="Ring1RightRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SlotRing1" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring1RightRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring1RightRow/SlotRing1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Ring1RightLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring1RightRow"]
+layout_mode = 2
+text = "Ring 1"
+
 [node name="Ring2Row" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
 theme_override_constants/separation = 4
@@ -354,6 +312,50 @@ stretch_mode = 5
 [node name="Ring2Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring2Row"]
 layout_mode = 2
 text = "Ring 2"
+
+[node name="LegsRightRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SlotLegs" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/LegsRightRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/LegsRightRow/SlotLegs"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LegsRightLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/LegsRightRow"]
+layout_mode = 2
+text = "Legs"
+
+[node name="BootsRightRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SlotBoots" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BootsRightRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BootsRightRow/SlotBoots"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BootsRightLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BootsRightRow"]
+layout_mode = 2
+text = "Boots"
 
 [node name="WeaponsRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
 layout_mode = 2
@@ -415,8 +417,8 @@ size_flags_horizontal = 3
 
 [node name="StatsPanel" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow"]
 layout_mode = 2
-size_flags_vertical = 3
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="StatsScroll" type="ScrollContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel"]
 custom_minimum_size = Vector2(320, 255)
