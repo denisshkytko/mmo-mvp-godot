@@ -44,6 +44,12 @@ func setup(player: Player) -> void:
 	p = player
 	_reset_slots()
 
+func _get_slot_item(slot_id: String) -> Dictionary:
+	var v: Variant = equipment_slots.get(slot_id, null)
+	if v is Dictionary:
+		return v as Dictionary
+	return {}
+
 func _reset_slots() -> void:
 	equipment_slots.clear()
 	for slot_id in SLOT_IDS:
@@ -94,8 +100,8 @@ func get_preferred_slot_for_item(item_id: String) -> String:
 	return ""
 
 func is_left_hand_blocked() -> bool:
-	var right_item: Dictionary = equipment_slots.get("weapon_r", null) as Dictionary
-	if right_item == null:
+	var right_item := _get_slot_item("weapon_r")
+	if right_item.is_empty():
 		return false
 	var id: String = String(right_item.get("id", ""))
 	if id == "":
@@ -104,8 +110,8 @@ func is_left_hand_blocked() -> bool:
 	return _is_two_handed_weapon(meta)
 
 func get_weapon_damage() -> int:
-	var right_item: Dictionary = equipment_slots.get("weapon_r", null) as Dictionary
-	if right_item == null:
+	var right_item := _get_slot_item("weapon_r")
+	if right_item.is_empty():
 		return 0
 	var id: String = String(right_item.get("id", ""))
 	if id == "":
@@ -155,8 +161,8 @@ func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String =
 			_restore_state(inventory, prev_slots, prev_equip)
 			return false
 
-		var old_right: Dictionary = equipment_slots.get("weapon_r", null) as Dictionary
-		var old_left: Dictionary = equipment_slots.get("weapon_l", null) as Dictionary
+		var old_right := _get_slot_item("weapon_r")
+		var old_left := _get_slot_item("weapon_l")
 		equipment_slots["weapon_r"] = new_item
 		equipment_slots["weapon_l"] = null
 
@@ -173,9 +179,9 @@ func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String =
 		_restore_state(inventory, prev_slots, prev_equip)
 		return false
 
-	var old_item: Dictionary = equipment_slots.get(target_slot_id, null) as Dictionary
+	var old_item := _get_slot_item(target_slot_id)
 	equipment_slots[target_slot_id] = new_item
-	if old_item != null:
+	if not old_item.is_empty():
 		if not _place_in_inventory(old_item, inv_slot_index, inventory.slots):
 			_restore_state(inventory, prev_slots, prev_equip)
 			return false
@@ -202,8 +208,8 @@ func _can_equip_in_slot(meta: Dictionary, target_slot_id: String) -> bool:
 func _can_equip_left_hand(meta: Dictionary) -> bool:
 	if is_left_hand_blocked():
 		return false
-	var right_item: Dictionary = equipment_slots.get("weapon_r", null) as Dictionary
-	if right_item == null:
+	var right_item := _get_slot_item("weapon_r")
+	if right_item.is_empty():
 		return false
 	var right_id: String = String(right_item.get("id", ""))
 	if right_id == "":
