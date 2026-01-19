@@ -5,7 +5,7 @@ const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 @onready var character_button: Button = $CharacterButton
 @onready var panel: Panel = $Panel
 @onready var title_label: Label = $Panel/MarginContainer/VBoxContainer/TitleLabel
-@onready var stats_text: RichTextLabel = $Panel/MarginContainer/VBoxContainer/ContentRow/StatsScroll/StatsText
+@onready var stats_text: RichTextLabel = $Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel/StatsScroll/StatsText
 @onready var equipment_panel: Panel = $Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel
 
 @onready var tooltip_panel: Panel = $TooltipPanel
