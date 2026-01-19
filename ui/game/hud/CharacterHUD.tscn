@@ -20,12 +20,12 @@ text = "Character"
 
 [node name="Panel" type="Panel" parent="."]
 visible = false
-custom_minimum_size = Vector2(350, 300)
+custom_minimum_size = Vector2(540, 320)
 layout_mode = 0
 offset_left = 401.0
 offset_top = 175.0
-offset_right = 751.0
-offset_bottom = 475.0
+offset_right = 941.0
+offset_bottom = 495.0
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 1
@@ -49,12 +49,374 @@ layout_mode = 2
 text = "Character"
 
 [node name="ContentRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(330, 255)
+custom_minimum_size = Vector2(510, 270)
 layout_mode = 2
 theme_override_constants/separation = 8
 
+[node name="EquipmentPanel" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow"]
+custom_minimum_size = Vector2(180, 255)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="EquipmentVBox" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="EquipmentTitle" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
+layout_mode = 2
+text = "Equipment"
+
+[node name="ArmorRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LeftColumn" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeadGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="HeadLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/HeadGroup"]
+layout_mode = 2
+text = "Head"
+
+[node name="SlotHead" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/HeadGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/HeadGroup/SlotHead"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChestGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="ChestLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/ChestGroup"]
+layout_mode = 2
+text = "Chest"
+
+[node name="SlotChest" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/ChestGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/ChestGroup/SlotChest"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LegsGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="LegsLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/LegsGroup"]
+layout_mode = 2
+text = "Legs"
+
+[node name="SlotLegs" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/LegsGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/LegsGroup/SlotLegs"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BootsGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="BootsLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/BootsGroup"]
+layout_mode = 2
+text = "Boots"
+
+[node name="SlotBoots" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/BootsGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/BootsGroup/SlotBoots"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Ring1Group" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Ring1Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/Ring1Group"]
+layout_mode = 2
+text = "Ring 1"
+
+[node name="SlotRing1" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/Ring1Group"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/Ring1Group/SlotRing1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NeckGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="NeckLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/NeckGroup"]
+layout_mode = 2
+text = "Neck"
+
+[node name="SlotNeck" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/NeckGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/LeftColumn/NeckGroup/SlotNeck"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Spacer" type="Control" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow"]
+custom_minimum_size = Vector2(8, 1)
+layout_mode = 2
+
+[node name="RightColumn" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ShouldersGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotShoulders" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/ShouldersGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/ShouldersGroup/SlotShoulders"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShouldersLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/ShouldersGroup"]
+layout_mode = 2
+text = "Shoulders"
+
+[node name="CloakGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotCloak" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/CloakGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/CloakGroup/SlotCloak"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CloakLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/CloakGroup"]
+layout_mode = 2
+text = "Cloak"
+
+[node name="ShirtGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotShirt" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/ShirtGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/ShirtGroup/SlotShirt"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShirtLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/ShirtGroup"]
+layout_mode = 2
+text = "Shirt"
+
+[node name="BracersGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotBracers" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/BracersGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/BracersGroup/SlotBracers"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BracersLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/BracersGroup"]
+layout_mode = 2
+text = "Bracers"
+
+[node name="GlovesGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotGloves" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/GlovesGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/GlovesGroup/SlotGloves"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GlovesLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/GlovesGroup"]
+layout_mode = 2
+text = "Gloves"
+
+[node name="Ring2Group" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotRing2" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/Ring2Group"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/Ring2Group/SlotRing2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Ring2Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ArmorRow/RightColumn/Ring2Group"]
+layout_mode = 2
+text = "Ring 2"
+
+[node name="WeaponRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LeftPad" type="Control" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow"]
+custom_minimum_size = Vector2(8, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightHandGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="RightHandLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow/RightHandGroup"]
+layout_mode = 2
+text = "Right Hand"
+
+[node name="SlotWeaponR" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow/RightHandGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow/RightHandGroup/SlotWeaponR"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RightPad" type="Control" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow"]
+custom_minimum_size = Vector2(8, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeftHandGroup" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="LeftHandLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow/LeftHandGroup"]
+layout_mode = 2
+text = "Left Hand"
+
+[node name="SlotWeaponL" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow/LeftHandGroup"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponRow/LeftHandGroup/SlotWeaponL"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="StatsScroll" type="ScrollContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow"]
-custom_minimum_size = Vector2(330, 255)
+custom_minimum_size = Vector2(320, 255)
 layout_mode = 2
 horizontal_scroll_mode = 0
 

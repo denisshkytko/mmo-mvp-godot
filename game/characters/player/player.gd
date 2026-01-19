@@ -173,6 +173,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_combat: PlayerCombat = $Components/Combat as PlayerCombat
 @onready var c_skills: PlayerSkills = $Components/Skills as PlayerSkills
 @onready var c_inv: PlayerInventoryComponent = $Components/Inventory as PlayerInventoryComponent
+@onready var c_equip: PlayerEquipmentComponent = $Components/Equipment as PlayerEquipmentComponent
 
 
 func _ready() -> void:
@@ -198,6 +199,7 @@ func _ready() -> void:
 	# inventory ref (чтобы LootUI/InventoryUI не ломались)
 	c_inv.setup(self)
 	inventory = c_inv.inventory
+	c_equip.setup(self)
 
 	# init stats
 	c_stats.recalculate_for_level(true)
@@ -331,12 +333,30 @@ func add_xp(amount: int) -> void:
 func get_inventory_snapshot() -> Dictionary:
 	return c_inv.get_inventory_snapshot()
 
+func get_equipment_snapshot() -> Dictionary:
+	if c_equip == null:
+		return {}
+	return c_equip.get_equipment_snapshot()
+
 
 func apply_inventory_snapshot(snapshot: Dictionary) -> void:
 	# UI / save helpers: apply inventory slots + equipped bags back to component.
 	if c_inv != null:
 		c_inv.apply_inventory_snapshot(snapshot)
 
+func apply_equipment_snapshot(snapshot: Dictionary) -> void:
+	if c_equip != null:
+		c_equip.apply_equipment_snapshot(snapshot)
+
+func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String) -> bool:
+	if c_equip == null:
+		return false
+	return c_equip.try_equip_from_inventory_slot(inv_slot_index, target_slot_id)
+
+func get_preferred_equipment_slot(item_id: String) -> String:
+	if c_equip == null:
+		return ""
+	return c_equip.get_preferred_slot_for_item(item_id)
 
 
 func try_equip_bag_from_inventory_slot(inv_slot_index: int, bag_index: int) -> bool:
@@ -392,6 +412,12 @@ func apply_character_data(d: Dictionary) -> void:
 	if inv_v is Dictionary:
 		c_inv.apply_inventory_snapshot(inv_v as Dictionary)
 
+	var equip_v: Variant = d.get("equipment", null)
+	if equip_v is Dictionary:
+		c_equip.apply_equipment_snapshot(equip_v as Dictionary)
+	else:
+		c_equip.apply_equipment_snapshot({})
+
 	var buffs_v: Variant = d.get("buffs", [])
 	if buffs_v is Array:
 		c_buffs.apply_buffs_snapshot(buffs_v as Array)
@@ -431,6 +457,7 @@ func export_character_data() -> Dictionary:
 
 	# inventory
 	base["inventory"] = c_inv.get_inventory_snapshot()
+	base["equipment"] = c_equip.get_equipment_snapshot()
 
 	# position
 	base["pos"] = {"x": float(global_position.x), "y": float(global_position.y)}	

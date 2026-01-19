@@ -38,3 +38,8 @@ autowrap_mode = 2
 layout_mode = 2
 visible = false
 text = "Использовать"
+
+[node name="EquipButton" type="Button" parent="Margin/VBox"]
+layout_mode = 2
+visible = false
+text = "Экипировать"

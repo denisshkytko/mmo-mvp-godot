@@ -16,6 +16,7 @@ extends CanvasLayer
 @onready var tooltip_panel_scene: Panel = $InvTooltip
 @onready var tooltip_label_scene: RichTextLabel = $InvTooltip/Margin/VBox/Text
 @onready var tooltip_use_btn_scene: Button = $InvTooltip/Margin/VBox/UseButton
+@onready var tooltip_equip_btn_scene: Button = $InvTooltip/Margin/VBox/EquipButton
 
 var player: Node = null
 var _is_open: bool = true
@@ -45,6 +46,7 @@ var _double_click_ms: int = 320
 var _tooltip_panel: Panel = null
 var _tooltip_label: RichTextLabel = null
 var _tooltip_use_btn: Button = null
+var _tooltip_equip_btn: Button = null
 var _tooltip_for_slot: int = -1
 
 # Small center toast ("hp full" / "mana full")
@@ -499,8 +501,13 @@ func _finish_drag(global_pos: Vector2) -> void:
 			var q: int = _get_quick_index_under_global(global_pos)
 			if q != -1:
 				dropped = _drop_into_quick_slot(q)
+			else:
+				# 4) Drop onto equipment slot
+				var equip_slot: String = _get_equipment_slot_under_global(global_pos)
+				if equip_slot != "":
+					dropped = _drop_into_equipment_slot(equip_slot)
 
-	# 4) Drop outside: confirm delete
+	# 5) Drop outside: confirm delete
 	if not dropped:
 		if not _is_point_inside_panel(global_pos):
 			_show_delete_confirm()
@@ -782,6 +789,10 @@ func _show_tooltip_for_slot(slot_index: int) -> void:
 			_tooltip_use_btn.disabled = bool(player.call("is_consumable_on_cooldown", kind))
 		else:
 			_tooltip_use_btn.disabled = false
+	if _tooltip_equip_btn != null:
+		var is_equippable := _is_equippable_item(id)
+		_tooltip_equip_btn.visible = is_equippable
+		_tooltip_equip_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = slot_index
@@ -829,6 +840,8 @@ func _resize_tooltip_to_content() -> void:
 	var btn_h: float = 0.0
 	if _tooltip_use_btn != null and _tooltip_use_btn.visible:
 		btn_h = max(32.0, _tooltip_use_btn.get_combined_minimum_size().y)
+	if _tooltip_equip_btn != null and _tooltip_equip_btn.visible:
+		btn_h += max(32.0, _tooltip_equip_btn.get_combined_minimum_size().y)
 	# label + optional button + small spacing
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
@@ -1061,6 +1074,21 @@ func _is_consumable_item(item_id: String) -> bool:
 	var typ: String = String(meta.get("type", "")).to_lower()
 	return typ == "food" or typ == "drink" or typ == "potion"
 
+func _is_equippable_item(item_id: String) -> bool:
+	if item_id == "":
+		return false
+	var db := get_node_or_null("/root/DataDB")
+	if db == null or not db.has_method("get_item"):
+		return false
+	var meta: Dictionary = db.call("get_item", item_id) as Dictionary
+	var typ: String = String(meta.get("type", "")).to_lower()
+	return typ == "weapon" or typ == "armor" or typ == "accessory" or typ == "shield" or typ == "offhand"
+
+func _get_default_equip_slot(item_id: String) -> String:
+	if player != null and player.has_method("get_preferred_equipment_slot"):
+		return String(player.call("get_preferred_equipment_slot", item_id))
+	return ""
+
 
 func _on_tooltip_use_pressed() -> void:
 	if player == null or not is_instance_valid(player):
@@ -1091,6 +1119,32 @@ func _on_tooltip_use_pressed() -> void:
 			return
 	_hide_tooltip()
 	_refresh()
+
+func _on_tooltip_equip_pressed() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if _tooltip_for_slot < 0:
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if _tooltip_for_slot >= slots.size():
+		_hide_tooltip()
+		return
+	var v: Variant = slots[_tooltip_for_slot]
+	if v == null or not (v is Dictionary):
+		_hide_tooltip()
+		return
+	var id: String = String((v as Dictionary).get("id", ""))
+	if not _is_equippable_item(id):
+		return
+	var target_slot: String = _get_default_equip_slot(id)
+	if target_slot == "":
+		return
+	if player.has_method("try_equip_from_inventory_slot"):
+		var ok: bool = bool(player.call("try_equip_from_inventory_slot", _tooltip_for_slot, target_slot))
+		if ok:
+			_hide_tooltip()
+			_refresh()
 
 
 func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
@@ -1437,6 +1491,36 @@ func _get_quick_index_under_global(global_pos: Vector2) -> int:
 			return i
 	return -1
 
+func _get_equipment_slot_under_global(global_pos: Vector2) -> String:
+	var hud := get_tree().get_first_node_in_group("character_hud")
+	if hud != null and hud.has_method("get_equipment_slot_at_global_pos"):
+		return String(hud.call("get_equipment_slot_at_global_pos", global_pos))
+	return ""
+
+func _drop_into_equipment_slot(slot_id: String) -> bool:
+	var id: String = String(_drag_item.get("id", ""))
+	if not _is_equippable_item(id):
+		return false
+	if player == null or not is_instance_valid(player):
+		return false
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	var src_idx: int = _drag_from_slot
+	if src_idx < 0 or src_idx >= slots.size() or slots[src_idx] != null:
+		src_idx = _find_first_free_slot(slots)
+		if src_idx == -1:
+			player.apply_inventory_snapshot(_drag_restore_snapshot)
+			return true
+	slots[src_idx] = _drag_item
+	snap["slots"] = slots
+	player.apply_inventory_snapshot(snap)
+	if player.has_method("try_equip_from_inventory_slot"):
+		var ok: bool = bool(player.call("try_equip_from_inventory_slot", src_idx, slot_id))
+		if not ok:
+			player.apply_inventory_snapshot(_drag_restore_snapshot)
+			return true
+	return true
+
 func _build_tooltip_text(id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
 	var meta: Dictionary = {}
@@ -1640,6 +1724,7 @@ func _ensure_support_ui() -> void:
 		_tooltip_panel = tooltip_panel_scene
 		_tooltip_label = tooltip_label_scene
 		_tooltip_use_btn = tooltip_use_btn_scene
+		_tooltip_equip_btn = tooltip_equip_btn_scene
 		if _tooltip_panel != null:
 			_tooltip_panel.visible = false
 			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -1665,6 +1750,8 @@ func _ensure_support_ui() -> void:
 			_tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		if _tooltip_use_btn != null and not _tooltip_use_btn.pressed.is_connected(_on_tooltip_use_pressed):
 			_tooltip_use_btn.pressed.connect(_on_tooltip_use_pressed)
+		if _tooltip_equip_btn != null and not _tooltip_equip_btn.pressed.is_connected(_on_tooltip_equip_pressed):
+			_tooltip_equip_btn.pressed.connect(_on_tooltip_equip_pressed)
 
 	if _delete_confirm == null:
 		_delete_confirm = ConfirmationDialog.new()
