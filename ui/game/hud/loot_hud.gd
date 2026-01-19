@@ -72,12 +72,18 @@ func _ready() -> void:
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		var b: Button = slot_panel.get_node_or_null("Button") as Button
-		if b != null:
-			b.pressed.connect(_on_slot_pressed.bind(i))
-			b.mouse_entered.connect(_on_slot_hover.bind(i))
-			b.mouse_exited.connect(_hide_tooltip)
-			b.mouse_filter = Control.MOUSE_FILTER_STOP
+		var take_button: Button = slot_panel.get_node_or_null("Row/TakeButton") as Button
+		if take_button != null:
+			take_button.pressed.connect(_on_slot_pressed.bind(i))
+			take_button.mouse_filter = Control.MOUSE_FILTER_STOP
+		var name_label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		if name_label != null:
+			name_label.gui_input.connect(_on_slot_tapped.bind(i))
+			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
+		if icon_rect != null:
+			icon_rect.gui_input.connect(_on_slot_tapped.bind(i))
+			icon_rect.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	panel.mouse_exited.connect(_hide_tooltip)
 
@@ -266,23 +272,26 @@ func _refresh() -> void:
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		var label: Label = slot_panel.get_node_or_null("Text") as Label
-		var b: Button = slot_panel.get_node_or_null("Button") as Button
+		var label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		var take_button: Button = slot_panel.get_node_or_null("Row/TakeButton") as Button
+		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
 
 		if i >= _view_map.size():
 			slot_panel.visible = false
 			if label != null:
 				label.text = ""
-			if b != null:
-				b.disabled = true
-				b.icon = null
+			if take_button != null:
+				take_button.disabled = true
+			if icon_rect != null:
+				icon_rect.texture = null
 			continue
 
 		slot_panel.visible = true
-		if b != null:
-			b.disabled = false
-			b.text = "Take"
-			b.icon = null
+		if take_button != null:
+			take_button.disabled = false
+			take_button.text = "Take"
+		if icon_rect != null:
+			icon_rect.texture = null
 
 		var map_d: Dictionary = _view_map[i] as Dictionary
 		var t: String = String(map_d.get("type", ""))
@@ -290,8 +299,8 @@ func _refresh() -> void:
 		if t == "gold":
 			if label != null:
 				label.text = "Gold: %s" % _format_money_bronze(gold)
-			if b != null:
-				b.text = "Take"
+			if take_button != null:
+				take_button.text = "Take"
 				# Optional icon: if you later add a gold item/icon in DB, hook it here.
 
 		elif t == "item":
@@ -317,8 +326,8 @@ func _refresh() -> void:
 
 			if label != null:
 				label.text = "%s x%d" % [item_name, count]
-			if b != null:
-				b.icon = icon_tex
+			if icon_rect != null:
+				icon_rect.texture = icon_tex
 
 
 func _get_icon(path: String) -> Texture2D:
@@ -331,7 +340,7 @@ func _get_icon(path: String) -> Texture2D:
 	if res is Texture2D:
 		tex = res as Texture2D
 
-	# Scale icons down to fit the 60x50 "Take" button area.
+	# Scale icons down to fit the loot row icon area.
 	# This keeps UI readable even if source icons are 128/256px.
 	var out: Texture2D = tex
 	if tex != null:
@@ -447,7 +456,19 @@ func _notify_bag_full() -> void:
 # Tooltip (panel beside LootHUD)
 # -----------------------------------------------------------------------------
 
-func _on_slot_hover(view_index: int) -> void:
+func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
+	if event is InputEventMouseButton:
+		var mouse := event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT or not mouse.pressed:
+			return
+	elif event is InputEventScreenTouch:
+		if not (event as InputEventScreenTouch).pressed:
+			return
+	else:
+		return
+	if view_index < 0 or view_index >= _view_map.size():
+		_hide_tooltip()
+		return
 	_show_tooltip_for_view(view_index)
 
 
@@ -495,10 +516,11 @@ func _show_tooltip_for_view(view_index: int) -> void:
 		tooltip_text.call("clear")
 	tooltip_text.text = text_out
 
+	tooltip_panel.visible = false
+	# Wait for the text layout before sizing, so the tooltip shows at its final size.
+	await get_tree().process_frame
+	_apply_tooltip_layout()
 	tooltip_panel.visible = true
-	# Defer layout + scroll reset to the next frame so the control has updated its content
-	# (prevents "text walks upward" across repeated hovers).
-	call_deferred("_apply_tooltip_layout")
 
 
 func _hide_tooltip() -> void:
