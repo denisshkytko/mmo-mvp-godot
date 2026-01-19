@@ -810,11 +810,16 @@ func _unhandled_input(event: InputEvent) -> void:
 func _resize_tooltip_to_content() -> void:
 	if _tooltip_panel == null or _tooltip_label == null:
 		return
+	var was_visible := _tooltip_panel.visible
+	var prev_modulate := _tooltip_panel.modulate
+	_tooltip_panel.visible = true
+	_tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
 	# Align layout sizing with LootHUD so the first show measures correctly.
 	var width: float = 360.0
 	_tooltip_panel.size = Vector2(width, 10)
 	_tooltip_panel.custom_minimum_size = Vector2(width, 0)
 	_tooltip_label.custom_minimum_size = Vector2(width - 20.0, 0)
+	await get_tree().process_frame
 	await get_tree().process_frame
 	var label_min := _tooltip_label.get_combined_minimum_size()
 	if label_min.y <= 1.0:
@@ -837,13 +842,13 @@ func _resize_tooltip_to_content() -> void:
 		final_size = Vector2(width, min_h)
 	_tooltip_panel.custom_minimum_size = final_size
 	_tooltip_panel.size = final_size
+	_tooltip_panel.modulate = prev_modulate
+	if not was_visible:
+		_tooltip_panel.visible = false
 
 func _position_tooltip_left_of_point(p: Vector2) -> void:
 	if _tooltip_panel == null:
 		return
-	# Ensure minimum size recalculated
-	_tooltip_panel.reset_size()
-	await get_tree().process_frame
 	var vp := get_viewport().get_visible_rect().size
 	var size := _tooltip_panel.size
 	var margin: float = 8.0

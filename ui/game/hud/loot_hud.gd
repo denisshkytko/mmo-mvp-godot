@@ -534,7 +534,11 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	tooltip_text.text = text_out
 
 	tooltip_panel.visible = false
-	# Wait for the text layout before sizing, so the tooltip shows at its final size.
+	# Warm-up layout while hidden visually so measurements are valid.
+	var prev_modulate := tooltip_panel.modulate
+	tooltip_panel.visible = true
+	tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
+	await get_tree().process_frame
 	await get_tree().process_frame
 	await _apply_tooltip_layout()
 	# Lock final size before showing to avoid the first-frame resize flicker.
@@ -542,6 +546,7 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	tooltip_panel.custom_minimum_size = final_size
 	tooltip_panel.size = final_size
 	_position_tooltip_beside_panel()
+	tooltip_panel.modulate = prev_modulate
 	tooltip_panel.visible = true
 	_tooltip_view_index = view_index
 
