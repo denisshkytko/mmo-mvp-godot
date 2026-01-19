@@ -769,6 +769,9 @@ func _show_tooltip_for_slot(slot_index: int) -> void:
 	_tooltip_panel.size = Vector2(_tooltip_panel.size.x, 0)
 	_tooltip_label.text = ""
 	var text := _build_tooltip_text(id, count)
+	if String(text).strip_edges().is_empty():
+		_hide_tooltip()
+		return
 	_tooltip_label.text = text
 	# "Use" button (inventory tooltip only)
 	if _tooltip_use_btn != null:
@@ -792,26 +795,60 @@ func _hide_tooltip() -> void:
 	_tooltip_for_slot = -1
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not _is_open or _tooltip_panel == null or not _tooltip_panel.visible:
+		return
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			_hide_tooltip()
+	elif event is InputEventScreenTouch:
+		if (event as InputEventScreenTouch).pressed:
+			_hide_tooltip()
+
+
 func _resize_tooltip_to_content() -> void:
 	if _tooltip_panel == null or _tooltip_label == null:
 		return
+	var was_visible := _tooltip_panel.visible
+	var prev_modulate := _tooltip_panel.modulate
+	_tooltip_panel.visible = true
+	_tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
+	# Align layout sizing with LootHUD so the first show measures correctly.
+	var width: float = 360.0
+	_tooltip_panel.size = Vector2(width, 10)
+	_tooltip_panel.custom_minimum_size = Vector2(width, 0)
+	_tooltip_label.custom_minimum_size = Vector2(width - 20.0, 0)
 	await get_tree().process_frame
-	var content_h: float = _tooltip_label.get_content_height()
+	await get_tree().process_frame
+	var label_min := _tooltip_label.get_combined_minimum_size()
+	if label_min.y <= 1.0:
+		await get_tree().process_frame
+		label_min = _tooltip_label.get_combined_minimum_size()
+	var content_h: float = max(float(_tooltip_label.get_content_height()), label_min.y)
 	var btn_h: float = 0.0
 	if _tooltip_use_btn != null and _tooltip_use_btn.visible:
 		btn_h = max(32.0, _tooltip_use_btn.get_combined_minimum_size().y)
 	# label + optional button + small spacing
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
-	var min_h: float = max(24.0, content_h + btn_h + extra_spacing + 18.0)
-	_tooltip_panel.custom_minimum_size = Vector2(_tooltip_panel.custom_minimum_size.x, min_h)
-	_tooltip_panel.size = Vector2(_tooltip_panel.size.x, min_h)
+	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
+	_tooltip_panel.custom_minimum_size = Vector2(width, min_h)
+	_tooltip_panel.size = Vector2(width, min_h)
+	# Finalize size after layout so first show doesn't resize on screen.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var final_size := _tooltip_panel.get_combined_minimum_size()
+	if final_size.y < min_h:
+		final_size = Vector2(width, min_h)
+	_tooltip_panel.custom_minimum_size = final_size
+	_tooltip_panel.size = final_size
+	_tooltip_panel.modulate = prev_modulate
+	if not was_visible:
+		_tooltip_panel.visible = false
 
 func _position_tooltip_left_of_point(p: Vector2) -> void:
 	if _tooltip_panel == null:
 		return
-	# Ensure minimum size recalculated
-	_tooltip_panel.reset_size()
-	await get_tree().process_frame
 	var vp := get_viewport().get_visible_rect().size
 	var size := _tooltip_panel.size
 	var margin: float = 8.0
@@ -1608,22 +1645,23 @@ func _ensure_support_ui() -> void:
 			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			# Match LootHUD tooltip styling.
 			var sb := StyleBoxFlat.new()
-			sb.bg_color = Color(0, 0, 0, 0.86)
-			sb.content_margin_left = 10
-			sb.content_margin_right = 10
-			sb.content_margin_top = 8
-			sb.content_margin_bottom = 8
+			sb.bg_color = Color(0, 0, 0, 0.85)
+			sb.border_width_left = 1
+			sb.border_width_top = 1
+			sb.border_width_right = 1
+			sb.border_width_bottom = 1
+			sb.border_color = Color(1, 1, 1, 0.12)
 			sb.corner_radius_top_left = 8
 			sb.corner_radius_top_right = 8
 			sb.corner_radius_bottom_left = 8
 			sb.corner_radius_bottom_right = 8
 			_tooltip_panel.add_theme_stylebox_override("panel", sb)
-			_tooltip_panel.custom_minimum_size = Vector2(300, 0)
+			_tooltip_panel.custom_minimum_size = Vector2(360, 0)
 		if _tooltip_label != null:
 			_tooltip_label.bbcode_enabled = true
 			_tooltip_label.fit_content = true
 			_tooltip_label.scroll_active = false
-			_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 			_tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		if _tooltip_use_btn != null and not _tooltip_use_btn.pressed.is_connected(_on_tooltip_use_pressed):
 			_tooltip_use_btn.pressed.connect(_on_tooltip_use_pressed)
@@ -1796,18 +1834,23 @@ func _style_inventory_tooltip() -> void:
 	if _tooltip_panel == null:
 		return
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0, 0, 0, 0.86)
-	sb.content_margin_left = 10
-	sb.content_margin_right = 10
-	sb.content_margin_top = 8
-	sb.content_margin_bottom = 8
+	sb.bg_color = Color(0, 0, 0, 0.85)
+	sb.border_width_left = 1
+	sb.border_width_top = 1
+	sb.border_width_right = 1
+	sb.border_width_bottom = 1
+	sb.border_color = Color(1, 1, 1, 0.12)
+	sb.corner_radius_top_left = 8
+	sb.corner_radius_top_right = 8
+	sb.corner_radius_bottom_left = 8
+	sb.corner_radius_bottom_right = 8
 	_tooltip_panel.add_theme_stylebox_override("panel", sb)
 	# Make sure RichTextLabel behaves consistently.
 	if _tooltip_label != null:
 		_tooltip_label.bbcode_enabled = true
 		_tooltip_label.fit_content = true
 		_tooltip_label.scroll_active = false
-		_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 
 
 func _ensure_quick_button_visuals(b: Button) -> void:

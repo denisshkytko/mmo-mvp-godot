@@ -13,10 +13,12 @@ extends CanvasLayer
 @onready var close_button: Button = $Panel/CloseButton
 
 @onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_text: RichTextLabel = $TooltipPanel/Text
+@onready var tooltip_text: RichTextLabel = $TooltipPanel/Margin/VBox/Text
 
 var _corpse: Node = null
 var _player: Node = null
+var _tooltip_view_index: int = -1
+var _tooltip_seq: int = 0
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -72,14 +74,25 @@ func _ready() -> void:
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		var b: Button = slot_panel.get_node_or_null("Button") as Button
-		if b != null:
-			b.pressed.connect(_on_slot_pressed.bind(i))
-			b.mouse_entered.connect(_on_slot_hover.bind(i))
-			b.mouse_exited.connect(_hide_tooltip)
-			b.mouse_filter = Control.MOUSE_FILTER_STOP
-
-	panel.mouse_exited.connect(_hide_tooltip)
+		var take_button: Button = slot_panel.get_node_or_null("Row/TakeButton") as Button
+		if take_button != null:
+			take_button.pressed.connect(_on_slot_pressed.bind(i))
+			take_button.mouse_filter = Control.MOUSE_FILTER_STOP
+		var name_label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		if name_label != null:
+			name_label.clip_text = true
+			name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+			name_label.gui_input.connect(_on_slot_tapped.bind(i))
+			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
+		if count_label != null:
+			count_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+			count_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
+		if icon_rect != null:
+			icon_rect.gui_input.connect(_on_slot_tapped.bind(i))
+			icon_rect.mouse_filter = Control.MOUSE_FILTER_STOP
 
 
 	# Draggable loot window (only when clicking on the panel background / title area)
@@ -266,23 +279,29 @@ func _refresh() -> void:
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		var label: Label = slot_panel.get_node_or_null("Text") as Label
-		var b: Button = slot_panel.get_node_or_null("Button") as Button
+		var label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
+		var take_button: Button = slot_panel.get_node_or_null("Row/TakeButton") as Button
+		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
 
 		if i >= _view_map.size():
 			slot_panel.visible = false
 			if label != null:
 				label.text = ""
-			if b != null:
-				b.disabled = true
-				b.icon = null
+			if count_label != null:
+				count_label.text = ""
+			if take_button != null:
+				take_button.disabled = true
+			if icon_rect != null:
+				icon_rect.texture = null
 			continue
 
 		slot_panel.visible = true
-		if b != null:
-			b.disabled = false
-			b.text = "Take"
-			b.icon = null
+		if take_button != null:
+			take_button.disabled = false
+			take_button.text = "Take"
+		if icon_rect != null:
+			icon_rect.texture = null
 
 		var map_d: Dictionary = _view_map[i] as Dictionary
 		var t: String = String(map_d.get("type", ""))
@@ -290,8 +309,10 @@ func _refresh() -> void:
 		if t == "gold":
 			if label != null:
 				label.text = "Gold: %s" % _format_money_bronze(gold)
-			if b != null:
-				b.text = "Take"
+			if count_label != null:
+				count_label.text = ""
+			if take_button != null:
+				take_button.text = "Take"
 				# Optional icon: if you later add a gold item/icon in DB, hook it here.
 
 		elif t == "item":
@@ -316,9 +337,11 @@ func _refresh() -> void:
 						icon_tex = _get_icon(ip)
 
 			if label != null:
-				label.text = "%s x%d" % [item_name, count]
-			if b != null:
-				b.icon = icon_tex
+				label.text = item_name
+			if count_label != null:
+				count_label.text = "x%d" % count
+			if icon_rect != null:
+				icon_rect.texture = icon_tex
 
 
 func _get_icon(path: String) -> Texture2D:
@@ -331,7 +354,7 @@ func _get_icon(path: String) -> Texture2D:
 	if res is Texture2D:
 		tex = res as Texture2D
 
-	# Scale icons down to fit the 60x50 "Take" button area.
+	# Scale icons down to fit the loot row icon area.
 	# This keeps UI readable even if source icons are 128/256px.
 	var out: Texture2D = tex
 	if tex != null:
@@ -447,11 +470,32 @@ func _notify_bag_full() -> void:
 # Tooltip (panel beside LootHUD)
 # -----------------------------------------------------------------------------
 
-func _on_slot_hover(view_index: int) -> void:
+func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
+	if event is InputEventMouseButton:
+		var mouse := event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT or not mouse.pressed:
+			return
+	elif event is InputEventScreenTouch:
+		if not (event as InputEventScreenTouch).pressed:
+			return
+	else:
+		return
+	if view_index < 0 or view_index >= _view_map.size():
+		_hide_tooltip()
+		return
+	if tooltip_panel.visible and _tooltip_view_index == view_index:
+		_hide_tooltip()
+		return
+	_hide_tooltip()
+	_tooltip_view_index = -1
 	_show_tooltip_for_view(view_index)
 
 
 func _show_tooltip_for_view(view_index: int) -> void:
+	_tooltip_seq += 1
+	var seq := _tooltip_seq
+	if OS.is_debug_build():
+		print("LootHUD tooltip start seq=", seq, " view=", view_index)
 	if _corpse == null or not is_instance_valid(_corpse):
 		_hide_tooltip()
 		return
@@ -463,6 +507,7 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	var t: String = String(m.get("type", ""))
 
 	var text_out: String = ""
+	var target_view := view_index
 	if t == "gold":
 		var corpse_typed := _as_corpse(_corpse)
 		var gold_amount: int = corpse_typed.loot_gold if corpse_typed != null else (int(_corpse.get("loot_gold")) if ("loot_gold" in _corpse) else 0)
@@ -489,20 +534,52 @@ func _show_tooltip_for_view(view_index: int) -> void:
 		_hide_tooltip()
 		return
 
+	tooltip_panel.visible = false
+	tooltip_panel.custom_minimum_size = Vector2(tooltip_panel.custom_minimum_size.x, 0)
+	tooltip_panel.size = Vector2(tooltip_panel.size.x, 0)
+	tooltip_text.text = ""
+
 	# RichTextLabel: assign BBCode via .text (bbcode_enabled=true).
 	# Clear first to avoid any stale layout.
 	if tooltip_text.has_method("clear"):
 		tooltip_text.call("clear")
 	tooltip_text.text = text_out
 
+	# Warm-up layout while hidden visually so measurements are valid.
+	var prev_modulate := tooltip_panel.modulate
 	tooltip_panel.visible = true
-	# Defer layout + scroll reset to the next frame so the control has updated its content
-	# (prevents "text walks upward" across repeated hovers).
-	call_deferred("_apply_tooltip_layout")
+	tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
+	await get_tree().process_frame
+	if seq != _tooltip_seq or not is_instance_valid(tooltip_panel) or not tooltip_panel.visible or _tooltip_view_index != -1 and _tooltip_view_index != target_view:
+		if OS.is_debug_build():
+			print("LootHUD tooltip cancel seq=", seq, " view=", view_index)
+		return
+	await get_tree().process_frame
+	if seq != _tooltip_seq or not is_instance_valid(tooltip_panel) or not tooltip_panel.visible or _tooltip_view_index != -1 and _tooltip_view_index != target_view:
+		if OS.is_debug_build():
+			print("LootHUD tooltip cancel seq=", seq, " view=", view_index)
+		return
+	await _apply_tooltip_layout()
+	if seq != _tooltip_seq or not is_instance_valid(tooltip_panel) or not tooltip_panel.visible or _tooltip_view_index != -1 and _tooltip_view_index != target_view:
+		if OS.is_debug_build():
+			print("LootHUD tooltip cancel seq=", seq, " view=", view_index)
+		return
+	# Lock final size before showing to avoid the first-frame resize flicker.
+	var final_size := tooltip_panel.size
+	tooltip_panel.custom_minimum_size = final_size
+	tooltip_panel.size = final_size
+	_position_tooltip_beside_panel()
+	tooltip_panel.modulate = prev_modulate
+	tooltip_panel.visible = true
+	_tooltip_view_index = view_index
+	if OS.is_debug_build():
+		print("LootHUD tooltip shown seq=", seq, " view=", view_index)
 
 
 func _hide_tooltip() -> void:
 	tooltip_panel.visible = false
+	_tooltip_view_index = -1
+	_tooltip_seq += 1
 	_reset_tooltip_scroll()
 
 
@@ -519,10 +596,12 @@ func _apply_tooltip_layout() -> void:
 	# Ask Godot for the wrapped text height and apply padding.
 	# RichTextLabel exposes content height.
 	var content_h: float = float(tooltip_text.get_content_height())
-	var height: float = max(32.0, content_h + 16.0)
+	if content_h <= 1.0 and tooltip_text.text.strip_edges() != "":
+		await get_tree().process_frame
+		content_h = float(tooltip_text.get_content_height())
+	var min_from_label := tooltip_text.get_combined_minimum_size().y
+	var height: float = max(32.0, max(content_h, min_from_label) + 16.0)
 	tooltip_panel.size = Vector2(width, height)
-
-	_position_tooltip_beside_panel()
 
 func _reset_tooltip_scroll() -> void:
 	# RichTextLabel can keep a previous scroll offset. Ensure it is reset.
@@ -536,14 +615,32 @@ func _reset_tooltip_scroll() -> void:
 		sb.value = 0
 
 func _position_tooltip_beside_panel() -> void:
-	# Tooltip is anchored to the loot window: to the right with a small gap,
-	# aligned by the top edge. Tooltip is allowed to go off-screen.
-	if not tooltip_panel.visible:
-		return
+	# Tooltip is anchored beside the loot window, top-aligned, and clamped on screen.
 	var pr := panel.get_global_rect()
+	var vp := get_viewport().get_visible_rect().size
 	var gap := 8.0
-	var pos := pr.position + Vector2(pr.size.x + gap, 0.0)
+	var size := tooltip_panel.size
+	var right_pos := pr.position + Vector2(pr.size.x + gap, 0.0)
+	var left_pos := pr.position + Vector2(-gap - size.x, 0.0)
+	var pos := right_pos
+	if right_pos.x + size.x > vp.x - gap and left_pos.x >= gap:
+		pos = left_pos
+	elif right_pos.x + size.x > vp.x - gap:
+		pos.x = max(gap, vp.x - size.x - gap)
+	pos.y = clamp(pr.position.y, gap, vp.y - size.y - gap)
 	tooltip_panel.global_position = pos
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not panel.visible or not tooltip_panel.visible:
+		return
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			_hide_tooltip()
+	elif event is InputEventScreenTouch:
+		if (event as InputEventScreenTouch).pressed:
+			_hide_tooltip()
 
 
 func _build_item_tooltip_text(item: Dictionary) -> String:
