@@ -831,6 +831,7 @@ func _resize_tooltip_to_content() -> void:
 	_tooltip_panel.size = Vector2(width, min_h)
 	# Finalize size after layout so first show doesn't resize on screen.
 	await get_tree().process_frame
+	await get_tree().process_frame
 	var final_size := _tooltip_panel.get_combined_minimum_size()
 	if final_size.y < min_h:
 		final_size = Vector2(width, min_h)

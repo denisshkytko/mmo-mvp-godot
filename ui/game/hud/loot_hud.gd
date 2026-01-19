@@ -536,7 +536,7 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	tooltip_panel.visible = false
 	# Wait for the text layout before sizing, so the tooltip shows at its final size.
 	await get_tree().process_frame
-	_apply_tooltip_layout()
+	await _apply_tooltip_layout()
 	# Lock final size before showing to avoid the first-frame resize flicker.
 	var final_size := tooltip_panel.size
 	tooltip_panel.custom_minimum_size = final_size
@@ -565,7 +565,11 @@ func _apply_tooltip_layout() -> void:
 	# Ask Godot for the wrapped text height and apply padding.
 	# RichTextLabel exposes content height.
 	var content_h: float = float(tooltip_text.get_content_height())
-	var height: float = max(32.0, content_h + 16.0)
+	if content_h <= 1.0 and tooltip_text.text.strip_edges() != "":
+		await get_tree().process_frame
+		content_h = float(tooltip_text.get_content_height())
+	var min_from_label := tooltip_text.get_combined_minimum_size().y
+	var height: float = max(32.0, max(content_h, min_from_label) + 16.0)
 	tooltip_panel.size = Vector2(width, height)
 
 func _reset_tooltip_scroll() -> void:
