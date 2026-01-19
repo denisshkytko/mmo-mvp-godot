@@ -66,8 +66,8 @@ func apply_equipment_snapshot(snapshot: Dictionary) -> void:
 				equipment_slots[slot_id] = {"id": id, "count": 1}
 			else:
 				equipment_slots[slot_id] = null
-	else:
-		equipment_slots[slot_id] = null
+		else:
+			equipment_slots[slot_id] = null
 	_emit_changed(false)
 
 func get_preferred_slot_for_item(item_id: String) -> String:
