@@ -1,5 +1,6 @@
 extends CanvasLayer
 
+const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var panel: Control = $Panel
 @onready var gold_label: Label = $Panel/GoldLabel
 @onready var grid: GridContainer = $Panel/Grid
@@ -1543,71 +1544,7 @@ func _build_tooltip_text(id: String, count: int) -> String:
 	var meta: Dictionary = {}
 	if db != null and db.has_method("get_item"):
 		meta = db.call("get_item", id) as Dictionary
-
-	var item_name: String = String(meta.get("name", id))
-	var typ: String = String(meta.get("type", ""))
-	var rarity: String = String(meta.get("rarity", ""))
-	# In DB we treat item_level as required level for use/equip.
-	var req_lvl: int = int(meta.get("required_level", meta.get("item_level", 0)))
-	var price: int = int(meta.get("vendor_price_bronze", 0))
-
-	var lines: Array[String] = []
-	var rarity_col: String = _rarity_color_hex(rarity, typ)
-	var name_part := "[color=%s][b]%s[/b][/color]" % [rarity_col, item_name]
-	lines.append(name_part + (" x%d" % count if count > 1 else ""))
-	# Don't show rarity line for junk items (keep only type for now).
-	if rarity != "" and typ.to_lower() != "junk":
-		var r_val := "[color=%s]%s[/color]" % [rarity_col, rarity]
-		lines.append("rarity: %s" % r_val)
-	# Required level is meaningful only for usable items for now.
-	var show_req: bool = typ in ["weapon", "armor", "bag", "food", "drink", "potion", "accessory", "offhand"]
-	if show_req and req_lvl > 0:
-		var p_lvl: int = 0
-		if player != null and is_instance_valid(player) and ("level" in player):
-			p_lvl = int(player.level)
-		var lvl_line := "required level: %d" % req_lvl
-		if p_lvl > 0 and p_lvl < req_lvl:
-			lvl_line = "[color=#ff5555]%s[/color]" % lvl_line
-		lines.append(lvl_line)
-	if typ != "":
-		lines.append("type: %s" % typ)
-	if meta.has("armor") and meta.get("armor") is Dictionary:
-		var a: Dictionary = meta.get("armor") as Dictionary
-		lines.append("armor: %d  magic: %d" % [int(a.get("physical_armor", 0)), int(a.get("magic_armor", 0))])
-	if meta.has("weapon") and meta.get("weapon") is Dictionary:
-		var w: Dictionary = meta.get("weapon") as Dictionary
-		var dmg: int = int(w.get("damage", 0))
-		var spd: float = float(w.get("attack_interval", 1.0))
-		lines.append("damage: %d  speed: %.2f" % [dmg, spd])
-		if spd > 0.0:
-			lines.append("dps: %.1f" % (float(dmg) / spd))
-	if meta.has("stats_modifiers") and meta.get("stats_modifiers") is Dictionary:
-		var sm: Dictionary = meta.get("stats_modifiers") as Dictionary
-		for k in sm.keys():
-			lines.append("%s: %+d" % [String(k), int(sm[k])])
-	# Consumable effects (food/drink/potions)
-	if meta.has("consumable") and meta.get("consumable") is Dictionary:
-		var c: Dictionary = meta.get("consumable") as Dictionary
-		if not c.is_empty():
-			var eff_lines: Array[String] = _format_consumable_effects(c)
-			if eff_lines.size() > 0:
-				lines.append("")
-				lines.append("effects:")
-				for el in eff_lines:
-					lines.append("  " + el)
-			# Cooldown info
-			var kind := _get_consumable_cd_kind_for_item(id)
-			var cd_total := _get_consumable_cd_total_for_kind(kind)
-			if cd_total > 0.0:
-				var cd_line := "cooldown: %ds" % int(cd_total)
-				if player != null and player.has_method("get_consumable_cooldown_left"):
-					var left := float(player.call("get_consumable_cooldown_left", kind))
-					if left > 0.01:
-						cd_line = "cooldown: %ds (%.1fs left)" % [int(cd_total), left]
-				lines.append(cd_line)
-	if price > 0:
-		lines.append("price: %s" % _format_money_bronze(price))
-	return "\n".join(lines)
+	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, player)
 
 
 func _rarity_color_hex(rarity: String, typ: String) -> String:

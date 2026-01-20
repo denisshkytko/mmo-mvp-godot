@@ -1,6 +1,7 @@
 extends Control
 
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
+const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 
 @onready var character_button: Button = $CharacterButton
 @onready var panel: Panel = %Panel
@@ -9,8 +10,8 @@ const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 @onready var equipment_panel: Panel = %EquipmentPanel
 
 @onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_rich: RichTextLabel = $TooltipPanel/Margin/TooltipVBox/TooltipText
-@onready var tooltip_unequip: Button = $TooltipPanel/Margin/TooltipVBox/UnequipButton
+@onready var tooltip_rich: RichTextLabel = $TooltipPanel/Margin/VBox/Text
+@onready var tooltip_unequip: Button = $TooltipPanel/Margin/VBox/UnequipButton
 
 var _player: Player = null
 var _breakdown_cache: Dictionary = {}
@@ -33,13 +34,13 @@ func _ready() -> void:
 
 	stats_text.bbcode_enabled = true
 	stats_text.fit_content = true
-	stats_text.meta_hover_started.connect(_on_meta_hover_started)
-	stats_text.meta_hover_ended.connect(_on_meta_hover_ended)
+	stats_text.meta_clicked.connect(_on_meta_clicked)
 
 	tooltip_rich.bbcode_enabled = true
 	tooltip_rich.fit_content = true
 	tooltip_panel.visible = false
 	tooltip_rich.text = ""
+	_style_tooltip_panel()
 	if tooltip_unequip != null and not tooltip_unequip.pressed.is_connected(_on_unequip_pressed):
 		tooltip_unequip.pressed.connect(_on_unequip_pressed)
 
@@ -75,23 +76,24 @@ func _process(_delta: float) -> void:
 	if _equip_drag_active:
 		_update_equip_drag_icon()
 
-func _on_meta_hover_started(meta) -> void:
+func _on_meta_clicked(meta) -> void:
 	if not panel.visible:
 		return
-
 	var key := String(meta)
 	if not _breakdown_cache.has(key):
 		return
-
-	tooltip_panel.visible = true
-	tooltip_rich.text = String(_breakdown_cache[key])
-	_position_tooltip()
-
-func _on_meta_hover_ended(_meta) -> void:
-	_hide_tooltip()
+	if _tooltip_slot == key and tooltip_panel.visible:
+		_hide_tooltip()
+		return
+	_tooltip_slot = key
+	_show_tooltip_text(String(_breakdown_cache[key]), false)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _equip_drag_active:
+		if event is InputEventMouseButton:
+			var mb := event as InputEventMouseButton
+			if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+				_close_tooltip_on_outside_click(mb.global_position)
 		return
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
@@ -177,6 +179,22 @@ func _setup_equipment_slots() -> void:
 		if not slot_node.gui_input.is_connected(_on_equipment_slot_gui_input.bind(slot_id)):
 			slot_node.gui_input.connect(_on_equipment_slot_gui_input.bind(slot_id))
 		_style_slot_panel(slot_node)
+
+func _style_tooltip_panel() -> void:
+	if tooltip_panel == null:
+		return
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0, 0, 0, 0.85)
+	sb.border_width_left = 1
+	sb.border_width_top = 1
+	sb.border_width_right = 1
+	sb.border_width_bottom = 1
+	sb.border_color = Color(1, 1, 1, 0.12)
+	sb.corner_radius_top_left = 8
+	sb.corner_radius_top_right = 8
+	sb.corner_radius_bottom_left = 8
+	sb.corner_radius_bottom_right = 8
+	tooltip_panel.add_theme_stylebox_override("panel", sb)
 
 func _style_slot_panel(slot_node: Control) -> void:
 	if slot_node == null:
@@ -274,52 +292,73 @@ func _show_equipment_tooltip(slot_id: String) -> void:
 	if id == "":
 		_hide_tooltip()
 		return
-	var text := _build_item_tooltip_text(id)
+	var text := _build_item_tooltip_text(id, 1)
 	if text.strip_edges() == "":
 		_hide_tooltip()
 		return
-	tooltip_panel.visible = true
-	tooltip_rich.text = text
 	_tooltip_slot = slot_id
-	if tooltip_unequip != null:
-		tooltip_unequip.visible = true
-	_position_tooltip()
+	_show_tooltip_text(text, true)
 
-func _build_item_tooltip_text(item_id: String) -> String:
+func _build_item_tooltip_text(item_id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
 	if db == null or not db.has_method("get_item"):
 		return ""
 	var meta: Dictionary = db.call("get_item", item_id) as Dictionary
 	if meta.is_empty():
 		return ""
+	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player)
 
-	var item_name: String = String(meta.get("name", item_id))
-	var typ: String = String(meta.get("type", ""))
-	var rarity: String = String(meta.get("rarity", ""))
+func _show_tooltip_text(text: String, show_unequip: bool) -> void:
+	if tooltip_panel == null or tooltip_rich == null:
+		return
+	tooltip_panel.visible = false
+	tooltip_panel.custom_minimum_size = Vector2(tooltip_panel.custom_minimum_size.x, 0)
+	tooltip_panel.size = Vector2(tooltip_panel.size.x, 0)
+	tooltip_rich.text = text
+	if tooltip_unequip != null:
+		tooltip_unequip.visible = show_unequip
+	await _resize_tooltip_to_content()
+	tooltip_panel.visible = true
+	_position_tooltip()
 
-	var lines: Array[String] = []
-	lines.append("[b]%s[/b]" % item_name)
-	if rarity != "":
-		lines.append("rarity: %s" % rarity)
-	if typ != "":
-		lines.append("type: %s" % typ)
+func _resize_tooltip_to_content() -> void:
+	if tooltip_panel == null or tooltip_rich == null:
+		return
+	var was_visible := tooltip_panel.visible
+	var prev_modulate := tooltip_panel.modulate
+	tooltip_panel.visible = true
+	tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
+	var width: float = 360.0
+	tooltip_panel.size = Vector2(width, 10)
+	tooltip_panel.custom_minimum_size = Vector2(width, 0)
+	tooltip_rich.custom_minimum_size = Vector2(width - 20.0, 0)
+	await get_tree().process_frame
+	var content_h: float = max(float(tooltip_rich.get_content_height()), tooltip_rich.get_combined_minimum_size().y)
+	var btn_h: float = 0.0
+	if tooltip_unequip != null and tooltip_unequip.visible:
+		btn_h = max(32.0, tooltip_unequip.get_combined_minimum_size().y)
+	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
+	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
+	tooltip_panel.custom_minimum_size = Vector2(width, min_h)
+	tooltip_panel.size = Vector2(width, min_h)
+	await get_tree().process_frame
+	var final_size := tooltip_panel.get_combined_minimum_size()
+	if final_size.y < min_h:
+		final_size = Vector2(width, min_h)
+	tooltip_panel.custom_minimum_size = final_size
+	tooltip_panel.size = final_size
+	tooltip_panel.modulate = prev_modulate
+	if not was_visible:
+		tooltip_panel.visible = false
 
-	if meta.has("armor") and meta.get("armor") is Dictionary:
-		var a: Dictionary = meta.get("armor") as Dictionary
-		lines.append("armor: %d  magic: %d" % [int(a.get("physical_armor", 0)), int(a.get("magic_armor", 0))])
-	if meta.has("weapon") and meta.get("weapon") is Dictionary:
-		var w: Dictionary = meta.get("weapon") as Dictionary
-		var dmg: int = int(w.get("damage", 0))
-		var spd: float = float(w.get("attack_interval", 1.0))
-		lines.append("damage: %d  speed: %.2f" % [dmg, spd])
-		if spd > 0.0:
-			lines.append("dps: %.1f" % (float(dmg) / spd))
-	if meta.has("stats_modifiers") and meta.get("stats_modifiers") is Dictionary:
-		var sm: Dictionary = meta.get("stats_modifiers") as Dictionary
-		for k in sm.keys():
-			lines.append("%s: %+d" % [String(k), int(sm[k])])
-
-	return "\n".join(lines)
+func _close_tooltip_on_outside_click(global_pos: Vector2) -> void:
+	if not tooltip_panel.visible:
+		return
+	if tooltip_panel.get_global_rect().has_point(global_pos):
+		return
+	if stats_text != null and stats_text.get_global_rect().has_point(global_pos):
+		return
+	_hide_tooltip()
 
 func get_equipment_slot_at_global_pos(global_pos: Vector2) -> String:
 	if not panel.visible:

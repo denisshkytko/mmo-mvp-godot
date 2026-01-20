@@ -43,3 +43,8 @@ text = "Использовать"
 layout_mode = 2
 visible = false
 text = "Экипировать"
+
+[node name="UnequipButton" type="Button" parent="Margin/VBox"]
+layout_mode = 2
+visible = false
+text = "Снять"

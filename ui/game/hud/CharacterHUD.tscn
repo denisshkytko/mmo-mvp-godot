@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://k52s76musmbr"]
+[gd_scene load_steps=3 format=3 uid="uid://k52s76musmbr"]
 
 [ext_resource type="Script" uid="uid://benifso7efdrw" path="res://ui/game/hud/character_hud.gd" id="1_6op8q"]
+[ext_resource type="PackedScene" uid="uid://bhgl2a5rnu6k7" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_0n5q6"]
 
 [node name="CharacterHUD" type="Control"]
 layout_mode = 3
@@ -437,37 +438,5 @@ layout_mode = 2
 fit_content = true
 unique_name_in_owner = true
 
-[node name="TooltipPanel" type="Panel" parent="."]
-visible = false
+[node name="TooltipPanel" parent="." instance=ExtResource("2_0n5q6")]
 z_index = 500
-custom_minimum_size = Vector2(320, 180)
-layout_mode = 0
-mouse_filter = 1
-
-[node name="Margin" type="MarginContainer" parent="TooltipPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="TooltipVBox" type="VBoxContainer" parent="TooltipPanel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="TooltipText" type="RichTextLabel" parent="TooltipPanel/Margin/TooltipVBox"]
-layout_mode = 2
-mouse_filter = 1
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-bbcode_enabled = true
-fit_content = true
-
-[node name="UnequipButton" type="Button" parent="TooltipPanel/Margin/TooltipVBox"]
-layout_mode = 2
-visible = false
-text = "Снять"
