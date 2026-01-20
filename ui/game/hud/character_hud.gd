@@ -2,11 +2,36 @@ extends Control
 
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
+const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 
 const TOOLTIP_MIN_W: float = 260.0
 const TOOLTIP_MAX_W: float = 420.0
 const TOOLTIP_OFFSET := Vector2(12, 10)
 const TOOLTIP_MARGIN: float = 8.0
+
+const PRIMARY_LABELS := {
+	"str": "Сила",
+	"agi": "Ловкость",
+	"end": "Выносливость",
+	"int": "Интеллект",
+	"per": "Восприятие",
+}
+const PRIMARY_ORDER := ["str", "agi", "end", "int", "per"]
+
+const DERIVED_PRIMARY_COEFFS := {
+	"max_hp": {"end": STAT_CONST.HP_PER_END, "str": STAT_CONST.HP_PER_STR},
+	"max_mana": {"int": STAT_CONST.MANA_PER_INT},
+	"hp_regen": {"end": STAT_CONST.HP_REGEN_PER_END, "str": STAT_CONST.HP_REGEN_PER_STR},
+	"mana_regen": {"int": STAT_CONST.MANA_REGEN_PER_INT},
+	"attack_power": {"str": STAT_CONST.AP_FROM_STR, "agi": STAT_CONST.AP_FROM_AGI},
+	"spell_power": {"int": STAT_CONST.SP_FROM_INT},
+	"defense": {"str": STAT_CONST.DEF_FROM_STR, "agi": STAT_CONST.DEF_FROM_AGI},
+	"magic_resist": {"end": STAT_CONST.RES_FROM_END, "int": STAT_CONST.RES_FROM_INT},
+	"attack_speed_rating": {"agi": STAT_CONST.AS_FROM_AGI},
+	"cast_speed_rating": {"int": STAT_CONST.CS_FROM_INT},
+	"crit_chance_rating": {"per": STAT_CONST.CRIT_FROM_PER, "agi": STAT_CONST.CRIT_FROM_AGI},
+	"crit_damage_rating": {"per": STAT_CONST.CDMG_FROM_PER},
+}
 
 @onready var character_button: Button = $CharacterButton
 @onready var panel: Panel = %Panel
@@ -353,6 +378,7 @@ func _resize_tooltip_to_content() -> void:
 	var target_w: float = clamp(min_size.x, TOOLTIP_MIN_W, TOOLTIP_MAX_W)
 	tooltip_panel.custom_minimum_size = Vector2(target_w, 0.0)
 	tooltip_panel.size = Vector2(target_w, 10.0)
+	tooltip_rich.custom_minimum_size = Vector2(max(0.0, target_w - 20.0), 0.0)
 	await get_tree().process_frame
 	var label_min: Vector2 = tooltip_rich.get_combined_minimum_size()
 	if label_min.y <= 1.0:
@@ -490,35 +516,35 @@ func _format_snapshot(snap: Dictionary) -> String:
 
 	# Primary (single column, full names)
 	lines.append("[b]Основные характеристики[/b]")
-	lines.append("Сила %d" % int(p.get("str", 0)))
-	lines.append("Ловкость %d" % int(p.get("agi", 0)))
-	lines.append("Выносливость %d" % int(p.get("end", 0)))
-	lines.append("Интеллект %d" % int(p.get("int", 0)))
-	lines.append("Восприятие %d" % int(p.get("per", 0)))
+	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает здоровье и силу атаки"))
+	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает шанс крит. удара и скорость атаки"))
+	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья и физическую защиту"))
+	lines.append(_line_primary_stat("Интеллект", "int", snap, "Увеличивает ману, восстановление маны и силу заклинаний"))
+	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. удара и рейтинг крит. урона"))
 
 	lines.append("")
 	lines.append("[b]Здоровье и мана[/b]")
-	lines.append(_line_with_breakdown("Макс. здоровье", "max_hp", d, ""))
-	lines.append(_line_with_breakdown("Макс. мана", "max_mana", d, ""))
-	lines.append(_line_with_breakdown("Восстановление здоровья", "hp_regen", d, "в секунду"))
-	lines.append(_line_with_breakdown("Восстановление маны", "mana_regen", d, "в секунду"))
+	lines.append(_line_with_breakdown("Здоровье", "max_hp", snap, "Максимальный запас здоровья"))
+	lines.append(_line_with_breakdown("Мана", "max_mana", snap, "Максимальный запас маны"))
+	lines.append(_line_with_breakdown("Восстановление здоровья", "hp_regen", snap, "Величина восстановления здоровья за каждую секунду"))
+	lines.append(_line_with_breakdown("Восстановление маны", "mana_regen", snap, "Величина восстановления маны за каждую секунду"))
 
 	lines.append("")
 	lines.append("[b]Урон[/b]")
-	lines.append(_line_damage("Урон", d))
-	lines.append(_line_with_breakdown("Сила атаки", "attack_power", d, "Увеличивает физический урон на это значение"))
-	lines.append(_line_with_breakdown("Сила заклинаний", "spell_power", d, "Увеличивает магический урон и исцеление на это значение"))
+	lines.append(_line_damage("Физический урон", snap))
+	lines.append(_line_with_breakdown("Сила атаки", "attack_power", snap, "Увеличивает физический урон"))
+	lines.append(_line_with_breakdown("Сила заклинаний", "spell_power", snap, "Увеличивает магический урон и силу исцеления"))
 
 	lines.append(_line_with_breakdown(
 		"Рейтинг крит. шанса",
 		"crit_chance_rating",
-		d,
+		snap,
 		"Шанс критического удара %.2f%%" % float(snap.get("crit_chance_pct", 0.0))
 	))
 	lines.append(_line_with_breakdown(
 		"Рейтинг крит. урона",
 		"crit_damage_rating",
-		d,
+		snap,
 		"Критический урон x%.2f" % float(snap.get("crit_multiplier", 2.0))
 	))
 
@@ -527,34 +553,34 @@ func _format_snapshot(snap: Dictionary) -> String:
 	lines.append(_line_with_breakdown(
 		"Скорость",
 		"speed",
-		d,
-		"Снижает время восстановления способностей на %.2f%%" % float(snap.get("cooldown_reduction_pct", 0.0))
+		snap,
+		"Увеличивает скорость атаки, скорость произнесения заклинаний и скорость восстановления способностей"
 	))
 	lines.append(_line_with_breakdown(
 		"Скорость атаки",
 		"attack_speed_rating",
-		d,
+		snap,
 		"Увеличивает скорость атаки на %.2f%%" % float(snap.get("attack_speed_pct", 0.0))
 	))
 	lines.append(_line_with_breakdown(
-		"Скорость произнесения",
+		"Скорость произнесения заклинаний",
 		"cast_speed_rating",
-		d,
-		"Снижает время произнесения заклинаний на %.2f%%" % float(snap.get("cast_speed_pct", 0.0))
+		snap,
+		"Увеличивает скорость произнесения заклинаний"
 	))
 
 	lines.append("")
 	lines.append("[b]Защита[/b]")
 	lines.append(_line_with_breakdown(
-		"Защита",
+		"Физическая защита",
 		"defense",
-		d,
+		snap,
 		"Снижает получаемый физический урон на %.2f%%" % float(snap.get("defense_mitigation_pct", 0.0))
 	))
 	lines.append(_line_with_breakdown(
-		"Маг. сопротивление",
+		"Магическое сопротивление",
 		"magic_resist",
-		d,
+		snap,
 		"Снижает получаемый магический урон на %.2f%%" % float(snap.get("magic_mitigation_pct", 0.0))
 	))
 
@@ -577,47 +603,102 @@ func _position_tooltip(anchor_pos: Vector2) -> void:
 
 	tooltip_panel.global_position = desired
 
-func _line_with_breakdown(title: String, key: String, derived: Dictionary, effect_text: String) -> String:
+func _line_with_breakdown(title: String, key: String, snap: Dictionary, effect_text: String) -> String:
+	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var val = derived.get(key, 0)
 	var val_str: String = _format_stat_value(val)
 
-	var base_val = val
-	var equip_val = 0
-	if _player != null and _player.c_stats != null:
-		base_val = _player.c_stats.get_base_stat(key)
-		equip_val = _player.c_stats.get_equipment_bonus(key)
-
-	var tooltip_lines: Array[String] = []
-	if effect_text != "":
-		tooltip_lines.append(effect_text)
-	tooltip_lines.append("Base: %s" % _format_stat_value(base_val))
-	tooltip_lines.append("Equipment: %s" % _format_signed_value(equip_val))
-	tooltip_lines.append("Total: %s" % val_str)
-
-	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
+	_build_derived_tooltip(key, effect_text, snap)
 
 	return "[url=%s]%s %s[/url]" % [key, title, val_str]
 
-func _line_damage(title: String, derived: Dictionary) -> String:
+func _line_primary_stat(title: String, key: String, snap: Dictionary, effect_text: String) -> String:
+	var primary: Dictionary = snap.get("primary", {}) as Dictionary
+	var total_val: int = int(primary.get(key, 0))
+	_build_primary_tooltip(key, effect_text)
+	return "[url=%s]%s %d[/url]" % [key, title, total_val]
+
+func _line_damage(title: String, snap: Dictionary) -> String:
+	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var attack_power_total: float = float(derived.get("attack_power", 0.0))
 	var weapon_damage: int = 0
 	if _player != null and _player.c_equip != null:
 		weapon_damage = _player.c_equip.get_weapon_damage()
-	var base_ap: float = 0.0
-	var equip_ap: float = 0.0
-	if _player != null and _player.c_stats != null:
-		base_ap = float(_player.c_stats.get_base_stat("attack_power"))
-		equip_ap = float(_player.c_stats.get_equipment_bonus("attack_power"))
 	var total_damage: float = attack_power_total + float(weapon_damage)
 
-	var tooltip_lines := [
-		"Base: %s" % _format_stat_value(base_ap),
-		"Equipment: %s" % _format_signed_value(equip_ap + float(weapon_damage)),
-		"Total: %s" % _format_stat_value(total_damage),
-	]
-	_breakdown_cache["damage"] = "\n".join(tooltip_lines)
+	var tooltip_lines: Array[String] = []
+	tooltip_lines.append("Наносимый урон оружием/без оружия")
+	tooltip_lines.append("")
+	tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
+	tooltip_lines.append("Урон оружия: %s" % _format_stat_value(weapon_damage))
+	_breakdown_cache["damage"] = "\n".join(tooltip_lines).strip_edges()
 
 	return "[url=damage]%s %s[/url]" % [title, _format_stat_value(total_damage)]
+
+func _build_primary_tooltip(key: String, effect_text: String) -> void:
+	var base_val = 0
+	var equip_val = 0
+	if _player != null and _player.c_stats != null:
+		base_val = _player.c_stats.get_base_stat(key)
+		equip_val = _player.c_stats.get_equipment_bonus(key)
+	var tooltip_lines: Array[String] = []
+	if effect_text != "":
+		tooltip_lines.append(effect_text)
+		tooltip_lines.append("")
+	tooltip_lines.append("Базовые характеристики: %s" % _format_stat_value(base_val))
+	if equip_val != 0:
+		tooltip_lines.append("Снаряжение: %s" % _format_signed_value(equip_val))
+	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
+
+func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) -> void:
+	var tooltip_lines: Array[String] = []
+	if effect_text != "":
+		tooltip_lines.append(effect_text)
+	var base_lines := _build_primary_contrib_lines(key, snap)
+	if base_lines.size() > 0:
+		if tooltip_lines.size() > 0:
+			tooltip_lines.append("")
+		tooltip_lines.append_array(base_lines)
+	var equip_val: float = _get_direct_equipment_bonus(key, snap)
+	if equip_val != 0.0:
+		if tooltip_lines.size() > 0:
+			tooltip_lines.append("")
+		tooltip_lines.append("Снаряжение: %s" % _format_signed_value(equip_val))
+	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
+
+func _build_primary_contrib_lines(key: String, snap: Dictionary) -> Array[String]:
+	var out: Array[String] = []
+	var coeffs: Dictionary = DERIVED_PRIMARY_COEFFS.get(key, {}) as Dictionary
+	if coeffs.is_empty():
+		return out
+	var primary: Dictionary = snap.get("primary", {}) as Dictionary
+	for stat_key in PRIMARY_ORDER:
+		if not coeffs.has(stat_key):
+			continue
+		var coeff: float = float(coeffs.get(stat_key, 0.0))
+		if coeff == 0.0:
+			continue
+		var base_val: float = float(primary.get(stat_key, 0))
+		var delta: float = base_val * coeff
+		if base_val == 0.0 and delta == 0.0:
+			continue
+		var label: String = PRIMARY_LABELS.get(stat_key, String(stat_key))
+		out.append("%s: %s × %s = %s" % [
+			label,
+			_format_stat_value(base_val),
+			_format_stat_value(coeff),
+			_format_stat_value(delta),
+		])
+	return out
+
+func _get_direct_equipment_bonus(key: String, snap: Dictionary) -> float:
+	var breakdown: Dictionary = snap.get("derived_breakdown", {}) as Dictionary
+	var entries: Array = breakdown.get(key, []) as Array
+	var total: float = 0.0
+	for entry in entries:
+		if entry is Dictionary and String((entry as Dictionary).get("label", "")) == "gear":
+			total += float((entry as Dictionary).get("value", 0.0))
+	return total
 
 func _format_stat_value(val) -> String:
 	if typeof(val) == TYPE_FLOAT:
