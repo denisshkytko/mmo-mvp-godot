@@ -329,7 +329,7 @@ func _show_tooltip_text(text: String, show_unequip: bool, anchor_pos: Vector2) -
 	tooltip_rich.text = text
 	tooltip_rich.visible = true
 	tooltip_rich.queue_redraw()
-	tooltip_rich.minimum_size_changed()
+	tooltip_rich.update_minimum_size()
 	await get_tree().process_frame
 	await get_tree().process_frame
 	if tooltip_unequip != null:
@@ -349,12 +349,12 @@ func _resize_tooltip_to_content() -> void:
 	tooltip_panel.size = Vector2(TOOLTIP_MAX_W, 10.0)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	var min_size := tooltip_panel.get_combined_minimum_size()
-	var target_w := clamp(min_size.x, TOOLTIP_MIN_W, TOOLTIP_MAX_W)
+	var min_size: Vector2 = tooltip_panel.get_combined_minimum_size()
+	var target_w: float = clamp(min_size.x, TOOLTIP_MIN_W, TOOLTIP_MAX_W)
 	tooltip_panel.custom_minimum_size = Vector2(target_w, 0.0)
 	tooltip_panel.size = Vector2(target_w, 10.0)
 	await get_tree().process_frame
-	var label_min := tooltip_rich.get_combined_minimum_size()
+	var label_min: Vector2 = tooltip_rich.get_combined_minimum_size()
 	if label_min.y <= 1.0:
 		await get_tree().process_frame
 		label_min = tooltip_rich.get_combined_minimum_size()
@@ -368,7 +368,7 @@ func _resize_tooltip_to_content() -> void:
 	tooltip_panel.size = Vector2(target_w, min_h)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	var final_size := tooltip_panel.get_combined_minimum_size()
+	var final_size: Vector2 = tooltip_panel.get_combined_minimum_size()
 	final_size.x = target_w
 	if final_size.y < min_h:
 		final_size.y = min_h
