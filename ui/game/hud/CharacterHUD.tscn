@@ -54,7 +54,7 @@ theme_override_constants/separation = 8
 
 [node name="EquipmentPanel" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 300)
+custom_minimum_size = Vector2(340, 300)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -424,26 +424,36 @@ text = "Left Hand"
 layout_mode = 2
 
 [node name="StatsPanel" type="Panel" parent="Panel/MarginContainer/VBoxContainer/ContentRow"]
-custom_minimum_size = Vector2(320, 300)
+custom_minimum_size = Vector2(340, 300)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="StatsScroll" type="ScrollContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel"]
-custom_minimum_size = Vector2(320, 255)
+[node name="StatsMargin" type="MarginContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="StatsScroll" type="ScrollContainer" parent="Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel/StatsMargin"]
+custom_minimum_size = Vector2(320, 255)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="StatsText" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel/StatsScroll"]
+[node name="StatsText" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer/ContentRow/StatsPanel/StatsMargin/StatsScroll"]
 unique_name_in_owner = true
 z_index = 200
 custom_minimum_size = Vector2(320, 255)
 layout_mode = 2
+size_flags_vertical = 3
 fit_content = true
 
 [node name="TooltipPanel" parent="." instance=ExtResource("2_0n5q6")]
