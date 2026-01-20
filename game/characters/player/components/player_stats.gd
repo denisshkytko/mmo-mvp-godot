@@ -30,6 +30,8 @@ signal stats_changed(snapshot: Dictionary)
 
 # Cached last snapshot (for UI)
 var _snapshot: Dictionary = {}
+var _base_stats: Dictionary = {}
+var _equipment_bonus: Dictionary = {}
 
 # Regen accumulators (float pools so small regen values still work)
 var _hp_regen_pool: float = 0.0
@@ -131,6 +133,18 @@ func tick(delta: float) -> void:
 func get_stats_snapshot() -> Dictionary:
 	return _snapshot.duplicate(true)
 
+func get_base_stat(stat_id: String):
+	if _base_stats.has(stat_id):
+		return _base_stats[stat_id]
+	return 0
+
+func get_equipment_bonus(stat_id: String):
+	if _equipment_bonus.has(stat_id):
+		return _equipment_bonus[stat_id]
+	return 0
+
+func get_total_stat(stat_id: String):
+	return get_base_stat(stat_id) + get_equipment_bonus(stat_id)
 
 func apply_primary_data(data: Dictionary) -> void:
 	# Backward compatible: if no keys, keep defaults
@@ -179,23 +193,132 @@ func _build_snapshot() -> Dictionary:
 		"per": per_per_level,
 	}
 
-	# Gear placeholder. Later Equipment will fill these.
-	var gear := {
+	var gear_base := {
 		"primary": {},
 		"secondary": {
 			"defense": base_gear_defense,
-			"magic_resist": 0,
-			"speed": 0,
-			"crit_chance_rating": 0,
-			"crit_damage_rating": 0,
 		}
 	}
+
+	var gear_equipment := {
+		"primary": {},
+		"secondary": {},
+	}
+
+	if p != null and p.c_equip != null:
+		gear_equipment = _collect_equipment_modifiers()
+
+	var gear_total := _merge_gear(gear_base, gear_equipment)
 
 	var buffs: Array = []
 	if p != null and p.c_buffs != null:
 		buffs = p.c_buffs.get_buffs_snapshot()
 
-	return STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear, buffs)
+	var base_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_base, buffs)
+	var total_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_total, buffs)
+
+	_base_stats = _collect_flat_stats(base_snapshot)
+	_equipment_bonus = _diff_stats(total_snapshot, base_snapshot)
+
+	return total_snapshot
+
+func _collect_equipment_modifiers() -> Dictionary:
+	var out := {
+		"primary": {},
+		"secondary": {},
+	}
+	var equip: Dictionary = p.c_equip.get_equipment_snapshot()
+	if equip.is_empty():
+		return out
+	var db := get_node_or_null("/root/DataDB")
+	for slot_id in equip.keys():
+		var v: Variant = equip[slot_id]
+		if v == null or not (v is Dictionary):
+			continue
+		var d: Dictionary = v as Dictionary
+		var id: String = String(d.get("id", ""))
+		if id == "":
+			continue
+		if db == null or not db.has_method("get_item"):
+			continue
+		var meta: Dictionary = db.call("get_item", id) as Dictionary
+		var mods: Dictionary = meta.get("stats_modifiers", {}) as Dictionary
+		for key in mods.keys():
+			var val: int = int(mods.get(key, 0))
+			if val == 0:
+				continue
+			_map_modifier(out, String(key), val)
+	return out
+
+func _map_modifier(gear: Dictionary, stat_key: String, value: int) -> void:
+	var primary := gear.get("primary", {}) as Dictionary
+	var secondary := gear.get("secondary", {}) as Dictionary
+
+	match stat_key:
+		"STR":
+			primary["str"] = int(primary.get("str", 0)) + value
+		"AGI":
+			primary["agi"] = int(primary.get("agi", 0)) + value
+		"END":
+			primary["end"] = int(primary.get("end", 0)) + value
+		"INT":
+			primary["int"] = int(primary.get("int", 0)) + value
+		"PER":
+			primary["per"] = int(primary.get("per", 0)) + value
+		"AttackPower":
+			secondary["attack_power"] = int(secondary.get("attack_power", 0)) + value
+		"SpellPower":
+			secondary["spell_power"] = int(secondary.get("spell_power", 0)) + value
+		"SpeedRating":
+			secondary["speed"] = int(secondary.get("speed", 0)) + value
+		"CritChanceRating":
+			secondary["crit_chance_rating"] = int(secondary.get("crit_chance_rating", 0)) + value
+		"CritDamageRating":
+			secondary["crit_damage_rating"] = int(secondary.get("crit_damage_rating", 0)) + value
+		"HPRegen":
+			secondary["hp_regen"] = float(secondary.get("hp_regen", 0.0)) + float(value)
+		"ManaRegen":
+			secondary["mana_regen"] = float(secondary.get("mana_regen", 0.0)) + float(value)
+		_:
+			pass
+
+	gear["primary"] = primary
+	gear["secondary"] = secondary
+
+func _merge_gear(base_gear: Dictionary, extra_gear: Dictionary) -> Dictionary:
+	var merged := {
+		"primary": {},
+		"secondary": {},
+	}
+	for cat in ["primary", "secondary"]:
+		var out_cat: Dictionary = {}
+		var base_cat: Dictionary = base_gear.get(cat, {}) as Dictionary
+		var extra_cat: Dictionary = extra_gear.get(cat, {}) as Dictionary
+		for key in base_cat.keys():
+			out_cat[key] = base_cat[key]
+		for key in extra_cat.keys():
+			var v: float = float(out_cat.get(key, 0)) + float(extra_cat.get(key, 0))
+			out_cat[key] = v
+		merged[cat] = out_cat
+	return merged
+
+func _collect_flat_stats(snapshot: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	var prim: Dictionary = snapshot.get("primary", {}) as Dictionary
+	var derived: Dictionary = snapshot.get("derived", {}) as Dictionary
+	for key in prim.keys():
+		out[key] = prim[key]
+	for key in derived.keys():
+		out[key] = derived[key]
+	return out
+
+func _diff_stats(total_snapshot: Dictionary, base_snapshot: Dictionary) -> Dictionary:
+	var total_stats := _collect_flat_stats(total_snapshot)
+	var base_stats := _collect_flat_stats(base_snapshot)
+	var out: Dictionary = {}
+	for key in total_stats.keys():
+		out[key] = float(total_stats.get(key, 0)) - float(base_stats.get(key, 0))
+	return out
 
 func take_damage(raw_damage: int) -> void:
 	if p == null:

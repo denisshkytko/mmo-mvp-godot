@@ -1,5 +1,6 @@
 extends CanvasLayer
 
+const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 # LootHUD for Corpse v2 loot (loot_gold + loot_slots).
 # - Shows gold as a normal loot row (no extra label)
 # - Shows item icons + names from DataDB
@@ -644,109 +645,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _build_item_tooltip_text(item: Dictionary) -> String:
-	if item.is_empty():
-		return "Unknown item"
-
-	var lines: Array[String] = []
-	var t: String = String(item.get("type", ""))
-	var r: String = String(item.get("rarity", ""))
-	var rl: int = int(item.get("required_level", 1))
-	var rarity_col: String = _rarity_color_hex(r, t)
-	var name: String = String(item.get("name", "Item"))
-	lines.append("[color=%s][b]%s[/b][/color]" % [rarity_col, name])
-	# Don't show rarity line for junk items (keep only type for now).
-	if r != "" and t.to_lower() != "junk":
-		lines.append("Rarity: [color=%s]%s[/color]" % [rarity_col, r])
-	if t != "":
-		lines.append("Type: " + t)
-	# Required level (only for usable items; red if player level too low)
-	var show_req: bool = t in ["weapon", "armor", "bag", "food", "drink", "potion", "accessory", "offhand"]
-	if show_req and rl > 0:
-		var p_lvl: int = 0
-		if _player != null and is_instance_valid(_player) and ("level" in _player):
-			p_lvl = int(_player.level)
-		var lvl_line := "Required level: " + str(rl)
-		if p_lvl > 0 and p_lvl < rl:
-			lvl_line = "[color=#ff5555]%s[/color]" % lvl_line
-		lines.append(lvl_line)
-
-	# Base gear stats (armor/weapon)
-	if t == "armor":
-		var a: Variant = item.get("armor", {})
-		if a is Dictionary and not (a as Dictionary).is_empty():
-			var ad: Dictionary = a as Dictionary
-			lines.append("")
-			lines.append("Armor:")
-			if ad.has("slot"):
-				lines.append("  Slot: " + str(ad.get("slot")))
-			if ad.has("class"):
-				lines.append("  Class: " + str(ad.get("class")))
-			var pa: int = int(ad.get("physical_armor", 0))
-			var ma: int = int(ad.get("magic_armor", 0))
-			if pa != 0:
-				lines.append("  Physical armor: " + str(pa))
-			if ma != 0:
-				lines.append("  Magic armor: " + str(ma))
-	elif t == "weapon":
-		var w: Variant = item.get("weapon", {})
-		if w is Dictionary and not (w as Dictionary).is_empty():
-			var wd: Dictionary = w as Dictionary
-			lines.append("")
-			lines.append("Weapon:")
-			if wd.has("subtype"):
-				lines.append("  Type: " + str(wd.get("subtype")))
-			var dmg: int = int(wd.get("damage", 0))
-			var interval: float = float(wd.get("attack_interval", 1.0))
-			var handed: int = int(wd.get("handed", 1))
-			if dmg != 0:
-				lines.append("  Damage: " + str(dmg))
-			if interval > 0.0:
-				lines.append("  Speed: " + str(snapped(interval, 0.01)) + "s")
-				var dps: float = float(dmg) / interval if dmg > 0 else 0.0
-				if dps > 0.0:
-					lines.append("  DPS: " + str(snapped(dps, 0.1)))
-			lines.append("  Hands: " + ("2H" if handed >= 2 else "1H"))
-
-	# Equipment stats
-	var stats: Variant = item.get("stats_modifiers", {})
-	if stats is Dictionary and not (stats as Dictionary).is_empty():
-		lines.append("")
-		lines.append("Stats:")
-		var sd: Dictionary = stats as Dictionary
-		# Support both nested schema (primary/derived) and flat key:value schema.
-		if sd.has("primary") or sd.has("derived"):
-			var prim: Variant = sd.get("primary", {})
-			if prim is Dictionary:
-				for k in (prim as Dictionary).keys():
-					lines.append("  " + str(k) + ": " + str(int((prim as Dictionary)[k])))
-			var der: Variant = sd.get("derived", {})
-			if der is Dictionary:
-				for k in (der as Dictionary).keys():
-					lines.append("  " + str(k) + ": " + str(int((der as Dictionary)[k])))
-		else:
-			for k in sd.keys():
-				lines.append("  " + str(k) + ": " + str(sd[k]))
-
-	# Consumable effects (formatted)
-	var cons: Variant = item.get("consumable", {})
-	if cons is Dictionary and not (cons as Dictionary).is_empty():
-		var eff_lines: Array[String] = _format_consumable_effects(cons as Dictionary)
-		if eff_lines.size() > 0:
-			lines.append("")
-			lines.append("Effects:")
-			for el in eff_lines:
-				lines.append("  " + el)
-		# Cooldown info (static)
-		var cd_total := _get_consumable_cd_total_for_item(item)
-		if cd_total > 0.0:
-			lines.append("Cooldown: %ds" % int(cd_total))
-
-	# Value
-	var price: int = int(item.get("vendor_price_bronze", 0))
-	lines.append("")
-	lines.append("Value: " + _format_money_bronze(price))
-
-	return "\n".join(lines)
+	return TOOLTIP_BUILDER.build_item_tooltip(item, 1, _player)
 
 
 func _rarity_color_hex(rarity: String, typ: String) -> String:
