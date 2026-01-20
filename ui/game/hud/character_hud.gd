@@ -3,6 +3,11 @@ extends Control
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 
+const TOOLTIP_MIN_W: float = 260.0
+const TOOLTIP_MAX_W: float = 420.0
+const TOOLTIP_OFFSET := Vector2(12, 10)
+const TOOLTIP_MARGIN: float = 8.0
+
 @onready var character_button: Button = $CharacterButton
 @onready var panel: Panel = %Panel
 @onready var title_label: Label = %TitleLabel
@@ -39,6 +44,8 @@ func _ready() -> void:
 
 	tooltip_rich.bbcode_enabled = true
 	tooltip_rich.fit_content = true
+	tooltip_rich.scroll_active = false
+	tooltip_rich.autowrap_mode = TextServer.AUTOWRAP_WORD
 	tooltip_panel.visible = false
 	tooltip_rich.text = ""
 	_style_tooltip_panel()
@@ -320,6 +327,11 @@ func _show_tooltip_text(text: String, show_unequip: bool, anchor_pos: Vector2) -
 	tooltip_panel.size = Vector2.ZERO
 	tooltip_rich.custom_minimum_size = Vector2.ZERO
 	tooltip_rich.text = text
+	tooltip_rich.visible = true
+	tooltip_rich.queue_redraw()
+	tooltip_rich.minimum_size_changed()
+	await get_tree().process_frame
+	await get_tree().process_frame
 	if tooltip_unequip != null:
 		tooltip_unequip.visible = show_unequip
 	await _resize_tooltip_to_content()
@@ -333,8 +345,33 @@ func _resize_tooltip_to_content() -> void:
 	var prev_modulate := tooltip_panel.modulate
 	tooltip_panel.visible = true
 	tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
+	tooltip_panel.custom_minimum_size = Vector2(TOOLTIP_MIN_W, 0.0)
+	tooltip_panel.size = Vector2(TOOLTIP_MAX_W, 10.0)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var min_size := tooltip_panel.get_combined_minimum_size()
+	var target_w := clamp(min_size.x, TOOLTIP_MIN_W, TOOLTIP_MAX_W)
+	tooltip_panel.custom_minimum_size = Vector2(target_w, 0.0)
+	tooltip_panel.size = Vector2(target_w, 10.0)
+	await get_tree().process_frame
+	var label_min := tooltip_rich.get_combined_minimum_size()
+	if label_min.y <= 1.0:
+		await get_tree().process_frame
+		label_min = tooltip_rich.get_combined_minimum_size()
+	var content_h: float = max(float(tooltip_rich.get_content_height()), label_min.y)
+	var btn_h: float = 0.0
+	if tooltip_unequip != null and tooltip_unequip.visible:
+		btn_h = max(32.0, tooltip_unequip.get_combined_minimum_size().y)
+	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
+	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
+	tooltip_panel.custom_minimum_size = Vector2(target_w, min_h)
+	tooltip_panel.size = Vector2(target_w, min_h)
+	await get_tree().process_frame
 	await get_tree().process_frame
 	var final_size := tooltip_panel.get_combined_minimum_size()
+	final_size.x = target_w
+	if final_size.y < min_h:
+		final_size.y = min_h
 	tooltip_panel.custom_minimum_size = final_size
 	tooltip_panel.size = final_size
 	tooltip_panel.modulate = prev_modulate
@@ -528,17 +565,15 @@ func _position_tooltip(anchor_pos: Vector2) -> void:
 		return
 
 	var vp: Rect2 = get_viewport_rect()
-	var desired := anchor_pos
+	var desired := anchor_pos + TOOLTIP_OFFSET
 	var tsize := tooltip_panel.size
 
-	if desired.x + tsize.x > vp.position.x + vp.size.x:
-		desired.x = anchor_pos.x - tsize.x
-	if desired.y + tsize.y > vp.position.y + vp.size.y:
-		desired.y = vp.position.y + vp.size.y - tsize.y
-	if desired.x < vp.position.x:
-		desired.x = vp.position.x
-	if desired.y < vp.position.y:
-		desired.y = vp.position.y
+	if desired.x + tsize.x > vp.position.x + vp.size.x - TOOLTIP_MARGIN:
+		desired.x = anchor_pos.x - tsize.x - TOOLTIP_OFFSET.x
+	if desired.y + tsize.y > vp.position.y + vp.size.y - TOOLTIP_MARGIN:
+		desired.y = anchor_pos.y - tsize.y - TOOLTIP_OFFSET.y
+	desired.x = clamp(desired.x, vp.position.x + TOOLTIP_MARGIN, vp.position.x + vp.size.x - tsize.x - TOOLTIP_MARGIN)
+	desired.y = clamp(desired.y, vp.position.y + TOOLTIP_MARGIN, vp.position.y + vp.size.y - tsize.y - TOOLTIP_MARGIN)
 
 	tooltip_panel.global_position = desired
 
