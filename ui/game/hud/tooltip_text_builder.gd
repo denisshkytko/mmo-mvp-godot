@@ -22,10 +22,10 @@ static func rarity_color_hex(rarity: String, typ: String) -> String:
 			return "#ffffff"
 
 static func format_money_bbcode(bronze_total: int) -> String:
-	var total := max(0, int(bronze_total))
-	var gold := int(total / 10000)
-	var silver := int((total % 10000) / 100)
-	var bronze := int(total % 100)
+	var total : int = max(0, int(bronze_total))
+	var gold : int = int(total / 10000)
+	var silver : int = int((total % 10000) / 100)
+	var bronze : int = int(total % 100)
 
 	var parts: Array[String] = []
 	if gold > 0:
