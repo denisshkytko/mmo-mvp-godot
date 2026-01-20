@@ -24,6 +24,7 @@ var _equip_drag_item: Dictionary = {}
 var _equip_drag_start_pos: Vector2 = Vector2.ZERO
 var _equip_drag_threshold: float = 8.0
 var _equip_drag_icon: TextureRect = null
+var _tooltip_anchor_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	add_to_group("character_hud")
@@ -86,7 +87,8 @@ func _on_meta_clicked(meta) -> void:
 		_hide_tooltip()
 		return
 	_tooltip_slot = key
-	_show_tooltip_text(String(_breakdown_cache[key]), false)
+	_tooltip_anchor_pos = get_viewport().get_mouse_position()
+	_show_tooltip_text(String(_breakdown_cache[key]), false, _tooltip_anchor_pos)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _equip_drag_active:
@@ -263,7 +265,8 @@ func _on_equipment_slot_gui_input(event: InputEvent, slot_id: String) -> void:
 		var mb := event as InputEventMouseButton
 		if mb.pressed:
 			_equip_drag_start_pos = mb.position
-			_toggle_equipment_tooltip(slot_id)
+			_tooltip_anchor_pos = get_viewport().get_mouse_position()
+			_toggle_equipment_tooltip(slot_id, _tooltip_anchor_pos)
 		else:
 			if _equip_drag_active:
 				_finish_equip_drag(mb.global_position)
@@ -273,13 +276,13 @@ func _on_equipment_slot_gui_input(event: InputEvent, slot_id: String) -> void:
 			if dist >= _equip_drag_threshold:
 				_start_equip_drag(slot_id)
 
-func _toggle_equipment_tooltip(slot_id: String) -> void:
+func _toggle_equipment_tooltip(slot_id: String, anchor_pos: Vector2) -> void:
 	if _tooltip_slot == slot_id and tooltip_panel.visible:
 		_hide_tooltip()
 		return
-	_show_equipment_tooltip(slot_id)
+	_show_equipment_tooltip(slot_id, anchor_pos)
 
-func _show_equipment_tooltip(slot_id: String) -> void:
+func _show_equipment_tooltip(slot_id: String, anchor_pos: Vector2) -> void:
 	if _player == null or _player.c_equip == null:
 		_hide_tooltip()
 		return
@@ -297,7 +300,8 @@ func _show_equipment_tooltip(slot_id: String) -> void:
 		_hide_tooltip()
 		return
 	_tooltip_slot = slot_id
-	_show_tooltip_text(text, true)
+	_tooltip_anchor_pos = anchor_pos
+	_show_tooltip_text(text, true, _tooltip_anchor_pos)
 
 func _build_item_tooltip_text(item_id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
@@ -308,18 +312,19 @@ func _build_item_tooltip_text(item_id: String, count: int) -> String:
 		return ""
 	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player)
 
-func _show_tooltip_text(text: String, show_unequip: bool) -> void:
+func _show_tooltip_text(text: String, show_unequip: bool, anchor_pos: Vector2) -> void:
 	if tooltip_panel == null or tooltip_rich == null:
 		return
 	tooltip_panel.visible = false
-	tooltip_panel.custom_minimum_size = Vector2(tooltip_panel.custom_minimum_size.x, 0)
-	tooltip_panel.size = Vector2(tooltip_panel.size.x, 0)
+	tooltip_panel.custom_minimum_size = Vector2.ZERO
+	tooltip_panel.size = Vector2.ZERO
+	tooltip_rich.custom_minimum_size = Vector2.ZERO
 	tooltip_rich.text = text
 	if tooltip_unequip != null:
 		tooltip_unequip.visible = show_unequip
 	await _resize_tooltip_to_content()
 	tooltip_panel.visible = true
-	_position_tooltip()
+	_position_tooltip(anchor_pos)
 
 func _resize_tooltip_to_content() -> void:
 	if tooltip_panel == null or tooltip_rich == null:
@@ -328,23 +333,8 @@ func _resize_tooltip_to_content() -> void:
 	var prev_modulate := tooltip_panel.modulate
 	tooltip_panel.visible = true
 	tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
-	var width: float = 360.0
-	tooltip_panel.size = Vector2(width, 10)
-	tooltip_panel.custom_minimum_size = Vector2(width, 0)
-	tooltip_rich.custom_minimum_size = Vector2(width - 20.0, 0)
-	await get_tree().process_frame
-	var content_h: float = max(float(tooltip_rich.get_content_height()), tooltip_rich.get_combined_minimum_size().y)
-	var btn_h: float = 0.0
-	if tooltip_unequip != null and tooltip_unequip.visible:
-		btn_h = max(32.0, tooltip_unequip.get_combined_minimum_size().y)
-	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
-	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
-	tooltip_panel.custom_minimum_size = Vector2(width, min_h)
-	tooltip_panel.size = Vector2(width, min_h)
 	await get_tree().process_frame
 	var final_size := tooltip_panel.get_combined_minimum_size()
-	if final_size.y < min_h:
-		final_size = Vector2(width, min_h)
 	tooltip_panel.custom_minimum_size = final_size
 	tooltip_panel.size = final_size
 	tooltip_panel.modulate = prev_modulate
@@ -533,30 +523,22 @@ func _format_snapshot(snap: Dictionary) -> String:
 
 	return "\n".join(lines)
 
-func _position_tooltip() -> void:
-	# Place tooltip beside the character panel (outside), so it never affects layout.
+func _position_tooltip(anchor_pos: Vector2) -> void:
 	if tooltip_panel == null or panel == null:
 		return
 
 	var vp: Rect2 = get_viewport_rect()
-	var ppos: Vector2 = panel.global_position
-	var psz: Vector2 = panel.size
-
-	# Size: keep stable; do not auto-expand based on text width.
-	tooltip_panel.size = Vector2(360, max(200, psz.y))
-
-	var desired := ppos + Vector2(psz.x + 12.0, 0.0)
+	var desired := anchor_pos
 	var tsize := tooltip_panel.size
 
-	# If doesn't fit to the right -> move to the left
 	if desired.x + tsize.x > vp.position.x + vp.size.x:
-		desired.x = ppos.x - tsize.x - 12.0
-
-	# Clamp vertically
+		desired.x = anchor_pos.x - tsize.x
 	if desired.y + tsize.y > vp.position.y + vp.size.y:
-		desired.y = vp.position.y + vp.size.y - tsize.y - 8.0
+		desired.y = vp.position.y + vp.size.y - tsize.y
+	if desired.x < vp.position.x:
+		desired.x = vp.position.x
 	if desired.y < vp.position.y:
-		desired.y = vp.position.y + 8.0
+		desired.y = vp.position.y
 
 	tooltip_panel.global_position = desired
 
