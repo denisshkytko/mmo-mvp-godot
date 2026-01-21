@@ -517,9 +517,9 @@ func _format_snapshot(snap: Dictionary) -> String:
 	# Primary (single column, full names)
 	lines.append("[b]Основные характеристики[/b]")
 	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает здоровье и силу атаки"))
-	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает шанс крит. удара и скорость атаки"))
+	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает скорость атаки, шанс крит. удара и силу атаки"))
 	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья и физическую защиту"))
-	lines.append(_line_primary_stat("Интеллект", "int", snap, "Увеличивает ману, восстановление маны и силу заклинаний"))
+	lines.append(_line_primary_stat("Интеллект", "int", snap, "Увеличивает запас маны, восстановление маны, силу заклинаний и магическое сопротивление"))
 	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. удара и рейтинг крит. урона"))
 
 	lines.append("")
