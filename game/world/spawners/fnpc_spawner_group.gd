@@ -70,8 +70,8 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		push_error("Faction NPC spawner misconfigured: " + validation_error)
 		return
 
-	var class_id := CLASS_IDS[_class_choice_internal]
-	var profile_id := "npc_citizen" if fighter_type == FighterType.CIVILIAN else "humanoid_hostile"
+	var class_id: String = CLASS_IDS[_class_choice_internal]
+	var profile_id: String = "npc_citizen" if fighter_type == FighterType.CIVILIAN else "humanoid_hostile"
 
 	mob.call_deferred(
 		"apply_spawn_init",
