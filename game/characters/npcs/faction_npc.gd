@@ -172,6 +172,9 @@ func apply_spawn_init(
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
 
+	if OS.is_debug_build():
+		print("[INIT][FNPC] class_id_in=", class_id_in, " growth_profile_id_in=", growth_profile_id_in, " lvl=", level_in, " pos=", spawn_pos)
+
 	# common params (если спавнер не передал — берём из инспектора)
 	c_ai.behavior = behavior_in
 	c_ai.aggro_radius = aggro_radius

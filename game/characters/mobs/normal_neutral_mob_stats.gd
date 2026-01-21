@@ -75,7 +75,7 @@ func recalculate_for_level(level: int) -> void:
 		)
 	else:
 		if OS.is_debug_build() and mob_level == 1:
-			print("Neutral mob legacy primary path.")
+			print("Neutral mob legacy primary path (class_id empty).")
 		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
 			mob_level,
 			base_primary_use,

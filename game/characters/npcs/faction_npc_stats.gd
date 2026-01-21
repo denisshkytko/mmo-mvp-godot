@@ -68,7 +68,7 @@ func recalc(level:int) -> void:
 		)
 	else:
 		if OS.is_debug_build() and npc_level == 1:
-			print("Faction NPC legacy primary path.")
+			print("Faction NPC legacy primary path (class_id empty).")
 		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
 			npc_level,
 			base_primary_use,

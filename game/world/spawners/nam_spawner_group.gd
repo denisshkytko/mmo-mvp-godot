@@ -62,13 +62,15 @@ func _compute_level() -> int:
 	return lvl
 
 
-func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
+func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	# ВАЖНО: не задаём aggro_radius из группы, чтобы ты мог менять
 	# его в каждой сущности отдельно (в инспекторе самого моба).
 	# Поэтому aggro_radius_in = -1.0.
 	if validation_error != "":
 		push_error("Aggressive spawner misconfigured: " + validation_error)
-		return
+		if is_instance_valid(mob):
+			mob.queue_free()
+		return false
 
 	var class_id: String = CLASS_IDS[_class_choice_internal]
 	var profile_id := "humanoid_hostile"
@@ -88,6 +90,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		class_id,
 		profile_id
 	)
+	return true
 
 
 func _get_allowed_map_for_mode(mode: int) -> Dictionary:

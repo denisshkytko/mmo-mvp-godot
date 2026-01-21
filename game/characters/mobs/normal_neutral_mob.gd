@@ -44,6 +44,7 @@ var loot_owner_player_id: int = 0
 # реген
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
+var _spawn_initialized: bool = false
 
 # ---------------------------
 # ПРЕСЕТЫ СТАТОВ ПО BODY SIZE
@@ -138,9 +139,12 @@ func _ready() -> void:
 		if not c_ai.leash_return_started.is_connected(_on_leash_return_started):
 			c_ai.leash_return_started.connect(_on_leash_return_started)
 
-	_apply_to_components()
-	c_stats.recalculate_for_level(mob_level)
-	c_stats.update_hp_bar(hp_fill)
+	# Для мобов из спавнера пересчёт делается в apply_spawn_init.
+	# Здесь оставляем только ручную инициализацию.
+	if not _spawn_initialized:
+		_apply_to_components()
+		c_stats.recalculate_for_level(mob_level)
+		c_stats.update_hp_bar(hp_fill)
 
 func _process(_delta: float) -> void:
 	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
@@ -227,6 +231,7 @@ func apply_spawn_init(
 	c_stats.recalculate_for_level(mob_level)
 	c_stats.current_hp = c_stats.max_hp
 	c_stats.update_hp_bar(hp_fill)
+	_spawn_initialized = true
 
 	is_aggressive = false
 	aggressor = null
@@ -290,6 +295,10 @@ func _apply_to_components() -> void:
 	c_combat.melee_stop_distance = 45.0
 
 	c_stats.recalculate_for_level(mob_level)
+
+
+func _mark_spawned() -> void:
+	_spawn_initialized = true
 
 # ---------------------------
 # Damage API

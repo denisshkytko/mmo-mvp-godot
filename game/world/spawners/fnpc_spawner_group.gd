@@ -69,13 +69,19 @@ func _ready() -> void:
 		_validate_current_choice()
 
 
-func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
+func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	if validation_error != "":
 		push_error("Faction NPC spawner misconfigured: " + validation_error)
-		return
+		# Не оставлять неинициализированную сущность в сцене и не блокировать точку.
+		if is_instance_valid(mob):
+			mob.queue_free()
+		return false
 
 	var class_id: String = CLASS_IDS[_class_choice_internal]
 	var profile_id: String = "npc_citizen" if fighter_type == FighterType.CIVILIAN else "humanoid_hostile"
+
+	if OS.is_debug_build():
+		print("[SPAWN][FNPC] type=", fighter_type, " class_id=", class_id, " profile_id=", profile_id, " lvl=", level, " point=", point.global_position)
 
 	mob.call_deferred(
 		"apply_spawn_init",
@@ -95,6 +101,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		class_id,
 		profile_id
 	)
+	return true
 
 
 func _get_allowed_map_for_type(t: int) -> Dictionary:

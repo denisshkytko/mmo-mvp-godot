@@ -31,7 +31,7 @@ func _compute_level() -> int:
 	return lvl
 
 
-func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
+func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var chosen_profile: LootProfile = loot_profile_animals
 	if body_size == BodySize.HUMANOID:
 		chosen_profile = loot_profile_humanoids
@@ -72,3 +72,4 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		class_id,
 		profile_id
 	)
+	return true
