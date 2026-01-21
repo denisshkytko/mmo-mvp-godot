@@ -14,6 +14,10 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export_enum("Civilian", "Melee", "Ranged") var fighter_type: int = FighterType.CIVILIAN:
 	set(v):
 		fighter_type = int(v)
+		var allowed := _get_allowed_map_for_type(fighter_type)
+		if not allowed.has(_class_choice_internal):
+			_class_choice_internal = _default_choice_for_type(fighter_type)
+			validation_error = ""
 		_validate_current_choice()
 @export_enum("None", "Merchant", "Quest", "Trainer") var interaction_type: int = InteractionType.NONE
 
@@ -149,10 +153,14 @@ func _apply_default_if_uninitialized() -> void:
 	var allowed := _get_allowed_map_for_type(fighter_type)
 	if allowed.has(_class_choice_internal):
 		return
-	match fighter_type:
+	_class_choice_internal = _default_choice_for_type(fighter_type)
+
+
+func _default_choice_for_type(t: int) -> int:
+	match t:
 		FighterType.RANGED:
-			_class_choice_internal = C_MAGE
+			return C_MAGE
 		FighterType.CIVILIAN:
-			_class_choice_internal = C_SHAMAN
+			return C_SHAMAN
 		_:
-			_class_choice_internal = C_PALADIN
+			return C_PALADIN
