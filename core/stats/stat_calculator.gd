@@ -348,12 +348,37 @@ static func build_mob_snapshot_from_primary(
             var base_v: int = int(base_primary.get(k, 0))
             var per_lvl: int = int(primary_per_level.get(k, 0))
             var total_v: int = base_v + per_lvl * (level - 1)
-            adjusted_primary[k] = int(round(float(total_v) * primary_multiplier))
+            adjusted_primary[k] = int(floor(float(total_v) * primary_multiplier))
         calc_level = 1
         calc_base_primary = adjusted_primary
         calc_primary_per_level = {"str": 0, "agi": 0, "end": 0, "int": 0, "per": 0}
 
     return build_player_snapshot(calc_level, calc_base_primary, calc_primary_per_level, gear, [])
+
+
+static func build_mob_snapshot_from_primary_values(
+    level: int,
+    primary: Dictionary,
+    base_defense: int = 0,
+    defense_per_level: int = 0,
+    base_magic_resist: int = 0,
+    magic_resist_per_level: int = 0
+) -> Dictionary:
+    level = max(1, level)
+
+    var def_v: int = max(0, base_defense + (level - 1) * defense_per_level)
+    var res_v: int = max(0, base_magic_resist + (level - 1) * magic_resist_per_level)
+
+    var gear := {
+        "primary": {},
+        "secondary": {
+            "defense": def_v,
+            "magic_resist": res_v,
+        }
+    }
+
+    var per_lvl := {"str": 0, "agi": 0, "end": 0, "int": 0, "per": 0}
+    return build_player_snapshot(1, primary, per_lvl, gear, [])
 
 
 static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, sec: Dictionary, source: String) -> void:

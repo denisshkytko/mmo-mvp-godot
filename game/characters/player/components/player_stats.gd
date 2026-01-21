@@ -237,8 +237,8 @@ func _build_snapshot() -> Dictionary:
 		base_primary = _legacy_base_primary.duplicate(true)
 		per_lvl = _legacy_per_level.duplicate(true)
 	else:
-		base_primary = PROG.get_base_primary(class_id)
-		per_lvl = PROG.get_per_level(class_id)
+		base_primary = PROG.get_base_primary_int(class_id)
+		per_lvl = PROG.get_per_level_int(class_id)
 
 	var gear_base := {
 		"primary": {},
@@ -263,6 +263,9 @@ func _build_snapshot() -> Dictionary:
 
 	var base_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_base, buffs)
 	var total_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_total, buffs)
+
+	if OS.is_debug_build() and p != null and p.class_id == "mage" and p.level <= 4:
+		print("Player mage L%d primary=%s" % [p.level, str(total_snapshot.get("primary", {}))])
 
 	_base_stats = _collect_flat_stats(base_snapshot)
 	_equipment_bonus = _diff_stats(total_snapshot, base_snapshot)
