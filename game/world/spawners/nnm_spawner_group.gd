@@ -42,18 +42,17 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 	var class_id := ""
 	var profile_id := ""
 	if body_size == BodySize.HUMANOID:
-		var humanoid_pool := ["warrior", "paladin", "hunter", "mage", "shaman", "priest"]
-		class_id = humanoid_pool[randi() % humanoid_pool.size()]
+		class_id = ["paladin", "warrior", "shaman", "mage", "priest", "hunter"].pick_random()
 		profile_id = "humanoid_hostile"
 	else:
 		class_id = "beast"
 		match body_size:
 			BodySize.SMALL:
 				profile_id = "beast_small"
+			BodySize.MEDIUM:
+				profile_id = "beast_medium"
 			BodySize.LARGE:
 				profile_id = "beast_large"
-			_:
-				profile_id = "beast_medium"
 
 	if OS.is_debug_build() and level == 1:
 		print("[SPAWN][NNM] body_size=", body_size, " class_id=", class_id, " profile_id=", profile_id)

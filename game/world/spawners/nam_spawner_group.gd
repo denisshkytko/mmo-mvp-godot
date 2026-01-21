@@ -40,12 +40,11 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 	# Поэтому aggro_radius_in = -1.0.
 	var class_id := class_id_override.strip_edges()
 	if class_id == "" or class_id == "Auto":
-		if attack_mode == AttackMode.MELEE:
-			var melee_pool := ["warrior", "paladin"]
-			class_id = melee_pool[randi() % melee_pool.size()]
-		else:
-			var ranged_pool := ["hunter", "mage", "shaman", "priest"]
-			class_id = ranged_pool[randi() % ranged_pool.size()]
+		class_id = (
+			["paladin", "warrior", "shaman"].pick_random()
+			if attack_mode == AttackMode.MELEE
+			else ["mage", "priest", "hunter"].pick_random()
+		)
 	var profile_id := "humanoid_hostile"
 	mob.call_deferred(
 		"apply_spawn_init",
