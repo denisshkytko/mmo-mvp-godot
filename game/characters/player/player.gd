@@ -54,6 +54,7 @@ var skill_3_attack_bonus: int = 6
 
 
 var faction_id: String = "blue"
+var class_id: String = "warrior"
 
 # --- Public “state” fields (HUD/UI читает их напрямую) ---
 var inventory: Inventory = null
@@ -393,6 +394,7 @@ func apply_character_data(d: Dictionary) -> void:
 	level = int(d.get("level", level))
 	xp = int(d.get("xp", xp))
 	xp_to_next = int(d.get("xp_to_next", xp_to_next))
+	class_id = String(d.get("class_id", d.get("class", class_id)))
 
 	max_hp = int(d.get("max_hp", max_hp))
 	current_hp = int(d.get("current_hp", current_hp))
@@ -439,6 +441,7 @@ func export_character_data() -> Dictionary:
 	var base: Dictionary = AppState.selected_character_data.duplicate(true)
 
 	base["faction"] = faction_id
+	base["class_id"] = class_id
 	base["level"] = level
 	base["xp"] = xp
 	base["xp_to_next"] = xp_to_next

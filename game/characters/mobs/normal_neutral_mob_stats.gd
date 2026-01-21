@@ -3,11 +3,14 @@ class_name NormalNeutralMobStats
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 
 var mob_level: int = 1
 var body_size: int = BodySize.MEDIUM
+var class_id: String = ""
+var growth_profile_id: String = ""
 
 # Эти поля заполняются на основе body_size
 var base_primary: Dictionary = {"str": 8, "agi": 0, "end": 5, "int": 0, "per": 0}
@@ -47,15 +50,42 @@ func apply_body_preset(
 func recalculate_for_level(level: int) -> void:
 	mob_level = max(1, level)
 
-	_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
-		mob_level,
-		base_primary,
-		primary_per_level,
-		base_defense,
-		defense_per_level,
-		base_magic_resist,
-		magic_resist_per_level
-	)
+	if class_id != "":
+		var profile_id := growth_profile_id
+		if profile_id == "":
+			match body_size:
+				BodySize.SMALL:
+					profile_id = "beast_small"
+				BodySize.LARGE:
+					profile_id = "beast_large"
+				BodySize.HUMANOID:
+					profile_id = "npc_citizen"
+				_:
+					profile_id = "beast_medium"
+		var base_primary_from_class := PROG.get_base_primary(class_id)
+		var per_level_from_class := PROG.get_per_level(class_id)
+		var primary_multiplier := PROG.get_primary_multiplier(profile_id, mob_level)
+		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
+			mob_level,
+			base_primary_from_class,
+			per_level_from_class,
+			base_defense,
+			defense_per_level,
+			base_magic_resist,
+			magic_resist_per_level,
+			{},
+			primary_multiplier
+		)
+	else:
+		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
+			mob_level,
+			base_primary,
+			primary_per_level,
+			base_defense,
+			defense_per_level,
+			base_magic_resist,
+			magic_resist_per_level
+		)
 
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	max_hp = int(d.get("max_hp", max_hp))

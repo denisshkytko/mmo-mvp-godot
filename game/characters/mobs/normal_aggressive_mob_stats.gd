@@ -3,11 +3,14 @@ class_name NormalAggresiveMobStats
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 var mob_level: int = 1
 
 var base_primary: Dictionary = {"str": 10, "agi": 0, "end": 6, "int": 0, "per": 0}
 var primary_per_level: Dictionary = {"str": 2, "agi": 0, "end": 1, "int": 0, "per": 0}
+var class_id: String = ""
+var growth_profile_id: String = ""
 
 # Baseline mitigation growth for mobs (so they don't become too "paper")
 var base_defense: int = 0
@@ -28,15 +31,34 @@ var _snapshot: Dictionary = {}
 func recalculate_for_level(level: int) -> void:
 	mob_level = max(1, level)
 
-	_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
-		mob_level,
-		base_primary,
-		primary_per_level,
-		base_defense,
-		defense_per_level,
-		base_magic_resist,
-		magic_resist_per_level
-	)
+	if class_id != "":
+		var profile_id := growth_profile_id if growth_profile_id != "" else "humanoid_hostile"
+		var base_primary_from_class := PROG.get_base_primary(class_id)
+		var per_level_from_class := PROG.get_per_level(class_id)
+		var primary_multiplier := PROG.get_primary_multiplier(profile_id, mob_level)
+		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
+			mob_level,
+			base_primary_from_class,
+			per_level_from_class,
+			base_defense,
+			defense_per_level,
+			base_magic_resist,
+			magic_resist_per_level,
+			{},
+			primary_multiplier
+		)
+		if PROG.DEBUG_LOGS and (mob_level == 10 or mob_level == 60):
+			print("Aggressive mob primary mult=%s lvl=%d profile=%s" % [str(primary_multiplier), mob_level, profile_id])
+	else:
+		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
+			mob_level,
+			base_primary,
+			primary_per_level,
+			base_defense,
+			defense_per_level,
+			base_magic_resist,
+			magic_resist_per_level
+		)
 
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	max_hp = int(d.get("max_hp", max_hp))

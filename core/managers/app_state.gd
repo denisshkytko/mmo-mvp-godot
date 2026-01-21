@@ -125,20 +125,15 @@ func create_character(char_name: String, class_id: String) -> String:
 
 	var clean_class := class_id.strip_edges()
 	if clean_class == "":
-		clean_class = "adventurer"
+		clean_class = "warrior"
 
 	var data := {
 		"id": id,
 		"name": clean_name,
 		"faction": "blue",
 		"class": clean_class,
+		"class_id": clean_class,
 		"level": 1,
-		# Stage 1 stats (primaries at level 1). Only these scale with level.
-		"base_str": 10,
-		"base_agi": 10,
-		"base_end": 10,
-		"base_int": 10,
-		"base_per": 10,
 		"xp": 0,
 		"xp_to_next": 10,
 

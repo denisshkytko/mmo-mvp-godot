@@ -316,7 +316,8 @@ static func build_mob_snapshot_from_primary(
     defense_per_level: int = 0,
     base_magic_resist: int = 0,
     magic_resist_per_level: int = 0,
-    extra_secondary: Dictionary = {}
+    extra_secondary: Dictionary = {},
+    primary_multiplier: float = 1.0
 ) -> Dictionary:
     level = max(1, level)
 
@@ -338,7 +339,21 @@ static func build_mob_snapshot_from_primary(
         for k in (extra_secondary as Dictionary).keys():
             gear["secondary"][k] = (extra_secondary as Dictionary)[k]
 
-    return build_player_snapshot(level, base_primary, primary_per_level, gear, [])
+    var calc_level := level
+    var calc_base_primary := base_primary
+    var calc_primary_per_level := primary_per_level
+    if primary_multiplier != 1.0:
+        var adjusted_primary := {}
+        for k in ["str", "agi", "end", "int", "per"]:
+            var base_v: int = int(base_primary.get(k, 0))
+            var per_lvl: int = int(primary_per_level.get(k, 0))
+            var total_v: int = base_v + per_lvl * (level - 1)
+            adjusted_primary[k] = int(round(float(total_v) * primary_multiplier))
+        calc_level = 1
+        calc_base_primary = adjusted_primary
+        calc_primary_per_level = {"str": 0, "agi": 0, "end": 0, "int": 0, "per": 0}
+
+    return build_player_snapshot(calc_level, calc_base_primary, calc_primary_per_level, gear, [])
 
 
 static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, sec: Dictionary, source: String) -> void:
