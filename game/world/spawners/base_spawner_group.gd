@@ -73,11 +73,12 @@ func _spawn_at(index: int) -> void:
 		push_error("BaseSpawnerGroup: spawn scene root is not Node")
 		return
 
-	get_parent().add_child(mob)
-	_mob_by_point[index] = mob
-
+	# Ставим флаг до входа в дерево, чтобы _ready() моба не делал legacy-recalc
 	if mob.has_method("_mark_spawned"):
 		mob.call("_mark_spawned")
+
+	get_parent().add_child(mob)
+	_mob_by_point[index] = mob
 
 	var lvl: int = _compute_level()
 	var ok: bool = _call_apply_spawn_init(mob, p, lvl)

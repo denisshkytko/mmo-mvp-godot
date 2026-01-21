@@ -67,6 +67,13 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		_apply_default_if_uninitialized()
 		_validate_current_choice()
+		return
+
+	# runtime: перед спавном проверяем валидность текущей конфигурации
+	_apply_default_if_uninitialized()
+	_validate_current_choice()
+
+	super._ready()
 
 
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
