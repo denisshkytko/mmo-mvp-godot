@@ -37,6 +37,14 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 	# ВАЖНО: не задаём aggro_radius из группы, чтобы ты мог менять
 	# его в каждой сущности отдельно (в инспекторе самого моба).
 	# Поэтому aggro_radius_in = -1.0.
+	var class_id := ""
+	if attack_mode == AttackMode.MELEE:
+		var melee_pool := ["warrior", "paladin"]
+		class_id = melee_pool[randi() % melee_pool.size()]
+	else:
+		var ranged_pool := ["hunter", "mage", "shaman", "priest"]
+		class_id = ranged_pool[randi() % ranged_pool.size()]
+	var profile_id := "humanoid_hostile"
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
@@ -49,5 +57,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		level,
 		attack_mode,
 		"",              # mob_id больше не используется
-		loot_profile
+		loot_profile,
+		class_id,
+		profile_id
 	)

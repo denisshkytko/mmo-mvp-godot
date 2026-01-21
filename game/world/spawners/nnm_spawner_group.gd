@@ -39,6 +39,22 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		# Safety: never spawn a neutral mob without a loot profile.
 		chosen_profile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
 
+	var class_id := ""
+	var profile_id := ""
+	if body_size == BodySize.HUMANOID:
+		var humanoid_pool := ["warrior", "paladin", "hunter", "mage", "shaman", "priest"]
+		class_id = humanoid_pool[randi() % humanoid_pool.size()]
+		profile_id = "humanoid_hostile"
+	else:
+		class_id = "beast"
+		match body_size:
+			BodySize.SMALL:
+				profile_id = "beast_small"
+			BodySize.LARGE:
+				profile_id = "beast_large"
+			_:
+				profile_id = "beast_medium"
+
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
@@ -50,5 +66,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		level,
 		body_size,
 		skin_id,
-		chosen_profile
+		chosen_profile,
+		class_id,
+		profile_id
 	)

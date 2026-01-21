@@ -155,7 +155,9 @@ func apply_spawn_init(
 	_speed_in: float,
 	level_in: int,
 	loot_profile_in: LootProfile,
-	projectile_scene_in: PackedScene
+	projectile_scene_in: PackedScene,
+	class_id_in: String = "",
+	growth_profile_id_in: String = ""
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -179,6 +181,10 @@ func apply_spawn_init(
 	c_ai.speed = move_speed
 	c_ai.home_position = home_position
 	c_ai.reset_to_idle()
+
+	if c_stats != null:
+		c_stats.class_id = class_id_in
+		c_stats.growth_profile_id = growth_profile_id_in
 
 	# presets + combat mode
 	match fighter_type:

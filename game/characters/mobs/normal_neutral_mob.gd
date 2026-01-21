@@ -194,7 +194,9 @@ func apply_spawn_init(
 	level_in: int,
 	body_size_in: int,
 	skin_id_in: String,
-	loot_profile_in: LootProfile = null
+	loot_profile_in: LootProfile = null,
+	class_id_in: String = "",
+	growth_profile_id_in: String = ""
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -213,6 +215,10 @@ func apply_spawn_init(
 		c_ai.speed = move_speed
 		c_ai.home_position = home_position
 		c_ai.reset_to_idle()
+
+	if c_stats != null:
+		c_stats.class_id = class_id_in
+		c_stats.growth_profile_id = growth_profile_id_in
 
 	_apply_to_components()
 	c_stats.recalculate_for_level(mob_level)

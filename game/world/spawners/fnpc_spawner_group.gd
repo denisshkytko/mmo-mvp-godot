@@ -16,6 +16,7 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 @export var level_min: int = 1
 @export var level_max: int = 1
+@export var class_id_override: String = ""
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
@@ -36,6 +37,28 @@ func _compute_level() -> int:
 
 
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
+	var class_id := class_id_override.strip_edges()
+	var profile_id := ""
+	if class_id == "":
+		match fighter_type:
+			FighterType.CIVILIAN:
+				profile_id = "npc_citizen"
+				var citizen_pool := ["warrior", "paladin", "hunter", "mage", "shaman", "priest"]
+				class_id = citizen_pool[randi() % citizen_pool.size()]
+			FighterType.MAGE:
+				profile_id = "humanoid_hostile"
+				var mage_pool := ["mage", "shaman", "priest"]
+				class_id = mage_pool[randi() % mage_pool.size()]
+			_:
+				profile_id = "humanoid_hostile"
+				var fighter_pool := ["warrior", "paladin", "hunter"]
+				class_id = fighter_pool[randi() % fighter_pool.size()]
+	else:
+		if fighter_type == FighterType.CIVILIAN:
+			profile_id = "npc_citizen"
+		else:
+			profile_id = "humanoid_hostile"
+
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
@@ -50,5 +73,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		-1.0, # move_speed is defined on the NPC itself
 		level,
 		loot_profile,
-		DEFAULT_PROJECTILE
+		DEFAULT_PROJECTILE,
+		class_id,
+		profile_id
 	)
