@@ -211,7 +211,9 @@ func export_primary_data() -> Dictionary:
 func _build_snapshot() -> Dictionary:
 	var class_id := "warrior"
 	if p != null:
-		var id_from_player := String(p.get("class_id", p.class_id))
+		var id_from_player := String(p.get("class_id"))
+		if id_from_player == "":
+			id_from_player = p.class_id
 		if id_from_player != "":
 			class_id = id_from_player
 
