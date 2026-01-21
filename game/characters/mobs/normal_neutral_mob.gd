@@ -216,6 +216,9 @@ func apply_spawn_init(
 		c_ai.home_position = home_position
 		c_ai.reset_to_idle()
 
+	if OS.is_debug_build() and mob_level == 1:
+		print("[INIT][NNM] class_id_in=", class_id_in, " growth_profile_id_in=", growth_profile_id_in)
+
 	if c_stats != null:
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in

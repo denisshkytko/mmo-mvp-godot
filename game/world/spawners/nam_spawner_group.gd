@@ -12,6 +12,7 @@ enum AttackMode { MELEE, RANGED }
 @export var level_min: int = 1
 @export var level_max: int = 1
 @export_enum("Melee", "Ranged") var attack_mode: int = AttackMode.MELEE
+@export_enum("Auto", "paladin", "shaman", "mage", "priest", "hunter", "warrior") var class_id_override: String = "Auto"
 
 
 @export_group("Behavior After Spawn")
@@ -37,13 +38,14 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 	# ВАЖНО: не задаём aggro_radius из группы, чтобы ты мог менять
 	# его в каждой сущности отдельно (в инспекторе самого моба).
 	# Поэтому aggro_radius_in = -1.0.
-	var class_id := ""
-	if attack_mode == AttackMode.MELEE:
-		var melee_pool := ["warrior", "paladin"]
-		class_id = melee_pool[randi() % melee_pool.size()]
-	else:
-		var ranged_pool := ["hunter", "mage", "shaman", "priest"]
-		class_id = ranged_pool[randi() % ranged_pool.size()]
+	var class_id := class_id_override.strip_edges()
+	if class_id == "" or class_id == "Auto":
+		if attack_mode == AttackMode.MELEE:
+			var melee_pool := ["warrior", "paladin"]
+			class_id = melee_pool[randi() % melee_pool.size()]
+		else:
+			var ranged_pool := ["hunter", "mage", "shaman", "priest"]
+			class_id = ranged_pool[randi() % ranged_pool.size()]
 	var profile_id := "humanoid_hostile"
 	mob.call_deferred(
 		"apply_spawn_init",

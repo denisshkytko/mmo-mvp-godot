@@ -16,7 +16,7 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 @export var level_min: int = 1
 @export var level_max: int = 1
-@export var class_id_override: String = ""
+@export_enum("Auto", "paladin", "shaman", "mage", "priest", "hunter", "warrior") var class_id_override: String = "Auto"
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
@@ -39,7 +39,7 @@ func _compute_level() -> int:
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 	var class_id := class_id_override.strip_edges()
 	var profile_id := ""
-	if class_id == "":
+	if class_id == "" or class_id == "Auto":
 		match fighter_type:
 			FighterType.CIVILIAN:
 				profile_id = "npc_citizen"

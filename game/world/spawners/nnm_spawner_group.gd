@@ -55,6 +55,9 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 			_:
 				profile_id = "beast_medium"
 
+	if OS.is_debug_build() and level == 1:
+		print("[SPAWN][NNM] body_size=", body_size, " class_id=", class_id, " profile_id=", profile_id)
+
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
