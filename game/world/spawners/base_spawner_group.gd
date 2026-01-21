@@ -73,7 +73,7 @@ func _spawn_at(index: int) -> void:
 		push_error("BaseSpawnerGroup: spawn scene root is not Node")
 		return
 
-	get_parent().add_child.call_deferred(mob)
+	get_parent().add_child(mob)
 	_mob_by_point[index] = mob
 
 	var lvl: int = _compute_level()

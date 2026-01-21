@@ -33,7 +33,7 @@ func _compute_level() -> int:
 
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 	var chosen_profile: LootProfile = loot_profile_animals
-	if body_size == NormalNeutralMob.BodySize.HUMANOID:
+	if body_size == BodySize.HUMANOID:
 		chosen_profile = loot_profile_humanoids
 	if chosen_profile == null:
 		# Safety: never spawn a neutral mob without a loot profile.
