@@ -237,8 +237,10 @@ func _build_snapshot() -> Dictionary:
 		base_primary = _legacy_base_primary.duplicate(true)
 		per_lvl = _legacy_per_level.duplicate(true)
 	else:
-		base_primary = PROG.get_base_primary_int(class_id)
-		per_lvl = PROG.get_per_level_int(class_id)
+		var primary_int := PROG.get_primary_for_entity(p.level, class_id, "player_default")
+		var zero_per := {"str": 0, "agi": 0, "end": 0, "int": 0, "per": 0}
+		base_primary = primary_int
+		per_lvl = zero_per
 
 	var gear_base := {
 		"primary": {},
@@ -261,8 +263,11 @@ func _build_snapshot() -> Dictionary:
 	if p != null and p.c_buffs != null:
 		buffs = p.c_buffs.get_buffs_snapshot()
 
-	var base_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_base, buffs)
-	var total_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_total, buffs)
+	var snapshot_level := p.level
+	if not _use_legacy_primary:
+		snapshot_level = 1
+	var base_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_base, buffs)
+	var total_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_total, buffs)
 
 	if OS.is_debug_build() and p != null and p.class_id == "mage" and p.level <= 4:
 		print("Player mage L%d primary=%s" % [p.level, str(total_snapshot.get("primary", {}))])

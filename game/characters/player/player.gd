@@ -428,10 +428,6 @@ func apply_character_data(d: Dictionary) -> void:
 	if c_stats != null:
 		c_stats.recalculate_for_level(false)
 
-	# Recalculate derived stats after primaries + buffs are applied
-	if c_stats != null:
-		c_stats.recalculate_for_level(false)
-
 	# защита от “вошёл мёртвым”
 	is_dead = false
 
