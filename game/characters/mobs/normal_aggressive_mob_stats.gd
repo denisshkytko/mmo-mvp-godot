@@ -31,34 +31,28 @@ var _snapshot: Dictionary = {}
 func recalculate_for_level(level: int) -> void:
 	mob_level = max(1, level)
 
+	var base_primary_use := base_primary
+	var per_level_use := primary_per_level
+	var primary_multiplier := 1.0
 	if class_id != "":
 		var profile_id := growth_profile_id if growth_profile_id != "" else "humanoid_hostile"
-		var base_primary_from_class := PROG.get_base_primary(class_id)
-		var per_level_from_class := PROG.get_per_level(class_id)
-		var primary_multiplier := PROG.get_primary_multiplier(profile_id, mob_level)
-		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
-			mob_level,
-			base_primary_from_class,
-			per_level_from_class,
-			base_defense,
-			defense_per_level,
-			base_magic_resist,
-			magic_resist_per_level,
-			{},
-			primary_multiplier
-		)
+		base_primary_use = PROG.get_base_primary(class_id)
+		per_level_use = PROG.get_per_level(class_id)
+		primary_multiplier = PROG.get_primary_multiplier(profile_id, mob_level)
 		if PROG.DEBUG_LOGS and (mob_level == 10 or mob_level == 60):
 			print("Aggressive mob primary mult=%s lvl=%d profile=%s" % [str(primary_multiplier), mob_level, profile_id])
-	else:
-		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
-			mob_level,
-			base_primary,
-			primary_per_level,
-			base_defense,
-			defense_per_level,
-			base_magic_resist,
-			magic_resist_per_level
-		)
+
+	_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
+		mob_level,
+		base_primary_use,
+		per_level_use,
+		base_defense,
+		defense_per_level,
+		base_magic_resist,
+		magic_resist_per_level,
+		{},
+		primary_multiplier
+	)
 
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	max_hp = int(d.get("max_hp", max_hp))

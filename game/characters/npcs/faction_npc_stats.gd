@@ -48,6 +48,9 @@ func apply_primary_preset(
 func recalc(level:int) -> void:
 	npc_level = max(1, level)
 
+	var base_primary_use := base_primary
+	var per_level_use := primary_per_level
+	var primary_multiplier := 1.0
 	if class_id != "":
 		var profile_id := growth_profile_id
 		if profile_id == "":
@@ -55,30 +58,21 @@ func recalc(level:int) -> void:
 				profile_id = "npc_citizen"
 			else:
 				profile_id = "humanoid_hostile"
-		var base_primary_from_class := PROG.get_base_primary(class_id)
-		var per_level_from_class := PROG.get_per_level(class_id)
-		var primary_multiplier := PROG.get_primary_multiplier(profile_id, npc_level)
-		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
-			npc_level,
-			base_primary_from_class,
-			per_level_from_class,
-			base_defense,
-			defense_per_level,
-			base_magic_resist,
-			magic_resist_per_level,
-			{},
-			primary_multiplier
-		)
-	else:
-		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
-			npc_level,
-			base_primary,
-			primary_per_level,
-			base_defense,
-			defense_per_level,
-			base_magic_resist,
-			magic_resist_per_level
-		)
+		base_primary_use = PROG.get_base_primary(class_id)
+		per_level_use = PROG.get_per_level(class_id)
+		primary_multiplier = PROG.get_primary_multiplier(profile_id, npc_level)
+
+	_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
+		npc_level,
+		base_primary_use,
+		per_level_use,
+		base_defense,
+		defense_per_level,
+		base_magic_resist,
+		magic_resist_per_level,
+		{},
+		primary_multiplier
+	)
 
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	max_hp = int(d.get("max_hp", max_hp))
