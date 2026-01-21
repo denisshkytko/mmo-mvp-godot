@@ -73,11 +73,18 @@ func _spawn_at(index: int) -> void:
 		push_error("BaseSpawnerGroup: spawn scene root is not Node")
 		return
 
-	get_parent().add_child.call_deferred(mob)
+	# Ставим флаг до входа в дерево, чтобы _ready() моба не делал legacy-recalc
+	if mob.has_method("_mark_spawned"):
+		mob.call("_mark_spawned")
+
+	get_parent().add_child(mob)
 	_mob_by_point[index] = mob
 
 	var lvl: int = _compute_level()
-	_call_apply_spawn_init(mob, p, lvl)
+	var ok: bool = _call_apply_spawn_init(mob, p, lvl)
+	if not ok:
+		_release_point(index)
+		return
 
 	# died(corpse) is used by spawner groups to detect respawn timing
 	var cb := Callable(self, "_on_mob_died").bind(index)
@@ -118,6 +125,16 @@ func _on_corpse_despawned(index: int) -> void:
 	_respawn_timer[index] = respawn_seconds
 
 
+func _release_point(index: int) -> void:
+	if index < 0 or index >= _mob_by_point.size():
+		return
+	_mob_by_point[index] = null
+	_corpse_by_point[index] = null
+	_waiting_corpse[index] = false
+	_waiting_respawn[index] = false
+	_respawn_timer[index] = 0.0
+
+
 # ---------------------
 # Virtuals for children
 # ---------------------
@@ -125,8 +142,8 @@ func _get_spawn_scene() -> PackedScene:
 	return null
 
 
-func _call_apply_spawn_init(_mob: Node, _point: SpawnPoint, _level: int) -> void:
-	pass
+func _call_apply_spawn_init(_mob: Node, _point: SpawnPoint, _level: int) -> bool:
+	return true
 
 
 func _compute_level() -> int:

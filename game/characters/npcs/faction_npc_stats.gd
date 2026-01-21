@@ -3,11 +3,14 @@ class_name FactionNPCStats
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 enum FighterType { CIVILIAN, FIGHTER, MAGE }
 
 var npc_level: int = 1
 var fighter_type: int = FighterType.FIGHTER
+var class_id: String = ""
+var growth_profile_id: String = ""
 
 var base_primary: Dictionary = {"str": 10, "agi": 0, "end": 6, "int": 0, "per": 0}
 var primary_per_level: Dictionary = {"str": 2, "agi": 0, "end": 1, "int": 0, "per": 0}
@@ -45,15 +48,36 @@ func apply_primary_preset(
 func recalc(level:int) -> void:
 	npc_level = max(1, level)
 
-	_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
-		npc_level,
-		base_primary,
-		primary_per_level,
-		base_defense,
-		defense_per_level,
-		base_magic_resist,
-		magic_resist_per_level
-	)
+	var base_primary_use := base_primary
+	var per_level_use := primary_per_level
+	if class_id != "":
+		var profile_id := growth_profile_id
+		if profile_id == "":
+			if fighter_type == FighterType.CIVILIAN:
+				profile_id = "npc_citizen"
+			else:
+				profile_id = "humanoid_hostile"
+		var primary_int := PROG.get_primary_for_entity(npc_level, class_id, profile_id)
+		_snapshot = STAT_CALC.build_mob_snapshot_from_primary_values(
+			npc_level,
+			primary_int,
+			base_defense,
+			defense_per_level,
+			base_magic_resist,
+			magic_resist_per_level
+		)
+	else:
+		if OS.is_debug_build() and npc_level == 1:
+			print("Faction NPC legacy primary path (class_id empty).")
+		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
+			npc_level,
+			base_primary_use,
+			per_level_use,
+			base_defense,
+			defense_per_level,
+			base_magic_resist,
+			magic_resist_per_level
+		)
 
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	max_hp = int(d.get("max_hp", max_hp))

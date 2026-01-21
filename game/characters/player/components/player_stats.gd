@@ -3,25 +3,26 @@ class_name PlayerStats
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 var p: Player = null
 
 signal stats_changed(snapshot: Dictionary)
 
-# --- Saved primary base (level 1) ---
-@export var base_str: int = 10
-@export var base_agi: int = 10
-@export var base_end: int = 10
-@export var base_int: int = 10
-@export var base_per: int = 10
+# --- Legacy primary base (level 1) ---
+var base_str: int = 10
+var base_agi: int = 10
+var base_end: int = 10
+var base_int: int = 10
+var base_per: int = 10
 
-# --- Primary growth per level ---
+# --- Legacy primary growth per level ---
 # (Only these scale directly from level)
-@export var str_per_level: int = 1
-@export var agi_per_level: int = 1
-@export var end_per_level: int = 1
-@export var int_per_level: int = 1
-@export var per_per_level: int = 1
+var str_per_level: int = 1
+var agi_per_level: int = 1
+var end_per_level: int = 1
+var int_per_level: int = 1
+var per_per_level: int = 1
 
 # "Base gear" placeholder.
 # Player spawns in simple grey items in the future. For now, we keep
@@ -32,6 +33,9 @@ signal stats_changed(snapshot: Dictionary)
 var _snapshot: Dictionary = {}
 var _base_stats: Dictionary = {}
 var _equipment_bonus: Dictionary = {}
+var _use_legacy_primary: bool = false
+var _legacy_base_primary: Dictionary = {}
+var _legacy_per_level: Dictionary = {}
 
 # Regen accumulators (float pools so small regen values still work)
 var _hp_regen_pool: float = 0.0
@@ -67,8 +71,8 @@ func recalculate_for_level(full_restore: bool) -> void:
 	p.max_mana = int(_snapshot.get("derived", {}).get("max_mana", p.max_mana))
 
 	# Keep compatibility fields (old code uses p.attack/p.defense)
-	p.attack = int(round(float(_snapshot.get("derived", {}).get("attack_power", p.attack))))
-	p.defense = int(round(float(_snapshot.get("derived", {}).get("defense", p.defense))))
+	p.attack = int(_snapshot.get("derived", {}).get("attack_power", p.attack))
+	p.defense = int(_snapshot.get("derived", {}).get("defense", p.defense))
 
 	# Optional extra fields (safe even if UI ignores them)
 	if p.has_method("set"):
@@ -147,6 +151,14 @@ func get_total_stat(stat_id: String):
 	return get_base_stat(stat_id) + get_equipment_bonus(stat_id)
 
 func apply_primary_data(data: Dictionary) -> void:
+	var incoming_class_id := String(data.get("class_id", "")).strip_edges()
+	if incoming_class_id != "":
+		_use_legacy_primary = false
+		_legacy_base_primary = {}
+		_legacy_per_level = {}
+		return
+
+	_use_legacy_primary = true
 	# Backward compatible: if no keys, keep defaults
 	base_str = int(data.get("base_str", base_str))
 	base_agi = int(data.get("base_agi", base_agi))
@@ -161,8 +173,27 @@ func apply_primary_data(data: Dictionary) -> void:
 	int_per_level = int(data.get("int_per_level", int_per_level))
 	per_per_level = int(data.get("per_per_level", per_per_level))
 
+	_legacy_base_primary = {
+		"str": base_str,
+		"agi": base_agi,
+		"end": base_end,
+		"int": base_int,
+		"per": base_per,
+	}
+	_legacy_per_level = {
+		"str": str_per_level,
+		"agi": agi_per_level,
+		"end": end_per_level,
+		"int": int_per_level,
+		"per": per_per_level,
+	}
+	if PROG.DEBUG_LOGS:
+		print("PlayerStats legacy primary loaded (class_id missing).")
+
 
 func export_primary_data() -> Dictionary:
+	if not _use_legacy_primary:
+		return {}
 	return {
 		"base_str": base_str,
 		"base_agi": base_agi,
@@ -178,20 +209,38 @@ func export_primary_data() -> Dictionary:
 
 
 func _build_snapshot() -> Dictionary:
-	var base_primary := {
-		"str": base_str,
-		"agi": base_agi,
-		"end": base_end,
-		"int": base_int,
-		"per": base_per,
-	}
-	var per_lvl := {
-		"str": str_per_level,
-		"agi": agi_per_level,
-		"end": end_per_level,
-		"int": int_per_level,
-		"per": per_per_level,
-	}
+	var class_id := "warrior"
+	if p != null:
+		var id_from_player := String(p.class_id)
+		if id_from_player != "":
+			class_id = id_from_player
+
+	var base_primary: Dictionary
+	var per_lvl: Dictionary
+	if _use_legacy_primary:
+		if _legacy_base_primary.is_empty():
+			_legacy_base_primary = {
+				"str": base_str,
+				"agi": base_agi,
+				"end": base_end,
+				"int": base_int,
+				"per": base_per,
+			}
+		if _legacy_per_level.is_empty():
+			_legacy_per_level = {
+				"str": str_per_level,
+				"agi": agi_per_level,
+				"end": end_per_level,
+				"int": int_per_level,
+				"per": per_per_level,
+			}
+		base_primary = _legacy_base_primary.duplicate(true)
+		per_lvl = _legacy_per_level.duplicate(true)
+	else:
+		var primary_int := PROG.get_primary_for_entity(p.level, class_id, "player_default")
+		var zero_per := {"str": 0, "agi": 0, "end": 0, "int": 0, "per": 0}
+		base_primary = primary_int
+		per_lvl = zero_per
 
 	var gear_base := {
 		"primary": {},
@@ -214,8 +263,14 @@ func _build_snapshot() -> Dictionary:
 	if p != null and p.c_buffs != null:
 		buffs = p.c_buffs.get_buffs_snapshot()
 
-	var base_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_base, buffs)
-	var total_snapshot: Dictionary = STAT_CALC.build_player_snapshot(p.level, base_primary, per_lvl, gear_total, buffs)
+	var snapshot_level := p.level
+	if not _use_legacy_primary:
+		snapshot_level = 1
+	var base_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_base, buffs)
+	var total_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_total, buffs)
+
+	if OS.is_debug_build() and p != null and p.class_id == "mage" and p.level <= 4:
+		print("Player mage L%d primary=%s" % [p.level, str(total_snapshot.get("primary", {}))])
 
 	_base_stats = _collect_flat_stats(base_snapshot)
 	_equipment_bonus = _diff_stats(total_snapshot, base_snapshot)
@@ -332,7 +387,8 @@ func take_damage(raw_damage: int) -> void:
 	if buffs != null and buffs.is_invulnerable():
 		return
 
-	var dmg: int = max(1, raw_damage - p.defense)
+	var def_v: int = int(_snapshot.get("derived", {}).get("defense", 0))
+	var dmg: int = max(1, raw_damage - def_v)
 	p.current_hp = max(0, p.current_hp - dmg)
 
 	if p.current_hp <= 0:

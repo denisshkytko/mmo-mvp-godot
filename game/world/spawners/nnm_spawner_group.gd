@@ -31,13 +31,31 @@ func _compute_level() -> int:
 	return lvl
 
 
-func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
+func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var chosen_profile: LootProfile = loot_profile_animals
-	if body_size == NormalNeutralMob.BodySize.HUMANOID:
+	if body_size == BodySize.HUMANOID:
 		chosen_profile = loot_profile_humanoids
 	if chosen_profile == null:
 		# Safety: never spawn a neutral mob without a loot profile.
 		chosen_profile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
+
+	var class_id := ""
+	var profile_id := ""
+	if body_size == BodySize.HUMANOID:
+		class_id = ["paladin", "warrior", "shaman", "mage", "priest", "hunter"].pick_random()
+		profile_id = "humanoid_hostile"
+	else:
+		class_id = "beast"
+		match body_size:
+			BodySize.SMALL:
+				profile_id = "beast_small"
+			BodySize.MEDIUM:
+				profile_id = "beast_medium"
+			BodySize.LARGE:
+				profile_id = "beast_large"
+
+	if OS.is_debug_build() and level == 1:
+		print("[SPAWN][NNM] body_size=", body_size, " class_id=", class_id, " profile_id=", profile_id)
 
 	mob.call_deferred(
 		"apply_spawn_init",
@@ -50,5 +68,8 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> void:
 		level,
 		body_size,
 		skin_id,
-		chosen_profile
+		chosen_profile,
+		class_id,
+		profile_id
 	)
+	return true

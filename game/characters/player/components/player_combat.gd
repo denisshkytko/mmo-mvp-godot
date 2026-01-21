@@ -40,7 +40,7 @@ func get_attack_damage() -> int:
 		snap = p.call("get_stats_snapshot") as Dictionary
 
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
-	var ap: float = float(derived.get("attack_power", float(p.attack)))
+	var ap: float = float(derived.get("attack_power", 0.0))
 	var weapon_damage: float = 0.0
 	var base_damage: float = weapon_damage + ap * STAT_CONST.AP_DAMAGE_SCALAR
 

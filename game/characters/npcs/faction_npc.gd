@@ -16,14 +16,14 @@ signal died(corpse: Corpse)
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 
-enum FighterType { CIVILIAN, FIGHTER, MAGE }
+enum FighterType { CIVILIAN, MELEE, RANGED }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 
 # -----------------------------
 # Identity / runtime state
 # -----------------------------
 var faction_id: String = "blue"
-var fighter_type: int = FighterType.FIGHTER
+var fighter_type: int = FighterType.MELEE
 var interaction_type: int = InteractionType.NONE
 
 var retaliation_target_id: int = 0
@@ -155,7 +155,9 @@ func apply_spawn_init(
 	_speed_in: float,
 	level_in: int,
 	loot_profile_in: LootProfile,
-	projectile_scene_in: PackedScene
+	projectile_scene_in: PackedScene,
+	class_id_in: String = "",
+	growth_profile_id_in: String = ""
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -170,6 +172,9 @@ func apply_spawn_init(
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
 
+	if OS.is_debug_build():
+		print("[INIT][FNPC] class_id_in=", class_id_in, " growth_profile_id_in=", growth_profile_id_in, " lvl=", level_in, " pos=", spawn_pos)
+
 	# common params (если спавнер не передал — берём из инспектора)
 	c_ai.behavior = behavior_in
 	c_ai.aggro_radius = aggro_radius
@@ -179,6 +184,10 @@ func apply_spawn_init(
 	c_ai.speed = move_speed
 	c_ai.home_position = home_position
 	c_ai.reset_to_idle()
+
+	if c_stats != null:
+		c_stats.class_id = class_id_in
+		c_stats.growth_profile_id = growth_profile_id_in
 
 	# presets + combat mode
 	match fighter_type:
@@ -195,7 +204,7 @@ func apply_spawn_init(
 			c_combat.melee_attack_range = civilian_base_attack_range
 			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
-		FighterType.MAGE:
+		FighterType.RANGED:
 			c_stats.apply_primary_preset(
 				{"str": mage_base_str, "agi": mage_base_agi, "end": mage_base_end, "int": mage_base_int, "per": mage_base_per},
 				{"str": mage_str_per_level, "agi": mage_agi_per_level, "end": mage_end_per_level, "int": mage_int_per_level, "per": mage_per_per_level},
@@ -213,7 +222,7 @@ func apply_spawn_init(
 				proj = mage_projectile_scene
 			c_combat.ranged_projectile_scene = proj
 
-		_:
+		FighterType.MELEE:
 			c_stats.apply_primary_preset(
 				{"str": fighter_base_str, "agi": fighter_base_agi, "end": fighter_base_end, "int": fighter_base_int, "per": fighter_base_per},
 				{"str": fighter_str_per_level, "agi": fighter_agi_per_level, "end": fighter_end_per_level, "int": fighter_int_per_level, "per": fighter_per_per_level},

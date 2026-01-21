@@ -41,6 +41,7 @@ var xp_reward: int = 0
 
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
+var _spawn_initialized: bool = false
 # ------------------------------------------------------------
 # Параметры двух состояний (без dropdown-скрытия)
 # ------------------------------------------------------------
@@ -124,8 +125,11 @@ func _ready() -> void:
 		c_ai.speed = move_speed
 
 	_apply_mode_to_components()
-	c_stats.recalculate_for_level(mob_level)
-	c_stats.update_hp_bar(hp_fill)
+	# Пересчёт в _ready нужен только если моб размещён вручную в сцене.
+	# Для мобов из спавнера пересчёт выполняется в apply_spawn_init/set_level.
+	if not _spawn_initialized:
+		c_stats.recalculate_for_level(mob_level)
+		c_stats.update_hp_bar(hp_fill)
 
 func _process(_delta: float) -> void:
 	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
@@ -181,7 +185,9 @@ func apply_spawn_init(
 	level_in: int,
 	attack_mode_in: int,
 	mob_id_in: String,
-	loot_profile_in: LootProfile = null
+	loot_profile_in: LootProfile = null,
+	class_id_in: String = "",
+	growth_profile_id_in: String = ""
 ) -> void:
 	# Эти поля должны выставляться до расчётов/AI
 
@@ -204,9 +210,18 @@ func apply_spawn_init(
 		speed_in
 	)
 
+	if c_stats != null:
+		c_stats.class_id = class_id_in
+		c_stats.growth_profile_id = growth_profile_id_in
+
 	# уровень/режим атаки выставляем как было
 	set_level(level_in)
 	attack_mode = attack_mode_in
+	_spawn_initialized = true
+
+
+func _mark_spawned() -> void:
+	_spawn_initialized = true
 
 
 func apply_spawn_settings(
