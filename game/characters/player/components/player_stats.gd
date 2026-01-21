@@ -71,8 +71,8 @@ func recalculate_for_level(full_restore: bool) -> void:
 	p.max_mana = int(_snapshot.get("derived", {}).get("max_mana", p.max_mana))
 
 	# Keep compatibility fields (old code uses p.attack/p.defense)
-	p.attack = int(round(float(_snapshot.get("derived", {}).get("attack_power", p.attack))))
-	p.defense = int(round(float(_snapshot.get("derived", {}).get("defense", p.defense))))
+	p.attack = int(_snapshot.get("derived", {}).get("attack_power", p.attack))
+	p.defense = int(_snapshot.get("derived", {}).get("defense", p.defense))
 
 	# Optional extra fields (safe even if UI ignores them)
 	if p.has_method("set"):
@@ -387,7 +387,8 @@ func take_damage(raw_damage: int) -> void:
 	if buffs != null and buffs.is_invulnerable():
 		return
 
-	var dmg: int = max(1, raw_damage - p.defense)
+	var def_v: int = int(_snapshot.get("derived", {}).get("defense", 0))
+	var dmg: int = max(1, raw_damage - def_v)
 	p.current_hp = max(0, p.current_hp - dmg)
 
 	if p.current_hp <= 0:
