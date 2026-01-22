@@ -1,29 +1,31 @@
 extends CanvasLayer
 
 @onready var panel: Panel = $Panel
-@onready var name_label: Label = $Panel/NameLabel
-@onready var hp_fill: ColorRect = $Panel/HpFill
-@onready var hp_text: Label = $Panel/HpText
-@onready var hp_back: ColorRect = $Panel/HpBack
-
-# добавленный фон (см. шаг 1)
 @onready var relation_bg: ColorRect = $Panel/RelationBg
+@onready var name_label: Label = $Panel/Margin/VBox/Header/NameLabel
+@onready var level_label: Label = $Panel/Margin/VBox/Header/LevelLabel
+@onready var hp_bar: ProgressBar = $Panel/Margin/VBox/HpRow/HpBar
+@onready var hp_text: Label = $Panel/Margin/VBox/HpRow/HpBar/HpText
+@onready var mana_row: HBoxContainer = $Panel/Margin/VBox/ManaRow
+@onready var mana_bar: ProgressBar = $Panel/Margin/VBox/ManaRow/ManaBar
+@onready var mana_text: Label = $Panel/Margin/VBox/ManaRow/ManaBar/ManaText
 
 var _gm: Node = null
 var _player: Node = null
 var _target: Node = null
-var _full_width: float = 0.0
 
 func _ready() -> void:
 	panel.visible = false
 	_gm = get_tree().get_first_node_in_group("game_manager")
 	_player = get_tree().get_first_node_in_group("player")
 
-	# дождёмся 1 кадра, чтобы размеры UI были рассчитаны
-	await get_tree().process_frame
-	_full_width = hp_back.size.x
-	hp_fill.size.x = _full_width
 	hp_text.text = ""
+	mana_text.text = ""
+	hp_bar.max_value = 1
+	hp_bar.value = 1
+	mana_bar.max_value = 1
+	mana_bar.value = 1
+	mana_row.visible = false
 
 func _process(_delta: float) -> void:
 	if _gm == null or not is_instance_valid(_gm):
@@ -42,15 +44,16 @@ func _process(_delta: float) -> void:
 	if t != _target:
 		_target = t
 		panel.visible = true
-		_update_name()
+		_update_identity()
 		_update_relation_color()
 
-	# HP обновляем каждый кадр (надёжно для прототипа)
 	_update_hp()
+	_update_resource()
 
-func _update_name() -> void:
+func _update_identity() -> void:
 	if _target == null:
 		name_label.text = ""
+		level_label.text = ""
 		return
 
 	var display_name: String = ""
@@ -89,16 +92,17 @@ func _update_name() -> void:
 			if ft == 0:
 				ft_name = "Civilian"
 			elif ft == 1:
-				ft_name = "Fighter"
+				ft_name = "Melee"
 			elif ft == 2:
-				ft_name = "Mage"
+				ft_name = "Ranged"
 
 			display_name = ("%s %s" % [fid, ft_name]).strip_edges()
 
 		else:
 			display_name = String(_target.name)
 
-	# level suffix
+	name_label.text = display_name
+
 	var lvl: int = 0
 	if _target.has_method("get_level"):
 		lvl = int(_target.call("get_level"))
@@ -111,11 +115,7 @@ func _update_name() -> void:
 			if nl != null:
 				lvl = int(nl)
 
-	if lvl > 0:
-		name_label.text = display_name + (" (lv %d)" % lvl)
-	else:
-		name_label.text = display_name
-
+	level_label.text = "lv %d" % lvl if lvl > 0 else ""
 
 func _get_stats_node() -> Node:
 	if _target == null:
@@ -129,7 +129,8 @@ func _get_stats_node() -> Node:
 func _update_hp() -> void:
 	if _target == null:
 		hp_text.text = ""
-		hp_fill.size.x = _full_width
+		hp_bar.max_value = 1
+		hp_bar.value = 1
 		return
 
 	var cur: int = -1
@@ -158,15 +159,43 @@ func _update_hp() -> void:
 
 	if cur < 0 or mx <= 0:
 		hp_text.text = ""
-		hp_fill.size.x = _full_width
+		hp_bar.max_value = 1
+		hp_bar.value = 1
 		return
 
 	mx = max(1, mx)
 	cur = clamp(cur, 0, mx)
 
 	hp_text.text = "%d/%d" % [cur, mx]
-	var ratio: float = clamp(float(cur) / float(mx), 0.0, 1.0)
-	hp_fill.size.x = _full_width * ratio
+	hp_bar.max_value = mx
+	hp_bar.value = cur
+
+func _update_resource() -> void:
+	if _target == null:
+		mana_row.visible = false
+		return
+
+	if not _target.has_node("Components/Resource"):
+		mana_row.visible = false
+		return
+
+	var r: Node = _target.get_node("Components/Resource")
+	if r == null:
+		mana_row.visible = false
+		return
+
+	mana_row.visible = true
+	if r.has_method("sync_from_owner_fields_if_mana"):
+		r.call("sync_from_owner_fields_if_mana")
+	if r.has_method("get_text"):
+		mana_text.text = String(r.call("get_text"))
+	else:
+		mana_text.text = ""
+
+	var mx_r: int = max(1, int(r.get("max_resource")))
+	var cur_r: int = int(r.get("resource"))
+	mana_bar.max_value = mx_r
+	mana_bar.value = cur_r
 
 func _update_relation_color() -> void:
 	if relation_bg == null:

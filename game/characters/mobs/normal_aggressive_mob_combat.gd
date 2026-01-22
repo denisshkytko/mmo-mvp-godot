@@ -45,6 +45,8 @@ func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _attack_timer <= 0.0:
 			target.call("take_damage", dmg)
+			if "c_resource" in actor and actor.c_resource != null:
+				actor.c_resource.on_damage_dealt()
 			_attack_timer = melee_cooldown / speed_mult
 		return
 
@@ -56,6 +58,8 @@ func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack
 func _fire_ranged(actor: Node2D, target: Node2D, damage: int) -> void:
 	if ranged_projectile_scene == null:
 		target.call("take_damage", damage)
+		if "c_resource" in actor and actor.c_resource != null:
+			actor.c_resource.on_damage_dealt()
 		return
 
 	var inst: Node = ranged_projectile_scene.instantiate()

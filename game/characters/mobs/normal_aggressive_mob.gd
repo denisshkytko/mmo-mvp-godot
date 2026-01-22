@@ -12,6 +12,7 @@ signal died(corpse: Corpse)
 @onready var c_ai: NormalAggresiveMobAI = $Components/AI as NormalAggresiveMobAI
 @onready var c_combat: NormalAggresiveMobCombat = $Components/Combat as NormalAggresiveMobCombat
 @onready var c_stats: NormalAggresiveMobStats = $Components/Stats as NormalAggresiveMobStats
+@onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 
 enum AttackMode { MELEE, RANGED }
 
@@ -128,6 +129,7 @@ func _ready() -> void:
 	# Пересчёт в _ready нужен только если моб размещён вручную в сцене.
 	# Для мобов из спавнера пересчёт выполняется в apply_spawn_init/set_level.
 	if not _spawn_initialized:
+		_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 		c_stats.recalculate_for_level(mob_level)
 		c_stats.update_hp_bar(hp_fill)
 
@@ -213,6 +215,7 @@ func apply_spawn_init(
 	if c_stats != null:
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in
+	_setup_resource_from_class(class_id_in)
 
 	# уровень/режим атаки выставляем как было
 	set_level(level_in)
@@ -279,6 +282,8 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 
 	var died_now: bool = c_stats.apply_damage(raw_damage)
 	c_stats.update_hp_bar(hp_fill)
+	if c_resource != null:
+		c_resource.on_damage_taken()
 
 	if died_now:
 		_die()
@@ -332,6 +337,16 @@ func _apply_mode_to_components() -> void:
 			ranged_base_magic_resist,
 			ranged_magic_resist_per_level
 		)
+
+func _setup_resource_from_class(class_id_value: String) -> void:
+	if c_resource == null:
+		return
+	c_resource.setup(self)
+	c_resource.configure_from_class_id(class_id_value)
+	if c_resource.resource_type == "rage":
+		c_resource.set_empty()
+	else:
+		c_resource.set_full()
 
 func _die() -> void:
 	if c_stats.is_dead:

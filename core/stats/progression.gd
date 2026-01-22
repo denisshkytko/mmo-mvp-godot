@@ -75,6 +75,14 @@ static func get_class_def(class_id: String) -> Dictionary:
 		return CLASS_TABLE.get("warrior", {}).duplicate(true)
 	return CLASS_TABLE.get(class_id, {}).duplicate(true)
 
+static func get_class_data(class_id: String) -> Dictionary:
+	return get_class_def(class_id)
+
+static func get_resource_type_for_class(class_id: String) -> String:
+	var d: Dictionary = get_class_data(class_id)
+	var t := String(d.get("resource_type", "mana")).strip_edges()
+	return t if t != "" else "mana"
+
 static func get_primary_multiplier(profile_id: String, level: int) -> float:
 	level = clamp(level, 1, MAX_LEVEL)
 	match profile_id:

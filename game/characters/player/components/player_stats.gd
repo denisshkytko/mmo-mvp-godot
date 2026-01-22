@@ -381,6 +381,8 @@ func take_damage(raw_damage: int) -> void:
 	# Any incoming damage puts player in combat (pauses HP regen)
 	if p.has_method("mark_in_combat"):
 		p.call("mark_in_combat")
+	if "c_resource" in p and p.c_resource != null:
+		p.c_resource.on_damage_taken()
 
 	# неуязвимость через баф (если есть)
 	var buffs: PlayerBuffs = p.c_buffs

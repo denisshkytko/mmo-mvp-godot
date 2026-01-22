@@ -12,9 +12,20 @@ func _ready() -> void:
 	error_label.text = ""
 
 	class_option.clear()
-	class_option.add_item("Paladin", 0)
+	var classes := [
+		{"label": "Paladin", "id": "paladin"},
+		{"label": "Shaman", "id": "shaman"},
+		{"label": "Mage", "id": "mage"},
+		{"label": "Priest", "id": "priest"},
+		{"label": "Hunter", "id": "hunter"},
+		{"label": "Warrior", "id": "warrior"},
+	]
+	for entry in classes:
+		var idx := class_option.item_count
+		class_option.add_item(String(entry.get("label", "")), idx)
+		class_option.set_item_metadata(idx, String(entry.get("id", "")))
 	class_option.select(0)
-	class_option.disabled = true
+	class_option.disabled = false
 
 	create_button.pressed.connect(_on_create_pressed)
 	cancel_button.pressed.connect(_on_cancel_pressed)
@@ -37,9 +48,19 @@ func _on_create_pressed() -> void:
 		error_label.text = "Enter a name"
 		return
 
-	var class_id: String = "paladin"
+	var selected_class_id: String = ""
+	var selected_meta: Variant = class_option.get_item_metadata(class_option.selected)
+	if selected_meta != null:
+		selected_class_id = String(selected_meta)
+	if selected_class_id == "":
+		selected_class_id = "paladin"
 
-	var new_id: String = AppState.create_character(n, class_id)
+	var selected_data: Dictionary = AppState.selected_character_data.duplicate(true)
+	selected_data["class_id"] = selected_class_id
+	selected_data["class"] = selected_class_id
+	AppState.selected_character_data = selected_data
+
+	var new_id: String = AppState.create_character(n, selected_class_id)
 	if new_id == "":
 		error_label.text = "Failed to create character"
 		return

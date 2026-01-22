@@ -13,6 +13,7 @@ signal died(corpse: Corpse)
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
 @onready var c_stats: FactionNPCStats = $Components/Stats as FactionNPCStats
+@onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 
@@ -137,6 +138,7 @@ func _ready() -> void:
 		c_ai.leash_return_started.connect(cb)
 
 	_update_faction_color()
+	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 
 func get_faction_id() -> String:
 	return faction_id
@@ -188,6 +190,7 @@ func apply_spawn_init(
 	if c_stats != null:
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in
+	_setup_resource_from_class(class_id_in)
 
 	# presets + combat mode
 	match fighter_type:
@@ -323,6 +326,8 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 
 	var died_now: bool = c_stats.apply_damage(raw_damage)
 	_update_hp()
+	if c_resource != null:
+		c_resource.on_damage_taken()
 
 	# retaliation
 	if attacker != null and is_instance_valid(attacker):
@@ -367,6 +372,16 @@ func _update_hp() -> void:
 		return
 	var r: float = clamp(float(c_stats.current_hp) / float(c_stats.max_hp), 0.0, 1.0)
 	hp_fill.size.x = 36.0 * r
+
+func _setup_resource_from_class(class_id_value: String) -> void:
+	if c_resource == null:
+		return
+	c_resource.setup(self)
+	c_resource.configure_from_class_id(class_id_value)
+	if c_resource.resource_type == "rage":
+		c_resource.set_empty()
+	else:
+		c_resource.set_full()
 
 func _set_loot_owner_if_first(attacker: Node2D) -> void:
 	# legacy wrapper (оставлено, чтобы не ломать возможные внешние вызовы)

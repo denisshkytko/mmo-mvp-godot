@@ -48,14 +48,29 @@ func _process(_delta: float) -> void:
 		hp_bar.max_value = 1
 		hp_bar.value = 1
 
-	# Mana
+	# Resource
+	if _player.has_node("Components/Resource"):
+		var r: Node = _player.get_node("Components/Resource")
+		if r != null:
+			if r.has_method("sync_from_owner_fields_if_mana"):
+				r.call("sync_from_owner_fields_if_mana")
+			var r_text: String = ""
+			if r.has_method("get_text"):
+				r_text = String(r.call("get_text"))
+			mana_text.text = r_text
+			var mx_r: int = max(1, int(r.get("max_resource")))
+			var cur_r: int = int(r.get("resource"))
+			mana_bar.max_value = mx_r
+			mana_bar.value = cur_r
+			return
+
 	var cur_m_v: Variant = _player.get("mana")
 	var mx_m_v: Variant = _player.get("max_mana")
 	if cur_m_v != null and mx_m_v != null:
 		var cur_m: int = int(cur_m_v)
 		var mx_m: int = max(1, int(mx_m_v))
 
-		mana_text.text = "%d/%d" % [cur_m, mx_m]
+		mana_text.text = "Mana %d/%d" % [cur_m, mx_m]
 		mana_bar.max_value = mx_m
 		mana_bar.value = cur_m
 	else:
