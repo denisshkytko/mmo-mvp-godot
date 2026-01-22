@@ -63,6 +63,7 @@ func _ready() -> void:
 	if get_viewport() != null:
 		get_viewport().size_changed.connect(_on_viewport_resized)
 
+	panel.visible = false
 	stats_text.bbcode_enabled = true
 	stats_text.fit_content = true
 	stats_text.meta_clicked.connect(_on_meta_clicked)
