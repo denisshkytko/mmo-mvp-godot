@@ -5,6 +5,13 @@ extends Node
 var player: Node2D
 var current_target: Node = null
 
+# --- Debug click marker ---
+@export var debug_show_click_world_marker: bool = true
+@export var debug_marker_lifetime_sec: float = 1.5
+@export var debug_marker_radius_px: float = 6.0
+var _debug_marker: Node2D = null
+var _debug_marker_timer: float = 0.0
+
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
 var _pending_override_pos: Vector2 = Vector2.ZERO
@@ -16,6 +23,7 @@ var _save_pending: bool = false
 
 
 func _ready() -> void:
+	set_process(true)
 	player = get_tree().get_first_node_in_group("player") as Node2D
 	if player == null:
 		push_error("Player not found in group 'player'.")
@@ -37,6 +45,58 @@ func _ready() -> void:
 
 	# --- load character state into world ---
 	_load_character_into_world()
+
+
+func _process(delta: float) -> void:
+	if not OS.is_debug_build():
+		return
+	if not debug_show_click_world_marker:
+		return
+	if _debug_marker == null or not is_instance_valid(_debug_marker):
+		return
+	if _debug_marker_timer <= 0.0:
+		return
+	_debug_marker_timer = max(0.0, _debug_marker_timer - delta)
+	if _debug_marker_timer <= 0.0:
+		_debug_marker.visible = false
+
+
+func _ensure_debug_marker() -> void:
+	if _debug_marker != null and is_instance_valid(_debug_marker):
+		return
+	var root := get_tree().current_scene
+	if root == null:
+		return
+	var marker := Node2D.new()
+	marker.name = "__DebugClickMarker"
+	marker.visible = false
+	root.add_child(marker)
+
+	var radius: float = max(2.0, debug_marker_radius_px)
+	var horiz := Line2D.new()
+	horiz.name = "CrossH"
+	horiz.width = 2.0
+	horiz.default_color = Color(1.0, 0.2, 0.2, 1.0)
+	horiz.points = PackedVector2Array([Vector2(-radius, 0.0), Vector2(radius, 0.0)])
+	marker.add_child(horiz)
+
+	var vert := Line2D.new()
+	vert.name = "CrossV"
+	vert.width = 2.0
+	vert.default_color = Color(1.0, 0.2, 0.2, 1.0)
+	vert.points = PackedVector2Array([Vector2(0.0, -radius), Vector2(0.0, radius)])
+	marker.add_child(vert)
+
+	_debug_marker = marker
+
+
+func _show_debug_marker_at(world_pos: Vector2) -> void:
+	_ensure_debug_marker()
+	if _debug_marker == null or not is_instance_valid(_debug_marker):
+		return
+	_debug_marker.global_position = world_pos
+	_debug_marker.visible = true
+	_debug_marker_timer = debug_marker_lifetime_sec
 
 
 func _exit_tree() -> void:
@@ -242,6 +302,13 @@ func _input(event: InputEvent) -> void:
 		return
 
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
+	if OS.is_debug_build() and debug_show_click_world_marker:
+		_show_debug_marker_at(world_pos)
+		var cam := get_viewport().get_camera_2d()
+		if cam != null:
+			print("[DEBUG_CLICK] screen=", screen_pos, " world=", world_pos, " cam=", cam.global_position, " zoom=", cam.zoom)
+		else:
+			print("[DEBUG_CLICK] screen=", screen_pos, " world=", world_pos, " cam=null")
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
 
 	if mob != null:
