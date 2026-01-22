@@ -253,11 +253,11 @@ func _update_relation_color() -> void:
 	# FRIENDLY -> green, NEUTRAL -> yellow, HOSTILE -> red
 	var color: Color
 	if rel == FactionRules.Relation.FRIENDLY:
-		color = Color(0.15, 0.55, 0.15, 0.4)
+		color = Color(0.15, 0.55, 0.15, 0.45)
 	elif rel == FactionRules.Relation.HOSTILE:
 		color = Color(0.65, 0.15, 0.15, 0.4)
 	else:
-		color = Color(0.65, 0.55, 0.15, 0.4)
+		color = Color(0.65, 0.55, 0.15, 0.5)
 
 	var sb: StyleBoxFlat = null
 	if _panel_stylebox_base is StyleBoxFlat:
@@ -274,5 +274,5 @@ func _update_relation_color() -> void:
 	sb.border_width_bottom = 2
 	sb.border_width_left = 2
 	sb.border_width_right = 2
-	sb.border_color = Color(color.r, color.g, color.b, 0.8)
+	sb.border_color = Color(0, 0, 0, 1)
 	panel.add_theme_stylebox_override("panel", sb)

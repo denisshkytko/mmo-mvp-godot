@@ -5,19 +5,7 @@ extends Node
 var player: Node2D
 var current_target: Node = null
 
-# --- Debug click marker ---
-@export var debug_show_click_world_marker: bool = true
-@export var debug_marker_lifetime_sec: float = 1.5
-@export var debug_marker_radius_px: float = 6.0
-@export var debug_click_log_v1: bool = true
-@export var debug_cam_center_log_v2: bool = true
-@export var debug_target_visibility_log_v2: bool = true
 @export var use_cam_screen_center_for_world_math: bool = true
-var _debug_marker: Node2D = null
-var _debug_marker_timer: float = 0.0
-const DBG_V1 := "[DBG_CLICK_V1]"
-const DBG_V2 := "[DBG_CAM_V2]"
-const DBG_V2_VIS := "[DBG_VIS_V2]"
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -30,7 +18,6 @@ var _save_pending: bool = false
 
 
 func _ready() -> void:
-	set_process(true)
 	player = get_tree().get_first_node_in_group("player") as Node2D
 	if player == null:
 		push_error("Player not found in group 'player'.")
@@ -53,58 +40,6 @@ func _ready() -> void:
 	# --- load character state into world ---
 	_load_character_into_world()
 
-
-func _process(delta: float) -> void:
-	if not OS.is_debug_build():
-		return
-	if not debug_show_click_world_marker:
-		return
-	if _debug_marker == null or not is_instance_valid(_debug_marker):
-		return
-	if _debug_marker_timer <= 0.0:
-		return
-	_debug_marker_timer = max(0.0, _debug_marker_timer - delta)
-	if _debug_marker_timer <= 0.0:
-		_debug_marker.visible = false
-
-
-func _ensure_debug_marker() -> void:
-	if _debug_marker != null and is_instance_valid(_debug_marker):
-		return
-	var root := get_tree().current_scene
-	if root == null:
-		return
-	var marker := Node2D.new()
-	marker.name = "__DebugClickMarker"
-	marker.visible = false
-	root.add_child(marker)
-
-	var radius: float = max(2.0, debug_marker_radius_px)
-	var horiz := Line2D.new()
-	horiz.name = "CrossH"
-	horiz.width = 2.0
-	horiz.default_color = Color(1.0, 0.2, 0.2, 1.0)
-	horiz.points = PackedVector2Array([Vector2(-radius, 0.0), Vector2(radius, 0.0)])
-	marker.add_child(horiz)
-
-	var vert := Line2D.new()
-	vert.name = "CrossV"
-	vert.width = 2.0
-	vert.default_color = Color(1.0, 0.2, 0.2, 1.0)
-	vert.points = PackedVector2Array([Vector2(0.0, -radius), Vector2(0.0, radius)])
-	marker.add_child(vert)
-
-	_debug_marker = marker
-
-
-func _show_debug_marker_at(world_pos: Vector2) -> void:
-	_ensure_debug_marker()
-	if _debug_marker == null or not is_instance_valid(_debug_marker):
-		return
-	_debug_marker.global_position = world_pos
-	_debug_marker.visible = true
-	_debug_marker_timer = debug_marker_lifetime_sec
-
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
 		return Vector2.ZERO
@@ -112,17 +47,6 @@ func _get_world_screen_center(cam: Camera2D) -> Vector2:
 		return cam.get_screen_center_position()
 	return cam.global_position
 
-func _dbg_compute_visible_world_rect(center_world: Vector2) -> Rect2:
-	var vp := get_viewport()
-	var cam := vp.get_camera_2d()
-	if cam == null:
-		return Rect2(center_world, Vector2.ZERO)
-	var size := vp.get_visible_rect().size
-	var half := size * 0.5
-	var zoom := cam.zoom
-	var top_left := center_world - Vector2(half.x * zoom.x, half.y * zoom.y)
-	var world_size := Vector2(size.x * zoom.x, size.y * zoom.y)
-	return Rect2(top_left, world_size)
 
 
 func _exit_tree() -> void:
@@ -293,11 +217,6 @@ func get_target() -> Node:
 	if current_target is Node2D:
 		var t := current_target as Node2D
 		if not _is_world_pos_visible(t.global_position):
-			if OS.is_debug_build() and debug_target_visibility_log_v2:
-				var cam := get_viewport().get_camera_2d()
-				var cam_node := cam.global_position if cam != null else Vector2.ZERO
-				var cam_center := cam.get_screen_center_position() if cam != null else Vector2.ZERO
-				print(DBG_V2_VIS, " CLEAR_TARGET reason=not_visible", " target_pos=", t.global_position, " cam_node=", cam_node, " cam_center=", cam_center, " use_screen_center=", use_cam_screen_center_for_world_math)
 			current_target = null
 			return null
 
@@ -333,23 +252,6 @@ func _input(event: InputEvent) -> void:
 		return
 
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
-	if OS.is_debug_build() and debug_show_click_world_marker:
-		_show_debug_marker_at(world_pos)
-		var cam := get_viewport().get_camera_2d()
-		var cam_node := Vector2.ZERO
-		var cam_center := Vector2.ZERO
-		if cam != null:
-			cam_node = cam.global_position
-			cam_center = cam.get_screen_center_position()
-		if debug_click_log_v1:
-			print(DBG_V1, " screen=", screen_pos, " world=", world_pos, " cam_node=", cam_node, " cam_center=", cam_center, " zoom=", cam.zoom if cam != null else Vector2.ONE, " vp_size=", get_viewport().get_visible_rect().size, " use_screen_center=", use_cam_screen_center_for_world_math)
-		if debug_cam_center_log_v2 and cam != null:
-			var delta := cam_center - cam_node
-			print(DBG_V2, " cam_node=", cam_node, " cam_center=", cam_center, " delta(center-node)=", delta, " zoom=", cam.zoom, " use_screen_center=", use_cam_screen_center_for_world_math)
-		if debug_target_visibility_log_v2 and cam != null:
-			var rect_node := _dbg_compute_visible_world_rect(cam_node)
-			var rect_center := _dbg_compute_visible_world_rect(cam_center)
-			print(DBG_V2_VIS, " click_world=", world_pos, " contains_node_rect=", rect_node.has_point(world_pos), " contains_center_rect=", rect_center.has_point(world_pos), " rect_node=", rect_node, " rect_center=", rect_center, " use_screen_center=", use_cam_screen_center_for_world_math)
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
 
 	if mob != null:

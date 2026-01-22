@@ -46,6 +46,19 @@ cache/0/12/0/scale = 1.0
 bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
 corner_detail = 6
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel_outline"]
+bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+corner_detail = 6
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1e2au"]
 bg_color = Color(0.84705883, 0.11764706, 0.06666667, 1)
 corner_detail = 6
@@ -87,6 +100,7 @@ offset_right = -186.0
 offset_bottom = 100.0
 grow_horizontal = 2
 clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel_outline")
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
 custom_minimum_size = Vector2(160, 80)
@@ -118,6 +132,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = SubResource("FontFile_5lq8m")
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
 text = "Target"
 text_overrun_behavior = 3
 clip_text = true
@@ -129,6 +145,8 @@ size_flags_horizontal = 8
 size_flags_vertical = 1
 theme_override_fonts/font = SubResource("FontFile_b4a0j")
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
 text = "lv 1"
 horizontal_alignment = 2
 vertical_alignment = 1
