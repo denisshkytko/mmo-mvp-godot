@@ -12,6 +12,7 @@ var current_target: Node = null
 @export var debug_click_log_v1: bool = true
 @export var debug_cam_center_log_v2: bool = true
 @export var debug_target_visibility_log_v2: bool = true
+@export var use_cam_screen_center_for_world_math: bool = true
 var _debug_marker: Node2D = null
 var _debug_marker_timer: float = 0.0
 const DBG_V1 := "[DBG_CLICK_V1]"
@@ -103,6 +104,13 @@ func _show_debug_marker_at(world_pos: Vector2) -> void:
 	_debug_marker.global_position = world_pos
 	_debug_marker.visible = true
 	_debug_marker_timer = debug_marker_lifetime_sec
+
+func _get_world_screen_center(cam: Camera2D) -> Vector2:
+	if cam == null:
+		return Vector2.ZERO
+	if use_cam_screen_center_for_world_math:
+		return cam.get_screen_center_position()
+	return cam.global_position
 
 func _dbg_compute_visible_world_rect(center_world: Vector2) -> Rect2:
 	var vp := get_viewport()
@@ -289,7 +297,7 @@ func get_target() -> Node:
 				var cam := get_viewport().get_camera_2d()
 				var cam_node := cam.global_position if cam != null else Vector2.ZERO
 				var cam_center := cam.get_screen_center_position() if cam != null else Vector2.ZERO
-				print(DBG_V2_VIS, " CLEAR_TARGET reason=not_visible", " target_pos=", t.global_position, " cam_node=", cam_node, " cam_center=", cam_center)
+				print(DBG_V2_VIS, " CLEAR_TARGET reason=not_visible", " target_pos=", t.global_position, " cam_node=", cam_node, " cam_center=", cam_center, " use_screen_center=", use_cam_screen_center_for_world_math)
 			current_target = null
 			return null
 
@@ -334,14 +342,14 @@ func _input(event: InputEvent) -> void:
 			cam_node = cam.global_position
 			cam_center = cam.get_screen_center_position()
 		if debug_click_log_v1:
-			print(DBG_V1, " screen=", screen_pos, " world=", world_pos, " cam_node=", cam_node, " cam_center=", cam_center, " zoom=", cam.zoom if cam != null else Vector2.ONE, " vp_size=", get_viewport().get_visible_rect().size)
+			print(DBG_V1, " screen=", screen_pos, " world=", world_pos, " cam_node=", cam_node, " cam_center=", cam_center, " zoom=", cam.zoom if cam != null else Vector2.ONE, " vp_size=", get_viewport().get_visible_rect().size, " use_screen_center=", use_cam_screen_center_for_world_math)
 		if debug_cam_center_log_v2 and cam != null:
 			var delta := cam_center - cam_node
-			print(DBG_V2, " cam_node=", cam_node, " cam_center=", cam_center, " delta(center-node)=", delta, " zoom=", cam.zoom)
+			print(DBG_V2, " cam_node=", cam_node, " cam_center=", cam_center, " delta(center-node)=", delta, " zoom=", cam.zoom, " use_screen_center=", use_cam_screen_center_for_world_math)
 		if debug_target_visibility_log_v2 and cam != null:
 			var rect_node := _dbg_compute_visible_world_rect(cam_node)
 			var rect_center := _dbg_compute_visible_world_rect(cam_center)
-			print(DBG_V2_VIS, " click_world=", world_pos, " contains_node_rect=", rect_node.has_point(world_pos), " contains_center_rect=", rect_center.has_point(world_pos), " rect_node=", rect_node, " rect_center=", rect_center)
+			print(DBG_V2_VIS, " click_world=", world_pos, " contains_node_rect=", rect_node.has_point(world_pos), " contains_center_rect=", rect_center.has_point(world_pos), " rect_node=", rect_node, " rect_center=", rect_center, " use_screen_center=", use_cam_screen_center_for_world_math)
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
 
 	if mob != null:
@@ -352,7 +360,18 @@ func _input(event: InputEvent) -> void:
 
 func _screen_to_world(screen_pos: Vector2) -> Vector2:
 	var vp: Viewport = get_viewport()
-	return vp.get_canvas_transform().affine_inverse() * screen_pos
+	var cam := vp.get_camera_2d()
+	if cam == null:
+		return vp.get_canvas_transform().affine_inverse() * screen_pos
+	if not use_cam_screen_center_for_world_math:
+		return vp.get_canvas_transform().affine_inverse() * screen_pos
+	var center_world := _get_world_screen_center(cam)
+	var screen_size := vp.get_visible_rect().size
+	var screen_center := screen_size * 0.5
+	var delta_screen := screen_pos - screen_center
+	var zoom := cam.zoom
+	var delta_world := Vector2(delta_screen.x * zoom.x, delta_screen.y * zoom.y)
+	return center_world + delta_world
 
 
 func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
@@ -389,8 +408,9 @@ func _is_world_pos_visible(world_pos: Vector2) -> bool:
 	if cam == null:
 		return true
 
+	var center := _get_world_screen_center(cam)
 	var half_size: Vector2 = vp.get_visible_rect().size * 0.5 * cam.zoom
-	var rect := Rect2(cam.global_position - half_size, half_size * 2.0)
+	var rect := Rect2(center - half_size, half_size * 2.0)
 	return rect.has_point(world_pos)
 
 
