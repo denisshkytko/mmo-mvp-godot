@@ -26,7 +26,7 @@ func set_type(t: String) -> void:
 
 func configure_from_class_id(class_id: String) -> void:
 	var t: String = "mana"
-	if PROG != null and PROG.has_method("get_resource_type_for_class"):
+	if PROG != null:
 		t = String(PROG.get_resource_type_for_class(class_id))
 	set_type(t)
 
