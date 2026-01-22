@@ -37,6 +37,8 @@ func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack
 		dmg = 1
 	if target.has_method("take_damage"):
 		target.call("take_damage", dmg)
+		if "c_resource" in actor and actor.c_resource != null:
+			actor.c_resource.on_damage_dealt()
 
 	_attack_timer = melee_cooldown / speed_mult
 

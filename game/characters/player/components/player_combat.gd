@@ -94,6 +94,8 @@ func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 		target.call("take_damage_from", dmg, p)
 	elif target.has_method("take_damage"):
 		target.call("take_damage", dmg)
+	if p != null and "c_resource" in p and p.c_resource != null:
+		p.c_resource.on_damage_dealt()
 
 
 func _get_current_target() -> Node2D:

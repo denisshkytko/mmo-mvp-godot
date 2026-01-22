@@ -27,8 +27,8 @@ const DEBUG_LOGS: bool = false
 
 const CLASS_TABLE: Dictionary = {
 	"paladin": {
-		"base_primary": {"str": 12.0, "agi": 8.0, "end": 11.0, "int": 8.0, "per": 7.0},
-		"per_level": {"str": 1.5, "agi": 0.7, "end": 1.4, "int": 0.6, "per": 0.8},
+		"base_primary": {"str": 12.0, "agi": 8.0, "end": 12.0, "int": 12.0, "per": 7.0},
+		"per_level": {"str": 1.2, "agi": 0.8, "end": 1.2, "int": 1.2, "per": 0.8},
 		"resource_type": "mana",
 	},
 	"shaman": {
@@ -47,13 +47,13 @@ const CLASS_TABLE: Dictionary = {
 		"resource_type": "mana",
 	},
 	"hunter": {
-		"base_primary": {"str": 8.0, "agi": 13.0, "end": 8.0, "int": 7.0, "per": 10.0},
-		"per_level": {"str": 0.8, "agi": 1.4, "end": 0.9, "int": 0.6, "per": 1.2},
+		"base_primary": {"str": 9.0, "agi": 14.0, "end": 9.0, "int": 10.0, "per": 10.0},
+		"per_level": {"str": 0.8, "agi": 1.4, "end": 0.9, "int": 1.0, "per": 1.2},
 		"resource_type": "mana",
 	},
 	"warrior": {
-		"base_primary": {"str": 13.0, "agi": 9.0, "end": 12.0, "int": 5.0, "per": 6.0},
-		"per_level": {"str": 1.6, "agi": 0.8, "end": 1.3, "int": 0.2, "per": 0.6},
+		"base_primary": {"str": 14.0, "agi": 10.0, "end": 13.0, "int": 4.0, "per": 6.0},
+		"per_level": {"str": 1.4, "agi": 1.0, "end": 1.3, "int": 0.3, "per": 0.6},
 		"resource_type": "rage",
 	},
 	"beast": {
@@ -75,6 +75,14 @@ static func get_class_def(class_id: String) -> Dictionary:
 		return CLASS_TABLE.get("warrior", {}).duplicate(true)
 	return CLASS_TABLE.get(class_id, {}).duplicate(true)
 
+static func get_class_data(class_id: String) -> Dictionary:
+	return get_class_def(class_id)
+
+static func get_resource_type_for_class(class_id: String) -> String:
+	var d: Dictionary = get_class_data(class_id)
+	var t := String(d.get("resource_type", "mana")).strip_edges()
+	return t if t != "" else "mana"
+
 static func get_primary_multiplier(profile_id: String, level: int) -> float:
 	level = clamp(level, 1, MAX_LEVEL)
 	match profile_id:
@@ -90,15 +98,11 @@ static func get_primary_multiplier(profile_id: String, level: int) -> float:
 				print("Progression hostile mult lvl=%d -> %.3f" % [level, mult])
 			return mult
 		"beast_small":
-			return 0.75
+			return 0.25
 		"beast_medium":
-			return 1.05
+			return 0.75
 		"beast_large":
-			if level <= 10:
-				return 1.0
-			var t2: float = float(level - 10) / float(MAX_LEVEL - 10)
-			var ease2: float = t2 * t2 * (3.0 - 2.0 * t2)
-			return 1.0 + (2.0 - 1.0) * ease2
+			return 1.25
 		_:
 			return 1.0
 

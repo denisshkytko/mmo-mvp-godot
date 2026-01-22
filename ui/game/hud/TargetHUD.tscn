@@ -1,83 +1,211 @@
-[gd_scene load_steps=2 format=3 uid="uid://dcu1lfgrbfvt5"]
+[gd_scene load_steps=9 format=3 uid="uid://dcu1lfgrbfvt5"]
 
 [ext_resource type="Script" uid="uid://bckvh6aela0ko" path="res://ui/game/hud/target_hud.gd" id="1_vx1m2"]
+
+[sub_resource type="FontFile" id="FontFile_5lq8m"]
+subpixel_positioning = 0
+msdf_pixel_range = 14
+msdf_size = 128
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+
+[sub_resource type="FontFile" id="FontFile_b4a0j"]
+subpixel_positioning = 0
+msdf_pixel_range = 14
+msdf_size = 128
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u4g43"]
+bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel_outline"]
+bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1e2au"]
+bg_color = Color(0.84705883, 0.11764706, 0.06666667, 1)
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_zqz3u"]
+bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0h8vv"]
+bg_color = Color(0.23921569, 0, 1, 1)
+corner_detail = 6
+
+[sub_resource type="FontFile" id="FontFile_0k7i0"]
+subpixel_positioning = 0
+msdf_pixel_range = 14
+msdf_size = 128
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
 
 [node name="TargetHUD" type="CanvasLayer"]
 script = ExtResource("1_vx1m2")
 
 [node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(170, 80)
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -356.0
 offset_top = 20.0
-offset_right = -216.0
-offset_bottom = 80.0
+offset_right = -186.0
+offset_bottom = 100.0
 grow_horizontal = 2
+clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel_outline")
 
-[node name="RelationBg" type="ColorRect" parent="Panel"]
+[node name="Margin" type="MarginContainer" parent="Panel"]
+custom_minimum_size = Vector2(160, 80)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
 
-[node name="NameLabel" type="Label" parent="Panel"]
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+custom_minimum_size = Vector2(160, 70)
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Header" type="HBoxContainer" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(150, 20)
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = SubResource("FontFile_5lq8m")
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+text = "Target"
+text_overrun_behavior = 3
+clip_text = true
+vertical_alignment = 1
+
+[node name="LevelLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 1
+theme_override_fonts/font = SubResource("FontFile_b4a0j")
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+text = "lv 1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="HpRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="HpBar" type="ProgressBar" parent="Panel/Margin/VBox/HpRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_styles/background = SubResource("StyleBoxFlat_u4g43")
+theme_override_styles/fill = SubResource("StyleBoxFlat_1e2au")
+value = 100.0
+show_percentage = false
+
+[node name="HpText" type="Label" parent="Panel/Margin/VBox/HpRow/HpBar"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
-offset_bottom = 23.0
+anchor_bottom = 1.0
 grow_horizontal = 2
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 14
-text = "Mob_name"
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 12
+text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HpBack" type="ColorRect" parent="Panel"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = -35.0
-offset_right = -5.0
-offset_bottom = -5.0
-grow_horizontal = 2
-grow_vertical = 0
-color = Color(0.26657522, 0.2665752, 0.2665752, 1)
+[node name="ManaRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 2
+size_flags_vertical = 10
 
-[node name="HpFill" type="ColorRect" parent="Panel"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = -35.0
-offset_right = -5.0
-offset_bottom = -5.0
-grow_horizontal = 2
-grow_vertical = 0
-color = Color(0.8096855, 0.12669769, 0.12613973, 1)
+[node name="ManaBar" type="ProgressBar" parent="Panel/Margin/VBox/ManaRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_styles/background = SubResource("StyleBoxFlat_zqz3u")
+theme_override_styles/fill = SubResource("StyleBoxFlat_0h8vv")
+value = 100.0
+show_percentage = false
 
-[node name="HpText" type="Label" parent="Panel"]
+[node name="ManaText" type="Label" parent="Panel/Margin/VBox/ManaRow/ManaBar"]
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = -35.0
-offset_right = -5.0
-offset_bottom = -5.0
 grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 14
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = SubResource("FontFile_0k7i0")
+theme_override_font_sizes/font_size = 12
 text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1

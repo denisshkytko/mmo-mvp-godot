@@ -12,6 +12,7 @@ signal died(corpse: Corpse)
 @onready var c_ai: NormalNeutralMobAI = $Components/AI as NormalNeutralMobAI
 @onready var c_combat: NormalNeutralMobCombat = $Components/Combat as NormalNeutralMobCombat
 @onready var c_stats: NormalNeutralMobStats = $Components/Stats as NormalNeutralMobStats
+@onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 
@@ -143,6 +144,7 @@ func _ready() -> void:
 	# Здесь оставляем только ручную инициализацию.
 	if not _spawn_initialized:
 		_apply_to_components()
+		_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 		c_stats.recalculate_for_level(mob_level)
 		c_stats.update_hp_bar(hp_fill)
 
@@ -227,6 +229,7 @@ func apply_spawn_init(
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in
 
+	_setup_resource_from_class(class_id_in)
 	_apply_to_components()
 	c_stats.recalculate_for_level(mob_level)
 	c_stats.current_hp = c_stats.max_hp
@@ -296,6 +299,16 @@ func _apply_to_components() -> void:
 
 	c_stats.recalculate_for_level(mob_level)
 
+func _setup_resource_from_class(class_id_value: String) -> void:
+	if c_resource == null:
+		return
+	c_resource.setup(self)
+	c_resource.configure_from_class_id(class_id_value)
+	if c_resource.resource_type == "rage":
+		c_resource.set_empty()
+	else:
+		c_resource.set_full()
+
 
 func _mark_spawned() -> void:
 	_spawn_initialized = true
@@ -315,6 +328,8 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 
 	var died_now: bool = c_stats.apply_damage(raw_damage)
 	c_stats.update_hp_bar(hp_fill)
+	if c_resource != null:
+		c_resource.on_damage_taken()
 
 	# нейтрал становится агрессивным на атакующего
 	if attacker != null and is_instance_valid(attacker):

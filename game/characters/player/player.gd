@@ -175,6 +175,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_skills: PlayerSkills = $Components/Skills as PlayerSkills
 @onready var c_inv: PlayerInventoryComponent = $Components/Inventory as PlayerInventoryComponent
 @onready var c_equip: PlayerEquipmentComponent = $Components/Equipment as PlayerEquipmentComponent
+@onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 
 
 func _ready() -> void:
@@ -204,6 +205,14 @@ func _ready() -> void:
 
 	# init stats
 	c_stats.recalculate_for_level(true)
+
+	if c_resource != null:
+		c_resource.setup(self)
+		c_resource.configure_from_class_id(class_id)
+		if c_resource.resource_type == "mana":
+			c_resource.sync_from_owner_fields_if_mana()
+		else:
+			c_resource.set_empty()
 
 
 func _physics_process(_delta: float) -> void:
@@ -381,7 +390,11 @@ func respawn_now() -> void:
 
 	# восстановить HP/ману
 	current_hp = max_hp
-	mana = max_mana
+	if c_resource != null:
+		if c_resource.resource_type == "mana":
+			c_resource.set_full()
+		else:
+			c_resource.set_empty()
 
 	# бафы не переносятся через смерть/респавн
 	c_buffs.clear_all()
@@ -403,6 +416,15 @@ func apply_character_data(d: Dictionary) -> void:
 
 	max_mana = int(d.get("max_mana", max_mana))
 	mana = int(d.get("mana", mana))
+
+	if c_resource != null:
+		c_resource.configure_from_class_id(class_id)
+		if c_resource.resource_type == "rage":
+			var saved_value: int = int(d.get("resource", d.get("rage", c_resource.resource)))
+			c_resource.max_resource = c_resource.rage_max_value
+			c_resource.resource = clamp(saved_value, 0, c_resource.max_resource)
+		else:
+			c_resource.sync_from_owner_fields_if_mana()
 
 	# Primary stats (new system, backward compatible)
 	if c_stats != null:
@@ -449,6 +471,16 @@ func export_character_data() -> Dictionary:
 
 	base["max_mana"] = max_mana
 	base["mana"] = mana
+
+	if c_resource != null:
+		if c_resource.resource_type == "mana":
+			c_resource.sync_from_owner_fields_if_mana()
+		base["resource_type"] = c_resource.resource_type
+		base["max_resource"] = c_resource.max_resource
+		base["resource"] = c_resource.resource
+		if c_resource.resource_type == "rage":
+			base["max_rage"] = c_resource.max_resource
+			base["rage"] = c_resource.resource
 
 	# Primary stats (saved)
 	if c_stats != null:

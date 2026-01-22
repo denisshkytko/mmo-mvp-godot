@@ -5,6 +5,8 @@ extends Node
 var player: Node2D
 var current_target: Node = null
 
+@export var use_cam_screen_center_for_world_math: bool = true
+
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
 var _pending_override_pos: Vector2 = Vector2.ZERO
@@ -37,6 +39,14 @@ func _ready() -> void:
 
 	# --- load character state into world ---
 	_load_character_into_world()
+
+func _get_world_screen_center(cam: Camera2D) -> Vector2:
+	if cam == null:
+		return Vector2.ZERO
+	if use_cam_screen_center_for_world_math:
+		return cam.get_screen_center_position()
+	return cam.global_position
+
 
 
 func _exit_tree() -> void:
@@ -252,7 +262,18 @@ func _input(event: InputEvent) -> void:
 
 func _screen_to_world(screen_pos: Vector2) -> Vector2:
 	var vp: Viewport = get_viewport()
-	return vp.get_canvas_transform().affine_inverse() * screen_pos
+	var cam := vp.get_camera_2d()
+	if cam == null:
+		return vp.get_canvas_transform().affine_inverse() * screen_pos
+	if not use_cam_screen_center_for_world_math:
+		return vp.get_canvas_transform().affine_inverse() * screen_pos
+	var center_world := _get_world_screen_center(cam)
+	var screen_size := vp.get_visible_rect().size
+	var screen_center := screen_size * 0.5
+	var delta_screen := screen_pos - screen_center
+	var zoom := cam.zoom
+	var delta_world := Vector2(delta_screen.x * zoom.x, delta_screen.y * zoom.y)
+	return center_world + delta_world
 
 
 func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
@@ -289,8 +310,9 @@ func _is_world_pos_visible(world_pos: Vector2) -> bool:
 	if cam == null:
 		return true
 
+	var center := _get_world_screen_center(cam)
 	var half_size: Vector2 = vp.get_visible_rect().size * 0.5 * cam.zoom
-	var rect := Rect2(cam.global_position - half_size, half_size * 2.0)
+	var rect := Rect2(center - half_size, half_size * 2.0)
 	return rect.has_point(world_pos)
 
 

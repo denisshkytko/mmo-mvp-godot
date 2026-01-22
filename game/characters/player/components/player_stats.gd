@@ -65,6 +65,7 @@ func recalculate_for_level(full_restore: bool) -> void:
 		return
 
 	_snapshot = _build_snapshot()
+	_apply_rage_mana_override(_snapshot)
 
 	# Apply to public fields (HUDs rely on these)
 	p.max_hp = int(_snapshot.get("derived", {}).get("max_hp", p.max_hp))
@@ -89,6 +90,24 @@ func recalculate_for_level(full_restore: bool) -> void:
 		p.mana = clamp(p.mana, 0, p.max_mana)
 
 	emit_signal("stats_changed", _snapshot)
+
+func _get_resource_type() -> String:
+	if p == null:
+		return "mana"
+	if "c_resource" in p and p.c_resource != null:
+		return String(p.c_resource.resource_type)
+	return String(PROG.get_resource_type_for_class(p.class_id))
+
+func _apply_rage_mana_override(snapshot: Dictionary) -> void:
+	if _get_resource_type() != "rage":
+		return
+	var derived: Dictionary = snapshot.get("derived", {}) as Dictionary
+	derived["max_mana"] = 0
+	derived["mana_regen"] = 0
+	snapshot["derived"] = derived
+	if p != null:
+		p.max_mana = 0
+		p.mana = 0
 
 
 func request_recalculate(full_restore: bool = false) -> void:
@@ -381,6 +400,8 @@ func take_damage(raw_damage: int) -> void:
 	# Any incoming damage puts player in combat (pauses HP regen)
 	if p.has_method("mark_in_combat"):
 		p.call("mark_in_combat")
+	if "c_resource" in p and p.c_resource != null:
+		p.c_resource.on_damage_taken()
 
 	# неуязвимость через баф (если есть)
 	var buffs: PlayerBuffs = p.c_buffs
