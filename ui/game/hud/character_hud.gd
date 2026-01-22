@@ -502,32 +502,53 @@ func _on_unequip_pressed() -> void:
 			_refresh()
 
 func _fallback_text() -> String:
+	if _is_rage_player():
+		return "HP %d/%d\nAttack %d\nDefense %d" % [
+			_player.current_hp, _player.max_hp,
+			_player.attack, _player.defense,
+		]
 	return "HP %d/%d\nMana %d/%d\nAttack %d\nDefense %d" % [
 		_player.current_hp, _player.max_hp,
 		_player.mana, _player.max_mana,
 		_player.attack, _player.defense,
 	]
 
+func _is_rage_player() -> bool:
+	if _player == null:
+		return false
+	if _player.has_node("Components/Resource"):
+		var r: Node = _player.get_node("Components/Resource")
+		if r != null:
+			return String(r.get("resource_type")) == "rage"
+	return false
+
 func _format_snapshot(snap: Dictionary) -> String:
 	var p: Dictionary = snap.get("primary", {}) as Dictionary
 	var d: Dictionary = snap.get("derived", {}) as Dictionary
 
 	var lines: Array[String] = []
+	var is_rage_player := _is_rage_player()
 
 	# Primary (single column, full names)
 	lines.append("[b]Основные характеристики[/b]")
 	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает здоровье и силу атаки"))
 	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает скорость атаки, шанс крит. удара и силу атаки"))
 	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья и физическую защиту"))
-	lines.append(_line_primary_stat("Интеллект", "int", snap, "Увеличивает запас маны, восстановление маны, силу заклинаний и магическое сопротивление"))
+	var int_text := "Увеличивает силу заклинаний и магическое сопротивление" if is_rage_player else "Увеличивает запас маны, восстановление маны, силу заклинаний и магическое сопротивление"
+	lines.append(_line_primary_stat("Интеллект", "int", snap, int_text))
 	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. удара и рейтинг крит. урона"))
 
 	lines.append("")
-	lines.append("[b]Здоровье и мана[/b]")
-	lines.append(_line_with_breakdown("Здоровье", "max_hp", snap, "Максимальный запас здоровья"))
-	lines.append(_line_with_breakdown("Мана", "max_mana", snap, "Максимальный запас маны"))
-	lines.append(_line_with_breakdown("Восстановление здоровья", "hp_regen", snap, "Величина восстановления здоровья за каждую секунду"))
-	lines.append(_line_with_breakdown("Восстановление маны", "mana_regen", snap, "Величина восстановления маны за каждую секунду"))
+	if is_rage_player:
+		lines.append("[b]Здоровье[/b]")
+		lines.append(_line_with_breakdown("Здоровье", "max_hp", snap, "Максимальный запас здоровья"))
+		lines.append(_line_with_breakdown("Восстановление здоровья", "hp_regen", snap, "Величина восстановления здоровья за каждую секунду"))
+	else:
+		lines.append("[b]Здоровье и мана[/b]")
+		lines.append(_line_with_breakdown("Здоровье", "max_hp", snap, "Максимальный запас здоровья"))
+		lines.append(_line_with_breakdown("Мана", "max_mana", snap, "Максимальный запас маны"))
+		lines.append(_line_with_breakdown("Восстановление здоровья", "hp_regen", snap, "Величина восстановления здоровья за каждую секунду"))
+		lines.append(_line_with_breakdown("Восстановление маны", "mana_regen", snap, "Величина восстановления маны за каждую секунду"))
 
 	lines.append("")
 	lines.append("[b]Урон[/b]")

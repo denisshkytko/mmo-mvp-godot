@@ -86,6 +86,8 @@ func recalculate_for_level(level: int) -> void:
 			magic_resist_per_level
 		)
 
+	_apply_rage_mana_override()
+
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	max_hp = int(d.get("max_hp", max_hp))
 	defense_value = int(round(float(d.get("defense", defense_value))))
@@ -100,6 +102,16 @@ func recalculate_for_level(level: int) -> void:
 
 	# ВАЖНО: нейтрал не должен сбрасывать HP при пересчёте, чтобы реген работал корректно.
 	current_hp = clamp(current_hp, 0, max_hp)
+
+func _apply_rage_mana_override() -> void:
+	if class_id == "":
+		return
+	if PROG.get_resource_type_for_class(class_id) != "rage":
+		return
+	var derived: Dictionary = _snapshot.get("derived", {}) as Dictionary
+	derived["max_mana"] = 0
+	derived["mana_regen"] = 0
+	_snapshot["derived"] = derived
 
 func apply_damage(raw_damage: int) -> bool:
 	if is_dead:

@@ -1,7 +1,6 @@
 extends CanvasLayer
 
 @onready var panel: Panel = $Panel
-@onready var relation_bg: ColorRect = $Panel/RelationBg
 @onready var name_label: Label = $Panel/Margin/VBox/Header/NameLabel
 @onready var level_label: Label = $Panel/Margin/VBox/Header/LevelLabel
 @onready var hp_bar: ProgressBar = $Panel/Margin/VBox/HpRow/HpBar
@@ -13,11 +12,15 @@ extends CanvasLayer
 var _gm: Node = null
 var _player: Node = null
 var _target: Node = null
+var _panel_stylebox_base: StyleBox = null
+var _mana_fill_color: Color = Color(0.23921569, 0.0, 1.0, 1.0)
 
 func _ready() -> void:
 	panel.visible = false
 	_gm = get_tree().get_first_node_in_group("game_manager")
 	_player = get_tree().get_first_node_in_group("player")
+	_cache_panel_stylebox()
+	_cache_mana_fill_color()
 
 	hp_text.text = ""
 	mana_text.text = ""
@@ -26,6 +29,33 @@ func _ready() -> void:
 	mana_bar.max_value = 1
 	mana_bar.value = 1
 	mana_row.visible = false
+
+func _cache_panel_stylebox() -> void:
+	var sb := panel.get_theme_stylebox("panel")
+	if sb != null:
+		_panel_stylebox_base = sb.duplicate()
+	else:
+		var fallback := StyleBoxFlat.new()
+		fallback.corner_radius_top_left = 12
+		fallback.corner_radius_top_right = 12
+		fallback.corner_radius_bottom_left = 12
+		fallback.corner_radius_bottom_right = 12
+		_panel_stylebox_base = fallback
+
+func _cache_mana_fill_color() -> void:
+	var sb := mana_bar.get_theme_stylebox("fill")
+	if sb is StyleBoxFlat:
+		_mana_fill_color = (sb as StyleBoxFlat).bg_color
+
+func _apply_resource_bar_color(resource_type: String) -> void:
+	var sb := mana_bar.get_theme_stylebox("fill")
+	if sb == null:
+		return
+	var sb2 := sb.duplicate()
+	if sb2 is StyleBoxFlat:
+		var fill_color := _mana_fill_color if resource_type != "rage" else Color(0.35, 0.14, 0.10, 1.0)
+		(sb2 as StyleBoxFlat).bg_color = fill_color
+		mana_bar.add_theme_stylebox_override("fill", sb2)
 
 func _process(_delta: float) -> void:
 	if _gm == null or not is_instance_valid(_gm):
@@ -187,6 +217,8 @@ func _update_resource() -> void:
 	mana_row.visible = true
 	if r.has_method("sync_from_owner_fields_if_mana"):
 		r.call("sync_from_owner_fields_if_mana")
+	var r_type: String = String(r.get("resource_type"))
+	_apply_resource_bar_color(r_type)
 	if r.has_method("get_text"):
 		mana_text.text = String(r.call("get_text"))
 	else:
@@ -198,7 +230,7 @@ func _update_resource() -> void:
 	mana_bar.value = cur_r
 
 func _update_relation_color() -> void:
-	if relation_bg == null:
+	if panel == null:
 		return
 
 	var player_faction: String = "blue"
@@ -219,9 +251,28 @@ func _update_relation_color() -> void:
 	var rel: int = FactionRules.relation(player_faction, target_faction)
 
 	# FRIENDLY -> green, NEUTRAL -> yellow, HOSTILE -> red
+	var color: Color
 	if rel == FactionRules.Relation.FRIENDLY:
-		relation_bg.color = Color(0.15, 0.55, 0.15, 0.55)
+		color = Color(0.15, 0.55, 0.15, 0.4)
 	elif rel == FactionRules.Relation.HOSTILE:
-		relation_bg.color = Color(0.65, 0.15, 0.15, 0.55)
+		color = Color(0.65, 0.15, 0.15, 0.4)
 	else:
-		relation_bg.color = Color(0.65, 0.55, 0.15, 0.55)
+		color = Color(0.65, 0.55, 0.15, 0.4)
+
+	var sb: StyleBoxFlat = null
+	if _panel_stylebox_base is StyleBoxFlat:
+		sb = (_panel_stylebox_base as StyleBoxFlat).duplicate()
+	else:
+		sb = StyleBoxFlat.new()
+		sb.corner_radius_top_left = 12
+		sb.corner_radius_top_right = 12
+		sb.corner_radius_bottom_left = 12
+		sb.corner_radius_bottom_right = 12
+
+	sb.bg_color = color
+	sb.border_width_top = 2
+	sb.border_width_bottom = 2
+	sb.border_width_left = 2
+	sb.border_width_right = 2
+	sb.border_color = Color(color.r, color.g, color.b, 0.8)
+	panel.add_theme_stylebox_override("panel", sb)

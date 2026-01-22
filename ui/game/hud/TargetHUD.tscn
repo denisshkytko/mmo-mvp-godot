@@ -86,15 +86,7 @@ offset_top = 20.0
 offset_right = -186.0
 offset_bottom = 100.0
 grow_horizontal = 2
-
-[node name="RelationBg" type="ColorRect" parent="Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+clip_contents = true
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
 custom_minimum_size = Vector2(160, 80)
@@ -123,9 +115,12 @@ alignment = 1
 
 [node name="NameLabel" type="Label" parent="Panel/Margin/VBox/Header"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_fonts/font = SubResource("FontFile_5lq8m")
 theme_override_font_sizes/font_size = 12
 text = "Target"
+text_overrun_behavior = 3
+clip_text = true
 vertical_alignment = 1
 
 [node name="LevelLabel" type="Label" parent="Panel/Margin/VBox/Header"]
