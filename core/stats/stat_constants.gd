@@ -15,7 +15,7 @@ class_name StatConstants
 # ------------------------------------------------------------
 
 # --- Primary -> base pools (no per-level pool growth here) ---
-const HP_PER_END: float = 8.0
+const HP_PER_END: float = 20.0
 const HP_PER_STR: float = 0.0
 
 const MANA_PER_INT: float = 6.0
@@ -27,8 +27,8 @@ const HP_REGEN_PER_STR: float = 0.0
 const MANA_REGEN_PER_INT: float = 0.04
 
 # --- Primary -> powers (units) ---
-const AP_FROM_STR: float = 2.0
-const AP_FROM_AGI: float = 0.6
+const AP_FROM_STR: float = 0.5
+const AP_FROM_AGI: float = 0.15
 
 const SP_FROM_INT: float = 2.2
 

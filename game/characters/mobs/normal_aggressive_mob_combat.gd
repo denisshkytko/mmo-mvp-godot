@@ -1,7 +1,7 @@
 extends Node
 class_name NormalAggresiveMobCombat
 
-const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 
 enum AttackMode { MELEE, RANGED }
 
@@ -35,12 +35,8 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	var dist: float = actor.global_position.distance_to(target.global_position)
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var ap: float = float(derived.get("attack_power", 0.0))
-	var raw: int = max(1, int(round(ap * STAT_CONST.MOB_UNARMED_AP_MULT)))
-	var crit_chance_pct: float = float(snap.get("crit_chance_pct", 0.0))
-	var crit_mult: float = float(snap.get("crit_multiplier", 2.0))
-	if randf() * 100.0 < crit_chance_pct:
-		raw = int(round(float(raw) * crit_mult))
-	raw = max(1, raw)
+	var raw: int = STAT_CALC.compute_mob_unarmed_hit(ap)
+	var dmg: int = STAT_CALC.apply_crit_to_damage(raw, snap)
 
 	var aspct: float = float(snap.get("attack_speed_pct", 0.0))
 	var speed_mult: float = 1.0 + max(0.0, aspct) / 100.0
@@ -49,7 +45,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _attack_timer <= 0.0:
-			target.call("take_damage", raw)
+			target.call("take_damage", dmg)
 			if "c_resource" in actor and actor.c_resource != null:
 				actor.c_resource.on_damage_dealt()
 			_attack_timer = melee_cooldown / speed_mult
@@ -57,7 +53,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 
 	# RANGED
 	if dist <= ranged_attack_range and _attack_timer <= 0.0:
-		_fire_ranged(actor, target, raw)
+		_fire_ranged(actor, target, dmg)
 		_attack_timer = ranged_cooldown / speed_mult
 
 func _fire_ranged(actor: Node2D, target: Node2D, damage: int) -> void:

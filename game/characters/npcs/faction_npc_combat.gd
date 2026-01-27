@@ -1,7 +1,7 @@
 extends Node
 class_name FactionNPCCombat
 
-const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 
 enum AttackMode { MELEE, RANGED }
 
@@ -31,12 +31,8 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	var dist: float = actor.global_position.distance_to(target.global_position)
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var ap: float = float(derived.get("attack_power", 0.0))
-	var dmg: int = max(1, int(round(ap * STAT_CONST.MOB_UNARMED_AP_MULT)))
-	var crit_chance_pct: float = float(snap.get("crit_chance_pct", 0.0))
-	var crit_mult: float = float(snap.get("crit_multiplier", 2.0))
-	if randf() * 100.0 < crit_chance_pct:
-		dmg = int(round(float(dmg) * crit_mult))
-	dmg = max(1, dmg)
+	var raw: int = STAT_CALC.compute_mob_unarmed_hit(ap)
+	var dmg: int = STAT_CALC.apply_crit_to_damage(raw, snap)
 
 	var aspct: float = float(snap.get("attack_speed_pct", 0.0))
 	var speed_mult: float = 1.0 + max(0.0, aspct) / 100.0

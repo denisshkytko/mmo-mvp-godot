@@ -440,3 +440,16 @@ static func _mitigation_pct(value: float) -> float:
     var mult: float = C.MITIGATION_K / (C.MITIGATION_K + value)
     var pct: float = 100.0 * (1.0 - mult)
     return clamp(pct, 0.0, C.MAX_MITIGATION_PCT)
+
+
+static func apply_crit_to_damage(base_damage: int, snap: Dictionary) -> int:
+    var dmg := base_damage
+    var crit_chance := float(snap.get("crit_chance_pct", 0.0))
+    var crit_mult := float(snap.get("crit_multiplier", 2.0))
+    if randf() * 100.0 < crit_chance:
+        dmg = int(round(float(dmg) * crit_mult))
+    return max(1, dmg)
+
+
+static func compute_mob_unarmed_hit(ap: float) -> int:
+    return max(1, int(round(ap * C.MOB_UNARMED_AP_MULT)))

@@ -318,6 +318,12 @@ func _physics_process(delta: float) -> void:
 		current_target = null
 
 	if _prev_target != current_target:
+		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
+		var cur_valid := (current_target != null and is_instance_valid(current_target))
+		if cur_valid:
+			regen_active = false
+		elif prev_valid and not cur_valid:
+			regen_active = true
 		_notify_target_change(_prev_target, current_target)
 		_prev_target = current_target
 

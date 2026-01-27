@@ -162,12 +162,19 @@ func _physics_process(delta: float) -> void:
 
 	_apply_to_components()
 
+	var prev_has_aggr := (aggressor != null and is_instance_valid(aggressor))
 	if aggressor != null and not is_instance_valid(aggressor):
 		aggressor = null
 		is_aggressive = false
 
 	if _prev_aggressor != null and not is_instance_valid(_prev_aggressor):
 		_prev_aggressor = null
+
+	var cur_has_aggr := (aggressor != null and is_instance_valid(aggressor))
+	if cur_has_aggr:
+		regen_active = false
+	elif prev_has_aggr and not cur_has_aggr:
+		regen_active = true
 
 	if _prev_aggressor != aggressor:
 		_notify_target_change(_prev_aggressor, aggressor)
