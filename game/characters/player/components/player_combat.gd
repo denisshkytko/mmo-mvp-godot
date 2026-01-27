@@ -56,6 +56,21 @@ func tick(delta: float) -> void:
 		_apply_damage_to_target(target, dmg_l)
 		_t_l = eff_interval_l
 
+func get_attack_damage() -> int:
+	if p == null:
+		return 0
+	var snap: Dictionary = {}
+	if p.has_method("get_stats_snapshot"):
+		snap = p.call("get_stats_snapshot") as Dictionary
+	var derived: Dictionary = snap.get("derived", {}) as Dictionary
+	var ap: float = float(derived.get("attack_power", 0.0))
+	var hits := _get_hit_values(ap)
+	if hits.has("right"):
+		return int(hits.get("right", 0))
+	if hits.has("left"):
+		return int(hits.get("left", 0))
+	return 0
+
 func _get_hit_values(ap: float) -> Dictionary:
 	var right_weapon_damage: int = 0
 	var left_weapon_damage: int = 0
