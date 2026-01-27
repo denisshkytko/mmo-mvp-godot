@@ -158,6 +158,9 @@ func _physics_process(delta: float) -> void:
 				tf = String(current_target.call("get_faction_id"))
 			if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
 				current_target = null
+	if current_target != null and c_ai != null and c_ai.is_returning():
+		current_target = null
+		regen_active = true
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
 		_prev_target = null
