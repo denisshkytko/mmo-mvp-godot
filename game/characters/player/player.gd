@@ -10,16 +10,23 @@ class_name Player
 @export var attack_cooldown: float = 0.8
 
 # Combat state (used for HP regen rule: HP regenerates only out of combat)
-@export_group("Combat")
-@export var out_of_combat_delay: float = 4.0
-var _last_combat_time_sec: float = -999999.0
+var _targeters := {} # instance_id -> true
 
-func mark_in_combat() -> void:
-	_last_combat_time_sec = float(Time.get_ticks_msec()) / 1000.0
+func on_targeted_by(attacker: Node) -> void:
+	if attacker == null:
+		return
+	_targeters[attacker.get_instance_id()] = true
+
+func on_untargeted_by(attacker: Node) -> void:
+	if attacker == null:
+		return
+	_targeters.erase(attacker.get_instance_id())
+
+func is_in_combat() -> bool:
+	return _targeters.size() > 0
 
 func is_out_of_combat() -> bool:
-	var now_sec := float(Time.get_ticks_msec()) / 1000.0
-	return (now_sec - _last_combat_time_sec) >= out_of_combat_delay
+	return _targeters.size() == 0
 
 # Primary stats are tuned per-character on the Player node (as you requested).
 # Internally they are applied to the PlayerStats component.

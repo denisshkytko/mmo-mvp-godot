@@ -2,7 +2,6 @@ extends Node
 class_name NormalAggresiveMobStats
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
-const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
 
 var mob_level: int = 1
@@ -110,8 +109,8 @@ func apply_damage(raw_physical_damage: int) -> bool:
 
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	var def_v: float = float(d.get("defense", defense_value))
-	var mult: float = STAT_CONST.MITIGATION_K / (STAT_CONST.MITIGATION_K + max(0.0, def_v))
-	var dmg: int = max(1, int(round(float(raw_physical_damage) * mult)))
+	var reduction_pct: float = STAT_CALC._mitigation_pct(def_v)
+	var dmg: int = max(1, int(round(float(raw_physical_damage) * (1.0 - reduction_pct / 100.0))))
 
 	current_hp = max(0, current_hp - dmg)
 	return current_hp <= 0

@@ -3,6 +3,7 @@ extends Control
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 const TOOLTIP_MIN_W: float = 260.0
 const TOOLTIP_MAX_W: float = 420.0
@@ -19,14 +20,14 @@ const PRIMARY_LABELS := {
 const PRIMARY_ORDER := ["str", "agi", "end", "int", "per"]
 
 const DERIVED_PRIMARY_COEFFS := {
-	"max_hp": {"end": STAT_CONST.HP_PER_END, "str": STAT_CONST.HP_PER_STR},
+	"max_hp": {"end": STAT_CONST.HP_PER_END},
 	"max_mana": {"int": STAT_CONST.MANA_PER_INT},
-	"hp_regen": {"end": STAT_CONST.HP_REGEN_PER_END, "str": STAT_CONST.HP_REGEN_PER_STR},
+	"hp_regen": {"end": STAT_CONST.HP_REGEN_PER_END},
 	"mana_regen": {"int": STAT_CONST.MANA_REGEN_PER_INT},
 	"attack_power": {"str": STAT_CONST.AP_FROM_STR, "agi": STAT_CONST.AP_FROM_AGI},
 	"spell_power": {"int": STAT_CONST.SP_FROM_INT},
-	"defense": {"str": STAT_CONST.DEF_FROM_STR, "agi": STAT_CONST.DEF_FROM_AGI},
-	"magic_resist": {"end": STAT_CONST.RES_FROM_END, "int": STAT_CONST.RES_FROM_INT},
+	"defense": {"str": STAT_CONST.DEF_FROM_STR, "end": STAT_CONST.DEF_FROM_END},
+	"magic_resist": {"int": STAT_CONST.RES_FROM_INT, "end": STAT_CONST.RES_FROM_END},
 	"attack_speed_rating": {"agi": STAT_CONST.AS_FROM_AGI},
 	"cast_speed_rating": {"int": STAT_CONST.CS_FROM_INT},
 	"crit_chance_rating": {"per": STAT_CONST.CRIT_FROM_PER, "agi": STAT_CONST.CRIT_FROM_AGI},
@@ -532,9 +533,9 @@ func _format_snapshot(snap: Dictionary) -> String:
 
 	# Primary (single column, full names)
 	lines.append("[b]Основные характеристики[/b]")
-	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает здоровье и силу атаки"))
+	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает силу атаки и физическую защиту"))
 	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает скорость атаки, шанс крит. удара и силу атаки"))
-	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья и физическую защиту"))
+	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья и защиту"))
 	var int_text := "Увеличивает силу заклинаний и магическое сопротивление" if is_rage_player else "Увеличивает запас маны, восстановление маны, силу заклинаний и магическое сопротивление"
 	lines.append(_line_primary_stat("Интеллект", "int", snap, int_text))
 	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. удара и рейтинг крит. урона"))
@@ -643,19 +644,78 @@ func _line_primary_stat(title: String, key: String, snap: Dictionary, effect_tex
 func _line_damage(title: String, snap: Dictionary) -> String:
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var attack_power_total: float = float(derived.get("attack_power", 0.0))
-	var weapon_damage: int = 0
+	var right_weapon_damage: int = 0
+	var left_weapon_damage: int = 0
+	var has_right_weapon := false
+	var has_left_weapon := false
+	var is_two_handed := false
+	var base_interval_r: float = 1.0
+	var base_interval_l: float = 0.0
 	if _player != null and _player.c_equip != null:
-		weapon_damage = _player.c_equip.get_weapon_damage()
-	var total_damage: float = attack_power_total + float(weapon_damage)
+		right_weapon_damage = _player.c_equip.get_weapon_damage_right()
+		left_weapon_damage = _player.c_equip.get_weapon_damage_left()
+		has_left_weapon = _player.c_equip.has_left_weapon()
+		is_two_handed = _player.c_equip.is_two_handed_equipped()
+		base_interval_r = _player.c_equip.get_weapon_attack_interval_right()
+		if base_interval_r <= 0.0:
+			base_interval_r = PROG.get_base_melee_attack_interval_for_class(_player.class_id)
+		if has_left_weapon:
+			base_interval_l = _player.c_equip.get_weapon_attack_interval_left()
+		has_right_weapon = _player.c_equip.get_weapon_attack_interval_right() > 0.0
+	else:
+		base_interval_r = PROG.get_base_melee_attack_interval_for_class(_player.class_id)
 
+	var atk_speed_pct: float = float(snap.get("attack_speed_pct", 0.0))
+	var speed_mult: float = 1.0 + (atk_speed_pct / 100.0)
+	if speed_mult <= 0.01:
+		speed_mult = 0.01
+	var interval_r: float = base_interval_r / speed_mult
+	var interval_l: float = base_interval_l / speed_mult if base_interval_l > 0.0 else 0.0
+
+	var display_damage := ""
 	var tooltip_lines: Array[String] = []
 	tooltip_lines.append("Наносимый урон оружием/без оружия")
-	tooltip_lines.append("")
-	tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
-	tooltip_lines.append("Урон оружия: %s" % _format_stat_value(weapon_damage))
+
+	if not has_right_weapon:
+		var unarmed_hit: int = int(round(attack_power_total * 1.5))
+		display_damage = _format_stat_value(unarmed_hit)
+		var dps: float = float(unarmed_hit) / max(0.01, interval_r)
+		tooltip_lines.append("Урон в секунду: %.2f" % dps)
+		tooltip_lines.append("")
+		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
+		tooltip_lines.append("Урон оружия: %s" % _format_stat_value(0))
+	elif is_two_handed:
+		var hit_2h: int = int(round(float(right_weapon_damage) + attack_power_total * 1.5))
+		display_damage = _format_stat_value(hit_2h)
+		var dps_2h: float = float(hit_2h) / max(0.01, interval_r)
+		tooltip_lines.append("Урон в секунду: %.2f" % dps_2h)
+		tooltip_lines.append("")
+		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
+		tooltip_lines.append("Урон оружия: %s" % _format_stat_value(right_weapon_damage))
+	elif has_left_weapon:
+		var hit_r: int = int(round(float(right_weapon_damage) + attack_power_total))
+		var hit_l: int = int(round((float(left_weapon_damage) + attack_power_total) * STAT_CONST.OFFHAND_MULT))
+		display_damage = "%s / %s" % [_format_stat_value(hit_r), _format_stat_value(hit_l)]
+		var dps_dw: float = float(hit_r) / max(0.01, interval_r)
+		if interval_l > 0.0:
+			dps_dw += float(hit_l) / max(0.01, interval_l)
+		tooltip_lines.append("Урон в секунду: %.2f" % dps_dw)
+		tooltip_lines.append("")
+		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
+		tooltip_lines.append("Урон оружия (правая): %s" % _format_stat_value(right_weapon_damage))
+		tooltip_lines.append("Урон оружия (левая): %s" % _format_stat_value(left_weapon_damage))
+	else:
+		var hit_1h: int = int(round(float(right_weapon_damage) + attack_power_total))
+		display_damage = _format_stat_value(hit_1h)
+		var dps_1h: float = float(hit_1h) / max(0.01, interval_r)
+		tooltip_lines.append("Урон в секунду: %.2f" % dps_1h)
+		tooltip_lines.append("")
+		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
+		tooltip_lines.append("Урон оружия: %s" % _format_stat_value(right_weapon_damage))
+
 	_breakdown_cache["damage"] = "\n".join(tooltip_lines).strip_edges()
 
-	return "[url=damage]%s %s[/url]" % [title, _format_stat_value(total_damage)]
+	return "[url=damage]%s %s[/url]" % [title, display_damage]
 
 func _build_primary_tooltip(key: String, effect_text: String) -> void:
 	var base_val = 0

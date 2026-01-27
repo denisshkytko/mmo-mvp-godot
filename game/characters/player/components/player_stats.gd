@@ -322,6 +322,17 @@ func _collect_equipment_modifiers() -> Dictionary:
 			if val == 0:
 				continue
 			_map_modifier(out, String(key), val)
+		var secondary := out.get("secondary", {}) as Dictionary
+		var typ: String = String(meta.get("type", "")).to_lower()
+		if typ == "armor":
+			var a := meta.get("armor", {}) as Dictionary
+			secondary["defense"] = int(secondary.get("defense", 0)) + int(a.get("physical_armor", 0))
+			secondary["magic_resist"] = int(secondary.get("magic_resist", 0)) + int(a.get("magic_armor", 0))
+		elif typ == "offhand":
+			var o := meta.get("offhand", {}) as Dictionary
+			secondary["defense"] = int(secondary.get("defense", 0)) + int(o.get("physical_armor", 0))
+			secondary["magic_resist"] = int(secondary.get("magic_resist", 0)) + int(o.get("magic_armor", 0))
+		out["secondary"] = secondary
 	return out
 
 func _map_modifier(gear: Dictionary, stat_key: String, value: int) -> void:
@@ -397,9 +408,6 @@ func _diff_stats(total_snapshot: Dictionary, base_snapshot: Dictionary) -> Dicti
 func take_damage(raw_damage: int) -> void:
 	if p == null:
 		return
-	# Any incoming damage puts player in combat (pauses HP regen)
-	if p.has_method("mark_in_combat"):
-		p.call("mark_in_combat")
 	if "c_resource" in p and p.c_resource != null:
 		p.c_resource.on_damage_taken()
 
@@ -408,8 +416,8 @@ func take_damage(raw_damage: int) -> void:
 	if buffs != null and buffs.is_invulnerable():
 		return
 
-	var def_v: int = int(_snapshot.get("derived", {}).get("defense", 0))
-	var dmg: int = max(1, raw_damage - def_v)
+	var reduction_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
+	var dmg: int = max(1, int(round(float(raw_damage) * (1.0 - reduction_pct / 100.0))))
 	p.current_hp = max(0, p.current_hp - dmg)
 
 	if p.current_hp <= 0:
