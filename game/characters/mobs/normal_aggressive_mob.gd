@@ -185,7 +185,6 @@ func apply_spawn_init(
 	patrol_pause_in: float,
 	speed_in: float,
 	level_in: int,
-	attack_mode_in: int,
 	mob_id_in: String,
 	loot_profile_in: LootProfile = null,
 	class_id_in: String = "",
@@ -217,9 +216,25 @@ func apply_spawn_init(
 		c_stats.growth_profile_id = growth_profile_id_in
 	_setup_resource_from_class(class_id_in)
 
+	var role := Progression.get_attack_role_for_class(class_id_in)
+	var chosen_mode := AttackMode.MELEE
+	match role:
+		"ranged":
+			chosen_mode = AttackMode.RANGED
+		"hybrid":
+			chosen_mode = AttackMode.RANGED if randi() % 2 == 0 else AttackMode.MELEE
+
+	attack_mode = chosen_mode
+	if c_combat != null:
+		var base_melee := Progression.get_base_melee_attack_interval_for_class(class_id_in)
+		var base_ranged := Progression.get_npc_base_ranged_attack_interval_for_class(class_id_in)
+		c_combat.melee_cooldown = base_melee
+		if chosen_mode == AttackMode.RANGED:
+			c_combat.ranged_cooldown = base_ranged
+		c_combat.attack_mode = chosen_mode
+
 	# уровень/режим атаки выставляем как было
 	set_level(level_in)
-	attack_mode = attack_mode_in
 	_spawn_initialized = true
 
 
@@ -311,10 +326,12 @@ func _apply_mode_to_components() -> void:
 
 	c_combat.melee_stop_distance = melee_stop_distance
 	c_combat.melee_attack_range = melee_attack_range
-	c_combat.melee_cooldown = melee_attack_cooldown
+	if not _spawn_initialized:
+		c_combat.melee_cooldown = melee_attack_cooldown
 
 	c_combat.ranged_attack_range = ranged_attack_range
-	c_combat.ranged_cooldown = ranged_attack_cooldown
+	if not _spawn_initialized:
+		c_combat.ranged_cooldown = ranged_attack_cooldown
 	c_combat.ranged_projectile_scene = ranged_projectile_scene
 
 	c_stats.mob_level = mob_level

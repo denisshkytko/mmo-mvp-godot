@@ -17,14 +17,14 @@ signal died(corpse: Corpse)
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 
-enum FighterType { CIVILIAN, MELEE, RANGED }
+enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 
 # -----------------------------
 # Identity / runtime state
 # -----------------------------
 var faction_id: String = "blue"
-var fighter_type: int = FighterType.MELEE
+var fighter_type: int = FighterType.COMBATANT
 var interaction_type: int = InteractionType.NONE
 
 var retaliation_target_id: int = 0
@@ -207,36 +207,48 @@ func apply_spawn_init(
 			c_combat.melee_attack_range = civilian_base_attack_range
 			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
-		FighterType.RANGED:
-			c_stats.apply_primary_preset(
-				{"str": mage_base_str, "agi": mage_base_agi, "end": mage_base_end, "int": mage_base_int, "per": mage_base_per},
-				{"str": mage_str_per_level, "agi": mage_agi_per_level, "end": mage_end_per_level, "int": mage_int_per_level, "per": mage_per_per_level},
-				mage_base_defense,
-				mage_defense_per_level,
-				mage_base_magic_resist,
-				mage_magic_resist_per_level
-			)
-			c_combat.attack_mode = FactionNPCCombat.AttackMode.RANGED
-			c_combat.ranged_attack_range = mage_base_attack_range
-			c_combat.ranged_cooldown = mage_base_attack_cooldown
+		FighterType.COMBATANT:
+			var role := Progression.get_attack_role_for_class(class_id_in)
+			var chosen_mode := FactionNPCCombat.AttackMode.MELEE
+			match role:
+				"ranged":
+					chosen_mode = FactionNPCCombat.AttackMode.RANGED
+				"hybrid":
+					chosen_mode = FactionNPCCombat.AttackMode.RANGED if randi() % 2 == 0 else FactionNPCCombat.AttackMode.MELEE
 
-			var proj: PackedScene = projectile_scene_in
-			if proj == null:
-				proj = mage_projectile_scene
-			c_combat.ranged_projectile_scene = proj
+			var base_melee := Progression.get_base_melee_attack_interval_for_class(class_id_in)
+			var base_ranged := Progression.get_npc_base_ranged_attack_interval_for_class(class_id_in)
+			c_combat.melee_cooldown = base_melee
 
-		FighterType.MELEE:
-			c_stats.apply_primary_preset(
-				{"str": fighter_base_str, "agi": fighter_base_agi, "end": fighter_base_end, "int": fighter_base_int, "per": fighter_base_per},
-				{"str": fighter_str_per_level, "agi": fighter_agi_per_level, "end": fighter_end_per_level, "int": fighter_int_per_level, "per": fighter_per_per_level},
-				fighter_base_defense,
-				fighter_defense_per_level,
-				fighter_base_magic_resist,
-				fighter_magic_resist_per_level
-			)
-			c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
-			c_combat.melee_attack_range = fighter_base_attack_range
-			c_combat.melee_cooldown = fighter_base_attack_cooldown
+			if chosen_mode == FactionNPCCombat.AttackMode.RANGED:
+				c_stats.apply_primary_preset(
+					{"str": mage_base_str, "agi": mage_base_agi, "end": mage_base_end, "int": mage_base_int, "per": mage_base_per},
+					{"str": mage_str_per_level, "agi": mage_agi_per_level, "end": mage_end_per_level, "int": mage_int_per_level, "per": mage_per_per_level},
+					mage_base_defense,
+					mage_defense_per_level,
+					mage_base_magic_resist,
+					mage_magic_resist_per_level
+				)
+				c_combat.attack_mode = FactionNPCCombat.AttackMode.RANGED
+				c_combat.ranged_attack_range = mage_base_attack_range
+				c_combat.ranged_cooldown = base_ranged
+
+				var proj: PackedScene = projectile_scene_in
+				if proj == null:
+					proj = mage_projectile_scene
+				c_combat.ranged_projectile_scene = proj
+			else:
+				c_stats.apply_primary_preset(
+					{"str": fighter_base_str, "agi": fighter_base_agi, "end": fighter_base_end, "int": fighter_base_int, "per": fighter_base_per},
+					{"str": fighter_str_per_level, "agi": fighter_agi_per_level, "end": fighter_end_per_level, "int": fighter_int_per_level, "per": fighter_per_per_level},
+					fighter_base_defense,
+					fighter_defense_per_level,
+					fighter_base_magic_resist,
+					fighter_magic_resist_per_level
+				)
+				c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
+				c_combat.melee_attack_range = fighter_base_attack_range
+				c_combat.melee_cooldown = base_melee
 
 	c_stats.recalc(npc_level)
 	c_stats.current_hp = c_stats.max_hp

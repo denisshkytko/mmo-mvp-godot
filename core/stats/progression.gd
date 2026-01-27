@@ -30,36 +30,101 @@ const CLASS_TABLE: Dictionary = {
 		"base_primary": {"str": 12.0, "agi": 8.0, "end": 12.0, "int": 12.0, "per": 7.0},
 		"per_level": {"str": 1.2, "agi": 0.8, "end": 1.2, "int": 1.2, "per": 0.8},
 		"resource_type": "mana",
+		"base_melee_attack_interval": 1.60,
+		"attack_role": "melee",
+		"allowed_weapon_types": [
+			"sword_1h",
+			"sword_2h",
+			"mace_1h",
+			"mace_2h",
+			"shield",
+			"offhand",
+		],
 	},
 	"shaman": {
 		"base_primary": {"str": 8.0, "agi": 9.0, "end": 9.0, "int": 10.0, "per": 8.0},
 		"per_level": {"str": 0.9, "agi": 0.8, "end": 1.0, "int": 1.4, "per": 0.7},
 		"resource_type": "mana",
+		"base_melee_attack_interval": 1.75,
+		"npc_base_ranged_attack_interval": 1.75,
+		"attack_role": "hybrid",
+		"allowed_weapon_types": [
+			"staff_2h",
+			"mace_1h",
+			"axe_1h",
+			"shield",
+			"offhand",
+		],
 	},
 	"mage": {
 		"base_primary": {"str": 5.0, "agi": 8.0, "end": 6.0, "int": 14.0, "per": 10.0},
 		"per_level": {"str": 0.2, "agi": 0.8, "end": 0.9, "int": 1.7, "per": 1.2},
 		"resource_type": "mana",
+		"base_melee_attack_interval": 1.95,
+		"npc_base_ranged_attack_interval": 1.60,
+		"attack_role": "ranged",
+		"allowed_weapon_types": [
+			"staff_2h",
+			"wand_1h",
+			"sword_1h",
+			"dagger_1h",
+			"offhand",
+		],
 	},
 	"priest": {
 		"base_primary": {"str": 6.0, "agi": 7.0, "end": 7.0, "int": 13.0, "per": 9.0},
 		"per_level": {"str": 0.6, "agi": 0.7, "end": 0.9, "int": 1.3, "per": 1.1},
 		"resource_type": "mana",
+		"base_melee_attack_interval": 1.90,
+		"npc_base_ranged_attack_interval": 1.70,
+		"attack_role": "ranged",
+		"allowed_weapon_types": [
+			"staff_2h",
+			"wand_1h",
+			"sword_1h",
+			"mace_1h",
+			"offhand",
+		],
 	},
 	"hunter": {
 		"base_primary": {"str": 9.0, "agi": 14.0, "end": 9.0, "int": 10.0, "per": 10.0},
 		"per_level": {"str": 0.8, "agi": 1.4, "end": 0.9, "int": 1.0, "per": 1.2},
 		"resource_type": "mana",
+		"base_melee_attack_interval": 1.80,
+		"npc_base_ranged_attack_interval": 1.70,
+		"attack_role": "hybrid",
+		"allowed_weapon_types": [
+			"bow_2h",
+			"crossbow_2h",
+			"dagger_1h",
+			"sword_1h",
+			"axe_1h",
+		],
 	},
 	"warrior": {
 		"base_primary": {"str": 14.0, "agi": 10.0, "end": 13.0, "int": 4.0, "per": 6.0},
 		"per_level": {"str": 1.4, "agi": 1.0, "end": 1.3, "int": 0.3, "per": 0.6},
 		"resource_type": "rage",
+		"base_melee_attack_interval": 1.50,
+		"attack_role": "melee",
+		"allowed_weapon_types": [
+			"sword_1h",
+			"sword_2h",
+			"axe_1h",
+			"axe_2h",
+			"mace_1h",
+			"mace_2h",
+			"dagger_1h",
+			"shield",
+		],
 	},
 	"beast": {
 		"base_primary": {"str": 11.0, "agi": 10.0, "end": 9.0, "int": 2.0, "per": 6.0},
 		"per_level": {"str": 1.2, "agi": 1.1, "end": 0.9, "int": 0.2, "per": 0.6},
 		"resource_type": "rage",
+		"base_melee_attack_interval": 1.70,
+		"attack_role": "melee",
+		"allowed_weapon_types": [],
 	},
 }
 
@@ -158,3 +223,35 @@ static func get_base_primary(class_id: String) -> Dictionary:
 
 static func get_per_level(class_id: String) -> Dictionary:
 	return get_per_level_int(class_id)
+
+static func get_attack_role_for_class(class_id: String) -> String:
+	if not is_valid_class_id(class_id):
+		return "melee"
+	var def := CLASS_TABLE.get(class_id, {}) as Dictionary
+	var role := String(def.get("attack_role", "melee")).strip_edges()
+	return role if role != "" else "melee"
+
+static func get_base_melee_attack_interval_for_class(class_id: String) -> float:
+	if not is_valid_class_id(class_id):
+		return 1.80
+	var def := CLASS_TABLE.get(class_id, {}) as Dictionary
+	return float(def.get("base_melee_attack_interval", 1.80))
+
+static func get_npc_base_ranged_attack_interval_for_class(class_id: String) -> float:
+	if not is_valid_class_id(class_id):
+		return 1.80
+	var def := CLASS_TABLE.get(class_id, {}) as Dictionary
+	return float(def.get("npc_base_ranged_attack_interval", 1.80))
+
+static func get_allowed_weapon_types_for_class(class_id: String) -> Array[String]:
+	if not is_valid_class_id(class_id):
+		return []
+	var def := CLASS_TABLE.get(class_id, {}) as Dictionary
+	var allowed: Array[String] = []
+	var raw: Variant = def.get("allowed_weapon_types", [])
+	if raw is Array:
+		for entry in raw:
+			var val := String(entry).strip_edges()
+			if val != "":
+				allowed.append(val)
+	return allowed

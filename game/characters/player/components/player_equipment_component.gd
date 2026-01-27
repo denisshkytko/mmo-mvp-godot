@@ -95,7 +95,7 @@ func get_preferred_slot_for_item(item_id: String) -> String:
 		return slot2
 	if typ == "weapon":
 		return "weapon_r"
-	if typ == "shield" or typ == "offhand":
+	if typ == "offhand":
 		return "weapon_l"
 	return ""
 
@@ -220,6 +220,10 @@ func try_unequip_to_inventory(slot_id: String, preferred_slot_index: int = -1) -
 
 func _can_equip_in_slot(meta: Dictionary, target_slot_id: String) -> bool:
 	var typ: String = String(meta.get("type", "")).to_lower()
+	var class_id := ""
+	if p != null:
+		class_id = String(p.class_id)
+	var allowed_types := Progression.get_allowed_weapon_types_for_class(class_id)
 	if typ == "armor":
 		var slot: String = String((meta.get("armor", {}) as Dictionary).get("slot", ""))
 		return slot == target_slot_id
@@ -229,25 +233,33 @@ func _can_equip_in_slot(meta: Dictionary, target_slot_id: String) -> bool:
 			return target_slot_id == "ring1" or target_slot_id == "ring2"
 		return slot2 == target_slot_id
 	if typ == "weapon":
-		return target_slot_id == "weapon_r"
-	if typ == "shield" or typ == "offhand":
-		return target_slot_id == "weapon_l"
+		var subtype := String((meta.get("weapon", {}) as Dictionary).get("subtype", ""))
+		if target_slot_id == "weapon_r":
+			return allowed_types.has(subtype)
+		if target_slot_id == "weapon_l":
+			if not ["warrior", "hunter", "shaman"].has(class_id):
+				return false
+			if _is_two_handed_weapon(meta):
+				return false
+			if is_left_hand_blocked():
+				return false
+			return allowed_types.has(subtype)
+		return false
+	if typ == "offhand":
+		if target_slot_id != "weapon_l":
+			return false
+		if is_left_hand_blocked():
+			return false
+		var slot_kind := String((meta.get("offhand", {}) as Dictionary).get("slot", "")).to_lower()
+		if slot_kind == "shield":
+			return allowed_types.has("shield")
+		if slot_kind == "offhand":
+			return allowed_types.has("offhand")
+		return false
 	return false
 
 func _can_equip_left_hand(meta: Dictionary) -> bool:
-	if is_left_hand_blocked():
-		return false
-	var right_item := _get_slot_item("weapon_r")
-	if right_item.is_empty():
-		return false
-	var right_id: String = String(right_item.get("id", ""))
-	if right_id == "":
-		return false
-	var right_meta := _get_item_meta(right_id)
-	if _is_two_handed_weapon(right_meta):
-		return false
-	var typ: String = String(meta.get("type", "")).to_lower()
-	return typ == "shield" or typ == "offhand"
+	return _can_equip_in_slot(meta, "weapon_l")
 
 func _is_two_handed_weapon(meta: Dictionary) -> bool:
 	if String(meta.get("type", "")).to_lower() != "weapon":
