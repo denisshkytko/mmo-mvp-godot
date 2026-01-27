@@ -24,11 +24,6 @@ var end_per_level: int = 1
 var int_per_level: int = 1
 var per_per_level: int = 1
 
-# "Base gear" placeholder.
-# Player spawns in simple grey items in the future. For now, we keep
-# a tiny base defense so early combat does not feel too punishing.
-@export var base_gear_defense: int = 2
-
 # Cached last snapshot (for UI)
 var _snapshot: Dictionary = {}
 var _base_stats: Dictionary = {}
@@ -263,9 +258,7 @@ func _build_snapshot() -> Dictionary:
 
 	var gear_base := {
 		"primary": {},
-		"secondary": {
-			"defense": base_gear_defense,
-		}
+		"secondary": {},
 	}
 
 	var gear_equipment := {
@@ -416,9 +409,10 @@ func take_damage(raw_damage: int) -> void:
 	if buffs != null and buffs.is_invulnerable():
 		return
 
-	var reduction_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
-	var dmg: int = max(1, int(round(float(raw_damage) * (1.0 - reduction_pct / 100.0))))
-	p.current_hp = max(0, p.current_hp - dmg)
+	var phys_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
+	var final: int = int(ceil(float(raw_damage) * (1.0 - phys_pct / 100.0)))
+	final = max(1, final)
+	p.current_hp = max(0, p.current_hp - final)
 
 	if p.current_hp <= 0:
 		_on_death()

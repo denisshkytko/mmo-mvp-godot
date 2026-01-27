@@ -48,7 +48,7 @@ const RES_FROM_INT: float = 0.9
 
 # Mitigation curve constant for converting Defense/Resist to %.
 # reduction = 1 - K/(K + defense)
-const MITIGATION_K: float = 100.0
+const MITIGATION_K: float = 150.0
 const MAX_MITIGATION_PCT: float = 85.0
 
 const OFFHAND_MULT: float = 0.75
@@ -69,8 +69,9 @@ const CS_RATING_PER_1PCT: float = 120.0
 const COOLDOWN_RATING_PER_1PCT: float = 100.0
 
 # --- Crit ratings ---
+const BASE_CRIT_CHANCE_PCT: float = 10.0
 const CRIT_FROM_PER: int = 7
-const CRIT_FROM_AGI: int = 0
+const CRIT_FROM_AGI: int = 3
 const CRIT_RATING_PER_1PCT: float = 100.0
 
 # Crit damage:

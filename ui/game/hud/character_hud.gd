@@ -534,11 +534,11 @@ func _format_snapshot(snap: Dictionary) -> String:
 	# Primary (single column, full names)
 	lines.append("[b]Основные характеристики[/b]")
 	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает силу атаки и физическую защиту"))
-	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает скорость атаки, шанс крит. удара и силу атаки"))
+	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает скорость атаки, рейтинг крит. шанса и силу атаки"))
 	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья и защиту"))
 	var int_text := "Увеличивает силу заклинаний и магическое сопротивление" if is_rage_player else "Увеличивает запас маны, восстановление маны, силу заклинаний и магическое сопротивление"
 	lines.append(_line_primary_stat("Интеллект", "int", snap, int_text))
-	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. удара и рейтинг крит. урона"))
+	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. шанса и рейтинг крит. урона"))
 
 	lines.append("")
 	if is_rage_player:
@@ -573,11 +573,13 @@ func _format_snapshot(snap: Dictionary) -> String:
 
 	lines.append("")
 	lines.append("[b]Скорость[/b]")
+	var cooldown_reduction := float(snap.get("cooldown_reduction_pct", 0.0))
+	var speed_text := "Увеличивает скорость атаки, скорость произнесения заклинаний и скорость восстановления способностей\nВремя восстановления способностей снижено на %.2f%%" % cooldown_reduction
 	lines.append(_line_with_breakdown(
 		"Скорость",
 		"speed",
 		snap,
-		"Увеличивает скорость атаки, скорость произнесения заклинаний и скорость восстановления способностей"
+		speed_text
 	))
 	lines.append(_line_with_breakdown(
 		"Скорость атаки",
@@ -589,7 +591,7 @@ func _format_snapshot(snap: Dictionary) -> String:
 		"Скорость произнесения заклинаний",
 		"cast_speed_rating",
 		snap,
-		"Увеличивает скорость произнесения заклинаний"
+		"Увеличивает скорость произнесения заклинаний на %.2f%%" % float(snap.get("cast_speed_pct", 0.0))
 	))
 
 	lines.append("")
@@ -677,41 +679,41 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 	tooltip_lines.append("Наносимый урон оружием/без оружия")
 
 	if not has_right_weapon:
-		var unarmed_hit: int = int(round(attack_power_total * 1.5))
-		display_damage = _format_stat_value(unarmed_hit)
+		var unarmed_hit: float = attack_power_total * 1.5
+		display_damage = _format_float_clean(unarmed_hit)
 		var dps: float = float(unarmed_hit) / max(0.01, interval_r)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
-		tooltip_lines.append("Урон оружия: %s" % _format_stat_value(0))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(0.0))
 	elif is_two_handed:
-		var hit_2h: int = int(round(float(right_weapon_damage) + attack_power_total * 1.5))
-		display_damage = _format_stat_value(hit_2h)
+		var hit_2h: float = float(right_weapon_damage) + attack_power_total * 1.5
+		display_damage = _format_float_clean(hit_2h)
 		var dps_2h: float = float(hit_2h) / max(0.01, interval_r)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps_2h)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
-		tooltip_lines.append("Урон оружия: %s" % _format_stat_value(right_weapon_damage))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))
 	elif has_left_weapon:
-		var hit_r: int = int(round(float(right_weapon_damage) + attack_power_total))
-		var hit_l: int = int(round((float(left_weapon_damage) + attack_power_total) * STAT_CONST.OFFHAND_MULT))
-		display_damage = "%s / %s" % [_format_stat_value(hit_r), _format_stat_value(hit_l)]
+		var hit_r: float = float(right_weapon_damage) + attack_power_total
+		var hit_l: float = (float(left_weapon_damage) + attack_power_total) * STAT_CONST.OFFHAND_MULT
+		display_damage = "%s / %s" % [_format_float_clean(hit_r), _format_float_clean(hit_l)]
 		var dps_dw: float = float(hit_r) / max(0.01, interval_r)
 		if interval_l > 0.0:
 			dps_dw += float(hit_l) / max(0.01, interval_l)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps_dw)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
-		tooltip_lines.append("Урон оружия (правая): %s" % _format_stat_value(right_weapon_damage))
-		tooltip_lines.append("Урон оружия (левая): %s" % _format_stat_value(left_weapon_damage))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Урон оружия (правая): %s" % _format_float_clean(float(right_weapon_damage)))
+		tooltip_lines.append("Урон оружия (левая): %s" % _format_float_clean(float(left_weapon_damage)))
 	else:
-		var hit_1h: int = int(round(float(right_weapon_damage) + attack_power_total))
-		display_damage = _format_stat_value(hit_1h)
+		var hit_1h: float = float(right_weapon_damage) + attack_power_total
+		display_damage = _format_float_clean(hit_1h)
 		var dps_1h: float = float(hit_1h) / max(0.01, interval_r)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps_1h)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_stat_value(attack_power_total))
-		tooltip_lines.append("Урон оружия: %s" % _format_stat_value(right_weapon_damage))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))
 
 	_breakdown_cache["damage"] = "\n".join(tooltip_lines).strip_edges()
 
@@ -729,7 +731,7 @@ func _build_primary_tooltip(key: String, effect_text: String) -> void:
 		tooltip_lines.append("")
 	tooltip_lines.append("Базовые характеристики: %s" % _format_stat_value(base_val))
 	if equip_val != 0:
-		tooltip_lines.append("Снаряжение: %s" % _format_signed_value(equip_val))
+		tooltip_lines.append("Снаряжение: %s" % _format_stat_value(equip_val))
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
 
 func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) -> void:
@@ -745,7 +747,7 @@ func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) 
 	if equip_val != 0.0:
 		if tooltip_lines.size() > 0:
 			tooltip_lines.append("")
-		tooltip_lines.append("Снаряжение: %s" % _format_signed_value(equip_val))
+		tooltip_lines.append("Снаряжение: %s" % _format_stat_value(equip_val))
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
 
 func _build_primary_contrib_lines(key: String, snap: Dictionary) -> Array[String]:
@@ -765,10 +767,8 @@ func _build_primary_contrib_lines(key: String, snap: Dictionary) -> Array[String
 		if base_val == 0.0 and delta == 0.0:
 			continue
 		var label: String = PRIMARY_LABELS.get(stat_key, String(stat_key))
-		out.append("%s: %s × %s = %s" % [
+		out.append("%s: %s" % [
 			label,
-			_format_stat_value(base_val),
-			_format_stat_value(coeff),
 			_format_stat_value(delta),
 		])
 	return out
@@ -795,3 +795,11 @@ func _format_signed_value(val) -> String:
 	if num < 0 and out[0] != "-":
 		return "-" + out
 	return out
+
+func _format_float_clean(v: float) -> String:
+	var s := String.num(v, 2)
+	while s.ends_with("0"):
+		s = s.left(s.length() - 1)
+	if s.ends_with("."):
+		s = s.left(s.length() - 1)
+	return s

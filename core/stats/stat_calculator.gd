@@ -201,7 +201,9 @@ static func build_player_snapshot(
     var cooldown_reduction_pct: float = 0.0
     if C.COOLDOWN_RATING_PER_1PCT > 0.0:
         cooldown_reduction_pct = float(derived.speed) / C.COOLDOWN_RATING_PER_1PCT
-    var crit_chance_pct: float = min(float(derived.crit_chance_rating) / C.CRIT_RATING_PER_1PCT, 100.0)
+    var crit_from_rating := float(derived.crit_chance_rating) / C.CRIT_RATING_PER_1PCT
+    var crit_chance_pct: float = C.BASE_CRIT_CHANCE_PCT + crit_from_rating
+    crit_chance_pct = clamp(crit_chance_pct, 1.0, 100.0)
     var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01
 
     var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
