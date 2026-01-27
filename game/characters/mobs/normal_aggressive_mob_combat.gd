@@ -22,7 +22,7 @@ var _attack_timer: float = 0.0
 func reset_combat() -> void:
 	_attack_timer = 0.0
 
-func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack_speed_pct: float = 0.0) -> void:
+func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void:
 	_attack_timer = max(0.0, _attack_timer - delta)
 
 	if target == null or not is_instance_valid(target):
@@ -33,18 +33,23 @@ func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack
 		return
 
 	var dist: float = actor.global_position.distance_to(target.global_position)
-	# unified physical damage
-	var dmg: int = int(round(float(attack_power) * STAT_CONST.AP_DAMAGE_SCALAR))
-	if dmg < 1:
-		dmg = 1
+	var derived: Dictionary = snap.get("derived", {}) as Dictionary
+	var ap: float = float(derived.get("attack_power", 0.0))
+	var raw: int = max(1, int(round(ap * STAT_CONST.MOB_UNARMED_AP_MULT)))
+	var crit_chance_pct: float = float(snap.get("crit_chance_pct", 0.0))
+	var crit_mult: float = float(snap.get("crit_multiplier", 2.0))
+	if randf() * 100.0 < crit_chance_pct:
+		raw = int(round(float(raw) * crit_mult))
+	raw = max(1, raw)
 
-	var speed_mult: float = 1.0 + max(0.0, attack_speed_pct) / 100.0
+	var aspct: float = float(snap.get("attack_speed_pct", 0.0))
+	var speed_mult: float = 1.0 + max(0.0, aspct) / 100.0
 	if speed_mult < 0.1:
 		speed_mult = 0.1
 
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _attack_timer <= 0.0:
-			target.call("take_damage", dmg)
+			target.call("take_damage", raw)
 			if "c_resource" in actor and actor.c_resource != null:
 				actor.c_resource.on_damage_dealt()
 			_attack_timer = melee_cooldown / speed_mult
@@ -52,7 +57,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack
 
 	# RANGED
 	if dist <= ranged_attack_range and _attack_timer <= 0.0:
-		_fire_ranged(actor, target, dmg)
+		_fire_ranged(actor, target, raw)
 		_attack_timer = ranged_cooldown / speed_mult
 
 func _fire_ranged(actor: Node2D, target: Node2D, damage: int) -> void:

@@ -187,8 +187,7 @@ func _physics_process(delta: float) -> void:
 	# атака только если агрессивен
 	if is_aggressive and aggressor != null and is_instance_valid(aggressor):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
-		c_combat.tick(delta, self, aggressor, c_stats.attack_value, aspct)
+		c_combat.tick(delta, self, aggressor, snap)
 
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"

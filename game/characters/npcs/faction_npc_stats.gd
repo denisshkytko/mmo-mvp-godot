@@ -100,10 +100,15 @@ func apply_damage(raw: int) -> bool:
 	if is_dead:
 		return false
 
-	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
-	var def_v: float = float(d.get("defense", defense_value))
-	var reduction_pct: float = STAT_CALC._mitigation_pct(def_v)
-	var dmg: int = max(1, int(round(float(raw) * (1.0 - reduction_pct / 100.0))))
+	var reduction_pct: float
+	if _snapshot.has("physical_reduction_pct"):
+		reduction_pct = float(_snapshot.get("physical_reduction_pct", 0.0))
+	else:
+		var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
+		var def_v: float = float(d.get("defense", defense_value))
+		reduction_pct = STAT_CALC._mitigation_pct(def_v)
+	var dmg: int = int(ceil(float(raw) * (1.0 - reduction_pct / 100.0)))
+	dmg = max(1, dmg)
 	current_hp = max(0, current_hp - dmg)
 	return current_hp <= 0
 

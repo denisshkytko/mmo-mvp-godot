@@ -52,6 +52,7 @@ const MITIGATION_K: float = 150.0
 const MAX_MITIGATION_PCT: float = 85.0
 
 const OFFHAND_MULT: float = 0.75
+const MOB_UNARMED_AP_MULT: float = 1.5
 
 # --- Speed ratings ---
 const AS_FROM_AGI: int = 10

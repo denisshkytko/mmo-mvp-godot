@@ -327,8 +327,7 @@ func _physics_process(delta: float) -> void:
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
-		c_combat.tick(delta, self, current_target, c_stats.attack_value, aspct)
+		c_combat.tick(delta, self, current_target, snap)
 
 
 func _pick_target() -> Node2D:

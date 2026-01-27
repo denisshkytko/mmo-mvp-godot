@@ -20,7 +20,7 @@ var _t: float = 0.0
 func reset() -> void:
 	_t = 0.0
 
-func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack_speed_pct: float = 0.0) -> void:
+func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void:
 	_t = max(0.0, _t - delta)
 
 	if target == null or not is_instance_valid(target):
@@ -29,12 +29,19 @@ func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack
 		return
 
 	var dist: float = actor.global_position.distance_to(target.global_position)
-	var speed_mult: float = 1.0 + max(0.0, attack_speed_pct) / 100.0
+	var derived: Dictionary = snap.get("derived", {}) as Dictionary
+	var ap: float = float(derived.get("attack_power", 0.0))
+	var dmg: int = max(1, int(round(ap * STAT_CONST.MOB_UNARMED_AP_MULT)))
+	var crit_chance_pct: float = float(snap.get("crit_chance_pct", 0.0))
+	var crit_mult: float = float(snap.get("crit_multiplier", 2.0))
+	if randf() * 100.0 < crit_chance_pct:
+		dmg = int(round(float(dmg) * crit_mult))
+	dmg = max(1, dmg)
+
+	var aspct: float = float(snap.get("attack_speed_pct", 0.0))
+	var speed_mult: float = 1.0 + max(0.0, aspct) / 100.0
 	if speed_mult < 0.1:
 		speed_mult = 0.1
-	var dmg: int = int(round(float(attack_power) * STAT_CONST.AP_DAMAGE_SCALAR))
-	if dmg < 1:
-		dmg = 1
 
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _t <= 0.0:
