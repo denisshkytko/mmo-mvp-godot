@@ -150,6 +150,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
 			current_target = null
+			regen_active = true
 		else:
 			# если цель стала не-hostile — сбрасываем
 			var tf := ""

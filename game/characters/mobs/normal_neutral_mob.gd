@@ -167,6 +167,7 @@ func _physics_process(delta: float) -> void:
 		if "is_dead" in aggressor and bool(aggressor.get("is_dead")):
 			aggressor = null
 			is_aggressive = false
+			regen_active = true
 	if aggressor != null and not is_instance_valid(aggressor):
 		aggressor = null
 		is_aggressive = false
