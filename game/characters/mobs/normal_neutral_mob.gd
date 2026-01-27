@@ -163,6 +163,10 @@ func _physics_process(delta: float) -> void:
 	_apply_to_components()
 
 	var prev_has_aggr := (aggressor != null and is_instance_valid(aggressor))
+	if aggressor != null and is_instance_valid(aggressor):
+		if "is_dead" in aggressor and bool(aggressor.get("is_dead")):
+			aggressor = null
+			is_aggressive = false
 	if aggressor != null and not is_instance_valid(aggressor):
 		aggressor = null
 		is_aggressive = false

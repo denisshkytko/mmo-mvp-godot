@@ -148,12 +148,15 @@ func _physics_process(delta: float) -> void:
 	if current_target == null or not is_instance_valid(current_target):
 		current_target = _pick_target()
 	else:
-		# если цель стала не-hostile — сбрасываем
-		var tf := ""
-		if current_target.has_method("get_faction_id"):
-			tf = String(current_target.call("get_faction_id"))
-		if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
+		if "is_dead" in current_target and bool(current_target.get("is_dead")):
 			current_target = null
+		else:
+			# если цель стала не-hostile — сбрасываем
+			var tf := ""
+			if current_target.has_method("get_faction_id"):
+				tf = String(current_target.call("get_faction_id"))
+			if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
+				current_target = null
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
 		_prev_target = null

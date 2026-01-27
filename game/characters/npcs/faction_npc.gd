@@ -311,6 +311,9 @@ func _physics_process(delta: float) -> void:
 	# (yellow is non-proactive by design)
 	if current_target == null and proactive_aggro:
 		current_target = _pick_target()
+	if current_target != null and is_instance_valid(current_target):
+		if "is_dead" in current_target and bool(current_target.get("is_dead")):
+			current_target = null
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
 		_prev_target = null
