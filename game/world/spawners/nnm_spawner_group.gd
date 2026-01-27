@@ -42,7 +42,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var class_id := ""
 	var profile_id := ""
 	if body_size == BodySize.HUMANOID:
-		class_id = ["paladin", "warrior", "shaman", "mage", "priest", "hunter"].pick_random()
+		class_id = "hunter"
 		profile_id = "humanoid_hostile"
 	else:
 		class_id = "beast"
