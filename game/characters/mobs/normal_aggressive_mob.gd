@@ -155,6 +155,11 @@ func _physics_process(delta: float) -> void:
 		if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
 			current_target = null
 
+	if _prev_target != null and not is_instance_valid(_prev_target):
+		_prev_target = null
+	if current_target != null and not is_instance_valid(current_target):
+		current_target = null
+
 	if _prev_target != current_target:
 		_notify_target_change(_prev_target, current_target)
 		_prev_target = current_target
@@ -419,11 +424,13 @@ func get_faction_id() -> String:
 func _pick_target() -> Node2D:
 	return FactionTargeting.pick_hostile_target(self, faction_id, aggro_radius)
 
-func _notify_target_change(old_t: Node2D, new_t: Node2D) -> void:
-	if old_t != null and is_instance_valid(old_t) and old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
-		old_t.call("on_untargeted_by", self)
-	if new_t != null and is_instance_valid(new_t) and new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
-		new_t.call("on_targeted_by", self)
+func _notify_target_change(old_t, new_t) -> void:
+	if old_t != null and is_instance_valid(old_t):
+		if old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
+			old_t.call("on_untargeted_by", self)
+	if new_t != null and is_instance_valid(new_t):
+		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
+			new_t.call("on_targeted_by", self)
 
 
 func _set_loot_owner_if_first(attacker: Node2D) -> void:

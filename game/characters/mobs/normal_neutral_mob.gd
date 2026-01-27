@@ -166,6 +166,9 @@ func _physics_process(delta: float) -> void:
 		aggressor = null
 		is_aggressive = false
 
+	if _prev_aggressor != null and not is_instance_valid(_prev_aggressor):
+		_prev_aggressor = null
+
 	if _prev_aggressor != aggressor:
 		_notify_target_change(_prev_aggressor, aggressor)
 		_prev_aggressor = aggressor
@@ -325,11 +328,13 @@ func _setup_resource_from_class(class_id_value: String) -> void:
 func _mark_spawned() -> void:
 	_spawn_initialized = true
 
-func _notify_target_change(old_t: Node2D, new_t: Node2D) -> void:
-	if old_t != null and is_instance_valid(old_t) and old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
-		old_t.call("on_untargeted_by", self)
-	if new_t != null and is_instance_valid(new_t) and new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
-		new_t.call("on_targeted_by", self)
+func _notify_target_change(old_t, new_t) -> void:
+	if old_t != null and is_instance_valid(old_t):
+		if old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
+			old_t.call("on_untargeted_by", self)
+	if new_t != null and is_instance_valid(new_t):
+		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
+			new_t.call("on_targeted_by", self)
 
 # ---------------------------
 # Damage API

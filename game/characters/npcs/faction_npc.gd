@@ -312,6 +312,11 @@ func _physics_process(delta: float) -> void:
 	if current_target == null and proactive_aggro:
 		current_target = _pick_target()
 
+	if _prev_target != null and not is_instance_valid(_prev_target):
+		_prev_target = null
+	if current_target != null and not is_instance_valid(current_target):
+		current_target = null
+
 	if _prev_target != current_target:
 		_notify_target_change(_prev_target, current_target)
 		_prev_target = current_target
@@ -425,11 +430,13 @@ func _on_leash_return_started() -> void:
 	retaliation_active = false
 	retaliation_target_id = 0
 
-func _notify_target_change(old_t: Node2D, new_t: Node2D) -> void:
-	if old_t != null and is_instance_valid(old_t) and old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
-		old_t.call("on_untargeted_by", self)
-	if new_t != null and is_instance_valid(new_t) and new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
-		new_t.call("on_targeted_by", self)
+func _notify_target_change(old_t, new_t) -> void:
+	if old_t != null and is_instance_valid(old_t):
+		if old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
+			old_t.call("on_untargeted_by", self)
+	if new_t != null and is_instance_valid(new_t):
+		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
+			new_t.call("on_targeted_by", self)
 
 
 func _get_player_faction_id() -> String:
