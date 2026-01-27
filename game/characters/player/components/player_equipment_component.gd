@@ -120,6 +120,99 @@ func get_weapon_damage() -> int:
 	var w: Dictionary = meta.get("weapon", {}) as Dictionary
 	return int(w.get("damage", 0))
 
+func get_weapon_damage_right() -> int:
+	return get_weapon_damage()
+
+func get_weapon_damage_left() -> int:
+	if is_left_hand_blocked():
+		return 0
+	var left_item := _get_slot_item("weapon_l")
+	if left_item.is_empty():
+		return 0
+	var id: String = String(left_item.get("id", ""))
+	if id == "":
+		return 0
+	var meta := _get_item_meta(id)
+	if String(meta.get("type", "")).to_lower() != "weapon":
+		return 0
+	if _is_two_handed_weapon(meta):
+		return 0
+	var w: Dictionary = meta.get("weapon", {}) as Dictionary
+	if int(w.get("handed", 1)) != 1:
+		return 0
+	return int(w.get("damage", 0))
+
+func get_weapon_attack_interval_right() -> float:
+	var right_item := _get_slot_item("weapon_r")
+	if right_item.is_empty():
+		return 0.0
+	var id: String = String(right_item.get("id", ""))
+	if id == "":
+		return 0.0
+	var meta := _get_item_meta(id)
+	if String(meta.get("type", "")).to_lower() != "weapon":
+		return 0.0
+	var w: Dictionary = meta.get("weapon", {}) as Dictionary
+	return float(w.get("attack_interval", 1.0))
+
+func get_weapon_attack_interval_left() -> float:
+	if is_left_hand_blocked():
+		return 0.0
+	var left_item := _get_slot_item("weapon_l")
+	if left_item.is_empty():
+		return 0.0
+	var id: String = String(left_item.get("id", ""))
+	if id == "":
+		return 0.0
+	var meta := _get_item_meta(id)
+	if String(meta.get("type", "")).to_lower() != "weapon":
+		return 0.0
+	if _is_two_handed_weapon(meta):
+		return 0.0
+	var w: Dictionary = meta.get("weapon", {}) as Dictionary
+	if int(w.get("handed", 1)) != 1:
+		return 0.0
+	return float(w.get("attack_interval", 1.0))
+
+func is_two_handed_equipped() -> bool:
+	var right_item := _get_slot_item("weapon_r")
+	if right_item.is_empty():
+		return false
+	var id: String = String(right_item.get("id", ""))
+	if id == "":
+		return false
+	var meta := _get_item_meta(id)
+	return _is_two_handed_weapon(meta)
+
+func has_left_weapon() -> bool:
+	if is_left_hand_blocked():
+		return false
+	var left_item := _get_slot_item("weapon_l")
+	if left_item.is_empty():
+		return false
+	var id: String = String(left_item.get("id", ""))
+	if id == "":
+		return false
+	var meta := _get_item_meta(id)
+	if String(meta.get("type", "")).to_lower() != "weapon":
+		return false
+	if _is_two_handed_weapon(meta):
+		return false
+	var w: Dictionary = meta.get("weapon", {}) as Dictionary
+	return int(w.get("handed", 1)) == 1
+
+func has_left_offhand_item() -> bool:
+	if is_left_hand_blocked():
+		return false
+	var left_item := _get_slot_item("weapon_l")
+	if left_item.is_empty():
+		return false
+	var id: String = String(left_item.get("id", ""))
+	if id == "":
+		return false
+	var meta := _get_item_meta(id)
+	return String(meta.get("type", "")).to_lower() == "offhand"
+
 func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String = "") -> bool:
 	if p == null or p.c_inv == null:
 		return false

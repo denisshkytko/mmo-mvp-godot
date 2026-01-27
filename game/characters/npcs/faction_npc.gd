@@ -36,6 +36,7 @@ var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_f
 var home_position: Vector2 = Vector2.ZERO
 var current_target: Node2D = null
 var proactive_aggro: bool = true
+var _prev_target: Node2D = null
 
 # Право на лут: первый удар игрока в текущем бою
 var loot_owner_player_id: int = 0
@@ -311,6 +312,15 @@ func _physics_process(delta: float) -> void:
 	if current_target == null and proactive_aggro:
 		current_target = _pick_target()
 
+	if _prev_target != null and not is_instance_valid(_prev_target):
+		_prev_target = null
+	if current_target != null and not is_instance_valid(current_target):
+		current_target = null
+
+	if _prev_target != current_target:
+		_notify_target_change(_prev_target, current_target)
+		_prev_target = current_target
+
 	# AI tick
 	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
 
@@ -344,6 +354,9 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 	# retaliation
 	if attacker != null and is_instance_valid(attacker):
 		current_target = attacker
+		if _prev_target != current_target:
+			_notify_target_change(_prev_target, current_target)
+			_prev_target = current_target
 
 	# Yellow: реагирует на насилие (как нейтральные)
 	if faction_id == "yellow" and attacker != null and is_instance_valid(attacker):
@@ -360,6 +373,10 @@ func _die() -> void:
 	if c_stats.is_dead:
 		return
 	c_stats.is_dead = true
+	if current_target != null:
+		_notify_target_change(current_target, null)
+	current_target = null
+	_prev_target = null
 
 	var p: LootProfile = loot_profile
 	if p == null:
@@ -406,9 +423,20 @@ func _on_leash_return_started() -> void:
 	# combat reset: lose loot rights + regen on
 	loot_owner_player_id = LootRights.clear_owner()
 	current_target = null
+	if _prev_target != null:
+		_notify_target_change(_prev_target, null)
+	_prev_target = null
 	regen_active = true
 	retaliation_active = false
 	retaliation_target_id = 0
+
+func _notify_target_change(old_t, new_t) -> void:
+	if old_t != null and is_instance_valid(old_t):
+		if old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
+			old_t.call("on_untargeted_by", self)
+	if new_t != null and is_instance_valid(new_t):
+		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
+			new_t.call("on_targeted_by", self)
 
 
 func _get_player_faction_id() -> String:

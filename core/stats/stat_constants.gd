@@ -16,13 +16,13 @@ class_name StatConstants
 
 # --- Primary -> base pools (no per-level pool growth here) ---
 const HP_PER_END: float = 8.0
-const HP_PER_STR: float = 2.0
+const HP_PER_STR: float = 0.0
 
 const MANA_PER_INT: float = 6.0
 
 # --- Primary -> regen (per second, can be fractional) ---
 const HP_REGEN_PER_END: float = 0.03
-const HP_REGEN_PER_STR: float = 0.01
+const HP_REGEN_PER_STR: float = 0.0
 
 const MANA_REGEN_PER_INT: float = 0.04
 
@@ -39,15 +39,19 @@ const AP_DAMAGE_SCALAR: float = 0.35
 const SP_DAMAGE_SCALAR: float = 0.40
 
 # --- Primary -> defenses (units) ---
-const DEF_FROM_STR: float = 0.5
-const DEF_FROM_AGI: float = 0.8
+const DEF_FROM_STR: float = 0.2
+const DEF_FROM_END: float = 0.7
+const DEF_FROM_AGI: float = 0.0
 
-const RES_FROM_END: float = 0.6
+const RES_FROM_END: float = 0.2
 const RES_FROM_INT: float = 0.9
 
 # Mitigation curve constant for converting Defense/Resist to %.
 # reduction = 1 - K/(K + defense)
-const MITIGATION_K: float = 100.0
+const MITIGATION_K: float = 150.0
+const MAX_MITIGATION_PCT: float = 85.0
+
+const OFFHAND_MULT: float = 0.75
 
 # --- Speed ratings ---
 const AS_FROM_AGI: int = 10
@@ -65,8 +69,9 @@ const CS_RATING_PER_1PCT: float = 120.0
 const COOLDOWN_RATING_PER_1PCT: float = 100.0
 
 # --- Crit ratings ---
+const BASE_CRIT_CHANCE_PCT: float = 10.0
 const CRIT_FROM_PER: int = 7
-const CRIT_FROM_AGI: int = 0
+const CRIT_FROM_AGI: int = 3
 const CRIT_RATING_PER_1PCT: float = 100.0
 
 # Crit damage:

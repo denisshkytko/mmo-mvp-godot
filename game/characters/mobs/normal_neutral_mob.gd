@@ -38,6 +38,7 @@ const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn"
 # агрессия
 var is_aggressive: bool = false
 var aggressor: Node2D = null
+var _prev_aggressor: Node2D = null
 
 # Право на лут: первый удар игрока в текущем бою
 var loot_owner_player_id: int = 0
@@ -161,6 +162,17 @@ func _physics_process(delta: float) -> void:
 
 	_apply_to_components()
 
+	if aggressor != null and not is_instance_valid(aggressor):
+		aggressor = null
+		is_aggressive = false
+
+	if _prev_aggressor != null and not is_instance_valid(_prev_aggressor):
+		_prev_aggressor = null
+
+	if _prev_aggressor != aggressor:
+		_notify_target_change(_prev_aggressor, aggressor)
+		_prev_aggressor = aggressor
+
 	# реген идёт только когда regen_active=true, и прекращается только когда HP=100%
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
 		c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
@@ -182,6 +194,9 @@ func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"
 	is_aggressive = false
 	aggressor = null
+	if _prev_aggressor != null:
+		_notify_target_change(_prev_aggressor, null)
+	_prev_aggressor = null
 	# бой сбросился → права на лут больше нет
 	loot_owner_player_id = LootRights.clear_owner()
 	regen_active = true
@@ -313,6 +328,14 @@ func _setup_resource_from_class(class_id_value: String) -> void:
 func _mark_spawned() -> void:
 	_spawn_initialized = true
 
+func _notify_target_change(old_t, new_t) -> void:
+	if old_t != null and is_instance_valid(old_t):
+		if old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
+			old_t.call("on_untargeted_by", self)
+	if new_t != null and is_instance_valid(new_t):
+		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
+			new_t.call("on_targeted_by", self)
+
 # ---------------------------
 # Damage API
 # ---------------------------
@@ -335,6 +358,9 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 	if attacker != null and is_instance_valid(attacker):
 		is_aggressive = true
 		aggressor = attacker
+		if _prev_aggressor != aggressor:
+			_notify_target_change(_prev_aggressor, aggressor)
+			_prev_aggressor = aggressor
 		regen_active = false
 		c_ai.on_took_damage(self)
 	else:
@@ -343,6 +369,9 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 		if p != null:
 			is_aggressive = true
 			aggressor = p
+			if _prev_aggressor != aggressor:
+				_notify_target_change(_prev_aggressor, aggressor)
+				_prev_aggressor = aggressor
 			regen_active = false
 			c_ai.on_took_damage(self)
 
@@ -353,6 +382,9 @@ func on_player_died() -> void:
 	# чтобы нейтралы тоже отпускали
 	is_aggressive = false
 	aggressor = null
+	if _prev_aggressor != null:
+		_notify_target_change(_prev_aggressor, null)
+	_prev_aggressor = null
 	loot_owner_player_id = LootRights.clear_owner()
 	regen_active = false
 	c_combat.reset_combat()
@@ -366,6 +398,9 @@ func _die() -> void:
 	if c_stats.is_dead:
 		return
 	c_stats.is_dead = true
+	if _prev_aggressor != null:
+		_notify_target_change(_prev_aggressor, null)
+	_prev_aggressor = null
 
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,

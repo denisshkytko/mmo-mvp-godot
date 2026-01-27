@@ -24,11 +24,6 @@ var end_per_level: int = 1
 var int_per_level: int = 1
 var per_per_level: int = 1
 
-# "Base gear" placeholder.
-# Player spawns in simple grey items in the future. For now, we keep
-# a tiny base defense so early combat does not feel too punishing.
-@export var base_gear_defense: int = 2
-
 # Cached last snapshot (for UI)
 var _snapshot: Dictionary = {}
 var _base_stats: Dictionary = {}
@@ -263,9 +258,7 @@ func _build_snapshot() -> Dictionary:
 
 	var gear_base := {
 		"primary": {},
-		"secondary": {
-			"defense": base_gear_defense,
-		}
+		"secondary": {},
 	}
 
 	var gear_equipment := {
@@ -322,6 +315,17 @@ func _collect_equipment_modifiers() -> Dictionary:
 			if val == 0:
 				continue
 			_map_modifier(out, String(key), val)
+		var secondary := out.get("secondary", {}) as Dictionary
+		var typ: String = String(meta.get("type", "")).to_lower()
+		if typ == "armor":
+			var a := meta.get("armor", {}) as Dictionary
+			secondary["defense"] = int(secondary.get("defense", 0)) + int(a.get("physical_armor", 0))
+			secondary["magic_resist"] = int(secondary.get("magic_resist", 0)) + int(a.get("magic_armor", 0))
+		elif typ == "offhand":
+			var o := meta.get("offhand", {}) as Dictionary
+			secondary["defense"] = int(secondary.get("defense", 0)) + int(o.get("physical_armor", 0))
+			secondary["magic_resist"] = int(secondary.get("magic_resist", 0)) + int(o.get("magic_armor", 0))
+		out["secondary"] = secondary
 	return out
 
 func _map_modifier(gear: Dictionary, stat_key: String, value: int) -> void:
@@ -397,9 +401,6 @@ func _diff_stats(total_snapshot: Dictionary, base_snapshot: Dictionary) -> Dicti
 func take_damage(raw_damage: int) -> void:
 	if p == null:
 		return
-	# Any incoming damage puts player in combat (pauses HP regen)
-	if p.has_method("mark_in_combat"):
-		p.call("mark_in_combat")
 	if "c_resource" in p and p.c_resource != null:
 		p.c_resource.on_damage_taken()
 
@@ -408,9 +409,10 @@ func take_damage(raw_damage: int) -> void:
 	if buffs != null and buffs.is_invulnerable():
 		return
 
-	var def_v: int = int(_snapshot.get("derived", {}).get("defense", 0))
-	var dmg: int = max(1, raw_damage - def_v)
-	p.current_hp = max(0, p.current_hp - dmg)
+	var phys_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
+	var final: int = int(ceil(float(raw_damage) * (1.0 - phys_pct / 100.0)))
+	final = max(1, final)
+	p.current_hp = max(0, p.current_hp - final)
 
 	if p.current_hp <= 0:
 		_on_death()

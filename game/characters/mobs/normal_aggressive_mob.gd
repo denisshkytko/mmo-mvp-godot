@@ -99,6 +99,7 @@ var player: Node2D = null
 
 var faction_id: String = "aggressive_mob"
 var current_target: Node2D = null
+var _prev_target: Node2D = null
 
 var first_attacker: Node2D = null
 var last_attacker: Node2D = null
@@ -153,6 +154,15 @@ func _physics_process(delta: float) -> void:
 			tf = String(current_target.call("get_faction_id"))
 		if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
 			current_target = null
+
+	if _prev_target != null and not is_instance_valid(_prev_target):
+		_prev_target = null
+	if current_target != null and not is_instance_valid(current_target):
+		current_target = null
+
+	if _prev_target != current_target:
+		_notify_target_change(_prev_target, current_target)
+		_prev_target = current_target
 
 	# реген после leash-return, продолжается пока HP не станет full
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
@@ -309,6 +319,10 @@ func on_player_died() -> void:
 	c_combat.reset_combat()
 	c_ai.force_return()
 	velocity = Vector2.ZERO
+	if current_target != null:
+		_notify_target_change(current_target, null)
+	current_target = null
+	_prev_target = null
 
 # ------------------------------------------------------------
 # Internals
@@ -369,6 +383,10 @@ func _die() -> void:
 	if c_stats.is_dead:
 		return
 	c_stats.is_dead = true
+	if current_target != null:
+		_notify_target_change(current_target, null)
+	current_target = null
+	_prev_target = null
 
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
@@ -393,6 +411,10 @@ func _on_leash_return_started() -> void:
 	# бой сбросился → права на лут больше нет
 	loot_owner_player_id = LootRights.clear_owner()
 	regen_active = true
+	if current_target != null:
+		_notify_target_change(current_target, null)
+	current_target = null
+	_prev_target = null
 
 
 func get_faction_id() -> String:
@@ -401,6 +423,14 @@ func get_faction_id() -> String:
 
 func _pick_target() -> Node2D:
 	return FactionTargeting.pick_hostile_target(self, faction_id, aggro_radius)
+
+func _notify_target_change(old_t, new_t) -> void:
+	if old_t != null and is_instance_valid(old_t):
+		if old_t.is_in_group("player") and old_t.has_method("on_untargeted_by"):
+			old_t.call("on_untargeted_by", self)
+	if new_t != null and is_instance_valid(new_t):
+		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
+			new_t.call("on_targeted_by", self)
 
 
 func _set_loot_owner_if_first(attacker: Node2D) -> void:

@@ -102,17 +102,15 @@ static func build_player_snapshot(
     }
 
     # MaxHP / MaxMana (ONLY from primary + mods)
-    derived.max_hp = int(round(prim.end * C.HP_PER_END + prim.str * C.HP_PER_STR))
+    derived.max_hp = int(round(prim.end * C.HP_PER_END))
     _add_breakdown_line(breakdown.max_hp, "END", prim.end * C.HP_PER_END)
-    _add_breakdown_line(breakdown.max_hp, "STR", prim.str * C.HP_PER_STR)
 
     derived.max_mana = int(round(prim.int * C.MANA_PER_INT))
     _add_breakdown_line(breakdown.max_mana, "INT", prim.int * C.MANA_PER_INT)
 
     # Regen (per second)
-    derived.hp_regen = prim.end * C.HP_REGEN_PER_END + prim.str * C.HP_REGEN_PER_STR
+    derived.hp_regen = prim.end * C.HP_REGEN_PER_END
     _add_breakdown_line(breakdown.hp_regen, "END", prim.end * C.HP_REGEN_PER_END)
-    _add_breakdown_line(breakdown.hp_regen, "STR", prim.str * C.HP_REGEN_PER_STR)
 
     derived.mana_regen = prim.int * C.MANA_REGEN_PER_INT
     _add_breakdown_line(breakdown.mana_regen, "INT", prim.int * C.MANA_REGEN_PER_INT)
@@ -126,13 +124,13 @@ static func build_player_snapshot(
     _add_breakdown_line(breakdown.spell_power, "INT", prim.int * C.SP_FROM_INT)
 
     # Defense / Resist units (player base is 0, gear can add)
-    derived.defense = prim.str * C.DEF_FROM_STR + prim.agi * C.DEF_FROM_AGI
+    derived.defense = prim.str * C.DEF_FROM_STR + prim.end * C.DEF_FROM_END
     _add_breakdown_line(breakdown.defense, "STR", prim.str * C.DEF_FROM_STR)
-    _add_breakdown_line(breakdown.defense, "AGI", prim.agi * C.DEF_FROM_AGI)
+    _add_breakdown_line(breakdown.defense, "END", prim.end * C.DEF_FROM_END)
 
-    derived.magic_resist = prim.end * C.RES_FROM_END + prim.int * C.RES_FROM_INT
-    _add_breakdown_line(breakdown.magic_resist, "END", prim.end * C.RES_FROM_END)
+    derived.magic_resist = prim.int * C.RES_FROM_INT + prim.end * C.RES_FROM_END
     _add_breakdown_line(breakdown.magic_resist, "INT", prim.int * C.RES_FROM_INT)
+    _add_breakdown_line(breakdown.magic_resist, "END", prim.end * C.RES_FROM_END)
 
     # Speed ratings
     derived.speed = 0
@@ -203,7 +201,9 @@ static func build_player_snapshot(
     var cooldown_reduction_pct: float = 0.0
     if C.COOLDOWN_RATING_PER_1PCT > 0.0:
         cooldown_reduction_pct = float(derived.speed) / C.COOLDOWN_RATING_PER_1PCT
-    var crit_chance_pct: float = min(float(derived.crit_chance_rating) / C.CRIT_RATING_PER_1PCT, 100.0)
+    var crit_from_rating := float(derived.crit_chance_rating) / C.CRIT_RATING_PER_1PCT
+    var crit_chance_pct: float = C.BASE_CRIT_CHANCE_PCT + crit_from_rating
+    crit_chance_pct = clamp(crit_chance_pct, 1.0, 100.0)
     var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01
 
     var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
@@ -438,4 +438,5 @@ static func _mitigation_pct(value: float) -> float:
     if value <= 0.0:
         return 0.0
     var mult: float = C.MITIGATION_K / (C.MITIGATION_K + value)
-    return 100.0 * (1.0 - mult)
+    var pct: float = 100.0 * (1.0 - mult)
+    return clamp(pct, 0.0, C.MAX_MITIGATION_PCT)
