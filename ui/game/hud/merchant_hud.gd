@@ -248,6 +248,9 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 		return Panel.new()
 	var cell: Panel = item_cell_template.duplicate(0) as Panel
 	cell.visible = true
+	if item_cell_template != null:
+		var base_size := item_cell_template.get_combined_minimum_size()
+		cell.custom_minimum_size = Vector2(base_size.x, base_size.y + 10.0)
 
 	var icon_panel: Panel = cell.get_node_or_null("Padding/Content/IconPanel") as Panel
 	var icon: TextureRect = cell.get_node_or_null("Padding/Content/IconPanel/Icon") as TextureRect
