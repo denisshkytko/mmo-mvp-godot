@@ -8,8 +8,7 @@ const DRAG_THRESHOLD: float = 8.0
 @onready var panel: Panel = $Panel
 @onready var title_label: Label = $Panel/Title
 @onready var close_button: Button = $Panel/CloseButton
-@onready var item_cell_template: Panel = $Panel/Tabs/Покупка/Scroll/Grid/ItemCellTemplate
-@onready var sell_item_cell_template: Panel = $Panel/Tabs/Продажа/Scroll/Grid/ItemCellTemplate
+@onready var item_cell_template: Panel = $Panel/ItemCellTemplate
 @onready var tabs: TabContainer = $Panel/Tabs
 @onready var buy_scroll: ScrollContainer = $Panel/Tabs/Покупка/Scroll
 @onready var sell_scroll: ScrollContainer = $Panel/Tabs/Продажа/Scroll
@@ -206,20 +205,22 @@ func _append_entries_from_preset(preset: Resource) -> void:
 					_buy_entries.append({"id": item_id2, "count": count2})
 
 func _refresh_buy_grid() -> void:
-	_clear_grid(buy_grid, item_cell_template)
+	for child in buy_grid.get_children():
+		child.queue_free()
 	for entry in _buy_entries:
 		var item_id: String = String(entry.get("id", ""))
 		var count: int = int(entry.get("count", 1))
 		if item_id == "" or count <= 0:
 			continue
-		var cell := _build_item_cell(item_id, count, "Купить", true, -1, item_cell_template)
+		var cell := _build_item_cell(item_id, count, "Купить", true, -1)
 		buy_grid.add_child(cell)
 	var db := get_node_or_null("/root/DataDB")
 	if db != null and not db.is_ready:
 		_names_pending = true
 
 func _refresh_sell_grid() -> void:
-	_clear_grid(sell_grid, sell_item_cell_template)
+	for child in sell_grid.get_children():
+		child.queue_free()
 	_sell_entries.clear()
 	if _merchant == null or _player == null:
 		return
@@ -239,18 +240,17 @@ func _refresh_sell_grid() -> void:
 		var sale_id2: int = int(entry2.get("sale_id", -1))
 		if item_id2 == "" or count2 <= 0:
 			continue
-		var cell2 := _build_item_cell(item_id2, count2, "Выкупить", false, sale_id2, sell_item_cell_template)
+		var cell2 := _build_item_cell(item_id2, count2, "Выкупить", false, sale_id2)
 		sell_grid.add_child(cell2)
 
-func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: bool, sale_id: int = -1, template: Panel = null) -> Panel:
-	var source := template if template != null else item_cell_template
-	if source == null:
+func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: bool, sale_id: int = -1) -> Panel:
+	if item_cell_template == null:
 		return Panel.new()
-	var cell: Panel = source.duplicate(0) as Panel
+	var cell: Panel = item_cell_template.duplicate(0) as Panel
 	cell.visible = true
-	var base_size := source.get_combined_minimum_size()
+	var base_size := item_cell_template.get_combined_minimum_size()
 	if base_size.y > 0.0:
-		cell.custom_minimum_size = base_size
+		cell.custom_minimum_size = Vector2(base_size.x, base_size.y + 10.0)
 
 	var icon_panel: Panel = cell.get_node_or_null("Padding/Content/IconPanel") as Panel
 	var icon: TextureRect = cell.get_node_or_null("Padding/Content/IconPanel/Icon") as TextureRect
@@ -277,12 +277,6 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 			action_button.pressed.connect(_on_buyback_button_pressed.bind(item_id, count, sale_id))
 
 	return cell
-
-func _clear_grid(grid: GridContainer, template: Panel) -> void:
-	for child in grid.get_children():
-		if child == template:
-			continue
-		child.queue_free()
 
 func _format_action_text(action_text: String, item_id: String, count: int, is_buy: bool) -> String:
 	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
