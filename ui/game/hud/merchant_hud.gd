@@ -263,7 +263,6 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	if name_label != null:
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		name_label.clip_text = true
-		name_label.max_lines = 2
 		name_label.text = _format_item_label(item_id, count)
 	if action_button != null:
 		action_button.text = _format_action_text(action_text, item_id, count, is_buy)
