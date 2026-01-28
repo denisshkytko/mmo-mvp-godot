@@ -7,6 +7,7 @@ const DRAG_THRESHOLD: float = 8.0
 
 @onready var panel: Panel = $Panel
 @onready var title_label: Label = $Panel/Title
+@onready var close_button: Button = $Panel/CloseButton
 @onready var tabs: TabContainer = $Panel/Tabs
 @onready var buy_scroll: ScrollContainer = $Panel/Tabs/Покупка/Scroll
 @onready var sell_scroll: ScrollContainer = $Panel/Tabs/Продажа/Scroll
@@ -54,6 +55,8 @@ var _sell_refresh_accum: float = 0.0
 func _ready() -> void:
 	panel.visible = false
 	tooltip_panel.visible = false
+	if close_button != null and not close_button.pressed.is_connected(close):
+		close_button.pressed.connect(close)
 	if tooltip_use_btn != null:
 		tooltip_use_btn.visible = false
 	if tooltip_equip_btn != null:
@@ -273,8 +276,8 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	row.add_child(name_label)
 
 	var action_button := Button.new()
-	action_button.custom_minimum_size = Vector2(80, 40)
-	action_button.text = action_text
+	action_button.custom_minimum_size = Vector2(96, 44)
+	action_button.text = _format_action_text(action_text, item_id, count, is_buy)
 	row.add_child(action_button)
 
 	icon_panel.gui_input.connect(_on_item_tooltip_input.bind(item_id, count))
@@ -288,10 +291,28 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 
 	return cell
 
+func _format_action_text(action_text: String, item_id: String, count: int, is_buy: bool) -> String:
+	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
+	var total: int = max(0, price_per * max(1, count))
+	return "%s\n%s" % [action_text, _format_money_short(total)]
+
+func _format_money_short(bronze_total: int) -> String:
+	var total: int = max(0, int(bronze_total))
+	var gold: int = int(total / 10000)
+	var silver: int = int((total % 10000) / 100)
+	var bronze: int = int(total % 100)
+	var parts: Array[String] = []
+	if gold > 0:
+		parts.append("%dg" % gold)
+	if silver > 0 or gold > 0:
+		parts.append("%ds" % silver)
+	parts.append("%db" % bronze)
+	return " ".join(parts)
+
 func _format_item_label(item_id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
 	var name: String = item_id
-	if db != null and db.has_method("get_item_name"):
+	if db != null and db.is_ready and db.has_method("get_item_name"):
 		name = String(db.call("get_item_name", item_id))
 	if count > 1:
 		return "%s x%d" % [name, count]
