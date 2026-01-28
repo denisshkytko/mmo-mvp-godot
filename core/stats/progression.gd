@@ -38,6 +38,7 @@ const CLASS_TABLE: Dictionary = {
 			"chest": "armor_common_cloth_chest_rl01_0698",
 			"legs": "armor_common_mail_legs_rl01_0509",
 			"boots": "armor_common_mail_boots_rl01_0599",
+			"weapon_r": "weapon_common_mace_2h_rl01_1203",
 		},
 		"allowed_weapon_types": [
 			"sword_1h",
@@ -60,6 +61,8 @@ const CLASS_TABLE: Dictionary = {
 			"shirt": "armor_common_cloth_shirt_rl01_0545",
 			"chest": "armor_common_cloth_chest_rl01_0698",
 			"legs": "armor_common_leather_legs_rl01_0518",
+			"weapon_r": "weapon_common_axe_1h_rl01_1205",
+			"weapon_l": "offhand_common_shield_rl01_1206",
 		},
 		"allowed_weapon_types": [
 			"staff_2h",
@@ -80,8 +83,10 @@ const CLASS_TABLE: Dictionary = {
 		"base_equipment": {
 			"shirt": "armor_common_cloth_shirt_rl01_0545",
 			"chest": "armor_common_cloth_chest_rl01_0698",
+			"weapon_r": "weapon_common_staff_rl01_1202",
 		},
 		"allowed_weapon_types": [
+			"staff",
 			"staff_2h",
 			"wand_1h",
 			"sword_1h",
@@ -100,8 +105,10 @@ const CLASS_TABLE: Dictionary = {
 		"base_equipment": {
 			"shirt": "armor_common_cloth_shirt_rl01_0545",
 			"chest": "armor_common_cloth_chest_rl01_0698",
+			"weapon_r": "weapon_common_staff_rl01_1202",
 		},
 		"allowed_weapon_types": [
+			"staff",
 			"staff_2h",
 			"wand_1h",
 			"sword_1h",
@@ -121,8 +128,10 @@ const CLASS_TABLE: Dictionary = {
 			"shirt": "armor_common_cloth_shirt_rl01_0545",
 			"chest": "armor_common_cloth_chest_rl01_0698",
 			"legs": "armor_common_leather_legs_rl01_0518",
+			"weapon_r": "weapon_common_bow_rl01_1201",
 		},
 		"allowed_weapon_types": [
+			"bow",
 			"bow_2h",
 			"crossbow_2h",
 			"dagger_1h",
@@ -142,6 +151,7 @@ const CLASS_TABLE: Dictionary = {
 			"chest": "armor_common_cloth_chest_rl01_0698",
 			"legs": "armor_common_mail_legs_rl01_0509",
 			"boots": "armor_common_mail_boots_rl01_0599",
+			"weapon_r": "weapon_common_sword_2h_rl01_1204",
 		},
 		"allowed_weapon_types": [
 			"sword_1h",
