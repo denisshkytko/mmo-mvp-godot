@@ -370,6 +370,11 @@ func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String) 
 		return false
 	return c_equip.try_equip_from_inventory_slot(inv_slot_index, target_slot_id)
 
+func get_last_equip_fail_reason() -> String:
+	if c_equip == null:
+		return ""
+	return c_equip.get_last_equip_fail_reason()
+
 func get_preferred_equipment_slot(item_id: String) -> String:
 	if c_equip == null:
 		return ""
