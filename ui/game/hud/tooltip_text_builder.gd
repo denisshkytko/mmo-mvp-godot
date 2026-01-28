@@ -1,6 +1,8 @@
 extends RefCounted
 class_name TooltipTextBuilder
 
+const PROG := preload("res://core/stats/progression.gd")
+
 static func rarity_color_hex(rarity: String, typ: String) -> String:
 	var r := rarity.to_lower()
 	if r == "" and typ == "junk":
@@ -75,6 +77,15 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var a: Dictionary = meta.get("armor") as Dictionary
 		var pa: int = int(a.get("physical_armor", 0))
 		var ma: int = int(a.get("magic_armor", 0))
+		var armor_class := String(a.get("class", "")).to_lower()
+		var armor_label := _armor_class_label(armor_class)
+		if armor_label != "":
+			var material_line := "material: %s" % armor_label
+			if player != null and is_instance_valid(player) and ("class_id" in player):
+				var allowed := PROG.get_allowed_armor_classes_for_class(String(player.class_id))
+				if armor_class != "" and not allowed.has(armor_class):
+					material_line = "[color=#ff5555]%s[/color]" % material_line
+			lines.append(material_line)
 		lines.append("armor: %d  magic: %d" % [pa, ma])
 	if meta.has("weapon") and meta.get("weapon") is Dictionary:
 		var w: Dictionary = meta.get("weapon") as Dictionary
@@ -134,6 +145,19 @@ static func _humanize_slot(slot_id: String) -> String:
 	if slot_id == "":
 		return ""
 	return slot_id.replace("_", " ")
+
+static func _armor_class_label(armor_class: String) -> String:
+	match armor_class:
+		"cloth":
+			return "ткань"
+		"leather":
+			return "кожа"
+		"mail":
+			return "кольчуга"
+		"plate":
+			return "латы"
+		_:
+			return ""
 
 static func _format_consumable_effects(consumable: Dictionary) -> Array[String]:
 	var lines: Array[String] = []

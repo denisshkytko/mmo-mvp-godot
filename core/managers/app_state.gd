@@ -127,6 +127,13 @@ func create_character(char_name: String, class_id: String) -> String:
 	if clean_class == "":
 		clean_class = "warrior"
 
+	var base_equipment := Progression.get_base_equipment_for_class(clean_class)
+	var equip_snapshot: Dictionary = {}
+	for slot_id in base_equipment.keys():
+		var item_id := String(base_equipment.get(slot_id, "")).strip_edges()
+		if item_id != "":
+			equip_snapshot[slot_id] = {"id": item_id, "count": 1}
+
 	var data := {
 		"id": id,
 		"name": clean_name,
@@ -150,6 +157,8 @@ func create_character(char_name: String, class_id: String) -> String:
 
 		"inventory": {"gold": 0, "slots": []}
 	}
+	if not equip_snapshot.is_empty():
+		data["equipment"] = equip_snapshot
 
 	var save_system = _save_system()
 	save_system.save_character_full(data)
