@@ -34,6 +34,58 @@ offset_right = 528.0
 offset_bottom = 26.0
 text = "×"
 
+[node name="ItemCellTemplate" type="Panel" parent="Panel"]
+visible = false
+custom_minimum_size = Vector2(240, 52)
+layout_mode = 0
+offset_left = 12.0
+offset_top = 80.0
+offset_right = 252.0
+offset_bottom = 132.0
+
+[node name="Padding" type="MarginContainer" parent="Panel/ItemCellTemplate"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="Content" type="HBoxContainer" parent="Panel/ItemCellTemplate/Padding"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="IconPanel" type="Panel" parent="Panel/ItemCellTemplate/Padding/Content"]
+custom_minimum_size = Vector2(36, 36)
+size_flags_vertical = 4
+
+[node name="Icon" type="TextureRect" parent="Panel/ItemCellTemplate/Padding/Content/IconPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/ItemCellTemplate/Padding/Content"]
+size_flags_horizontal = 3
+size_flags_vertical = 4
+autowrap_mode = 2
+clip_text = true
+
+[node name="ActionButton" type="Button" parent="Panel/ItemCellTemplate/Padding/Content"]
+custom_minimum_size = Vector2(96, 44)
+size_flags_vertical = 4
+text = "Купить"
+
 [node name="Tabs" type="TabContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 12.0

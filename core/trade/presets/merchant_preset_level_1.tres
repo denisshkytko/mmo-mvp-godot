@@ -30,5 +30,6 @@ count = 10
 
 [resource]
 script = ExtResource("1_qog5x")
+preset_id = 0
 title = "Товары для 1 уровня"
 items = [SubResource("Resource_1h1d0"), SubResource("Resource_b4j1g"), SubResource("Resource_e5vgm"), SubResource("Resource_3m6r1"), SubResource("Resource_v7h8o")]

@@ -8,6 +8,7 @@ const DRAG_THRESHOLD: float = 8.0
 @onready var panel: Panel = $Panel
 @onready var title_label: Label = $Panel/Title
 @onready var close_button: Button = $Panel/CloseButton
+@onready var item_cell_template: Panel = $Panel/ItemCellTemplate
 @onready var tabs: TabContainer = $Panel/Tabs
 @onready var buy_scroll: ScrollContainer = $Panel/Tabs/Покупка/Scroll
 @onready var sell_scroll: ScrollContainer = $Panel/Tabs/Продажа/Scroll
@@ -29,6 +30,7 @@ var _sell_entries: Array[Dictionary] = []
 
 var _icon_cache: Dictionary = {}
 var _tooltip_item_id: String = ""
+var _names_pending: bool = false
 
 # Drag state for buy tab
 var _drag_active: bool = false
@@ -109,6 +111,12 @@ func _process(delta: float) -> void:
 	if _sell_refresh_accum >= 1.0:
 		_sell_refresh_accum = 0.0
 		_refresh_sell_grid()
+	if _names_pending:
+		var db := get_node_or_null("/root/DataDB")
+		if db != null and db.is_ready:
+			_names_pending = false
+			_refresh_buy_grid()
+			_refresh_sell_grid()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _is_open:
@@ -206,6 +214,9 @@ func _refresh_buy_grid() -> void:
 			continue
 		var cell := _build_item_cell(item_id, count, "Купить", true)
 		buy_grid.add_child(cell)
+	var db := get_node_or_null("/root/DataDB")
+	if db != null and not db.is_ready:
+		_names_pending = true
 
 func _refresh_sell_grid() -> void:
 	for child in sell_grid.get_children():
@@ -233,61 +244,41 @@ func _refresh_sell_grid() -> void:
 		sell_grid.add_child(cell2)
 
 func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: bool, sale_id: int = -1) -> Panel:
-	var cell := Panel.new()
-	cell.custom_minimum_size = Vector2(240, 50)
+	if item_cell_template == null:
+		return Panel.new()
+	var cell: Panel = item_cell_template.duplicate(0) as Panel
+	cell.visible = true
 	cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cell.size_flags_vertical = Control.SIZE_FILL
 
-	var padding := MarginContainer.new()
-	padding.set_anchors_preset(Control.PRESET_FULL_RECT)
-	padding.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	padding.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	padding.add_theme_constant_override("margin_left", 6)
-	padding.add_theme_constant_override("margin_right", 6)
-	padding.add_theme_constant_override("margin_top", 4)
-	padding.add_theme_constant_override("margin_bottom", 4)
-	cell.add_child(padding)
+	var icon_panel: Panel = cell.get_node_or_null("Padding/Content/IconPanel") as Panel
+	var icon: TextureRect = cell.get_node_or_null("Padding/Content/IconPanel/Icon") as TextureRect
+	var name_label: Label = cell.get_node_or_null("Padding/Content/Name") as Label
+	var action_button: Button = cell.get_node_or_null("Padding/Content/ActionButton") as Button
 
-	var row := HBoxContainer.new()
-	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	padding.add_child(row)
+	if icon_panel != null:
+		icon_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if icon != null:
+		icon.texture = _get_item_icon(item_id)
+	if name_label != null:
+		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		name_label.clip_text = true
+		name_label.max_lines = 2
+		name_label.text = _format_item_label(item_id, count)
+	if action_button != null:
+		action_button.text = _format_action_text(action_text, item_id, count, is_buy)
 
-	var icon_panel := Panel.new()
-	icon_panel.custom_minimum_size = Vector2(32, 32)
-	icon_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(icon_panel)
+	if icon_panel != null:
+		icon_panel.gui_input.connect(_on_item_tooltip_input.bind(item_id, count))
+	if name_label != null:
+		name_label.gui_input.connect(_on_item_tooltip_input.bind(item_id, count))
 
-	var icon := TextureRect.new()
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.custom_minimum_size = Vector2(28, 28)
-	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
-	icon_panel.add_child(icon)
-	icon.texture = _get_item_icon(item_id)
-
-	var name_label := Label.new()
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	name_label.clip_text = true
-	name_label.custom_minimum_size = Vector2(140, 0)
-	name_label.text = _format_item_label(item_id, count)
-	row.add_child(name_label)
-
-	var action_button := Button.new()
-	action_button.custom_minimum_size = Vector2(96, 44)
-	action_button.text = _format_action_text(action_text, item_id, count, is_buy)
-	row.add_child(action_button)
-
-	icon_panel.gui_input.connect(_on_item_tooltip_input.bind(item_id, count))
-	name_label.gui_input.connect(_on_item_tooltip_input.bind(item_id, count))
-
-	if is_buy:
-		action_button.pressed.connect(_on_buy_button_pressed.bind(item_id, count))
-		cell.gui_input.connect(_on_buy_cell_input.bind(item_id, count))
-	else:
-		action_button.pressed.connect(_on_buyback_button_pressed.bind(item_id, count, sale_id))
+	if action_button != null:
+		if is_buy:
+			action_button.pressed.connect(_on_buy_button_pressed.bind(item_id, count))
+			cell.gui_input.connect(_on_buy_cell_input.bind(item_id, count))
+		else:
+			action_button.pressed.connect(_on_buyback_button_pressed.bind(item_id, count, sale_id))
 
 	return cell
 
