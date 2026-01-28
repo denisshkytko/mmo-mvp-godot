@@ -177,9 +177,10 @@ func _append_entries_from_preset(preset: Resource) -> void:
 		for v in entries:
 			if v == null:
 				continue
-			if v.has_method("get"):
-				var item_id: String = String(v.get("item_id", ""))
-				var count: int = int(v.get("count", 1))
+			if v is MerchantItemEntry:
+				var entry := v as MerchantItemEntry
+				var item_id: String = entry.item_id
+				var count: int = entry.count
 				if item_id != "" and count > 0:
 					_buy_entries.append({"id": item_id, "count": count})
 	else:
