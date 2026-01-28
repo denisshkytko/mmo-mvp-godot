@@ -174,6 +174,19 @@ func get_weapon_attack_interval_left() -> float:
 		return 0.0
 	return float(w.get("attack_interval", 1.0))
 
+func get_right_weapon_subtype() -> String:
+	var right_item := _get_slot_item("weapon_r")
+	if right_item.is_empty():
+		return ""
+	var id: String = String(right_item.get("id", ""))
+	if id == "":
+		return ""
+	var meta := _get_item_meta(id)
+	if String(meta.get("type", "")).to_lower() != "weapon":
+		return ""
+	var w: Dictionary = meta.get("weapon", {}) as Dictionary
+	return String(w.get("subtype", "")).to_lower()
+
 func is_two_handed_equipped() -> bool:
 	var right_item := _get_slot_item("weapon_r")
 	if right_item.is_empty():

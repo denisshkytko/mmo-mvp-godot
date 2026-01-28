@@ -4,10 +4,27 @@ class_name PlayerCombat
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
+const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
+
+const MELEE_ATTACK_RANGE: float = 66.0
+const RANGED_ATTACK_RANGE: float = 264.0
+const RANGED_WEAPON_SUBTYPES: Array[String] = [
+	"staff",
+	"staff_2h",
+	"bow",
+	"bow_2h",
+	"crossbow",
+	"crossbow_2h",
+	"wand",
+	"wand_1h",
+]
+
+enum AttackMode { MELEE, RANGED }
 
 var p: Player = null
 var _t_r: float = 0.0
 var _t_l: float = 0.0
+var _attack_mode: int = AttackMode.MELEE
 
 func setup(player: Player) -> void:
 	p = player
@@ -22,8 +39,10 @@ func tick(delta: float) -> void:
 		_t_l = 0.0
 		return
 
+	_attack_mode = _get_attack_mode()
 	var dist: float = p.global_position.distance_to(target.global_position)
-	if dist > p.attack_range:
+	var attack_range := _get_attack_range()
+	if dist > attack_range:
 		return
 
 	var snap: Dictionary = {}
@@ -48,12 +67,18 @@ func tick(delta: float) -> void:
 
 	if hits.has("right") and _t_r <= 0.0:
 		var dmg_r: int = _apply_crit(int(hits.get("right", 0)), snap)
-		_apply_damage_to_target(target, dmg_r)
+		if _attack_mode == AttackMode.RANGED:
+			_fire_ranged(target, dmg_r)
+		else:
+			_apply_damage_to_target(target, dmg_r)
 		_t_r = eff_interval_r
 
 	if hits.has("left") and _t_l <= 0.0:
 		var dmg_l: int = _apply_crit(int(hits.get("left", 0)), snap)
-		_apply_damage_to_target(target, dmg_l)
+		if _attack_mode == AttackMode.RANGED:
+			_fire_ranged(target, dmg_l)
+		else:
+			_apply_damage_to_target(target, dmg_l)
 		_t_l = eff_interval_l
 
 func get_attack_damage() -> int:
@@ -136,17 +161,7 @@ func _apply_crit(base_damage: int, snap: Dictionary) -> int:
 func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
 		return
-
-	# faction gate
-	var attacker_faction := "blue"
-	if p != null and p.has_method("get_faction_id"):
-		attacker_faction = String(p.call("get_faction_id"))
-
-	var target_faction := ""
-	if target.has_method("get_faction_id"):
-		target_faction = String(target.call("get_faction_id"))
-
-	if not FactionRules.can_attack(attacker_faction, target_faction, true):
+	if not _can_attack_target(target):
 		return
 
 	# apply damage (prefer take_damage_from for loot rights)
@@ -156,6 +171,31 @@ func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 		target.call("take_damage", dmg)
 	if p != null and "c_resource" in p and p.c_resource != null:
 		p.c_resource.on_damage_dealt()
+
+func _fire_ranged(target: Node2D, dmg: int) -> void:
+	if target == null or not is_instance_valid(target):
+		return
+	if not _can_attack_target(target):
+		return
+	if RANGED_PROJECTILE_SCENE == null:
+		_apply_damage_to_target(target, dmg)
+		return
+
+	var inst: Node = RANGED_PROJECTILE_SCENE.instantiate()
+	var proj: Node2D = inst as Node2D
+	if proj == null:
+		_apply_damage_to_target(target, dmg)
+		return
+
+	var parent: Node = p.get_parent()
+	if parent == null:
+		_apply_damage_to_target(target, dmg)
+		return
+
+	parent.add_child(proj)
+	proj.global_position = p.global_position
+	if proj.has_method("setup"):
+		proj.call("setup", target, dmg, p)
 
 
 func _get_current_target() -> Node2D:
@@ -167,3 +207,25 @@ func _get_current_target() -> Node2D:
 	if t != null and t is Node2D and is_instance_valid(t):
 		return t as Node2D
 	return null
+
+func _can_attack_target(target: Node2D) -> bool:
+	var attacker_faction := "blue"
+	if p != null and p.has_method("get_faction_id"):
+		attacker_faction = String(p.call("get_faction_id"))
+
+	var target_faction := ""
+	if target != null and target.has_method("get_faction_id"):
+		target_faction = String(target.call("get_faction_id"))
+
+	return FactionRules.can_attack(attacker_faction, target_faction, true)
+
+func _get_attack_mode() -> int:
+	if p == null or p.c_equip == null:
+		return AttackMode.MELEE
+	var subtype := p.c_equip.get_right_weapon_subtype()
+	if subtype != "" and RANGED_WEAPON_SUBTYPES.has(subtype):
+		return AttackMode.RANGED
+	return AttackMode.MELEE
+
+func _get_attack_range() -> float:
+	return RANGED_ATTACK_RANGE if _attack_mode == AttackMode.RANGED else MELEE_ATTACK_RANGE
