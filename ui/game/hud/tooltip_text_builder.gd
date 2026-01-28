@@ -89,9 +89,6 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var pa: int = int(a.get("physical_armor", 0))
 		var ma: int = int(a.get("magic_armor", 0))
 		var armor_class := String(a.get("class", "")).to_lower()
-		var defense_line := _format_defense_line(pa, ma)
-		if defense_line != "":
-			lines.append(defense_line)
 		if armor_class != "":
 			var material_line := "material: %s" % armor_class
 			if player != null and is_instance_valid(player) and ("class_id" in player):
@@ -99,6 +96,9 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 				if armor_class != "" and not allowed.has(armor_class):
 					material_line = "[color=#ff5555]%s[/color]" % material_line
 			lines.append(material_line)
+		var defense_line := _format_defense_line(pa, ma)
+		if defense_line != "":
+			lines.append(defense_line)
 	if meta.has("offhand") and meta.get("offhand") is Dictionary:
 		var oh: Dictionary = meta.get("offhand") as Dictionary
 		var oh_pa: int = int(oh.get("physical_armor", 0))
