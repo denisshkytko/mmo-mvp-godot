@@ -379,6 +379,13 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 	if died_now:
 		_die()
 
+func is_in_combat() -> bool:
+	if current_target == null or not is_instance_valid(current_target):
+		return false
+	if "is_dead" in current_target and bool(current_target.get("is_dead")):
+		return false
+	return true
+
 func _die() -> void:
 	if c_stats.is_dead:
 		return

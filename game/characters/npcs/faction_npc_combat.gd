@@ -2,6 +2,7 @@ extends Node
 class_name FactionNPCCombat
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 enum AttackMode { MELEE, RANGED }
 
@@ -41,12 +42,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _t <= 0.0:
-			if target.has_method("take_damage_from"):
-				target.call("take_damage_from", dmg, actor)
-			elif target.has_method("take_damage"):
-				target.call("take_damage", dmg)
-			if "c_resource" in actor and actor.c_resource != null:
-				actor.c_resource.on_damage_dealt()
+			DAMAGE_HELPER.apply_damage(actor, target, dmg)
 			_t = melee_cooldown / speed_mult
 		return
 

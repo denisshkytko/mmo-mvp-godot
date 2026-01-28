@@ -2,6 +2,7 @@ extends Node
 class_name NormalNeutralMobCombat
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 var melee_stop_distance: float = 45.0
 var melee_attack_range: float = 55.0
@@ -36,10 +37,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	if speed_mult < 0.1:
 		speed_mult = 0.1
 
-	if target.has_method("take_damage"):
-		target.call("take_damage", dmg)
-		if "c_resource" in actor and actor.c_resource != null:
-			actor.c_resource.on_damage_dealt()
+	DAMAGE_HELPER.apply_damage(actor, target, dmg)
 
 	_attack_timer = melee_cooldown / speed_mult
 

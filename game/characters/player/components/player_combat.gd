@@ -4,6 +4,7 @@ class_name PlayerCombat
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 
@@ -154,13 +155,7 @@ func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 	if not _can_attack_target(target):
 		return
 
-	# apply damage (prefer take_damage_from for loot rights)
-	if target.has_method("take_damage_from"):
-		target.call("take_damage_from", dmg, p)
-	elif target.has_method("take_damage"):
-		target.call("take_damage", dmg)
-	if p != null and "c_resource" in p and p.c_resource != null:
-		p.c_resource.on_damage_dealt()
+	DAMAGE_HELPER.apply_damage(p, target, dmg)
 
 func _fire_ranged(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):

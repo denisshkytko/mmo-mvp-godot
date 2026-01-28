@@ -1,6 +1,8 @@
 extends Node
 class_name PlayerSkills
 
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+
 var p: Player = null
 
 var _skill_1_timer: float = 0.0
@@ -58,10 +60,7 @@ func try_cast_skill_1() -> void:
 	if not FactionRules.can_attack(attacker_faction, target_faction, true):
 		return
 
-	if target.has_method("take_damage_from"):
-		target.call("take_damage_from", dmg, p)
-	elif target.has_method("take_damage"):
-		target.call("take_damage", dmg)
+	DAMAGE_HELPER.apply_damage(p, target, dmg)
 
 	p.mana = max(0, p.mana - p.skill_1_mana_cost)
 	_skill_1_timer = _get_effective_skill_cooldown(p.skill_1_cooldown)

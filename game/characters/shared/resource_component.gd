@@ -117,6 +117,8 @@ func _process(delta: float) -> void:
 		return
 	if resource <= 0:
 		return
+	if _is_in_combat():
+		return
 	var now_sec: float = float(Time.get_ticks_msec()) / 1000.0
 	if (now_sec - _last_combat_time_sec) < rage_decay_delay_sec:
 		return
@@ -126,3 +128,10 @@ func _process(delta: float) -> void:
 		return
 	resource = max(0, resource - decay_amount)
 	_rage_decay_accum -= float(decay_amount)
+
+func _is_in_combat() -> bool:
+	if owner_entity == null:
+		return false
+	if owner_entity.has_method("is_in_combat"):
+		return bool(owner_entity.call("is_in_combat"))
+	return false
