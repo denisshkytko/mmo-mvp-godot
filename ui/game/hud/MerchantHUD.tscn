@@ -66,7 +66,7 @@ columns = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/v_separation = 10
 
 [node name="ItemCellTemplate" type="Panel" parent="Panel/Tabs/Покупка/Scroll/Grid"]
 visible = false
@@ -138,4 +138,49 @@ columns = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/v_separation = 10
+
+[node name="ItemCellTemplate" type="Panel" parent="Panel/Tabs/Продажа/Scroll/Grid"]
+visible = false
+
+[node name="Padding" type="MarginContainer" parent="Panel/Tabs/Продажа/Scroll/Grid/ItemCellTemplate"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="Content" type="HBoxContainer" parent="Panel/Tabs/Продажа/Scroll/Grid/ItemCellTemplate/Padding"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="IconPanel" type="Panel" parent="Panel/Tabs/Продажа/Scroll/Grid/ItemCellTemplate/Padding/Content"]
+size_flags_vertical = 4
+
+[node name="Icon" type="TextureRect" parent="Panel/Tabs/Продажа/Scroll/Grid/ItemCellTemplate/Padding/Content/IconPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+stretch_mode = 5
+expand_mode = 2
+
+[node name="Name" type="Label" parent="Panel/Tabs/Продажа/Scroll/Grid/ItemCellTemplate/Padding/Content"]
+size_flags_horizontal = 3
+size_flags_vertical = 4
+autowrap_mode = 2
+clip_text = true
+
+[node name="ActionButton" type="Button" parent="Panel/Tabs/Продажа/Scroll/Grid/ItemCellTemplate/Padding/Content"]
+size_flags_vertical = 4
+text = "Выкупить"
