@@ -32,6 +32,14 @@ const CLASS_TABLE: Dictionary = {
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.60,
 		"attack_role": "melee",
+		"allowed_armor_classes": ["cloth", "leather", "mail"],
+		"base_equipment": {
+			"shirt": "armor_common_cloth_shirt_rl01_0545",
+			"chest": "armor_common_cloth_chest_rl01_0698",
+			"legs": "armor_common_mail_legs_rl01_0509",
+			"boots": "armor_common_mail_boots_rl01_0599",
+			"weapon_r": "weapon_common_mace_2h_rl01_1203",
+		},
 		"allowed_weapon_types": [
 			"sword_1h",
 			"sword_2h",
@@ -48,6 +56,14 @@ const CLASS_TABLE: Dictionary = {
 		"base_melee_attack_interval": 1.75,
 		"npc_base_ranged_attack_interval": 1.75,
 		"attack_role": "hybrid",
+		"allowed_armor_classes": ["cloth", "leather"],
+		"base_equipment": {
+			"shirt": "armor_common_cloth_shirt_rl01_0545",
+			"chest": "armor_common_cloth_chest_rl01_0698",
+			"legs": "armor_common_leather_legs_rl01_0518",
+			"weapon_r": "weapon_common_axe_1h_rl01_1205",
+			"weapon_l": "offhand_common_shield_rl01_1206",
+		},
 		"allowed_weapon_types": [
 			"staff_2h",
 			"mace_1h",
@@ -63,7 +79,14 @@ const CLASS_TABLE: Dictionary = {
 		"base_melee_attack_interval": 1.95,
 		"npc_base_ranged_attack_interval": 1.60,
 		"attack_role": "ranged",
+		"allowed_armor_classes": ["cloth"],
+		"base_equipment": {
+			"shirt": "armor_common_cloth_shirt_rl01_0545",
+			"chest": "armor_common_cloth_chest_rl01_0698",
+			"weapon_r": "weapon_common_staff_rl01_1202",
+		},
 		"allowed_weapon_types": [
+			"staff",
 			"staff_2h",
 			"wand_1h",
 			"sword_1h",
@@ -78,7 +101,14 @@ const CLASS_TABLE: Dictionary = {
 		"base_melee_attack_interval": 1.90,
 		"npc_base_ranged_attack_interval": 1.70,
 		"attack_role": "ranged",
+		"allowed_armor_classes": ["cloth"],
+		"base_equipment": {
+			"shirt": "armor_common_cloth_shirt_rl01_0545",
+			"chest": "armor_common_cloth_chest_rl01_0698",
+			"weapon_r": "weapon_common_staff_rl01_1202",
+		},
 		"allowed_weapon_types": [
+			"staff",
 			"staff_2h",
 			"wand_1h",
 			"sword_1h",
@@ -93,7 +123,15 @@ const CLASS_TABLE: Dictionary = {
 		"base_melee_attack_interval": 1.80,
 		"npc_base_ranged_attack_interval": 1.70,
 		"attack_role": "hybrid",
+		"allowed_armor_classes": ["cloth", "leather"],
+		"base_equipment": {
+			"shirt": "armor_common_cloth_shirt_rl01_0545",
+			"chest": "armor_common_cloth_chest_rl01_0698",
+			"legs": "armor_common_leather_legs_rl01_0518",
+			"weapon_r": "weapon_common_bow_rl01_1201",
+		},
 		"allowed_weapon_types": [
+			"bow",
 			"bow_2h",
 			"crossbow_2h",
 			"dagger_1h",
@@ -107,6 +145,14 @@ const CLASS_TABLE: Dictionary = {
 		"resource_type": "rage",
 		"base_melee_attack_interval": 1.50,
 		"attack_role": "melee",
+		"allowed_armor_classes": ["cloth", "leather", "mail"],
+		"base_equipment": {
+			"shirt": "armor_common_cloth_shirt_rl01_0545",
+			"chest": "armor_common_cloth_chest_rl01_0698",
+			"legs": "armor_common_mail_legs_rl01_0509",
+			"boots": "armor_common_mail_boots_rl01_0599",
+			"weapon_r": "weapon_common_sword_2h_rl01_1204",
+		},
 		"allowed_weapon_types": [
 			"sword_1h",
 			"sword_2h",
@@ -124,6 +170,8 @@ const CLASS_TABLE: Dictionary = {
 		"resource_type": "rage",
 		"base_melee_attack_interval": 1.70,
 		"attack_role": "melee",
+		"allowed_armor_classes": [],
+		"base_equipment": {},
 		"allowed_weapon_types": [],
 	},
 }
@@ -255,3 +303,21 @@ static func get_allowed_weapon_types_for_class(class_id: String) -> Array[String
 			if val != "":
 				allowed.append(val)
 	return allowed
+
+static func get_allowed_armor_classes_for_class(class_id: String) -> Array[String]:
+	if not is_valid_class_id(class_id):
+		return []
+	var def := CLASS_TABLE.get(class_id, {}) as Dictionary
+	var allowed: Array[String] = []
+	var raw: Variant = def.get("allowed_armor_classes", [])
+	if raw is Array:
+		for entry in raw:
+			var val := String(entry).strip_edges()
+			if val != "":
+				allowed.append(val)
+	return allowed
+
+static func get_base_equipment_for_class(class_id: String) -> Dictionary:
+	var def := get_class_def(class_id)
+	var equip := def.get("base_equipment", {}) as Dictionary
+	return equip.duplicate(true)

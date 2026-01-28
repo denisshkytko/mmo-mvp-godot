@@ -36,6 +36,7 @@ var home_position: Vector2 = Vector2.ZERO
 
 # Стандартная сцена трупа (для всех мобов)
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
+const BASE_XP_L1_AGGRESSIVE: int = 10
 
 # Награда опыта
 var xp_reward: int = 0
@@ -148,12 +149,19 @@ func _physics_process(delta: float) -> void:
 	if current_target == null or not is_instance_valid(current_target):
 		current_target = _pick_target()
 	else:
-		# если цель стала не-hostile — сбрасываем
-		var tf := ""
-		if current_target.has_method("get_faction_id"):
-			tf = String(current_target.call("get_faction_id"))
-		if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
+		if "is_dead" in current_target and bool(current_target.get("is_dead")):
 			current_target = null
+			regen_active = true
+		else:
+			# если цель стала не-hostile — сбрасываем
+			var tf := ""
+			if current_target.has_method("get_faction_id"):
+				tf = String(current_target.call("get_faction_id"))
+			if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
+				current_target = null
+	if current_target != null and c_ai != null and c_ai.is_returning():
+		current_target = null
+		regen_active = true
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
 		_prev_target = null
@@ -161,6 +169,12 @@ func _physics_process(delta: float) -> void:
 		current_target = null
 
 	if _prev_target != current_target:
+		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
+		var cur_valid := (current_target != null and is_instance_valid(current_target))
+		if cur_valid:
+			regen_active = false
+		elif prev_valid and not cur_valid:
+			regen_active = true
 		_notify_target_change(_prev_target, current_target)
 		_prev_target = current_target
 
@@ -180,8 +194,7 @@ func _physics_process(delta: float) -> void:
 
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
-		c_combat.tick(delta, self, current_target, c_stats.attack_value, aspct)
+		c_combat.tick(delta, self, current_target, snap)
 
 # ------------------------------------------------------------
 # Called by Spawner
@@ -388,10 +401,17 @@ func _die() -> void:
 	current_target = null
 	_prev_target = null
 
+	var xp_amount := 0
+	if loot_owner_player_id != 0:
+		var owner_node: Node = LootRights.get_player_by_instance_id(get_tree(), loot_owner_player_id)
+		if owner_node != null and owner_node.is_in_group("player"):
+			var player_lvl: int = int(owner_node.get("level"))
+			xp_amount = XpSystem.xp_reward_for_kill(BASE_XP_L1_AGGRESSIVE, mob_level, player_lvl)
+
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
 		loot_owner_player_id,
-		_get_xp_reward(),
+		xp_amount,
 		mob_level,
 		loot_profile,
 		{ "mob_kind": "aggressive" }
@@ -399,13 +419,6 @@ func _die() -> void:
 
 	emit_signal("died", corpse)
 	queue_free()
-
-func _get_xp_reward() -> int:
-	if xp_reward > 0:
-		return xp_reward
-
-	return base_xp + mob_level * xp_per_level
-
 
 func _on_leash_return_started() -> void:
 	# бой сбросился → права на лут больше нет

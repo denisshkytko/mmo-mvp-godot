@@ -162,12 +162,24 @@ func _physics_process(delta: float) -> void:
 
 	_apply_to_components()
 
+	var prev_has_aggr := (aggressor != null and is_instance_valid(aggressor))
+	if aggressor != null and is_instance_valid(aggressor):
+		if "is_dead" in aggressor and bool(aggressor.get("is_dead")):
+			aggressor = null
+			is_aggressive = false
+			regen_active = true
 	if aggressor != null and not is_instance_valid(aggressor):
 		aggressor = null
 		is_aggressive = false
 
 	if _prev_aggressor != null and not is_instance_valid(_prev_aggressor):
 		_prev_aggressor = null
+
+	var cur_has_aggr := (aggressor != null and is_instance_valid(aggressor))
+	if cur_has_aggr:
+		regen_active = false
+	elif prev_has_aggr and not cur_has_aggr:
+		regen_active = true
 
 	if _prev_aggressor != aggressor:
 		_notify_target_change(_prev_aggressor, aggressor)
@@ -187,8 +199,7 @@ func _physics_process(delta: float) -> void:
 	# атака только если агрессивен
 	if is_aggressive and aggressor != null and is_instance_valid(aggressor):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
-		c_combat.tick(delta, self, aggressor, c_stats.attack_value, aspct)
+		c_combat.tick(delta, self, aggressor, snap)
 
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"
@@ -402,10 +413,17 @@ func _die() -> void:
 		_notify_target_change(_prev_aggressor, null)
 	_prev_aggressor = null
 
+	var xp_amount := 0
+	if loot_owner_player_id != 0:
+		var owner_node: Node = LootRights.get_player_by_instance_id(get_tree(), loot_owner_player_id)
+		if owner_node != null and owner_node.is_in_group("player"):
+			var player_lvl: int = int(owner_node.get("level"))
+			xp_amount = XpSystem.xp_reward_for_kill(_base_xp_l1_by_size(), mob_level, player_lvl)
+
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
 		loot_owner_player_id,
-		(base_xp + mob_level * xp_per_level),
+		xp_amount,
 		mob_level,
 		loot_profile,
 		{
@@ -417,3 +435,16 @@ func _die() -> void:
 
 	emit_signal("died", corpse)
 	queue_free()
+
+func _base_xp_l1_by_size() -> int:
+	match body_size:
+		BodySize.SMALL:
+			return 2
+		BodySize.LARGE:
+			return 14
+		BodySize.MEDIUM:
+			return 10
+		BodySize.HUMANOID:
+			return 10
+		_:
+			return 10

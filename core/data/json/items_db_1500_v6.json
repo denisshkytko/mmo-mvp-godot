@@ -37021,6 +37021,151 @@
         "magic_armor": 190
       },
       "icon": "res://assets/icons/items/offhand_offhand_legendary.png"
+    },
+    {
+      "id": "weapon_common_bow_rl01_1201",
+      "name": "Common Bow",
+      "type": "weapon",
+      "rarity": "common",
+      "required_level": 1,
+      "item_level": 2,
+      "stack_max": 1,
+      "vendor_price_bronze": 120,
+      "stats_modifiers": {},
+      "tags": [
+        "gear",
+        "weapon",
+        "bow",
+        "01_09"
+      ],
+      "weapon": {
+        "damage": 11,
+        "attack_interval": 1.35,
+        "handed": 2,
+        "subtype": "bow",
+        "projectile_scene": "res://game/characters/mobs/projectiles/HomingProjectile.tscn"
+      },
+      "icon": "res://assets/icons/items/weapon_bow_uncommon.png"
+    },
+    {
+      "id": "weapon_common_staff_rl01_1202",
+      "name": "Common Staff",
+      "type": "weapon",
+      "rarity": "common",
+      "required_level": 1,
+      "item_level": 2,
+      "stack_max": 1,
+      "vendor_price_bronze": 130,
+      "stats_modifiers": {},
+      "tags": [
+        "gear",
+        "weapon",
+        "staff",
+        "01_09"
+      ],
+      "weapon": {
+        "damage": 12,
+        "attack_interval": 1.5,
+        "handed": 2,
+        "subtype": "staff",
+        "projectile_scene": "res://game/characters/mobs/projectiles/HomingProjectile.tscn"
+      },
+      "icon": "res://assets/icons/items/weapon_staff_uncommon.png"
+    },
+    {
+      "id": "weapon_common_mace_2h_rl01_1203",
+      "name": "Common Mace 2H",
+      "type": "weapon",
+      "rarity": "common",
+      "required_level": 1,
+      "item_level": 2,
+      "stack_max": 1,
+      "vendor_price_bronze": 140,
+      "stats_modifiers": {},
+      "tags": [
+        "gear",
+        "weapon",
+        "mace_2h",
+        "01_09"
+      ],
+      "weapon": {
+        "damage": 16,
+        "attack_interval": 1.8,
+        "handed": 2,
+        "subtype": "mace_2h"
+      },
+      "icon": "res://assets/icons/items/weapon_axe_2h_uncommon.png"
+    },
+    {
+      "id": "weapon_common_sword_2h_rl01_1204",
+      "name": "Common Sword 2H",
+      "type": "weapon",
+      "rarity": "common",
+      "required_level": 1,
+      "item_level": 2,
+      "stack_max": 1,
+      "vendor_price_bronze": 140,
+      "stats_modifiers": {},
+      "tags": [
+        "gear",
+        "weapon",
+        "sword_2h",
+        "01_09"
+      ],
+      "weapon": {
+        "damage": 18,
+        "attack_interval": 1.65,
+        "handed": 2,
+        "subtype": "sword_2h"
+      },
+      "icon": "res://assets/icons/items/weapon_sword_2h_uncommon.png"
+    },
+    {
+      "id": "weapon_common_axe_1h_rl01_1205",
+      "name": "Common Axe 1H",
+      "type": "weapon",
+      "rarity": "common",
+      "required_level": 1,
+      "item_level": 2,
+      "stack_max": 1,
+      "vendor_price_bronze": 90,
+      "stats_modifiers": {},
+      "tags": [
+        "gear",
+        "weapon",
+        "axe_1h",
+        "01_09"
+      ],
+      "weapon": {
+        "damage": 7,
+        "attack_interval": 1.3,
+        "handed": 1,
+        "subtype": "axe_1h"
+      },
+      "icon": "res://assets/icons/items/weapon_axe_1h_uncommon.png"
+    },
+    {
+      "id": "offhand_common_shield_rl01_1206",
+      "name": "Common Shield",
+      "type": "offhand",
+      "rarity": "common",
+      "required_level": 1,
+      "item_level": 2,
+      "stack_max": 1,
+      "vendor_price_bronze": 80,
+      "stats_modifiers": {},
+      "tags": [
+        "gear",
+        "offhand",
+        "shield",
+        "01_09"
+      ],
+      "offhand": {
+        "slot": "shield",
+        "physical_armor": 18,
+        "magic_armor": 0
+      },
+      "icon": "res://assets/icons/items/offhand_shield_uncommon.png"
     }
   ]
 }

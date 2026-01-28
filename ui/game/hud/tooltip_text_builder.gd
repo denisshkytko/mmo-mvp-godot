@@ -1,6 +1,8 @@
 extends RefCounted
 class_name TooltipTextBuilder
 
+const PROG := preload("res://core/stats/progression.gd")
+
 static func rarity_color_hex(rarity: String, typ: String) -> String:
 	var r := rarity.to_lower()
 	if r == "" and typ == "junk":
@@ -75,6 +77,14 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var a: Dictionary = meta.get("armor") as Dictionary
 		var pa: int = int(a.get("physical_armor", 0))
 		var ma: int = int(a.get("magic_armor", 0))
+		var armor_class := String(a.get("class", "")).to_lower()
+		if armor_class != "":
+			var material_line := "material: %s" % armor_class
+			if player != null and is_instance_valid(player) and ("class_id" in player):
+				var allowed := PROG.get_allowed_armor_classes_for_class(String(player.class_id))
+				if armor_class != "" and not allowed.has(armor_class):
+					material_line = "[color=#ff5555]%s[/color]" % material_line
+			lines.append(material_line)
 		lines.append("armor: %d  magic: %d" % [pa, ma])
 	if meta.has("weapon") and meta.get("weapon") is Dictionary:
 		var w: Dictionary = meta.get("weapon") as Dictionary

@@ -4,6 +4,7 @@ class_name PlayerStats
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
+const XP_SYSTEM := preload("res://core/progression/xp_system.gd")
 
 var p: Player = null
 
@@ -53,12 +54,13 @@ func add_xp(amount: int) -> void:
 		recalculate_for_level(true)
 
 func _calc_xp_to_next(new_level: int) -> int:
-	return 10 + (new_level - 1) * 5
+	return XP_SYSTEM.xp_to_next(new_level)
 
 func recalculate_for_level(full_restore: bool) -> void:
 	if p == null:
 		return
 
+	p.xp_to_next = _calc_xp_to_next(p.level)
 	_snapshot = _build_snapshot()
 	_apply_rage_mana_override(_snapshot)
 

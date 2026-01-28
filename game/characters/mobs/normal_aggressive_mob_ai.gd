@@ -35,6 +35,9 @@ func force_return() -> void:
 	_force_chase_timer = 0.0
 	emit_signal("leash_return_started")
 
+func is_returning() -> bool:
+	return _state == AIState.RETURN
+
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	_force_chase_timer = max(0.0, _force_chase_timer - delta)
 

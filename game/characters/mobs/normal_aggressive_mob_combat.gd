@@ -1,7 +1,7 @@
 extends Node
 class_name NormalAggresiveMobCombat
 
-const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 
 enum AttackMode { MELEE, RANGED }
 
@@ -22,7 +22,7 @@ var _attack_timer: float = 0.0
 func reset_combat() -> void:
 	_attack_timer = 0.0
 
-func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack_speed_pct: float = 0.0) -> void:
+func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void:
 	_attack_timer = max(0.0, _attack_timer - delta)
 
 	if target == null or not is_instance_valid(target):
@@ -33,12 +33,13 @@ func tick(delta: float, actor: Node2D, target: Node2D, attack_power: int, attack
 		return
 
 	var dist: float = actor.global_position.distance_to(target.global_position)
-	# unified physical damage
-	var dmg: int = int(round(float(attack_power) * STAT_CONST.AP_DAMAGE_SCALAR))
-	if dmg < 1:
-		dmg = 1
+	var derived: Dictionary = snap.get("derived", {}) as Dictionary
+	var ap: float = float(derived.get("attack_power", 0.0))
+	var raw: int = STAT_CALC.compute_mob_unarmed_hit(ap)
+	var dmg: int = STAT_CALC.apply_crit_to_damage(raw, snap)
 
-	var speed_mult: float = 1.0 + max(0.0, attack_speed_pct) / 100.0
+	var aspct: float = float(snap.get("attack_speed_pct", 0.0))
+	var speed_mult: float = 1.0 + max(0.0, aspct) / 100.0
 	if speed_mult < 0.1:
 		speed_mult = 0.1
 

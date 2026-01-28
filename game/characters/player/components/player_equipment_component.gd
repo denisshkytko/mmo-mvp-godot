@@ -319,6 +319,10 @@ func _can_equip_in_slot(meta: Dictionary, target_slot_id: String) -> bool:
 	var allowed_types := Progression.get_allowed_weapon_types_for_class(class_id)
 	if typ == "armor":
 		var slot: String = String((meta.get("armor", {}) as Dictionary).get("slot", ""))
+		var armor_class: String = String((meta.get("armor", {}) as Dictionary).get("class", "")).to_lower()
+		var allowed_armor := Progression.get_allowed_armor_classes_for_class(class_id)
+		if armor_class != "" and not allowed_armor.has(armor_class):
+			return false
 		return slot == target_slot_id
 	if typ == "accessory":
 		var slot2: String = String((meta.get("accessory", {}) as Dictionary).get("slot", ""))

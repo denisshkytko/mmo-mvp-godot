@@ -16,6 +16,7 @@ signal died(corpse: Corpse)
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
+const BASE_XP_L1_FACTION: int = 3
 
 enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
@@ -311,6 +312,10 @@ func _physics_process(delta: float) -> void:
 	# (yellow is non-proactive by design)
 	if current_target == null and proactive_aggro:
 		current_target = _pick_target()
+	if current_target != null and is_instance_valid(current_target):
+		if "is_dead" in current_target and bool(current_target.get("is_dead")):
+			current_target = null
+			regen_active = true
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
 		_prev_target = null
@@ -318,6 +323,12 @@ func _physics_process(delta: float) -> void:
 		current_target = null
 
 	if _prev_target != current_target:
+		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
+		var cur_valid := (current_target != null and is_instance_valid(current_target))
+		if cur_valid:
+			regen_active = false
+		elif prev_valid and not cur_valid:
+			regen_active = true
 		_notify_target_change(_prev_target, current_target)
 		_prev_target = current_target
 
@@ -327,8 +338,7 @@ func _physics_process(delta: float) -> void:
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		var aspct: float = float(snap.get("attack_speed_pct", 0.0))
-		c_combat.tick(delta, self, current_target, c_stats.attack_value, aspct)
+		c_combat.tick(delta, self, current_target, snap)
 
 
 func _pick_target() -> Node2D:
@@ -382,10 +392,17 @@ func _die() -> void:
 	if p == null:
 		p = default_loot_profile
 
+	var xp_amount := 0
+	if loot_owner_player_id != 0:
+		var owner_node: Node = LootRights.get_player_by_instance_id(get_tree(), loot_owner_player_id)
+		if owner_node != null and owner_node.is_in_group("player"):
+			var player_lvl: int = int(owner_node.get("level"))
+			xp_amount = XpSystem.xp_reward_for_kill(BASE_XP_L1_FACTION, npc_level, player_lvl)
+
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
 		loot_owner_player_id,
-		(base_xp + npc_level * xp_per_level),
+		xp_amount,
 		npc_level,
 		p,
 		{ "mob_kind": "faction_npc" }
