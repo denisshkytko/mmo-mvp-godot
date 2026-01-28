@@ -16,6 +16,7 @@ signal died(corpse: Corpse)
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
+const BASE_XP_L1_FACTION: int = 3
 
 enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
@@ -391,10 +392,17 @@ func _die() -> void:
 	if p == null:
 		p = default_loot_profile
 
+	var xp_amount := 0
+	if loot_owner_player_id != 0:
+		var owner_node: Node = LootRights.get_player_by_instance_id(get_tree(), loot_owner_player_id)
+		if owner_node != null and owner_node.is_in_group("player"):
+			var player_lvl: int = int(owner_node.get("level"))
+			xp_amount = XpSystem.xp_reward_for_kill(BASE_XP_L1_FACTION, npc_level, player_lvl)
+
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
 		loot_owner_player_id,
-		(base_xp + npc_level * xp_per_level),
+		xp_amount,
 		npc_level,
 		p,
 		{ "mob_kind": "faction_npc" }

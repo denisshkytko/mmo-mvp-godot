@@ -413,10 +413,17 @@ func _die() -> void:
 		_notify_target_change(_prev_aggressor, null)
 	_prev_aggressor = null
 
+	var xp_amount := 0
+	if loot_owner_player_id != 0:
+		var owner_node: Node = LootRights.get_player_by_instance_id(get_tree(), loot_owner_player_id)
+		if owner_node != null and owner_node.is_in_group("player"):
+			var player_lvl: int = int(owner_node.get("level"))
+			xp_amount = XpSystem.xp_reward_for_kill(_base_xp_l1_by_size(), mob_level, player_lvl)
+
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
 		loot_owner_player_id,
-		(base_xp + mob_level * xp_per_level),
+		xp_amount,
 		mob_level,
 		loot_profile,
 		{
@@ -428,3 +435,16 @@ func _die() -> void:
 
 	emit_signal("died", corpse)
 	queue_free()
+
+func _base_xp_l1_by_size() -> int:
+	match body_size:
+		BodySize.SMALL:
+			return 2
+		BodySize.LARGE:
+			return 14
+		BodySize.MEDIUM:
+			return 10
+		BodySize.HUMANOID:
+			return 10
+		_:
+			return 10

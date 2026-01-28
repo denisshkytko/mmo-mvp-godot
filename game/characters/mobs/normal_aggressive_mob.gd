@@ -36,6 +36,7 @@ var home_position: Vector2 = Vector2.ZERO
 
 # Стандартная сцена трупа (для всех мобов)
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
+const BASE_XP_L1_AGGRESSIVE: int = 10
 
 # Награда опыта
 var xp_reward: int = 0
@@ -400,10 +401,17 @@ func _die() -> void:
 	current_target = null
 	_prev_target = null
 
+	var xp_amount := 0
+	if loot_owner_player_id != 0:
+		var owner_node: Node = LootRights.get_player_by_instance_id(get_tree(), loot_owner_player_id)
+		if owner_node != null and owner_node.is_in_group("player"):
+			var player_lvl: int = int(owner_node.get("level"))
+			xp_amount = XpSystem.xp_reward_for_kill(BASE_XP_L1_AGGRESSIVE, mob_level, player_lvl)
+
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
 		loot_owner_player_id,
-		_get_xp_reward(),
+		xp_amount,
 		mob_level,
 		loot_profile,
 		{ "mob_kind": "aggressive" }
@@ -411,13 +419,6 @@ func _die() -> void:
 
 	emit_signal("died", corpse)
 	queue_free()
-
-func _get_xp_reward() -> int:
-	if xp_reward > 0:
-		return xp_reward
-
-	return base_xp + mob_level * xp_per_level
-
 
 func _on_leash_return_started() -> void:
 	# бой сбросился → права на лут больше нет
