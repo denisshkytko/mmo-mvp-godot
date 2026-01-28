@@ -526,7 +526,7 @@ func _get_item_icon(item_id: String) -> Texture2D:
 		if path != "" and ResourceLoader.exists(path):
 			tex = load(path)
 	if tex == null:
-		tex = preload("res://assets/icons/items/loot_bag.png")
+		tex = preload("res://assets/icons/items/bag_6_common.png")
 	_icon_cache[item_id] = tex
 	return tex
 
