@@ -78,9 +78,8 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var pa: int = int(a.get("physical_armor", 0))
 		var ma: int = int(a.get("magic_armor", 0))
 		var armor_class := String(a.get("class", "")).to_lower()
-		var armor_label := _armor_class_label(armor_class)
-		if armor_label != "":
-			var material_line := "material: %s" % armor_label
+		if armor_class != "":
+			var material_line := "material: %s" % armor_class
 			if player != null and is_instance_valid(player) and ("class_id" in player):
 				var allowed := PROG.get_allowed_armor_classes_for_class(String(player.class_id))
 				if armor_class != "" and not allowed.has(armor_class):
@@ -145,19 +144,6 @@ static func _humanize_slot(slot_id: String) -> String:
 	if slot_id == "":
 		return ""
 	return slot_id.replace("_", " ")
-
-static func _armor_class_label(armor_class: String) -> String:
-	match armor_class:
-		"cloth":
-			return "ткань"
-		"leather":
-			return "кожа"
-		"mail":
-			return "кольчуга"
-		"plate":
-			return "латы"
-		_:
-			return ""
 
 static func _format_consumable_effects(consumable: Dictionary) -> Array[String]:
 	var lines: Array[String] = []
