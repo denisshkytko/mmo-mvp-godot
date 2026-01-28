@@ -3,6 +3,7 @@ class_name PlayerCombat
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
+const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 
@@ -66,7 +67,7 @@ func tick(delta: float) -> void:
 	_t_l = max(0.0, _t_l - delta)
 
 	if hits.has("right") and _t_r <= 0.0:
-		var dmg_r: int = _apply_crit(int(hits.get("right", 0)), snap)
+		var dmg_r: int = STAT_CALC.apply_crit_to_damage(int(hits.get("right", 0)), snap)
 		if _attack_mode == AttackMode.RANGED:
 			_fire_ranged(target, dmg_r)
 		else:
@@ -74,7 +75,7 @@ func tick(delta: float) -> void:
 		_t_r = eff_interval_r
 
 	if hits.has("left") and _t_l <= 0.0:
-		var dmg_l: int = _apply_crit(int(hits.get("left", 0)), snap)
+		var dmg_l: int = STAT_CALC.apply_crit_to_damage(int(hits.get("left", 0)), snap)
 		if _attack_mode == AttackMode.RANGED:
 			_fire_ranged(target, dmg_l)
 		else:
@@ -146,17 +147,6 @@ func _get_class_base_interval() -> float:
 	if p == null:
 		return 1.0
 	return float(PROG.get_base_melee_attack_interval_for_class(p.class_id))
-
-func _apply_crit(base_damage: int, snap: Dictionary) -> int:
-	if base_damage <= 0:
-		return 1
-	var crit_chance_pct: float = float(snap.get("crit_chance_pct", 0.0))
-	var crit_mult: float = float(snap.get("crit_multiplier", 2.0))
-	var final: float = float(base_damage)
-	if (randf() * 100.0) < crit_chance_pct:
-		final *= crit_mult
-	return max(1, int(round(final)))
-
 
 func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
