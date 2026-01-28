@@ -341,6 +341,12 @@ func add_item(item_id: String, amount: int) -> int:
 
 	return remaining
 
+func consume_item(item_id: String, amount: int = 1) -> int:
+	var removed: int = c_inv.consume_item(item_id, amount)
+	if removed > 0:
+		_request_save("item")
+	return removed
+
 
 func add_xp(amount: int) -> void:
 	c_stats.add_xp(amount)

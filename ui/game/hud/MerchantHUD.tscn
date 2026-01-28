@@ -1,0 +1,88 @@
+[gd_scene load_steps=3 format=3 uid="uid://z2n5el699p5r"]
+
+[ext_resource type="Script" uid="uid://31wu7f4vmesd" path="res://ui/game/hud/merchant_hud.gd" id="1_yj2p2"]
+[ext_resource type="PackedScene" uid="uid://bhgl2a5rnu6k7" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_2u4xq"]
+
+[node name="MerchantHUD" type="CanvasLayer"]
+script = ExtResource("1_yj2p2")
+
+[node name="TooltipPanel" parent="." instance=ExtResource("2_2u4xq")]
+z_index = 50
+
+[node name="Panel" type="Panel" parent="."]
+visible = false
+custom_minimum_size = Vector2(540, 420)
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 564.0
+offset_bottom = 444.0
+
+[node name="Title" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 260.0
+offset_bottom = 30.0
+text = "Торговля"
+
+[node name="Tabs" type="TabContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 38.0
+offset_right = 528.0
+offset_bottom = 392.0
+
+[node name="Покупка" type="Control" parent="Panel/Tabs"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Tabs/Покупка"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Grid" type="GridContainer" parent="Panel/Tabs/Покупка/Scroll"]
+columns = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="Продажа" type="Control" parent="Panel/Tabs"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Tabs/Продажа"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Grid" type="GridContainer" parent="Panel/Tabs/Продажа/Scroll"]
+columns = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8

@@ -9,6 +9,7 @@ signal died(corpse: Corpse)
 @onready var faction_rect: ColorRect = $"ColorRect"
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
+@onready var merchant_hint: Label = get_node_or_null("UI/MerchantHint") as Label
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -17,6 +18,8 @@ signal died(corpse: Corpse)
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 const BASE_XP_L1_FACTION: int = 3
+const MERCHANT_HINT_TEXT: String = "\"E\" to trade"
+const MERCHANT_BUYBACK_TTL_MSEC: int = 10 * 60 * 1000
 
 enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
@@ -42,6 +45,10 @@ var _prev_target: Node2D = null
 # Право на лут: первый удар игрока в текущем бою
 var loot_owner_player_id: int = 0
 
+# Merchant buyback storage (per player)
+var _merchant_sales: Dictionary = {}
+var _merchant_sale_seq: int = 0
+
 # Реген после сброса боя
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
@@ -55,6 +62,10 @@ const REGEN_PCT_PER_SEC: float = 0.02
 @export var move_speed: float = 120.0
 @export var aggro_radius: float = 260.0
 @export var leash_distance: float = 420.0
+
+@export_group("Merchant")
+@export var merchant_interact_radius: float = 60.0
+@export var merchant_preset: MerchantPreset
 
 
 # -----------------------------
@@ -141,6 +152,9 @@ func _ready() -> void:
 
 	_update_faction_color()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
+	if merchant_hint != null:
+		merchant_hint.text = MERCHANT_HINT_TEXT
+		merchant_hint.visible = false
 
 func get_faction_id() -> String:
 	return faction_id
@@ -161,7 +175,8 @@ func apply_spawn_init(
 	loot_profile_in: LootProfile,
 	projectile_scene_in: PackedScene,
 	class_id_in: String = "",
-	growth_profile_id_in: String = ""
+	growth_profile_id_in: String = "",
+	merchant_preset_in: MerchantPreset = null
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -172,6 +187,7 @@ func apply_spawn_init(
 	interaction_type = interaction_in
 	npc_level = max(1, level_in)
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
+	merchant_preset = merchant_preset_in
 
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
@@ -263,6 +279,7 @@ func _process(_delta: float) -> void:
 	if current_target != null and is_instance_valid(current_target):
 		is_aggro_on_player = current_target.is_in_group("player")
 	TargetMarkerHelper.set_marker_visible(target_marker, is_aggro_on_player)
+	_update_merchant_interaction()
 
 
 func _physics_process(delta: float) -> void:
@@ -461,6 +478,104 @@ func _notify_target_change(old_t, new_t) -> void:
 	if new_t != null and is_instance_valid(new_t):
 		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
 			new_t.call("on_targeted_by", self)
+
+func _update_merchant_interaction() -> void:
+	if interaction_type != InteractionType.MERCHANT:
+		if merchant_hint != null:
+			merchant_hint.visible = false
+		return
+	if merchant_hint == null:
+		return
+	var p: Node = NodeCache.get_player(get_tree())
+	if p == null or not is_instance_valid(p):
+		merchant_hint.visible = false
+		return
+	var dist: float = global_position.distance_to(p.global_position)
+	var can_trade: bool = _can_trade_with(p)
+	var show_hint: bool = can_trade and dist <= merchant_interact_radius
+	merchant_hint.visible = show_hint
+	if show_hint and Input.is_action_just_pressed("loot"):
+		_try_open_merchant(p)
+
+func _can_trade_with(player_node: Node) -> bool:
+	if player_node == null or c_stats == null or c_stats.is_dead:
+		return false
+	var pf: String = "blue"
+	if player_node.has_method("get_faction_id"):
+		pf = String(player_node.call("get_faction_id"))
+	var rel: int = FactionRules.relation(pf, faction_id)
+	if rel == FactionRules.Relation.HOSTILE:
+		return false
+	if rel == FactionRules.Relation.NEUTRAL and is_in_combat():
+		return false
+	return true
+
+func _try_open_merchant(_player_node: Node) -> void:
+	var ui := get_tree().get_first_node_in_group("merchant_ui")
+	if ui != null and ui.has_method("toggle_for_merchant"):
+		ui.call("toggle_for_merchant", self)
+
+func get_merchant_preset() -> MerchantPreset:
+	return merchant_preset
+
+func get_merchant_title() -> String:
+	return ""
+
+func add_merchant_sale(player_id: int, item_id: String, count: int) -> void:
+	if player_id == 0 or item_id == "" or count <= 0:
+		return
+	_prune_merchant_sales(player_id)
+	var list: Array = _merchant_sales.get(player_id, [])
+	_merchant_sale_seq += 1
+	list.append({
+		"sale_id": _merchant_sale_seq,
+		"id": item_id,
+		"count": count,
+		"expires_at": Time.get_ticks_msec() + MERCHANT_BUYBACK_TTL_MSEC
+	})
+	_merchant_sales[player_id] = list
+
+func get_merchant_sales_for_player(player_id: int) -> Array:
+	if player_id == 0:
+		return []
+	_prune_merchant_sales(player_id)
+	if not _merchant_sales.has(player_id):
+		return []
+	return (_merchant_sales[player_id] as Array).duplicate(true)
+
+func take_merchant_sale(player_id: int, sale_id: int) -> Dictionary:
+	if player_id == 0:
+		return {}
+	_prune_merchant_sales(player_id)
+	if not _merchant_sales.has(player_id):
+		return {}
+	var list: Array = _merchant_sales[player_id] as Array
+	for i in range(list.size()):
+		var entry: Dictionary = list[i] as Dictionary
+		if int(entry.get("sale_id", -1)) == sale_id:
+			list.remove_at(i)
+			if list.is_empty():
+				_merchant_sales.erase(player_id)
+			else:
+				_merchant_sales[player_id] = list
+			return entry
+	return {}
+
+func _prune_merchant_sales(player_id: int) -> void:
+	if not _merchant_sales.has(player_id):
+		return
+	var list: Array = _merchant_sales[player_id] as Array
+	var now: int = Time.get_ticks_msec()
+	var filtered: Array = []
+	for entry in list:
+		if entry is Dictionary:
+			var exp: int = int((entry as Dictionary).get("expires_at", 0))
+			if exp == 0 or exp > now:
+				filtered.append(entry)
+	if filtered.is_empty():
+		_merchant_sales.erase(player_id)
+	else:
+		_merchant_sales[player_id] = filtered
 
 
 func _get_player_faction_id() -> String:
