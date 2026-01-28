@@ -51,10 +51,10 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
 [node name="Content" type="HBoxContainer" parent="Panel/ItemCellTemplate/Padding"]
 layout_mode = 2
@@ -77,6 +77,7 @@ stretch_mode = 5
 expand_mode = 2
 
 [node name="Name" type="Label" parent="Panel/ItemCellTemplate/Padding/Content"]
+custom_minimum_size = Vector2(140, 0)
 size_flags_horizontal = 3
 size_flags_vertical = 4
 autowrap_mode = 2
@@ -122,14 +123,15 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
-theme_override_constants/margin_left = 10
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
 
 [node name="Grid" type="GridContainer" parent="Panel/Tabs/Покупка/Scroll/Margin"]
 columns = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 10
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
 
 [node name="Продажа" type="Control" parent="Panel/Tabs"]
 layout_mode = 3
@@ -160,11 +162,12 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
-theme_override_constants/margin_left = 10
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
 
 [node name="Grid" type="GridContainer" parent="Panel/Tabs/Продажа/Scroll/Margin"]
 columns = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 10
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
