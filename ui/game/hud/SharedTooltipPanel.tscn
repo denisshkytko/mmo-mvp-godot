@@ -43,6 +43,11 @@ layout_mode = 2
 visible = false
 text = "Экипировать"
 
+[node name="SellButton" type="Button" parent="Margin/VBox"]
+layout_mode = 2
+visible = false
+text = "Продать"
+
 [node name="UnequipButton" type="Button" parent="Margin/VBox"]
 layout_mode = 2
 visible = false

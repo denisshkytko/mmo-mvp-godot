@@ -49,6 +49,14 @@ offset_right = 18.0
 offset_bottom = -24.0
 color = Color(0.38720772, 0.18201989, 0.97702104, 1)
 
+[node name="MerchantHint" type="Label" parent="UI"]
+visible = false
+offset_left = -60.0
+offset_top = -55.0
+offset_right = 60.0
+offset_bottom = -32.0
+text = "\"E\" to trade"
+
 [node name="TargetHitbox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]

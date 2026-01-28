@@ -13,6 +13,7 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export_enum("blue", "red", "yellow", "green") var faction_id: String = "blue"
 @export_enum("Civilian", "Combatant") var fighter_type: int = FighterType.CIVILIAN
 @export_enum("None", "Merchant", "Quest", "Trainer") var interaction_type: int = InteractionType.NONE
+@export var merchant_preset: MerchantPreset = preload("res://core/trade/presets/merchant_preset_level_1.tres")
 
 @export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 @export var level_min: int = 1
@@ -83,6 +84,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		loot_profile,
 		DEFAULT_PROJECTILE,
 		class_id,
-		profile_id
+		profile_id,
+		merchant_preset
 	)
 	return true
