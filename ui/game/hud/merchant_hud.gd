@@ -27,6 +27,7 @@ var _buy_entries: Array[Dictionary] = []
 var _sell_entries: Array[Dictionary] = []
 
 var _icon_cache: Dictionary = {}
+var _tooltip_item_id: String = ""
 
 # Drag state for buy tab
 var _drag_active: bool = false
@@ -162,7 +163,7 @@ func _load_buy_entries() -> void:
 	elif "merchant_preset" in _merchant:
 		preset = _merchant.get("merchant_preset")
 	if preset == null:
-		return
+		preset = preload("res://core/trade/presets/merchant_preset_level_1.tres")
 	if preset.has_method("get_entries"):
 		var entries: Array = preset.call("get_entries")
 		for v in entries:
@@ -232,12 +233,14 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	cell.add_child(row)
 
 	var icon_panel := Panel.new()
-	icon_panel.custom_minimum_size = Vector2(40, 40)
+	icon_panel.custom_minimum_size = Vector2(32, 32)
 	icon_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(icon_panel)
 
 	var icon := TextureRect.new()
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2(28, 28)
+	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
 	icon_panel.add_child(icon)
 	icon.texture = _get_item_icon(item_id)
@@ -280,12 +283,18 @@ func _on_item_tooltip_input(event: InputEvent, item_id: String, count: int) -> v
 		var mb := event as InputEventMouseButton
 		if mb.button_index != MOUSE_BUTTON_LEFT or not mb.pressed:
 			return
-		_show_tooltip(item_id, count, mb.global_position)
+		_toggle_tooltip(item_id, count, mb.global_position)
 	elif event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
 		if not st.pressed:
 			return
-		_show_tooltip(item_id, count, st.position)
+		_toggle_tooltip(item_id, count, st.position)
+
+func _toggle_tooltip(item_id: String, count: int, global_pos: Vector2) -> void:
+	if tooltip_panel != null and tooltip_panel.visible and _tooltip_item_id == item_id:
+		_hide_tooltip()
+		return
+	_show_tooltip(item_id, count, global_pos)
 
 func _on_buy_cell_input(event: InputEvent, item_id: String, count: int) -> void:
 	if not _is_buy_tab_active():
@@ -551,11 +560,13 @@ func _show_tooltip(item_id: String, count: int, global_pos: Vector2) -> void:
 		tooltip_unequip_btn.visible = false
 	await _resize_tooltip_to_content()
 	tooltip_panel.visible = true
+	_tooltip_item_id = item_id
 	_position_tooltip_left_of_point(global_pos)
 
 func _hide_tooltip() -> void:
 	if tooltip_panel != null:
 		tooltip_panel.visible = false
+	_tooltip_item_id = ""
 
 func _resize_tooltip_to_content() -> void:
 	if tooltip_panel == null or tooltip_label == null:

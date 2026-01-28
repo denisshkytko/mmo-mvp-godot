@@ -65,7 +65,7 @@ const REGEN_PCT_PER_SEC: float = 0.02
 
 @export_group("Merchant")
 @export var merchant_interact_radius: float = 60.0
-@export var merchant_preset: MerchantPreset
+@export var merchant_preset: MerchantPreset = preload("res://core/trade/presets/merchant_preset_level_1.tres")
 
 
 # -----------------------------
@@ -187,7 +187,7 @@ func apply_spawn_init(
 	interaction_type = interaction_in
 	npc_level = max(1, level_in)
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
-	merchant_preset = merchant_preset_in
+	merchant_preset = merchant_preset_in if merchant_preset_in != null else merchant_preset
 
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
