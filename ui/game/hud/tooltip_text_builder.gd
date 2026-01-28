@@ -56,14 +56,13 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 	lines.append(name_part + (" x%d" % count if count > 1 else ""))
 	if rarity != "" and typ.to_lower() != "junk":
 		lines.append("rarity: [color=%s]%s[/color]" % [rarity_col, rarity])
-	if typ != "":
-		lines.append("type: %s" % typ)
 
 	var slot_name := _slot_label(meta, typ)
 	if slot_name != "":
 		lines.append("slot: %s" % slot_name)
 
 	var show_req: bool = typ in ["weapon", "armor", "bag", "food", "drink", "potion", "accessory", "offhand", "shield"]
+	var req_line := ""
 	if show_req and req_lvl > 0:
 		var p_lvl: int = 0
 		if player != null and is_instance_valid(player) and ("level" in player):
@@ -71,13 +70,28 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var lvl_line := "required level: %d" % req_lvl
 		if p_lvl > 0 and p_lvl < req_lvl:
 			lvl_line = "[color=#ff5555]%s[/color]" % lvl_line
-		lines.append(lvl_line)
+		req_line = lvl_line
+
+	if typ == "weapon" and meta.get("weapon") is Dictionary:
+		var w: Dictionary = meta.get("weapon") as Dictionary
+		var subtype := String(w.get("subtype", ""))
+		if subtype != "":
+			var subtype_label := _humanize_slot(subtype)
+			var subtype_line := "subtype: %s" % subtype_label
+			if player != null and is_instance_valid(player) and ("class_id" in player):
+				var allowed_types := PROG.get_allowed_weapon_types_for_class(String(player.class_id))
+				if not allowed_types.has(subtype):
+					subtype_line = "subtype: [color=#ff5555]%s[/color]" % subtype_label
+			lines.append(subtype_line)
 
 	if meta.has("armor") and meta.get("armor") is Dictionary:
 		var a: Dictionary = meta.get("armor") as Dictionary
 		var pa: int = int(a.get("physical_armor", 0))
 		var ma: int = int(a.get("magic_armor", 0))
 		var armor_class := String(a.get("class", "")).to_lower()
+		var defense_line := _format_defense_line(pa, ma)
+		if defense_line != "":
+			lines.append(defense_line)
 		if armor_class != "":
 			var material_line := "material: %s" % armor_class
 			if player != null and is_instance_valid(player) and ("class_id" in player):
@@ -85,7 +99,13 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 				if armor_class != "" and not allowed.has(armor_class):
 					material_line = "[color=#ff5555]%s[/color]" % material_line
 			lines.append(material_line)
-		lines.append("armor: %d  magic: %d" % [pa, ma])
+	if meta.has("offhand") and meta.get("offhand") is Dictionary:
+		var oh: Dictionary = meta.get("offhand") as Dictionary
+		var oh_pa: int = int(oh.get("physical_armor", 0))
+		var oh_ma: int = int(oh.get("magic_armor", 0))
+		var oh_defense_line := _format_defense_line(oh_pa, oh_ma)
+		if oh_defense_line != "":
+			lines.append(oh_defense_line)
 	if meta.has("weapon") and meta.get("weapon") is Dictionary:
 		var w: Dictionary = meta.get("weapon") as Dictionary
 		var dmg: int = int(w.get("damage", 0))
@@ -116,6 +136,8 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 						cd_line = "cooldown: %ds (%.1fs left)" % [int(cd_total), left]
 				lines.append(cd_line)
 
+	if req_line != "":
+		lines.append(req_line)
 	var price: int = int(meta.get("vendor_price_bronze", 0))
 	if price > 0:
 		lines.append("price: %s" % format_money_bbcode(price))
@@ -144,6 +166,14 @@ static func _humanize_slot(slot_id: String) -> String:
 	if slot_id == "":
 		return ""
 	return slot_id.replace("_", " ")
+
+static func _format_defense_line(physical: int, magic: int) -> String:
+	var parts: Array[String] = []
+	if physical > 0:
+		parts.append("physical defense: %d" % physical)
+	if magic > 0:
+		parts.append("magic defense: %d" % magic)
+	return "  ".join(parts)
 
 static func _format_consumable_effects(consumable: Dictionary) -> Array[String]:
 	var lines: Array[String] = []
