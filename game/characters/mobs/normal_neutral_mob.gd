@@ -389,6 +389,13 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 	if died_now:
 		_die()
 
+func is_in_combat() -> bool:
+	if aggressor == null or not is_instance_valid(aggressor):
+		return false
+	if "is_dead" in aggressor and bool(aggressor.get("is_dead")):
+		return false
+	return true
+
 func on_player_died() -> void:
 	# чтобы нейтралы тоже отпускали
 	is_aggressive = false

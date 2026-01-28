@@ -1,6 +1,8 @@
 extends Node2D
 class_name HomingProjectile
 
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+
 @export var speed: float = 420.0
 @export var hit_distance: float = 10.0
 @export var max_lifetime: float = 6.0
@@ -61,11 +63,6 @@ func _apply_hit() -> void:
 		if "is_dead" in _target and bool(_target.get("is_dead")):
 			queue_free()
 			return
-		if _source != null and is_instance_valid(_source) and _target.has_method("take_damage_from"):
-			_target.call("take_damage_from", _damage, _source)
-		elif _target.has_method("take_damage"):
-			_target.call("take_damage", _damage)
-		if _source != null and is_instance_valid(_source) and "c_resource" in _source and _source.c_resource != null:
-			_source.c_resource.on_damage_dealt()
+		DAMAGE_HELPER.apply_damage(_source, _target, _damage)
 
 	queue_free()
