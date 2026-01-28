@@ -1146,6 +1146,8 @@ func _on_tooltip_equip_pressed() -> void:
 		if ok:
 			_hide_tooltip()
 			_refresh()
+		else:
+			_show_equip_fail_toast()
 
 
 func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
@@ -1171,6 +1173,36 @@ func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
 	var tw := create_tween()
 	tw.tween_interval(1.2)
 	tw.tween_property(_toast_label, "modulate", Color(1,1,1,0), 0.8)
+	tw.finished.connect(func():
+		if _toast_label != null:
+			_toast_label.visible = false
+	)
+
+func _show_equip_fail_toast() -> void:
+	_ensure_support_ui()
+	if _toast_label == null:
+		return
+	if player == null or not is_instance_valid(player):
+		return
+	var reason := ""
+	if player.has_method("get_last_equip_fail_reason"):
+		reason = String(player.call("get_last_equip_fail_reason"))
+	var msg := ""
+	match reason:
+		"level":
+			msg = "Не подходящий уровень предмета"
+		"skill":
+			msg = "Вы не умеете пользоваться этим"
+		_:
+			msg = ""
+	if msg == "":
+		return
+	_toast_label.text = msg
+	_toast_label.modulate = Color(1, 1, 1, 1)
+	_toast_label.visible = true
+	var tw := create_tween()
+	tw.tween_interval(1.2)
+	tw.tween_property(_toast_label, "modulate", Color(1, 1, 1, 0), 0.8)
 	tw.finished.connect(func():
 		if _toast_label != null:
 			_toast_label.visible = false
@@ -1536,6 +1568,7 @@ func _drop_into_equipment_slot(slot_id: String) -> bool:
 		var ok: bool = bool(player.call("try_equip_from_inventory_slot", src_idx, slot_id))
 		if not ok:
 			player.apply_inventory_snapshot(_drag_restore_snapshot)
+			_show_equip_fail_toast()
 			return true
 	return true
 

@@ -61,8 +61,11 @@ func _apply_hit() -> void:
 		if "is_dead" in _target and bool(_target.get("is_dead")):
 			queue_free()
 			return
-
-		if _target.has_method("take_damage"):
+		if _source != null and is_instance_valid(_source) and _target.has_method("take_damage_from"):
+			_target.call("take_damage_from", _damage, _source)
+		elif _target.has_method("take_damage"):
 			_target.call("take_damage", _damage)
+		if _source != null and is_instance_valid(_source) and "c_resource" in _source and _source.c_resource != null:
+			_source.c_resource.on_damage_dealt()
 
 	queue_free()

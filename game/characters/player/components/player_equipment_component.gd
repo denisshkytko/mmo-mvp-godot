@@ -39,6 +39,7 @@ const ACCESSORY_SLOTS: Array[String] = [
 
 var p: Player = null
 var equipment_slots: Dictionary = {}
+var last_equip_fail_reason: String = ""
 
 func setup(player: Player) -> void:
 	p = player
@@ -174,6 +175,19 @@ func get_weapon_attack_interval_left() -> float:
 		return 0.0
 	return float(w.get("attack_interval", 1.0))
 
+func get_right_weapon_subtype() -> String:
+	var right_item := _get_slot_item("weapon_r")
+	if right_item.is_empty():
+		return ""
+	var id: String = String(right_item.get("id", ""))
+	if id == "":
+		return ""
+	var meta := _get_item_meta(id)
+	if String(meta.get("type", "")).to_lower() != "weapon":
+		return ""
+	var w: Dictionary = meta.get("weapon", {}) as Dictionary
+	return String(w.get("subtype", "")).to_lower()
+
 func is_two_handed_equipped() -> bool:
 	var right_item := _get_slot_item("weapon_r")
 	if right_item.is_empty():
@@ -214,6 +228,7 @@ func has_left_offhand_item() -> bool:
 	return String(meta.get("type", "")).to_lower() == "offhand"
 
 func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String = "") -> bool:
+	last_equip_fail_reason = ""
 	if p == null or p.c_inv == null:
 		return false
 	var inventory: Inventory = p.c_inv.inventory
@@ -239,8 +254,9 @@ func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String =
 	var meta := _get_item_meta(id)
 	if meta.is_empty():
 		return false
-
-	if not _can_equip_in_slot(meta, target_slot_id):
+	var fail_reason := _get_equip_fail_reason(meta, target_slot_id)
+	if fail_reason != "":
+		last_equip_fail_reason = fail_reason
 		return false
 
 	var prev_slots: Array = inventory.slots.duplicate(true)
@@ -269,6 +285,7 @@ func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String =
 		return true
 
 	if target_slot_id == "weapon_l" and not _can_equip_left_hand(meta):
+		last_equip_fail_reason = "skill"
 		_restore_state(inventory, prev_slots, prev_equip)
 		return false
 
@@ -357,6 +374,17 @@ func _can_equip_in_slot(meta: Dictionary, target_slot_id: String) -> bool:
 
 func _can_equip_left_hand(meta: Dictionary) -> bool:
 	return _can_equip_in_slot(meta, "weapon_l")
+
+func get_last_equip_fail_reason() -> String:
+	return last_equip_fail_reason
+
+func _get_equip_fail_reason(meta: Dictionary, target_slot_id: String) -> String:
+	var req_lvl: int = int(meta.get("required_level", meta.get("item_level", 0)))
+	if req_lvl > 0 and p != null and int(p.level) < req_lvl:
+		return "level"
+	if not _can_equip_in_slot(meta, target_slot_id):
+		return "skill"
+	return ""
 
 func _is_two_handed_weapon(meta: Dictionary) -> bool:
 	if String(meta.get("type", "")).to_lower() != "weapon":
