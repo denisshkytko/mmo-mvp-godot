@@ -62,6 +62,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="IconPanel" type="Panel" parent="Panel/ItemCellTemplate/Padding/Content"]
+custom_minimum_size = Vector2(36, 36)
 size_flags_vertical = 4
 
 [node name="Icon" type="TextureRect" parent="Panel/ItemCellTemplate/Padding/Content/IconPanel"]
@@ -112,7 +113,18 @@ offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
 
-[node name="Grid" type="GridContainer" parent="Panel/Tabs/Покупка/Scroll"]
+[node name="Margin" type="MarginContainer" parent="Panel/Tabs/Покупка/Scroll"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 10
+
+[node name="Grid" type="GridContainer" parent="Panel/Tabs/Покупка/Scroll/Margin"]
 columns = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -139,7 +151,18 @@ offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
 
-[node name="Grid" type="GridContainer" parent="Panel/Tabs/Продажа/Scroll"]
+[node name="Margin" type="MarginContainer" parent="Panel/Tabs/Продажа/Scroll"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 10
+
+[node name="Grid" type="GridContainer" parent="Panel/Tabs/Продажа/Scroll/Margin"]
 columns = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3

@@ -12,8 +12,8 @@ const DRAG_THRESHOLD: float = 8.0
 @onready var tabs: TabContainer = $Panel/Tabs
 @onready var buy_scroll: ScrollContainer = $Panel/Tabs/Покупка/Scroll
 @onready var sell_scroll: ScrollContainer = $Panel/Tabs/Продажа/Scroll
-@onready var buy_grid: GridContainer = $Panel/Tabs/Покупка/Scroll/Grid
-@onready var sell_grid: GridContainer = $Panel/Tabs/Продажа/Scroll/Grid
+@onready var buy_grid: GridContainer = $Panel/Tabs/Покупка/Scroll/Margin/Grid
+@onready var sell_grid: GridContainer = $Panel/Tabs/Продажа/Scroll/Margin/Grid
 
 @onready var tooltip_panel: Panel = $TooltipPanel
 @onready var tooltip_label: RichTextLabel = $TooltipPanel/Margin/VBox/Text
