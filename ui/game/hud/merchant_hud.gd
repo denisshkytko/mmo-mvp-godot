@@ -8,7 +8,7 @@ const DRAG_THRESHOLD: float = 8.0
 @onready var panel: Panel = $Panel
 @onready var title_label: Label = $Panel/Title
 @onready var close_button: Button = $Panel/CloseButton
-@onready var item_cell_template: Panel = $Panel/ItemCellTemplate
+@onready var item_cell_template: Panel = $Panel/Tabs/Покупка/Scroll/Grid/ItemCellTemplate
 @onready var tabs: TabContainer = $Panel/Tabs
 @onready var buy_scroll: ScrollContainer = $Panel/Tabs/Покупка/Scroll
 @onready var sell_scroll: ScrollContainer = $Panel/Tabs/Продажа/Scroll
@@ -248,21 +248,15 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 		return Panel.new()
 	var cell: Panel = item_cell_template.duplicate(0) as Panel
 	cell.visible = true
-	cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	cell.size_flags_vertical = Control.SIZE_FILL
 
 	var icon_panel: Panel = cell.get_node_or_null("Padding/Content/IconPanel") as Panel
 	var icon: TextureRect = cell.get_node_or_null("Padding/Content/IconPanel/Icon") as TextureRect
 	var name_label: Label = cell.get_node_or_null("Padding/Content/Name") as Label
 	var action_button: Button = cell.get_node_or_null("Padding/Content/ActionButton") as Button
 
-	if icon_panel != null:
-		icon_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if icon != null:
 		icon.texture = _get_item_icon(item_id)
 	if name_label != null:
-		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		name_label.clip_text = true
 		name_label.text = _format_item_label(item_id, count)
 	if action_button != null:
 		action_button.text = _format_action_text(action_text, item_id, count, is_buy)
