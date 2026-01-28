@@ -162,8 +162,16 @@ func _load_buy_entries() -> void:
 		preset = _merchant.call("get_merchant_preset")
 	elif "merchant_preset" in _merchant:
 		preset = _merchant.get("merchant_preset")
+	var fallback := preload("res://core/trade/presets/merchant_preset_level_1.tres")
 	if preset == null:
-		preset = preload("res://core/trade/presets/merchant_preset_level_1.tres")
+		preset = fallback
+	_append_entries_from_preset(preset)
+	if _buy_entries.is_empty() and preset != fallback:
+		_append_entries_from_preset(fallback)
+
+func _append_entries_from_preset(preset: Resource) -> void:
+	if preset == null:
+		return
 	if preset.has_method("get_entries"):
 		var entries: Array = preset.call("get_entries")
 		for v in entries:
@@ -226,11 +234,20 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cell.size_flags_vertical = Control.SIZE_FILL
 
+	var padding := MarginContainer.new()
+	padding.set_anchors_preset(Control.PRESET_FULL_RECT)
+	padding.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	padding.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	padding.add_theme_constant_override("margin_left", 6)
+	padding.add_theme_constant_override("margin_right", 6)
+	padding.add_theme_constant_override("margin_top", 4)
+	padding.add_theme_constant_override("margin_bottom", 4)
+	cell.add_child(padding)
+
 	var row := HBoxContainer.new()
-	row.set_anchors_preset(Control.PRESET_FULL_RECT)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	cell.add_child(row)
+	padding.add_child(row)
 
 	var icon_panel := Panel.new()
 	icon_panel.custom_minimum_size = Vector2(32, 32)
@@ -250,6 +267,7 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	name_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_label.clip_text = true
+	name_label.custom_minimum_size = Vector2(140, 0)
 	name_label.text = _format_item_label(item_id, count)
 	row.add_child(name_label)
 
