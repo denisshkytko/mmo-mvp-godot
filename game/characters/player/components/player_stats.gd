@@ -60,6 +60,7 @@ func recalculate_for_level(full_restore: bool) -> void:
 	if p == null:
 		return
 
+	p.xp_to_next = _calc_xp_to_next(p.level)
 	_snapshot = _build_snapshot()
 	_apply_rage_mana_override(_snapshot)
 
