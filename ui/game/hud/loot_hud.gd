@@ -84,10 +84,11 @@ func _ready() -> void:
 		if take_button != null:
 			take_button.pressed.connect(_on_slot_pressed.bind(i))
 			take_button.mouse_filter = Control.MOUSE_FILTER_STOP
-		var name_label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		var name_label: RichTextLabel = slot_panel.get_node_or_null("Row/Name") as RichTextLabel
 		if name_label != null:
-			name_label.clip_text = true
-			name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			name_label.bbcode_enabled = true
+			name_label.fit_content = true
+			name_label.scroll_active = false
 			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 			name_label.gui_input.connect(_on_slot_tapped.bind(i))
 			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -285,7 +286,7 @@ func _refresh() -> void:
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		var label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		var label: RichTextLabel = slot_panel.get_node_or_null("Row/Name") as RichTextLabel
 		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
 		var take_button: Button = slot_panel.get_node_or_null("Row/TakeButton") as Button
 		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
@@ -314,7 +315,7 @@ func _refresh() -> void:
 
 		if t == "gold":
 			if label != null:
-				label.text = "Gold: %s" % _format_money_bronze(gold)
+				label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(gold)
 			if count_label != null:
 				count_label.text = ""
 			if take_button != null:
@@ -517,7 +518,7 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	if t == "gold":
 		var corpse_typed := _as_corpse(_corpse)
 		var gold_amount: int = corpse_typed.loot_gold if corpse_typed != null else (int(_corpse.get("loot_gold")) if ("loot_gold" in _corpse) else 0)
-		text_out = "Gold\n" + _format_money_bronze(gold_amount)
+		text_out = "Gold\n" + TOOLTIP_BUILDER.format_money_bbcode(gold_amount)
 	elif t == "item":
 		var corpse_typed2 := _as_corpse(_corpse)
 		var slots: Array = corpse_typed2.loot_slots if corpse_typed2 != null else (_corpse.get("loot_slots") if ("loot_slots" in _corpse) else [])

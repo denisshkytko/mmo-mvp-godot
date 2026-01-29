@@ -273,12 +273,16 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	var icon: TextureRect = cell.get_node_or_null("Padding/Content/IconPanel/Icon") as TextureRect
 	var name_label: Label = cell.get_node_or_null("Padding/Content/Name") as Label
 	var action_button: Button = cell.get_node_or_null("Padding/Content/ActionButton") as Button
+	var action_label: RichTextLabel = cell.get_node_or_null("Padding/Content/ActionButton/ActionText") as RichTextLabel
 
 	if icon != null:
 		icon.texture = _get_item_icon(item_id)
 	if name_label != null:
 		name_label.text = _format_item_label(item_id, count)
-	if action_button != null:
+	if action_label != null:
+		action_label.bbcode_enabled = true
+		action_label.text = _format_action_bbcode(action_text, item_id, count, is_buy)
+	if action_button != null and action_label == null:
 		action_button.text = _format_action_text(action_text, item_id, count, is_buy)
 
 	if icon_panel != null:
@@ -299,6 +303,11 @@ func _format_action_text(action_text: String, item_id: String, count: int, is_bu
 	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
 	var total: int = max(0, price_per * max(1, count))
 	return "%s\n%s" % [action_text, _format_money_short(total)]
+
+func _format_action_bbcode(action_text: String, item_id: String, count: int, is_buy: bool) -> String:
+	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
+	var total: int = max(0, price_per * max(1, count))
+	return "%s\n%s" % [action_text, TOOLTIP_BUILDER.format_money_bbcode(total)]
 
 func _format_money_short(bronze_total: int) -> String:
 	var total: int = max(0, int(bronze_total))

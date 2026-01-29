@@ -2,7 +2,7 @@ extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var panel: Control = $Panel
-@onready var gold_label: Label = $Panel/GoldLabel
+@onready var gold_label: RichTextLabel = $Panel/GoldLabel
 @onready var grid: GridContainer = $Panel/Grid
 
 @onready var base_bag_button: Button = $BagBar/BaseBagButton
@@ -117,6 +117,10 @@ func _ready() -> void:
 	add_to_group("inventory_ui")
 	# default to closed in actual gameplay; keep current behavior
 	_is_open = panel.visible
+	if gold_label != null:
+		gold_label.bbcode_enabled = true
+		gold_label.fit_content = true
+		gold_label.scroll_active = false
 
 	base_bag_button.pressed.connect(_on_bag_button_pressed)
 	# Bag equipment slots (visual order: they extend left from base bag button).
@@ -1369,7 +1373,7 @@ func _refresh() -> void:
 		await _apply_inventory_layout(total_slots)
 
 	# Gold
-	gold_label.text = "Gold: %s" % _format_money_bronze(int(snap.get("gold", 0)))
+	gold_label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))
 
 	# Render items
 	for i in range(grid.get_child_count()):
