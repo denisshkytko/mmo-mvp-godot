@@ -58,6 +58,12 @@ var _sell_refresh_accum: float = 0.0
 func _ready() -> void:
 	panel.visible = false
 	tooltip_panel.visible = false
+	if tooltip_panel != null:
+		tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	if tooltip_label != null:
+		tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if tooltip_close_button != null:
+		tooltip_close_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	if close_button != null and not close_button.pressed.is_connected(close):
 		close_button.pressed.connect(close)
 	if tooltip_use_btn != null:
