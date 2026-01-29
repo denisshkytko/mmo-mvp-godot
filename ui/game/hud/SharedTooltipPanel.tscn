@@ -3,6 +3,17 @@
 [node name="TooltipPanel" type="Panel"]
 visible = false
 
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -22.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = 22.0
+z_index = 1
+text = "×"
+
 [node name="Margin" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0

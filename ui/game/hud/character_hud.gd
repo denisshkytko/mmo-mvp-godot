@@ -43,6 +43,7 @@ const DERIVED_PRIMARY_COEFFS := {
 @onready var tooltip_panel: Panel = $TooltipPanel
 @onready var tooltip_rich: RichTextLabel = $TooltipPanel/Margin/VBox/Text
 @onready var tooltip_unequip: Button = $TooltipPanel/Margin/VBox/UnequipButton
+@onready var tooltip_close_button: Button = $TooltipPanel/CloseButton
 
 var _player: Player = null
 var _breakdown_cache: Dictionary = {}
@@ -78,6 +79,8 @@ func _ready() -> void:
 	_style_tooltip_panel()
 	if tooltip_unequip != null and not tooltip_unequip.pressed.is_connected(_on_unequip_pressed):
 		tooltip_unequip.pressed.connect(_on_unequip_pressed)
+	if tooltip_close_button != null and not tooltip_close_button.pressed.is_connected(_hide_tooltip):
+		tooltip_close_button.pressed.connect(_hide_tooltip)
 
 	_player = NODE_CACHE.get_player(get_tree()) as Player
 	if _player != null and _player.c_stats != null:

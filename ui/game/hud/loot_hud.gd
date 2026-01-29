@@ -15,6 +15,7 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 
 @onready var tooltip_panel: Panel = $TooltipPanel
 @onready var tooltip_text: RichTextLabel = $TooltipPanel/Margin/VBox/Text
+@onready var tooltip_close_button: Button = $TooltipPanel/CloseButton
 
 var _corpse: Node = null
 var _player: Node = null
@@ -50,7 +51,7 @@ func _ready() -> void:
 	# (This was the root cause of the "text keeps drifting upward" bug.)
 	_reset_tooltip_scroll()
 	tooltip_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	# Make tooltip styling stable and readable
 	var sb := StyleBoxFlat.new()
@@ -69,6 +70,8 @@ func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
 	loot_all_button.pressed.connect(_on_loot_all_pressed)
 	close_button.pressed.connect(close)
+	if tooltip_close_button != null:
+		tooltip_close_button.pressed.connect(_hide_tooltip)
 
 	# Bind slot UI
 	for i in range(grid.get_child_count()):

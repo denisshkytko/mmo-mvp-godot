@@ -19,6 +19,7 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var tooltip_use_btn_scene: Button = $InvTooltip/Margin/VBox/UseButton
 @onready var tooltip_equip_btn_scene: Button = $InvTooltip/Margin/VBox/EquipButton
 @onready var tooltip_sell_btn_scene: Button = $InvTooltip/Margin/VBox/SellButton
+@onready var tooltip_close_btn_scene: Button = $InvTooltip/CloseButton
 
 var player: Node = null
 var _is_open: bool = true
@@ -51,6 +52,7 @@ var _tooltip_label: RichTextLabel = null
 var _tooltip_use_btn: Button = null
 var _tooltip_equip_btn: Button = null
 var _tooltip_sell_btn: Button = null
+var _tooltip_close_btn: Button = null
 var _tooltip_for_slot: int = -1
 
 # Small center toast ("hp full" / "mana full")
@@ -1811,9 +1813,10 @@ func _ensure_support_ui() -> void:
 		_tooltip_use_btn = tooltip_use_btn_scene
 		_tooltip_equip_btn = tooltip_equip_btn_scene
 		_tooltip_sell_btn = tooltip_sell_btn_scene
+		_tooltip_close_btn = tooltip_close_btn_scene
 		if _tooltip_panel != null:
 			_tooltip_panel.visible = false
-			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 			# Match LootHUD tooltip styling.
 			var sb := StyleBoxFlat.new()
 			sb.bg_color = Color(0, 0, 0, 0.85)
@@ -1840,6 +1843,8 @@ func _ensure_support_ui() -> void:
 			_tooltip_equip_btn.pressed.connect(_on_tooltip_equip_pressed)
 		if _tooltip_sell_btn != null and not _tooltip_sell_btn.pressed.is_connected(_on_tooltip_sell_pressed):
 			_tooltip_sell_btn.pressed.connect(_on_tooltip_sell_pressed)
+		if _tooltip_close_btn != null and not _tooltip_close_btn.pressed.is_connected(_hide_tooltip):
+			_tooltip_close_btn.pressed.connect(_hide_tooltip)
 
 	if _delete_confirm == null:
 		_delete_confirm = ConfirmationDialog.new()
