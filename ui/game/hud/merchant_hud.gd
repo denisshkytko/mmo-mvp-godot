@@ -146,11 +146,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			var mb2 := event as InputEventMouseButton
 			if mb2.button_index == MOUSE_BUTTON_LEFT and mb2.pressed:
 				if tooltip_close_button != null and tooltip_close_button.get_global_rect().has_point(mb2.global_position):
+					_hide_tooltip()
 					return
 				_hide_tooltip()
 		elif event is InputEventScreenTouch:
 			if (event as InputEventScreenTouch).pressed:
 				if tooltip_close_button != null and tooltip_close_button.get_global_rect().has_point((event as InputEventScreenTouch).position):
+					_hide_tooltip()
 					return
 				_hide_tooltip()
 
@@ -269,20 +271,12 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	var icon: TextureRect = cell.get_node_or_null("Padding/Content/IconPanel/Icon") as TextureRect
 	var name_label: Label = cell.get_node_or_null("Padding/Content/Name") as Label
 	var action_button: Button = cell.get_node_or_null("Padding/Content/ActionButton") as Button
-	var action_label: Label = cell.get_node_or_null("Padding/Content/ActionButton/Content/ActionText") as Label
-	var price_label: RichTextLabel = cell.get_node_or_null("Padding/Content/ActionButton/Content/PriceText") as RichTextLabel
 
 	if icon != null:
 		icon.texture = _get_item_icon(item_id)
 	if name_label != null:
 		name_label.text = _format_item_label(item_id, count)
-	var price_bbcode := _format_action_price_bbcode(item_id, count, is_buy)
-	if action_label != null:
-		action_label.text = action_text
-	if price_label != null:
-		price_label.bbcode_enabled = true
-		price_label.text = price_bbcode
-	if action_button != null and action_label == null and price_label == null:
+	if action_button != null:
 		action_button.text = _format_action_text(action_text, item_id, count, is_buy)
 
 	if icon_panel != null:
@@ -303,11 +297,6 @@ func _format_action_text(action_text: String, item_id: String, count: int, is_bu
 	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
 	var total: int = max(0, price_per * max(1, count))
 	return "%s\n%s" % [action_text, _format_money_short(total)]
-
-func _format_action_price_bbcode(item_id: String, count: int, is_buy: bool) -> String:
-	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
-	var total: int = max(0, price_per * max(1, count))
-	return TOOLTIP_BUILDER.format_money_bbcode(total)
 
 func _format_money_short(bronze_total: int) -> String:
 	var total: int = max(0, int(bronze_total))
