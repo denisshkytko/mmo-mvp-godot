@@ -60,209 +60,28 @@ size_flags_vertical = 3
 [node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot0/Row"]
 custom_minimum_size = Vector2(40, 40)
 size_flags_vertical = 4
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot0/Row"]
 size_flags_horizontal = 3
 size_flags_vertical = 4
 bbcode_enabled = true
-fit_content = true
+fit_content = false
 scroll_active = false
-autowrap_mode = 2
+autowrap_mode = 0
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot0/Row"]
 size_flags_vertical = 4
 autowrap_mode = 0
+text_overrun_behavior = 3
+clip_text = true
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot0/Row"]
 custom_minimum_size = Vector2(60, 40)
 size_flags_vertical = 4
 text = "Take"
 
-[node name="LootSlot1" type="Panel" parent="Panel/Scroll/Grid"]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
-
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot1"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot1/Row"]
-custom_minimum_size = Vector2(40, 40)
-size_flags_vertical = 4
-stretch_mode = 5
-
-[node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot1/Row"]
-size_flags_horizontal = 3
-size_flags_vertical = 4
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-autowrap_mode = 2
-
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot1/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
-
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot1/Row"]
-custom_minimum_size = Vector2(60, 40)
-size_flags_vertical = 4
-text = "Take"
-
-[node name="LootSlot2" type="Panel" parent="Panel/Scroll/Grid"]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
-
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot2"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot2/Row"]
-custom_minimum_size = Vector2(40, 40)
-size_flags_vertical = 4
-stretch_mode = 5
-
-[node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot2/Row"]
-size_flags_horizontal = 3
-size_flags_vertical = 4
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-autowrap_mode = 2
-
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot2/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
-
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot2/Row"]
-custom_minimum_size = Vector2(60, 40)
-size_flags_vertical = 4
-text = "Take"
-
-[node name="LootSlot3" type="Panel" parent="Panel/Scroll/Grid"]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
-
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot3"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot3/Row"]
-custom_minimum_size = Vector2(40, 40)
-size_flags_vertical = 4
-stretch_mode = 5
-
-[node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot3/Row"]
-size_flags_horizontal = 3
-size_flags_vertical = 4
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-autowrap_mode = 2
-
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot3/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
-
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot3/Row"]
-custom_minimum_size = Vector2(60, 40)
-size_flags_vertical = 4
-text = "Take"
-
-[node name="LootSlot4" type="Panel" parent="Panel/Scroll/Grid"]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
-
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot4"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot4/Row"]
-custom_minimum_size = Vector2(40, 40)
-size_flags_vertical = 4
-stretch_mode = 5
-
-[node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot4/Row"]
-size_flags_horizontal = 3
-size_flags_vertical = 4
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-autowrap_mode = 2
-
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot4/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
-
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot4/Row"]
-custom_minimum_size = Vector2(60, 40)
-size_flags_vertical = 4
-text = "Take"
-
-[node name="LootSlot5" type="Panel" parent="Panel/Scroll/Grid"]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
-
-[node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot5"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot5/Row"]
-custom_minimum_size = Vector2(40, 40)
-size_flags_vertical = 4
-stretch_mode = 5
-
-[node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot5/Row"]
-size_flags_horizontal = 3
-size_flags_vertical = 4
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-autowrap_mode = 2
-
-[node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot5/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
-
-[node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot5/Row"]
-custom_minimum_size = Vector2(60, 40)
-size_flags_vertical = 4
-text = "Take"
 
 [node name="LootAllButton" type="Button" parent="Panel"]
 layout_mode = 0

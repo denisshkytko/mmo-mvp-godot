@@ -6,6 +6,7 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 # - Shows item icons + names from DataDB
 # - "Collect all" and per-row collect
 # - Tooltip panel rendered beside the window (not under mouse)
+const SLOT_COUNT := 6
 
 @onready var panel: Control = $Panel
 @onready var scroll: ScrollContainer = $Panel/Scroll
@@ -22,6 +23,7 @@ var _player: Node = null
 var _tooltip_view_index: int = -1
 var _tooltip_seq: int = 0
 var _tooltip_layer: CanvasLayer = null
+var _slots_built: bool = false
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -76,6 +78,7 @@ func _ready() -> void:
 		tooltip_close_button.pressed.connect(_hide_tooltip)
 
 	# Bind slot UI
+	_ensure_slots()
 	for i in range(grid.get_child_count()):
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
@@ -87,14 +90,18 @@ func _ready() -> void:
 		var name_label: RichTextLabel = slot_panel.get_node_or_null("Row/Name") as RichTextLabel
 		if name_label != null:
 			name_label.bbcode_enabled = true
-			name_label.fit_content = true
+			name_label.fit_content = false
 			name_label.scroll_active = false
 			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+			if name_label.has_method("set_text_overrun_behavior"):
+				name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 			name_label.gui_input.connect(_on_slot_tapped.bind(i))
 			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
 		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
 		if count_label != null:
 			count_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+			count_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			count_label.clip_text = true
 			count_label.mouse_filter = Control.MOUSE_FILTER_STOP
 		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
 		if icon_rect != null:
@@ -240,6 +247,20 @@ func _on_panel_gui_input(event: InputEvent) -> void:
 		_clamp_panel_to_viewport()
 		_position_tooltip_beside_panel()
 		_mark_input_handled()
+
+func _ensure_slots() -> void:
+	if _slots_built:
+		return
+	if grid == null:
+		return
+	var template: Panel = grid.get_node_or_null("LootSlot0") as Panel
+	if template == null:
+		return
+	for i in range(1, SLOT_COUNT):
+		var clone := template.duplicate() as Panel
+		clone.name = "LootSlot%d" % i
+		grid.add_child(clone)
+	_slots_built = true
 
 func _refresh() -> void:
 	if _corpse == null:

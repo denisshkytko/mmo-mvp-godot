@@ -62,6 +62,18 @@ func _ready() -> void:
 	_ensure_tooltip_layer()
 	if tooltip_panel != null:
 		tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0, 0, 0, 1.0)
+		sb.border_width_left = 1
+		sb.border_width_top = 1
+		sb.border_width_right = 1
+		sb.border_width_bottom = 1
+		sb.border_color = Color(1, 1, 1, 0.12)
+		sb.corner_radius_top_left = 8
+		sb.corner_radius_top_right = 8
+		sb.corner_radius_bottom_left = 8
+		sb.corner_radius_bottom_right = 8
+		tooltip_panel.add_theme_stylebox_override("panel", sb)
 	if tooltip_label != null:
 		tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if tooltip_close_button != null:
