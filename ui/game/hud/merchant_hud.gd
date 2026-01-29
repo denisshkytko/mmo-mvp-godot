@@ -145,9 +145,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event is InputEventMouseButton:
 			var mb2 := event as InputEventMouseButton
 			if mb2.button_index == MOUSE_BUTTON_LEFT and mb2.pressed:
+				if tooltip_close_button != null and tooltip_close_button.get_global_rect().has_point(mb2.global_position):
+					return
 				_hide_tooltip()
 		elif event is InputEventScreenTouch:
 			if (event as InputEventScreenTouch).pressed:
+				if tooltip_close_button != null and tooltip_close_button.get_global_rect().has_point((event as InputEventScreenTouch).position):
+					return
 				_hide_tooltip()
 
 func try_accept_inventory_drop(global_pos: Vector2, item: Dictionary) -> bool:
