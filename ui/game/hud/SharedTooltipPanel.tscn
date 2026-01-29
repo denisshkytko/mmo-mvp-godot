@@ -2,6 +2,7 @@
 
 [node name="TooltipPanel" type="Panel"]
 visible = false
+z_index = 200
 
 [node name="Margin" type="MarginContainer" parent="."]
 anchors_preset = 15
