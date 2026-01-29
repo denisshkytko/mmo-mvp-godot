@@ -70,7 +70,6 @@ bbcode_enabled = true
 fit_content = false
 scroll_active = false
 autowrap_mode = 0
-text_overrun_behavior = 3
 clip_text = true
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot0/Row"]

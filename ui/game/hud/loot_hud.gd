@@ -93,7 +93,8 @@ func _ready() -> void:
 			name_label.fit_content = false
 			name_label.scroll_active = false
 			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
-			name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			if name_label.has_method("set_text_overrun_behavior"):
+				name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 			name_label.clip_text = true
 			name_label.gui_input.connect(_on_slot_tapped.bind(i))
 			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
