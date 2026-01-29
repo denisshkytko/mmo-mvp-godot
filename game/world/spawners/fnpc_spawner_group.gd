@@ -24,6 +24,7 @@ var class_choice: int:
 		return _class_choice_internal
 	set(v):
 		_class_choice_internal = int(v)
+@export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
@@ -85,6 +86,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		DEFAULT_PROJECTILE,
 		class_id,
 		profile_id,
-		merchant_preset
+		merchant_preset,
+		mob_variant
 	)
 	return true

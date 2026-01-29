@@ -13,6 +13,7 @@ enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 @export var level_max: int = 1
 @export_enum("Small", "Medium", "Large", "Humanoid") var body_size: int = BodySize.MEDIUM
 @export var skin_id: String = ""
+@export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
@@ -70,6 +71,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		skin_id,
 		chosen_profile,
 		class_id,
-		profile_id
+		profile_id,
+		mob_variant
 	)
 	return true

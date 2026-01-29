@@ -3,6 +3,7 @@ class_name NormalAggresiveMob
 
 ## These helpers are registered as global classes (class_name).
 ## Avoid shadowing them with local constants.
+const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 
 signal died(corpse: Corpse)
 
@@ -31,6 +32,7 @@ var mob_id: String = "slime"
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_aggressive_default.tres") as LootProfile
 var mob_level: int = 1
 var attack_mode: int = AttackMode.MELEE
+var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 
 var home_position: Vector2 = Vector2.ZERO
 
@@ -211,7 +213,8 @@ func apply_spawn_init(
 	mob_id_in: String,
 	loot_profile_in: LootProfile = null,
 	class_id_in: String = "",
-	growth_profile_id_in: String = ""
+	growth_profile_id_in: String = "",
+	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL
 ) -> void:
 	# Эти поля должны выставляться до расчётов/AI
 
@@ -237,6 +240,7 @@ func apply_spawn_init(
 	if c_stats != null:
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in
+		c_stats.mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	_setup_resource_from_class(class_id_in)
 
 	var role := Progression.get_attack_role_for_class(class_id_in)
@@ -255,6 +259,8 @@ func apply_spawn_init(
 		if chosen_mode == AttackMode.RANGED:
 			c_combat.ranged_cooldown = base_ranged
 		c_combat.attack_mode = chosen_mode
+
+	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 
 	# уровень/режим атаки выставляем как было
 	set_level(level_in)
@@ -414,6 +420,7 @@ func _die() -> void:
 		if owner_node != null and owner_node.is_in_group("player"):
 			var player_lvl: int = int(owner_node.get("level"))
 			xp_amount = XpSystem.xp_reward_for_kill(BASE_XP_L1_AGGRESSIVE, mob_level, player_lvl)
+			xp_amount = int(round(float(xp_amount) * MOB_VARIANT.xp_mult(MOB_VARIANT.clamp_variant(mob_variant))))
 
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
@@ -421,7 +428,7 @@ func _die() -> void:
 		xp_amount,
 		mob_level,
 		loot_profile,
-		{ "mob_kind": "aggressive" }
+		{ "mob_kind": "aggressive", "mob_variant": mob_variant }
 	)
 
 	emit_signal("died", corpse)

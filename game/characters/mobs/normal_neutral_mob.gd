@@ -3,6 +3,7 @@ class_name NormalNeutralMob
 
 ## These helpers are registered as global classes (class_name).
 ## Avoid shadowing them with local constants.
+const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 
 signal died(corpse: Corpse)
 
@@ -28,6 +29,7 @@ var body_size: int = BodySize.MEDIUM
 var mob_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
 var skin_id: String = ""
+var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 
 var home_position: Vector2 = Vector2.ZERO
 
@@ -228,7 +230,8 @@ func apply_spawn_init(
 	skin_id_in: String,
 	loot_profile_in: LootProfile = null,
 	class_id_in: String = "",
-	growth_profile_id_in: String = ""
+	growth_profile_id_in: String = "",
+	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -238,6 +241,7 @@ func apply_spawn_init(
 	# Common params (speed/leash/aggro) are configured on the mob itself.
 	mob_level = max(1, level_in)
 	body_size = body_size_in
+	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 
 	if c_ai != null:
 		c_ai.behavior = behavior_in
@@ -254,6 +258,7 @@ func apply_spawn_init(
 	if c_stats != null:
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in
+		c_stats.mob_variant = mob_variant
 
 	_setup_resource_from_class(class_id_in)
 	_apply_to_components()
@@ -426,6 +431,7 @@ func _die() -> void:
 		if owner_node != null and owner_node.is_in_group("player"):
 			var player_lvl: int = int(owner_node.get("level"))
 			xp_amount = XpSystem.xp_reward_for_kill(_base_xp_l1_by_size(), mob_level, player_lvl)
+			xp_amount = int(round(float(xp_amount) * MOB_VARIANT.xp_mult(MOB_VARIANT.clamp_variant(mob_variant))))
 
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
@@ -437,6 +443,7 @@ func _die() -> void:
 			"mob_kind": "neutral",
 			"body_size": body_size,
 			"is_humanoid": body_size == BodySize.HUMANOID,
+			"mob_variant": mob_variant,
 		}
 	)
 

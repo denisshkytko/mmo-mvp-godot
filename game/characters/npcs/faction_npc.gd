@@ -3,6 +3,7 @@ class_name FactionNPC
 
 @export var default_loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 ## Helpers below are global classes (class_name). Avoid shadowing them.
+const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 
 signal died(corpse: Corpse)
 
@@ -36,6 +37,7 @@ var retaliation_active: bool = false
 
 var npc_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
+var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 
 var home_position: Vector2 = Vector2.ZERO
 var current_target: Node2D = null
@@ -176,7 +178,8 @@ func apply_spawn_init(
 	projectile_scene_in: PackedScene,
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
-	merchant_preset_in: MerchantPreset = null
+	merchant_preset_in: MerchantPreset = null,
+	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -186,6 +189,7 @@ func apply_spawn_init(
 	fighter_type = fighter_in
 	interaction_type = interaction_in
 	npc_level = max(1, level_in)
+	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
 	merchant_preset = merchant_preset_in if merchant_preset_in != null else merchant_preset
 
@@ -208,6 +212,7 @@ func apply_spawn_init(
 	if c_stats != null:
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in
+		c_stats.mob_variant = mob_variant
 	_setup_resource_from_class(class_id_in)
 
 	# presets + combat mode
@@ -422,6 +427,7 @@ func _die() -> void:
 		if owner_node != null and owner_node.is_in_group("player"):
 			var player_lvl: int = int(owner_node.get("level"))
 			xp_amount = XpSystem.xp_reward_for_kill(BASE_XP_L1_FACTION, npc_level, player_lvl)
+			xp_amount = int(round(float(xp_amount) * MOB_VARIANT.xp_mult(MOB_VARIANT.clamp_variant(mob_variant))))
 
 	var corpse: Corpse = DeathPipeline.die_and_spawn(
 		self,
@@ -429,7 +435,7 @@ func _die() -> void:
 		xp_amount,
 		npc_level,
 		p,
-		{ "mob_kind": "faction_npc" }
+		{ "mob_kind": "faction_npc", "mob_variant": mob_variant }
 	)
 
 	emit_signal("died", corpse)
