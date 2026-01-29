@@ -111,6 +111,7 @@ var _panel_anchor_valid: bool = false
 
 # Icon cache for slot buttons
 var _icon_cache: Dictionary = {} # path -> Texture2D
+var _tooltip_layer: CanvasLayer = null
 
 func _ready() -> void:
 	add_to_group("inventory_ui")
@@ -1817,6 +1818,7 @@ func _ensure_support_ui() -> void:
 		if _tooltip_panel != null:
 			_tooltip_panel.visible = false
 			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+			_ensure_tooltip_layer()
 			# Match LootHUD tooltip styling.
 			var sb := StyleBoxFlat.new()
 			sb.bg_color = Color(0, 0, 0, 0.85)
@@ -1868,7 +1870,6 @@ func _ensure_support_ui() -> void:
 		sb2.content_margin_top = 10
 		sb2.content_margin_bottom = 10
 		_split_dialog.add_theme_stylebox_override("panel", sb2)
-
 		_split_label = Label.new()
 		_split_dialog.add_child(_split_label)
 		_split_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -2211,3 +2212,14 @@ func _format_money_bronze(bronze: int) -> String:
 		parts.append("%ds" % silver)
 	parts.append("%db" % bronze_small)
 	return " ".join(parts)
+
+func _ensure_tooltip_layer() -> void:
+	if _tooltip_panel == null:
+		return
+	if _tooltip_layer == null:
+		_tooltip_layer = CanvasLayer.new()
+		_tooltip_layer.name = "TooltipLayer"
+		_tooltip_layer.layer = 200
+		add_child(_tooltip_layer)
+	if _tooltip_panel.get_parent() != _tooltip_layer:
+		_tooltip_panel.reparent(_tooltip_layer)

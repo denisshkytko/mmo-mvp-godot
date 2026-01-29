@@ -21,6 +21,7 @@ var _corpse: Node = null
 var _player: Node = null
 var _tooltip_view_index: int = -1
 var _tooltip_seq: int = 0
+var _tooltip_layer: CanvasLayer = null
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -47,6 +48,7 @@ func _as_corpse(n: Node) -> Corpse:
 func _ready() -> void:
 	panel.visible = false
 	tooltip_panel.visible = false
+	_ensure_tooltip_layer()
 	# Prevent RichTextLabel from keeping an old scroll/offset between hover updates.
 	# (This was the root cause of the "text keeps drifting upward" bug.)
 	_reset_tooltip_scroll()
@@ -633,6 +635,17 @@ func _position_tooltip_beside_panel() -> void:
 		pos.x = max(gap, vp.x - size.x - gap)
 	pos.y = clamp(pr.position.y, gap, vp.y - size.y - gap)
 	tooltip_panel.global_position = pos
+
+func _ensure_tooltip_layer() -> void:
+	if tooltip_panel == null:
+		return
+	if _tooltip_layer == null:
+		_tooltip_layer = CanvasLayer.new()
+		_tooltip_layer.name = "TooltipLayer"
+		_tooltip_layer.layer = 200
+		add_child(_tooltip_layer)
+	if tooltip_panel.get_parent() != _tooltip_layer:
+		tooltip_panel.reparent(_tooltip_layer)
 
 
 func _unhandled_input(event: InputEvent) -> void:

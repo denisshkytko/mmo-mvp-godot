@@ -57,6 +57,7 @@ var _equip_drag_start_pos: Vector2 = Vector2.ZERO
 var _equip_drag_threshold: float = 8.0
 var _equip_drag_icon: TextureRect = null
 var _tooltip_anchor_pos: Vector2 = Vector2.ZERO
+var _tooltip_layer: CanvasLayer = null
 
 func _ready() -> void:
 	add_to_group("character_hud")
@@ -77,6 +78,7 @@ func _ready() -> void:
 	tooltip_panel.visible = false
 	tooltip_rich.text = ""
 	_style_tooltip_panel()
+	_ensure_tooltip_layer()
 	if tooltip_unequip != null and not tooltip_unequip.pressed.is_connected(_on_unequip_pressed):
 		tooltip_unequip.pressed.connect(_on_unequip_pressed)
 	if tooltip_close_button != null and not tooltip_close_button.pressed.is_connected(_hide_tooltip):
@@ -806,3 +808,14 @@ func _format_float_clean(v: float) -> String:
 	if s.ends_with("."):
 		s = s.left(s.length() - 1)
 	return s
+
+func _ensure_tooltip_layer() -> void:
+	if tooltip_panel == null:
+		return
+	if _tooltip_layer == null:
+		_tooltip_layer = CanvasLayer.new()
+		_tooltip_layer.name = "TooltipLayer"
+		_tooltip_layer.layer = 200
+		add_child(_tooltip_layer)
+	if tooltip_panel.get_parent() != _tooltip_layer:
+		tooltip_panel.reparent(_tooltip_layer)

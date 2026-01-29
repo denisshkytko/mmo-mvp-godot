@@ -32,6 +32,7 @@ var _sell_entries: Array[Dictionary] = []
 var _icon_cache: Dictionary = {}
 var _tooltip_item_id: String = ""
 var _names_pending: bool = false
+var _tooltip_layer: CanvasLayer = null
 
 # Drag state for buy tab
 var _drag_active: bool = false
@@ -58,6 +59,7 @@ var _sell_refresh_accum: float = 0.0
 func _ready() -> void:
 	panel.visible = false
 	tooltip_panel.visible = false
+	_ensure_tooltip_layer()
 	if tooltip_panel != null:
 		tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	if tooltip_label != null:
@@ -310,6 +312,17 @@ func _format_money_short(bronze_total: int) -> String:
 		parts.append("%ds" % silver)
 	parts.append("%db" % bronze)
 	return " ".join(parts)
+
+func _ensure_tooltip_layer() -> void:
+	if tooltip_panel == null:
+		return
+	if _tooltip_layer == null:
+		_tooltip_layer = CanvasLayer.new()
+		_tooltip_layer.name = "TooltipLayer"
+		_tooltip_layer.layer = 200
+		add_child(_tooltip_layer)
+	if tooltip_panel.get_parent() != _tooltip_layer:
+		tooltip_panel.reparent(_tooltip_layer)
 
 func _format_item_label(item_id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
