@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cyfwx2chmt82i"]
 
 [ext_resource type="Script" uid="uid://65yhursyacwe" path="res://ui/game/hud/loot_hud.gd" id="1_784ee"]
-[ext_resource type="PackedScene" uid="uid://bhgl2a5rnu6k7" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_4g0os"]
+[ext_resource type="PackedScene" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_4g0os"]
 
 [node name="LootHUD" type="CanvasLayer"]
 script = ExtResource("1_784ee")
@@ -47,22 +47,20 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
 [node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot0"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot0/Row"]
 custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
 size_flags_vertical = 4
 stretch_mode = 5
 
 [node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot0/Row"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 bbcode_enabled = true
@@ -71,11 +69,11 @@ scroll_active = false
 autowrap_mode = 2
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot0/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
+layout_mode = 2
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot0/Row"]
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_vertical = 4
 text = "Take"
 
@@ -84,22 +82,20 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
 [node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot1"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot1/Row"]
 custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
 size_flags_vertical = 4
 stretch_mode = 5
 
 [node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot1/Row"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 bbcode_enabled = true
@@ -108,11 +104,11 @@ scroll_active = false
 autowrap_mode = 2
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot1/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
+layout_mode = 2
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot1/Row"]
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_vertical = 4
 text = "Take"
 
@@ -121,22 +117,20 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
 [node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot2"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot2/Row"]
 custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
 size_flags_vertical = 4
 stretch_mode = 5
 
 [node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot2/Row"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 bbcode_enabled = true
@@ -145,11 +139,11 @@ scroll_active = false
 autowrap_mode = 2
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot2/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
+layout_mode = 2
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot2/Row"]
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_vertical = 4
 text = "Take"
 
@@ -158,22 +152,20 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
 [node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot3"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot3/Row"]
 custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
 size_flags_vertical = 4
 stretch_mode = 5
 
 [node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot3/Row"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 bbcode_enabled = true
@@ -182,11 +174,11 @@ scroll_active = false
 autowrap_mode = 2
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot3/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
+layout_mode = 2
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot3/Row"]
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_vertical = 4
 text = "Take"
 
@@ -195,22 +187,20 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
 [node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot4"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot4/Row"]
 custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
 size_flags_vertical = 4
 stretch_mode = 5
 
 [node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot4/Row"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 bbcode_enabled = true
@@ -219,11 +209,11 @@ scroll_active = false
 autowrap_mode = 2
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot4/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
+layout_mode = 2
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot4/Row"]
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_vertical = 4
 text = "Take"
 
@@ -232,22 +222,20 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 
 [node name="Row" type="HBoxContainer" parent="Panel/Scroll/Grid/LootSlot5"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Icon" type="TextureRect" parent="Panel/Scroll/Grid/LootSlot5/Row"]
 custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
 size_flags_vertical = 4
 stretch_mode = 5
 
 [node name="Name" type="RichTextLabel" parent="Panel/Scroll/Grid/LootSlot5/Row"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 bbcode_enabled = true
@@ -256,11 +244,11 @@ scroll_active = false
 autowrap_mode = 2
 
 [node name="Count" type="Label" parent="Panel/Scroll/Grid/LootSlot5/Row"]
-size_flags_vertical = 4
-autowrap_mode = 0
+layout_mode = 2
 
 [node name="TakeButton" type="Button" parent="Panel/Scroll/Grid/LootSlot5/Row"]
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_vertical = 4
 text = "Take"
 
