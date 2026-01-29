@@ -2,7 +2,7 @@ extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var panel: Control = $Panel
-@onready var gold_label: Label = $Panel/GoldLabel
+@onready var gold_label: RichTextLabel = $Panel/GoldLabel
 @onready var grid: GridContainer = $Panel/Grid
 
 @onready var base_bag_button: Button = $BagBar/BaseBagButton
@@ -18,9 +18,12 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var tooltip_label_scene: RichTextLabel = $InvTooltip/Margin/VBox/Text
 @onready var tooltip_use_btn_scene: Button = $InvTooltip/Margin/VBox/UseButton
 @onready var tooltip_equip_btn_scene: Button = $InvTooltip/Margin/VBox/EquipButton
+@onready var tooltip_sell_btn_scene: Button = $InvTooltip/Margin/VBox/SellButton
+@onready var tooltip_close_btn_scene: Button = $InvTooltip/CloseButton
 
 var player: Node = null
 var _is_open: bool = true
+var _trade_open: bool = false
 
 # --- Inventory UI state ---
 var _selected_slot_index: int = -1
@@ -48,6 +51,8 @@ var _tooltip_panel: Panel = null
 var _tooltip_label: RichTextLabel = null
 var _tooltip_use_btn: Button = null
 var _tooltip_equip_btn: Button = null
+var _tooltip_sell_btn: Button = null
+var _tooltip_close_btn: Button = null
 var _tooltip_for_slot: int = -1
 
 # Small center toast ("hp full" / "mana full")
@@ -106,10 +111,16 @@ var _panel_anchor_valid: bool = false
 
 # Icon cache for slot buttons
 var _icon_cache: Dictionary = {} # path -> Texture2D
+var _tooltip_layer: CanvasLayer = null
 
 func _ready() -> void:
+	add_to_group("inventory_ui")
 	# default to closed in actual gameplay; keep current behavior
 	_is_open = panel.visible
+	if gold_label != null:
+		gold_label.bbcode_enabled = true
+		gold_label.fit_content = true
+		gold_label.scroll_active = false
 
 	base_bag_button.pressed.connect(_on_bag_button_pressed)
 	# Bag equipment slots (visual order: they extend left from base bag button).
@@ -141,6 +152,12 @@ func _ready() -> void:
 func set_player(p: Node) -> void:
 	player = p
 	_refresh()
+
+func set_trade_open(state: bool) -> void:
+	_trade_open = state
+
+func hide_tooltip() -> void:
+	_hide_tooltip()
 
 func _auto_bind_player() -> void:
 	# Try to bind automatically if caller didn't call set_player().
@@ -508,6 +525,15 @@ func _finish_drag(global_pos: Vector2) -> void:
 				if equip_slot != "":
 					dropped = _drop_into_equipment_slot(equip_slot)
 
+	# 4.5) Drop onto merchant sell area
+	if not dropped:
+		var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
+		if merchant_ui != null and merchant_ui.has_method("try_accept_inventory_drop"):
+			var accepted: bool = bool(merchant_ui.call("try_accept_inventory_drop", global_pos, _drag_item))
+			if accepted:
+				_end_drag()
+				return
+
 	# 5) Drop outside: confirm delete
 	if not dropped:
 		if not _is_point_inside_panel(global_pos):
@@ -794,6 +820,9 @@ func _show_tooltip_for_slot(slot_index: int) -> void:
 		var is_equippable := _is_equippable_item(id)
 		_tooltip_equip_btn.visible = is_equippable
 		_tooltip_equip_btn.disabled = false
+	if _tooltip_sell_btn != null:
+		_tooltip_sell_btn.visible = _trade_open
+		_tooltip_sell_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = slot_index
@@ -843,6 +872,8 @@ func _resize_tooltip_to_content() -> void:
 		btn_h = max(32.0, _tooltip_use_btn.get_combined_minimum_size().y)
 	if _tooltip_equip_btn != null and _tooltip_equip_btn.visible:
 		btn_h += max(32.0, _tooltip_equip_btn.get_combined_minimum_size().y)
+	if _tooltip_sell_btn != null and _tooltip_sell_btn.visible:
+		btn_h += max(32.0, _tooltip_sell_btn.get_combined_minimum_size().y)
 	# label + optional button + small spacing
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
@@ -1149,6 +1180,42 @@ func _on_tooltip_equip_pressed() -> void:
 		else:
 			_show_equip_fail_toast()
 
+func _on_tooltip_sell_pressed() -> void:
+	if not _trade_open:
+		return
+	if player == null or not is_instance_valid(player):
+		return
+	if _tooltip_for_slot < 0:
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if _tooltip_for_slot >= slots.size():
+		_hide_tooltip()
+		return
+	var v: Variant = slots[_tooltip_for_slot]
+	if v == null or not (v is Dictionary):
+		_hide_tooltip()
+		return
+	var id: String = String((v as Dictionary).get("id", ""))
+	if id == "":
+		return
+	var total: int = _get_total_item_count(id)
+	if total <= 0:
+		return
+	var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
+	if merchant_ui == null:
+		return
+	if total <= 1 or _get_stack_max(id) <= 1:
+		if merchant_ui.has_method("sell_items_from_inventory"):
+			merchant_ui.call("sell_items_from_inventory", id, 1)
+		_hide_tooltip()
+		_refresh()
+		return
+	if merchant_ui.has_method("request_sell_from_inventory"):
+		merchant_ui.call("request_sell_from_inventory", id, total)
+	_hide_tooltip()
+	_refresh()
+
 
 func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
 	_ensure_support_ui()
@@ -1198,6 +1265,23 @@ func _show_equip_fail_toast() -> void:
 	if msg == "":
 		return
 	_toast_label.text = msg
+	_toast_label.modulate = Color(1, 1, 1, 1)
+	_toast_label.visible = true
+	var tw := create_tween()
+	tw.tween_interval(1.2)
+	tw.tween_property(_toast_label, "modulate", Color(1, 1, 1, 0), 0.8)
+	tw.finished.connect(func():
+		if _toast_label != null:
+			_toast_label.visible = false
+	)
+
+func show_center_toast(message: String) -> void:
+	_ensure_support_ui()
+	if _toast_label == null:
+		return
+	if message.strip_edges() == "":
+		return
+	_toast_label.text = message
 	_toast_label.modulate = Color(1, 1, 1, 1)
 	_toast_label.visible = true
 	var tw := create_tween()
@@ -1289,7 +1373,7 @@ func _refresh() -> void:
 		await _apply_inventory_layout(total_slots)
 
 	# Gold
-	gold_label.text = "Gold: %s" % _format_money_bronze(int(snap.get("gold", 0)))
+	gold_label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))
 
 	# Render items
 	for i in range(grid.get_child_count()):
@@ -1457,6 +1541,27 @@ func _find_first_free_slot(slots: Array) -> int:
 		if slots[i] == null:
 			return i
 	return -1
+
+func _get_total_item_count(item_id: String) -> int:
+	if item_id == "":
+		return 0
+	if player == null:
+		return 0
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	var total: int = 0
+	for v in slots:
+		if v == null or not (v is Dictionary):
+			continue
+		var d: Dictionary = v as Dictionary
+		if String(d.get("id", "")) == item_id:
+			total += int(d.get("count", 0))
+	return total
+
+func is_point_over_inventory(global_pos: Vector2) -> bool:
+	if panel == null or not panel.visible:
+		return false
+	return panel.get_global_rect().has_point(global_pos)
 
 func _find_first_slot_with_item(id: String) -> int:
 	if player == null:
@@ -1712,9 +1817,12 @@ func _ensure_support_ui() -> void:
 		_tooltip_label = tooltip_label_scene
 		_tooltip_use_btn = tooltip_use_btn_scene
 		_tooltip_equip_btn = tooltip_equip_btn_scene
+		_tooltip_sell_btn = tooltip_sell_btn_scene
+		_tooltip_close_btn = tooltip_close_btn_scene
 		if _tooltip_panel != null:
 			_tooltip_panel.visible = false
-			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+			_ensure_tooltip_layer()
 			# Match LootHUD tooltip styling.
 			var sb := StyleBoxFlat.new()
 			sb.bg_color = Color(0, 0, 0, 0.85)
@@ -1739,6 +1847,10 @@ func _ensure_support_ui() -> void:
 			_tooltip_use_btn.pressed.connect(_on_tooltip_use_pressed)
 		if _tooltip_equip_btn != null and not _tooltip_equip_btn.pressed.is_connected(_on_tooltip_equip_pressed):
 			_tooltip_equip_btn.pressed.connect(_on_tooltip_equip_pressed)
+		if _tooltip_sell_btn != null and not _tooltip_sell_btn.pressed.is_connected(_on_tooltip_sell_pressed):
+			_tooltip_sell_btn.pressed.connect(_on_tooltip_sell_pressed)
+		if _tooltip_close_btn != null and not _tooltip_close_btn.pressed.is_connected(_hide_tooltip):
+			_tooltip_close_btn.pressed.connect(_hide_tooltip)
 
 	if _delete_confirm == null:
 		_delete_confirm = ConfirmationDialog.new()
@@ -1762,7 +1874,6 @@ func _ensure_support_ui() -> void:
 		sb2.content_margin_top = 10
 		sb2.content_margin_bottom = 10
 		_split_dialog.add_theme_stylebox_override("panel", sb2)
-
 		_split_label = Label.new()
 		_split_dialog.add_child(_split_label)
 		_split_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -2105,3 +2216,14 @@ func _format_money_bronze(bronze: int) -> String:
 		parts.append("%ds" % silver)
 	parts.append("%db" % bronze_small)
 	return " ".join(parts)
+
+func _ensure_tooltip_layer() -> void:
+	if _tooltip_panel == null:
+		return
+	if _tooltip_layer == null:
+		_tooltip_layer = CanvasLayer.new()
+		_tooltip_layer.name = "TooltipLayer"
+		_tooltip_layer.layer = 200
+		add_child(_tooltip_layer)
+	if _tooltip_panel.get_parent() != _tooltip_layer:
+		_tooltip_panel.reparent(_tooltip_layer)

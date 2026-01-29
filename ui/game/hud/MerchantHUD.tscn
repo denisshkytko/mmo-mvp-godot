@@ -1,0 +1,191 @@
+[gd_scene load_steps=3 format=3 uid="uid://z2n5el699p5r"]
+
+[ext_resource type="Script" uid="uid://31wu7f4vmesd" path="res://ui/game/hud/merchant_hud.gd" id="1_yj2p2"]
+[ext_resource type="PackedScene" uid="uid://bhgl2a5rnu6k7" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_2u4xq"]
+
+[node name="MerchantHUD" type="CanvasLayer"]
+script = ExtResource("1_yj2p2")
+
+[node name="TooltipPanel" parent="." instance=ExtResource("2_2u4xq")]
+z_index = 50
+
+[node name="Panel" type="Panel" parent="."]
+visible = false
+custom_minimum_size = Vector2(540, 420)
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 564.0
+offset_bottom = 444.0
+
+[node name="Title" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 260.0
+offset_bottom = 30.0
+text = "Торговля"
+
+[node name="CloseButton" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 508.0
+offset_top = 6.0
+offset_right = 528.0
+offset_bottom = 26.0
+text = "×"
+
+[node name="ItemCellTemplate" type="Panel" parent="Panel"]
+visible = false
+custom_minimum_size = Vector2(240, 52)
+layout_mode = 0
+offset_left = 12.0
+offset_top = 80.0
+offset_right = 252.0
+offset_bottom = 132.0
+
+[node name="Padding" type="MarginContainer" parent="Panel/ItemCellTemplate"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Content" type="HBoxContainer" parent="Panel/ItemCellTemplate/Padding"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="IconPanel" type="Panel" parent="Panel/ItemCellTemplate/Padding/Content"]
+custom_minimum_size = Vector2(36, 36)
+size_flags_vertical = 4
+
+[node name="Icon" type="TextureRect" parent="Panel/ItemCellTemplate/Padding/Content/IconPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+stretch_mode = 5
+expand_mode = 2
+
+[node name="Name" type="Label" parent="Panel/ItemCellTemplate/Padding/Content"]
+custom_minimum_size = Vector2(140, 0)
+size_flags_horizontal = 3
+size_flags_vertical = 4
+autowrap_mode = 2
+clip_text = true
+
+[node name="ActionButton" type="Button" parent="Panel/ItemCellTemplate/Padding/Content"]
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = ""
+
+[node name="ActionText" type="RichTextLabel" parent="Panel/ItemCellTemplate/Padding/Content/ActionButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+bbcode_enabled = true
+fit_content = false
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+mouse_filter = 2
+text = "Купить"
+
+[node name="Tabs" type="TabContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 38.0
+offset_right = 528.0
+offset_bottom = 392.0
+
+[node name="Покупка" type="Control" parent="Panel/Tabs"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Tabs/Покупка"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Margin" type="MarginContainer" parent="Panel/Tabs/Покупка/Scroll"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+
+[node name="Grid" type="GridContainer" parent="Panel/Tabs/Покупка/Scroll/Margin"]
+columns = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+
+[node name="Продажа" type="Control" parent="Panel/Tabs"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Tabs/Продажа"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Margin" type="MarginContainer" parent="Panel/Tabs/Продажа/Scroll"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+
+[node name="Grid" type="GridContainer" parent="Panel/Tabs/Продажа/Scroll/Margin"]
+columns = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5

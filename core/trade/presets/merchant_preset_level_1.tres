@@ -1,0 +1,35 @@
+[gd_resource type="Resource" load_steps=7 format=3]
+
+[ext_resource type="Script" uid="uid://ccdasue20q2e" path="res://core/trade/merchant_preset.gd" id="1_qog5x"]
+[ext_resource type="Script" uid="uid://renf9c2znnf4" path="res://core/trade/merchant_item_entry.gd" id="2_lxm4a"]
+
+[sub_resource type="Resource" id="Resource_1h1d0"]
+script = ExtResource("2_lxm4a")
+item_id = "bag_6s_rl01"
+count = 1
+
+[sub_resource type="Resource" id="Resource_b4j1g"]
+script = ExtResource("2_lxm4a")
+item_id = "cons_food_01_09"
+count = 20
+
+[sub_resource type="Resource" id="Resource_e5vgm"]
+script = ExtResource("2_lxm4a")
+item_id = "cons_drink_01_09"
+count = 20
+
+[sub_resource type="Resource" id="Resource_3m6r1"]
+script = ExtResource("2_lxm4a")
+item_id = "cons_potion_hp_01_09"
+count = 10
+
+[sub_resource type="Resource" id="Resource_v7h8o"]
+script = ExtResource("2_lxm4a")
+item_id = "cons_potion_mp_01_09"
+count = 10
+
+[resource]
+script = ExtResource("1_qog5x")
+preset_id = 0
+title = "Товары для 1 уровня"
+items = [SubResource("Resource_1h1d0"), SubResource("Resource_b4j1g"), SubResource("Resource_e5vgm"), SubResource("Resource_3m6r1"), SubResource("Resource_v7h8o")]

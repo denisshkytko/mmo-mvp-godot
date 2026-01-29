@@ -15,11 +15,13 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 
 @onready var tooltip_panel: Panel = $TooltipPanel
 @onready var tooltip_text: RichTextLabel = $TooltipPanel/Margin/VBox/Text
+@onready var tooltip_close_button: Button = $TooltipPanel/CloseButton
 
 var _corpse: Node = null
 var _player: Node = null
 var _tooltip_view_index: int = -1
 var _tooltip_seq: int = 0
+var _tooltip_layer: CanvasLayer = null
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -46,11 +48,12 @@ func _as_corpse(n: Node) -> Corpse:
 func _ready() -> void:
 	panel.visible = false
 	tooltip_panel.visible = false
+	_ensure_tooltip_layer()
 	# Prevent RichTextLabel from keeping an old scroll/offset between hover updates.
 	# (This was the root cause of the "text keeps drifting upward" bug.)
 	_reset_tooltip_scroll()
 	tooltip_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	# Make tooltip styling stable and readable
 	var sb := StyleBoxFlat.new()
@@ -69,6 +72,8 @@ func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
 	loot_all_button.pressed.connect(_on_loot_all_pressed)
 	close_button.pressed.connect(close)
+	if tooltip_close_button != null:
+		tooltip_close_button.pressed.connect(_hide_tooltip)
 
 	# Bind slot UI
 	for i in range(grid.get_child_count()):
@@ -79,10 +84,11 @@ func _ready() -> void:
 		if take_button != null:
 			take_button.pressed.connect(_on_slot_pressed.bind(i))
 			take_button.mouse_filter = Control.MOUSE_FILTER_STOP
-		var name_label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		var name_label: RichTextLabel = slot_panel.get_node_or_null("Row/Name") as RichTextLabel
 		if name_label != null:
-			name_label.clip_text = true
-			name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			name_label.bbcode_enabled = true
+			name_label.fit_content = true
+			name_label.scroll_active = false
 			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 			name_label.gui_input.connect(_on_slot_tapped.bind(i))
 			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -280,7 +286,7 @@ func _refresh() -> void:
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		var label: Label = slot_panel.get_node_or_null("Row/Name") as Label
+		var label: RichTextLabel = slot_panel.get_node_or_null("Row/Name") as RichTextLabel
 		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
 		var take_button: Button = slot_panel.get_node_or_null("Row/TakeButton") as Button
 		var icon_rect: TextureRect = slot_panel.get_node_or_null("Row/Icon") as TextureRect
@@ -309,7 +315,7 @@ func _refresh() -> void:
 
 		if t == "gold":
 			if label != null:
-				label.text = "Gold: %s" % _format_money_bronze(gold)
+				label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(gold)
 			if count_label != null:
 				count_label.text = ""
 			if take_button != null:
@@ -512,7 +518,7 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	if t == "gold":
 		var corpse_typed := _as_corpse(_corpse)
 		var gold_amount: int = corpse_typed.loot_gold if corpse_typed != null else (int(_corpse.get("loot_gold")) if ("loot_gold" in _corpse) else 0)
-		text_out = "Gold\n" + _format_money_bronze(gold_amount)
+		text_out = "Gold\n" + TOOLTIP_BUILDER.format_money_bbcode(gold_amount)
 	elif t == "item":
 		var corpse_typed2 := _as_corpse(_corpse)
 		var slots: Array = corpse_typed2.loot_slots if corpse_typed2 != null else (_corpse.get("loot_slots") if ("loot_slots" in _corpse) else [])
@@ -630,6 +636,17 @@ func _position_tooltip_beside_panel() -> void:
 		pos.x = max(gap, vp.x - size.x - gap)
 	pos.y = clamp(pr.position.y, gap, vp.y - size.y - gap)
 	tooltip_panel.global_position = pos
+
+func _ensure_tooltip_layer() -> void:
+	if tooltip_panel == null:
+		return
+	if _tooltip_layer == null:
+		_tooltip_layer = CanvasLayer.new()
+		_tooltip_layer.name = "TooltipLayer"
+		_tooltip_layer.layer = 200
+		add_child(_tooltip_layer)
+	if tooltip_panel.get_parent() != _tooltip_layer:
+		tooltip_panel.reparent(_tooltip_layer)
 
 
 func _unhandled_input(event: InputEvent) -> void:
