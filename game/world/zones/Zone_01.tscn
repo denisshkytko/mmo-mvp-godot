@@ -109,7 +109,6 @@ position = Vector2(-1077, -619)
 script = ExtResource("3_rjbcs")
 loot_profile = SubResource("Resource_nldw7")
 level_max = 2
-attack_mode = 1
 behavior = 1
 patrol_radius = 350.0
 patrol_pause_seconds = 3.0
@@ -152,9 +151,12 @@ position = Vector2(-15.999999, -318)
 
 [node name="FNPCSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
+fighter_type = 1
+interaction_type = 1
 loot_profile = SubResource("Resource_b1gjl")
 level_min = 5
 level_max = 5
+class_choice = 2
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-1659, -163)
@@ -165,6 +167,7 @@ faction_id = "red"
 loot_profile = SubResource("Resource_ecawj")
 level_min = 5
 level_max = 5
+class_choice = 2
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup2" instance=ExtResource("7_82kis")]
 position = Vector2(-1275, -159)
@@ -175,6 +178,7 @@ faction_id = "yellow"
 loot_profile = SubResource("Resource_g6f5m")
 level_min = 5
 level_max = 5
+class_choice = 2
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup3" instance=ExtResource("7_82kis")]
 position = Vector2(-1663, 213)
@@ -185,6 +189,7 @@ faction_id = "green"
 loot_profile = SubResource("Resource_1orgs")
 level_min = 5
 level_max = 5
+class_choice = 2
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup4" instance=ExtResource("7_82kis")]
 position = Vector2(-1575, 192)

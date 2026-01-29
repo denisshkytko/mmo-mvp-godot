@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bq1obwgfdui1f"]
 
 [ext_resource type="Script" uid="uid://dv5t17eg8j84f" path="res://ui/game/hud/inventory_hud.gd" id="1_wqexf"]
-[ext_resource type="PackedScene" uid="uid://bhgl2a5rnu6k7" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_0n5q6"]
+[ext_resource type="PackedScene" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_0n5q6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wqexf"]
 border_width_left = 2
@@ -44,26 +44,27 @@ grow_vertical = 0
 
 [node name="GoldLabel" type="RichTextLabel" parent="Panel"]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 67.0
-offset_bottom = 39.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 61.0
+offset_bottom = 33.0
 bbcode_enabled = true
+text = "gold: 0"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
-text = "gold: 0"
 
 [node name="Grid" type="GridContainer" parent="Panel"]
+custom_minimum_size = Vector2(65, 65)
 layout_mode = 0
-offset_left = 16.0
+offset_left = 10.0
 offset_top = 50.0
-offset_right = 56.0
-offset_bottom = 90.0
+offset_right = 75.0
+offset_bottom = 115.0
 columns = 4
 
 [node name="Slot0" type="Panel" parent="Panel/Grid"]
-custom_minimum_size = Vector2(72, 72)
+custom_minimum_size = Vector2(65, 65)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
 
@@ -155,7 +156,6 @@ layout_mode = 2
 z_index = 60
 offset_right = 360.0
 offset_bottom = 10.0
-
 
 [node name="BagFullDialog" type="AcceptDialog" parent="."]
 title = "Inventory"

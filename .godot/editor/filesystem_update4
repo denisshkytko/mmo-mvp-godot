@@ -1,0 +1,3 @@
+res://ui/game/hud/MerchantHUD.tscn
+res://core/trade/presets/merchant_preset_level_1.tres
+res://ui/game/hud/InventoryHUD.tscn
