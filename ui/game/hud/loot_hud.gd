@@ -95,7 +95,6 @@ func _ready() -> void:
 			name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 			if name_label.has_method("set_text_overrun_behavior"):
 				name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-			name_label.clip_text = true
 			name_label.gui_input.connect(_on_slot_tapped.bind(i))
 			name_label.mouse_filter = Control.MOUSE_FILTER_STOP
 		var count_label: Label = slot_panel.get_node_or_null("Row/Count") as Label
