@@ -334,35 +334,35 @@ func _on_item_tooltip_input(event: InputEvent, item_id: String, count: int) -> v
 		var mb := event as InputEventMouseButton
 		if mb.button_index != MOUSE_BUTTON_LEFT:
 			return
-			if mb.pressed:
-				_tooltip_press_ms = Time.get_ticks_msec()
-				_tooltip_press_item_id = item_id
-				_tooltip_press_pos = mb.global_position
-				return
-			if _tooltip_press_item_id != item_id:
-				return
-			if mb.global_position.distance_to(_tooltip_press_pos) > 1.0:
-				_tooltip_press_item_id = ""
-				return
-			var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+		if mb.pressed:
+			_tooltip_press_ms = Time.get_ticks_msec()
+			_tooltip_press_item_id = item_id
+			_tooltip_press_pos = mb.global_position
+			return
+		if _tooltip_press_item_id != item_id:
+			return
+		if mb.global_position.distance_to(_tooltip_press_pos) > 1.0:
 			_tooltip_press_item_id = ""
-			if held_ms > TOOLTIP_HOLD_MAX_MS:
-				return
-			_toggle_tooltip(item_id, count, mb.global_position)
+			return
+		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+		_tooltip_press_item_id = ""
+		if held_ms > TOOLTIP_HOLD_MAX_MS:
+			return
+		_toggle_tooltip(item_id, count, mb.global_position)
 	elif event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
-			if st.pressed:
-				_tooltip_press_ms = Time.get_ticks_msec()
-				_tooltip_press_item_id = item_id
-				_tooltip_press_pos = st.position
-				return
-			if _tooltip_press_item_id != item_id:
-				return
-			if st.position.distance_to(_tooltip_press_pos) > 1.0:
-				_tooltip_press_item_id = ""
-				return
-			var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+		if st.pressed:
+			_tooltip_press_ms = Time.get_ticks_msec()
+			_tooltip_press_item_id = item_id
+			_tooltip_press_pos = st.position
+			return
+		if _tooltip_press_item_id != item_id:
+			return
+		if st.position.distance_to(_tooltip_press_pos) > 1.0:
 			_tooltip_press_item_id = ""
+			return
+		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+		_tooltip_press_item_id = ""
 		if held_ms > TOOLTIP_HOLD_MAX_MS:
 			return
 		_toggle_tooltip(item_id, count, st.position)
