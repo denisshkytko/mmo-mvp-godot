@@ -2,8 +2,9 @@ extends CharacterBody2D
 class_name Player
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
+const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 
-@export var move_speed: float = 220.0
+@export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
 # Auto-attack
 @export var attack_range: float = 70.0

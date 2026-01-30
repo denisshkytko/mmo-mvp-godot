@@ -5,6 +5,7 @@ class_name LootGenerator
 ## Procedural loot generator that pulls items from DataDB (items DB) using
 ## simple filter rules (LootProfile). This is meant to replace hand-built
 ## per-mob loot tables later, while staying Inspector-friendly.
+const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 
 ## Returned format matches Corpse/LootHUD (v2):
 ## { "gold": int, "slots": [ {"type":"item","id":String,"count":int}, ... ] }
@@ -31,12 +32,15 @@ static func generate(profile: LootProfile, level: int, context: Dictionary = {})
 	match profile.mode:
 		LootProfile.Mode.FACTION_NPC_GOLD_ONLY:
 			_generate_faction_gold_only(profile, level, out)
+			_apply_variant_gold_bonus(out, context)
 			return out
 		LootProfile.Mode.NEUTRAL_ANIMAL:
 			_generate_neutral_animal(profile, level, out, context, max_total, duplicate_cap, picked_counts)
+			_apply_variant_gold_bonus(out, context)
 			return out
 		LootProfile.Mode.NEUTRAL_HUMANOID:
 			_generate_neutral_humanoid(profile, level, out, context, max_total, duplicate_cap, picked_counts)
+			_apply_variant_gold_bonus(out, context)
 			return out
 		_:
 			pass
@@ -73,6 +77,7 @@ static func generate(profile: LootProfile, level: int, context: Dictionary = {})
 	if profile.equipment_enabled and max_total > 0:
 		_add_equipment(out, picked_counts, duplicate_cap, max_total, profile, level)
 
+	_apply_variant_gold_bonus(out, context)
 	return out
 
 
@@ -135,6 +140,17 @@ static func _generate_neutral_humanoid(profile: LootProfile, level: int, out: Di
 				slots_budget -= 1
 	else:
 		out["gold"] = 0
+
+
+static func _apply_variant_gold_bonus(out: Dictionary, context: Dictionary) -> void:
+	var gold: int = int(out.get("gold", 0))
+	if gold <= 0:
+		return
+	var variant_value := int(context.get("mob_variant", MOB_VARIANT.MobVariant.NORMAL))
+	var multiplier := MOB_VARIANT.gold_mult(MOB_VARIANT.clamp_variant(variant_value))
+	if multiplier == 1.0:
+		return
+	out["gold"] = int(round(float(gold) * multiplier))
 
 
 static func _roll_gold(profile: LootProfile, level: int) -> int:

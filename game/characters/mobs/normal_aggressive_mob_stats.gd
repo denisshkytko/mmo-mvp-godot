@@ -3,6 +3,7 @@ class_name NormalAggresiveMobStats
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const PROG := preload("res://core/stats/progression.gd")
+const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 
 var mob_level: int = 1
 
@@ -10,6 +11,7 @@ var base_primary: Dictionary = {"str": 10, "agi": 0, "end": 6, "int": 0, "per": 
 var primary_per_level: Dictionary = {"str": 2, "agi": 0, "end": 1, "int": 0, "per": 0}
 var class_id: String = ""
 var growth_profile_id: String = ""
+var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 
 # Baseline mitigation growth for mobs (so they don't become too "paper")
 var base_defense: int = 0
@@ -30,11 +32,16 @@ var _snapshot: Dictionary = {}
 func recalculate_for_level(level: int) -> void:
 	mob_level = max(1, level)
 
+	var variant := MOB_VARIANT.clamp_variant(mob_variant)
+	var primary_multiplier := MOB_VARIANT.primary_mult(variant)
+	var defense_multiplier := MOB_VARIANT.defense_mult(variant)
+
 	var base_primary_use := base_primary
 	var per_level_use := primary_per_level
 	if class_id != "":
 		var profile_id := growth_profile_id if growth_profile_id != "" else "humanoid_hostile"
 		var primary_int := PROG.get_primary_for_entity(mob_level, class_id, profile_id)
+		primary_int = _scale_primary(primary_int, primary_multiplier)
 		if OS.is_debug_build() and (mob_level == 10 or mob_level == 60):
 			var mult := PROG.get_primary_multiplier(profile_id, mob_level)
 			print("Aggressive mob L%d mult=%.2f primary=%s" % [mob_level, mult, str(primary_int)])
@@ -49,6 +56,8 @@ func recalculate_for_level(level: int) -> void:
 	else:
 		if OS.is_debug_build() and mob_level == 1:
 			print("Aggressive mob legacy primary path (class_id empty).")
+		base_primary_use = _scale_primary(base_primary_use, primary_multiplier)
+		per_level_use = _scale_primary(per_level_use, primary_multiplier)
 		_snapshot = STAT_CALC.build_mob_snapshot_from_primary(
 			mob_level,
 			base_primary_use,
@@ -60,6 +69,7 @@ func recalculate_for_level(level: int) -> void:
 		)
 
 	_apply_rage_mana_override()
+	_apply_defense_multiplier(defense_multiplier)
 
 	var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 	max_hp = int(d.get("max_hp", max_hp))
@@ -84,6 +94,30 @@ func _apply_rage_mana_override() -> void:
 	derived["max_mana"] = 0
 	derived["mana_regen"] = 0
 	_snapshot["derived"] = derived
+
+func _scale_primary(primary: Dictionary, mult: float) -> Dictionary:
+	if mult == 1.0:
+		return primary.duplicate(true)
+	var out: Dictionary = {}
+	for key in primary.keys():
+		out[key] = float(primary.get(key, 0)) * mult
+	return out
+
+func _apply_defense_multiplier(mult: float) -> void:
+	if mult == 1.0:
+		return
+	var derived: Dictionary = _snapshot.get("derived", {}) as Dictionary
+	var defense := float(derived.get("defense", defense_value)) * mult
+	var magic_resist := float(derived.get("magic_resist", 0.0)) * mult
+	derived["defense"] = defense
+	derived["magic_resist"] = magic_resist
+	_snapshot["derived"] = derived
+	var phys_reduction := STAT_CALC._mitigation_pct(defense)
+	var magic_reduction := STAT_CALC._mitigation_pct(magic_resist)
+	_snapshot["physical_reduction_pct"] = phys_reduction
+	_snapshot["magic_reduction_pct"] = magic_reduction
+	_snapshot["defense_mitigation_pct"] = phys_reduction
+	_snapshot["magic_mitigation_pct"] = magic_reduction
 
 func setup_primary_profile(
 		base_primary_in: Dictionary,

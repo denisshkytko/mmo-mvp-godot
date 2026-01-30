@@ -5,11 +5,12 @@ enum Behavior { GUARD, PATROL }
 enum State { IDLE, CHASE, RETURN }
 
 signal leash_return_started
+const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
 
-var speed: float = 115.0
+var speed: float = MOVE_SPEED.MOB_BASE
 var aggro_radius: float = 200.0
 var leash_distance: float = 420.0
 var patrol_radius: float = 140.0
