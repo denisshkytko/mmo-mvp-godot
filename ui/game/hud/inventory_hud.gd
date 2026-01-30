@@ -165,8 +165,7 @@ func _auto_bind_player() -> void:
 
 func _process(_delta: float) -> void:
 	if not _initial_layout_done and not _initial_layout_pending and player != null and is_instance_valid(player):
-		_initial_layout_pending = true
-		call_deferred("_run_initial_layout")
+		call_deferred("_force_initial_layout")
 	# While open, keep HUD in sync (so looting updates without requiring sort).
 	if _is_open and player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot"):
 		_refresh_accum += _delta
@@ -192,6 +191,7 @@ func _set_open(v: bool) -> void:
 		_hide_settings()
 	else:
 		await _force_initial_layout()
+		_refresh()
 
 func _on_bag_button_pressed() -> void:
 	_toggle_inventory()
@@ -1984,16 +1984,28 @@ func _ensure_error_layer() -> void:
 func _force_initial_layout() -> void:
 	if _initial_layout_done:
 		return
+	if _initial_layout_pending:
+		return
+	_initial_layout_pending = true
+	await _run_initial_layout()
+
+func _run_initial_layout() -> void:
 	if player == null or not is_instance_valid(player):
+		_initial_layout_pending = false
 		return
 	if not player.has_method("get_inventory_snapshot"):
+		_initial_layout_pending = false
 		return
 	_load_grid_columns()
 	var snap: Dictionary = player.get_inventory_snapshot()
 	var slots: Array = snap.get("slots", [])
+	if slots.size() <= 0:
+		_initial_layout_pending = false
+		return
 	_layout_dirty = true
 	await _apply_inventory_layout(slots.size())
 	_initial_layout_done = true
+	_initial_layout_pending = false
 
 func _run_initial_layout() -> void:
 	await _force_initial_layout()
