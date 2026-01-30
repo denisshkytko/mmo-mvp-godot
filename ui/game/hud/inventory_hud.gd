@@ -132,8 +132,6 @@ func _ready() -> void:
 	var rect := panel.get_global_rect()
 	_panel_anchor_br = rect.position + rect.size
 	_panel_anchor_valid = true
-	await _force_initial_layout()
-	_refresh()
 
 func set_player(p: Node) -> void:
 	player = p
@@ -190,9 +188,10 @@ func _set_open(v: bool) -> void:
 		_hide_split()
 		_hide_settings()
 	else:
-		await _force_initial_layout()
 		# Two-frame stabilization so GridContainer lays out correctly on first open.
 		await get_tree().process_frame
+		_initial_layout_done = false
+		await _force_initial_layout()
 		_layout_dirty = true
 		_last_applied_columns = -1
 		_refresh()
