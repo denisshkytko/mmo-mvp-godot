@@ -191,6 +191,13 @@ func _set_open(v: bool) -> void:
 		_hide_settings()
 	else:
 		await _force_initial_layout()
+		await get_tree().process_frame
+		var rect := panel.get_global_rect()
+		if rect.size.x > 10.0 and rect.size.y > 10.0:
+			_panel_anchor_br = rect.position + rect.size
+			_panel_anchor_valid = true
+		_layout_dirty = true
+		_last_applied_columns = -1
 		_refresh()
 
 func _on_bag_button_pressed() -> void:
