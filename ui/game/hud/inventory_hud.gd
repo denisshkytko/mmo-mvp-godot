@@ -2006,7 +2006,3 @@ func _run_initial_layout() -> void:
 	await _apply_inventory_layout(slots.size())
 	_initial_layout_done = true
 	_initial_layout_pending = false
-
-func _run_initial_layout() -> void:
-	await _force_initial_layout()
-	_initial_layout_pending = false
