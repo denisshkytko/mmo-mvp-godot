@@ -953,7 +953,9 @@ func _on_tooltip_sell_pressed() -> void:
 	if v == null or not (v is Dictionary):
 		_hide_tooltip()
 		return
-	var id: String = String((v as Dictionary).get("id", ""))
+	var d := v as Dictionary
+	var id: String = String(d.get("id", ""))
+	var count: int = int(d.get("count", 0))
 	if id == "":
 		return
 	var total: int = _get_total_item_count(id)
