@@ -1552,11 +1552,11 @@ func _sort_inventory_slots() -> void:
 			if stacked.size() > 0 and String(stacked[-1].get("id", "")) == id:
 				var last_count := int(stacked[-1].get("count", 0))
 				if last_count < max_stack:
-					var can_add := min(remaining, max_stack - last_count)
+					var can_add: int = min(remaining, max_stack - last_count)
 					stacked[-1]["count"] = last_count + can_add
 					remaining -= can_add
 					continue
-			var take := min(remaining, max_stack)
+			var take: int = min(remaining, max_stack)
 			stacked.append({"id": id, "count": take})
 			remaining -= take
 
