@@ -4,6 +4,7 @@ class_name NormalAggresiveMob
 ## These helpers are registered as global classes (class_name).
 ## Avoid shadowing them with local constants.
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
+const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 
 signal died(corpse: Corpse)
 
@@ -23,7 +24,7 @@ enum AttackMode { MELEE, RANGED }
 @export_group("Common")
 @export var base_xp: int = 5
 @export var xp_per_level: int = 2
-@export var move_speed: float = 120.0
+@export var move_speed: float = MOVE_SPEED.MOB_BASE
 @export var aggro_radius: float = 260.0
 @export var leash_distance: float = 420.0
 

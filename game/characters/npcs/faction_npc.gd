@@ -4,6 +4,7 @@ class_name FactionNPC
 @export var default_loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 ## Helpers below are global classes (class_name). Avoid shadowing them.
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
+const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 
 signal died(corpse: Corpse)
 
@@ -61,7 +62,7 @@ const REGEN_PCT_PER_SEC: float = 0.02
 @export_group("Common")
 @export var base_xp: int = 5
 @export var xp_per_level: int = 2
-@export var move_speed: float = 120.0
+@export var move_speed: float = MOVE_SPEED.MOB_BASE
 @export var aggro_radius: float = 260.0
 @export var leash_distance: float = 420.0
 

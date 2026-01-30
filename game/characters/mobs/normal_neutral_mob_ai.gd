@@ -2,12 +2,13 @@ extends Node
 class_name NormalNeutralMobAI
 
 signal leash_return_started
+const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
 
 var behavior: int = Behavior.GUARD
-var speed: float = 120.0
+var speed: float = MOVE_SPEED.MOB_BASE
 var leash_distance: float = 420.0
 var patrol_radius: float = 140.0
 var patrol_pause_seconds: float = 1.5
