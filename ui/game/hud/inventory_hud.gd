@@ -126,14 +126,14 @@ func _ready() -> void:
 	_hook_slot_panels()
 	_auto_bind_player()
 	_load_grid_columns()
-	# Capture the bottom-right anchor based on where you placed the panel in the scene.
-	# This anchor will be used for all future resizes so the panel grows up+left.
-	await get_tree().process_frame
-	var rect := panel.get_global_rect()
-	_panel_anchor_br = rect.position + rect.size
-	_panel_anchor_valid = true
 	await _force_initial_layout()
 	_refresh()
+	# Capture the bottom-right anchor after at least one refresh so the rect is valid.
+	await get_tree().process_frame
+	var rect := panel.get_global_rect()
+	if rect.size.x > 10.0 and rect.size.y > 10.0:
+		_panel_anchor_br = rect.position + rect.size
+		_panel_anchor_valid = true
 
 func set_player(p: Node) -> void:
 	player = p
@@ -191,15 +191,16 @@ func _set_open(v: bool) -> void:
 		_hide_settings()
 	else:
 		await _force_initial_layout()
+		# Two-frame stabilization so GridContainer lays out correctly on first open.
+		await get_tree().process_frame
+		_layout_dirty = true
+		_last_applied_columns = -1
+		_refresh()
 		await get_tree().process_frame
 		var rect := panel.get_global_rect()
 		if rect.size.x > 10.0 and rect.size.y > 10.0:
 			_panel_anchor_br = rect.position + rect.size
 			_panel_anchor_valid = true
-		_layout_dirty = true
-		_last_applied_columns = -1
-		_refresh()
-		await get_tree().process_frame
 		_layout_dirty = true
 		_last_applied_columns = -1
 		_refresh()
