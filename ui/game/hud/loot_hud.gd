@@ -1,6 +1,8 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
+# Tooltip should show on release if press <= 1s.
+const TOOLTIP_HOLD_MAX_MS: int = 1000
 # LootHUD for Corpse v2 loot (loot_gold + loot_slots).
 # - Shows gold as a normal loot row (no extra label)
 # - Shows item icons + names from DataDB
@@ -24,6 +26,9 @@ var _tooltip_view_index: int = -1
 var _tooltip_seq: int = 0
 var _tooltip_layer: CanvasLayer = null
 var _slots_built: bool = false
+var _tooltip_press_ms: int = 0
+var _tooltip_press_view_index: int = -1
+var _tooltip_press_pos: Vector2 = Vector2.ZERO
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -501,10 +506,37 @@ func _notify_bag_full() -> void:
 func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
 	if event is InputEventMouseButton:
 		var mouse := event as InputEventMouseButton
-		if mouse.button_index != MOUSE_BUTTON_LEFT or not mouse.pressed:
+		if mouse.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mouse.pressed:
+			_tooltip_press_ms = Time.get_ticks_msec()
+			_tooltip_press_view_index = view_index
+			_tooltip_press_pos = mouse.global_position
+			return
+		if _tooltip_press_view_index != view_index:
+			return
+		if mouse.global_position.distance_to(_tooltip_press_pos) > 1.0:
+			_tooltip_press_view_index = -1
+			return
+		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+		_tooltip_press_view_index = -1
+		if held_ms > TOOLTIP_HOLD_MAX_MS:
 			return
 	elif event is InputEventScreenTouch:
-		if not (event as InputEventScreenTouch).pressed:
+		var st := event as InputEventScreenTouch
+		if st.pressed:
+			_tooltip_press_ms = Time.get_ticks_msec()
+			_tooltip_press_view_index = view_index
+			_tooltip_press_pos = st.position
+			return
+		if _tooltip_press_view_index != view_index:
+			return
+		if st.position.distance_to(_tooltip_press_pos) > 1.0:
+			_tooltip_press_view_index = -1
+			return
+		var held_ms2 := Time.get_ticks_msec() - _tooltip_press_ms
+		_tooltip_press_view_index = -1
+		if held_ms2 > TOOLTIP_HOLD_MAX_MS:
 			return
 	else:
 		return

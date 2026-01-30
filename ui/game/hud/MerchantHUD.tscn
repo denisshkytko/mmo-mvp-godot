@@ -9,6 +9,53 @@ script = ExtResource("1_yj2p2")
 [node name="TooltipPanel" parent="." instance=ExtResource("2_2u4xq")]
 z_index = 50
 
+[node name="QtyDialog" type="Panel" parent="."]
+visible = false
+custom_minimum_size = Vector2(260, 140)
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 300.0
+offset_bottom = 180.0
+
+[node name="QtyTitle" type="Label" parent="QtyDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 240.0
+offset_bottom = 30.0
+text = "Купить"
+
+[node name="QtySlider" type="HSlider" parent="QtyDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 36.0
+offset_right = 240.0
+offset_bottom = 60.0
+
+[node name="QtyPrice" type="Label" parent="QtyDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 64.0
+offset_right = 240.0
+offset_bottom = 86.0
+text = "Цена: 0"
+
+[node name="QtyOk" type="Button" parent="QtyDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 94.0
+offset_right = 90.0
+offset_bottom = 120.0
+text = "Ок"
+
+[node name="QtyCancel" type="Button" parent="QtyDialog"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 94.0
+offset_right = 190.0
+offset_bottom = 120.0
+text = "Отмена"
+
 [node name="Panel" type="Panel" parent="."]
 visible = false
 custom_minimum_size = Vector2(385, 585)

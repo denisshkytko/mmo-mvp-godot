@@ -50,12 +50,10 @@ var _breakdown_cache: Dictionary = {}
 var _equipment_slots: Dictionary = {}
 var _icon_cache: Dictionary = {}
 var _tooltip_slot: String = ""
-var _equip_drag_active: bool = false
-var _equip_drag_slot_id: String = ""
-var _equip_drag_item: Dictionary = {}
-var _equip_drag_start_pos: Vector2 = Vector2.ZERO
-var _equip_drag_threshold: float = 8.0
-var _equip_drag_icon: TextureRect = null
+const TOOLTIP_HOLD_MAX_MS: int = 1000
+var _equip_press_start_ms: int = 0
+var _equip_press_slot_id: String = ""
+var _equip_press_pos: Vector2 = Vector2.ZERO
 var _tooltip_anchor_pos: Vector2 = Vector2.ZERO
 var _tooltip_layer: CanvasLayer = null
 
@@ -102,7 +100,6 @@ func _on_button() -> void:
 		_refresh()
 	else:
 		_hide_tooltip()
-		_end_equip_drag()
 
 func _on_stats_changed(_snapshot: Dictionary) -> void:
 	if panel.visible:
@@ -113,8 +110,7 @@ func _on_equipment_changed(_snapshot: Dictionary) -> void:
 		_refresh()
 
 func _process(_delta: float) -> void:
-	if _equip_drag_active:
-		_update_equip_drag_icon()
+	pass
 
 func _on_meta_clicked(meta) -> void:
 	if not panel.visible:
@@ -130,16 +126,10 @@ func _on_meta_clicked(meta) -> void:
 	_show_tooltip_text(String(_breakdown_cache[key]), false, _tooltip_anchor_pos)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not _equip_drag_active:
-		if event is InputEventMouseButton:
-			var mb := event as InputEventMouseButton
-			if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
-				_close_tooltip_on_outside_click(mb.global_position)
-		return
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
-		if mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed:
-			_finish_equip_drag(mb.global_position)
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			_close_tooltip_on_outside_click(mb.global_position)
 
 func _hide_tooltip() -> void:
 	tooltip_panel.visible = false
@@ -300,20 +290,44 @@ func _get_icon_texture(item_id: String) -> Texture2D:
 func _on_equipment_slot_gui_input(event: InputEvent, slot_id: String) -> void:
 	if not panel.visible:
 		return
-	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
 		if mb.pressed:
-			_equip_drag_start_pos = mb.position
-			_tooltip_anchor_pos = get_viewport().get_mouse_position()
-			_toggle_equipment_tooltip(slot_id, _tooltip_anchor_pos)
-		else:
-			if _equip_drag_active:
-				_finish_equip_drag(mb.global_position)
-	elif event is InputEventMouseMotion:
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _equip_drag_active:
-			var dist := _equip_drag_start_pos.distance_to((event as InputEventMouseMotion).position)
-			if dist >= _equip_drag_threshold:
-				_start_equip_drag(slot_id)
+			_equip_press_start_ms = Time.get_ticks_msec()
+			_equip_press_slot_id = slot_id
+			_equip_press_pos = mb.global_position
+			return
+		if _equip_press_slot_id != slot_id:
+			return
+		if mb.global_position.distance_to(_equip_press_pos) > 1.0:
+			_equip_press_slot_id = ""
+			return
+		var held_ms := Time.get_ticks_msec() - _equip_press_start_ms
+		_equip_press_slot_id = ""
+		if held_ms > TOOLTIP_HOLD_MAX_MS:
+			return
+		_tooltip_anchor_pos = mb.global_position
+		_toggle_equipment_tooltip(slot_id, _tooltip_anchor_pos)
+	elif event is InputEventScreenTouch:
+		var st := event as InputEventScreenTouch
+		if st.pressed:
+			_equip_press_start_ms = Time.get_ticks_msec()
+			_equip_press_slot_id = slot_id
+			_equip_press_pos = st.position
+			return
+		if _equip_press_slot_id != slot_id:
+			return
+		if st.position.distance_to(_equip_press_pos) > 1.0:
+			_equip_press_slot_id = ""
+			return
+		var held_ms2 := Time.get_ticks_msec() - _equip_press_start_ms
+		_equip_press_slot_id = ""
+		if held_ms2 > TOOLTIP_HOLD_MAX_MS:
+			return
+		_tooltip_anchor_pos = st.position
+		_toggle_equipment_tooltip(slot_id, _tooltip_anchor_pos)
 
 func _toggle_equipment_tooltip(slot_id: String, anchor_pos: Vector2) -> void:
 	if _tooltip_slot == slot_id and tooltip_panel.visible:
@@ -432,70 +446,6 @@ func get_equipment_slot_at_global_pos(global_pos: Vector2) -> String:
 		if slot_node.get_global_rect().has_point(global_pos):
 			return slot_id
 	return ""
-
-func _start_equip_drag(slot_id: String) -> void:
-	if _player == null or _player.c_equip == null:
-		return
-	var equip: Dictionary = _player.c_equip.get_equipment_snapshot()
-	var v: Variant = equip.get(slot_id, null)
-	if v == null or not (v is Dictionary):
-		return
-	var item: Dictionary = v as Dictionary
-	if String(item.get("id", "")) == "":
-		return
-	_equip_drag_active = true
-	_equip_drag_slot_id = slot_id
-	_equip_drag_item = item.duplicate(true)
-	_show_equip_drag_icon()
-	_hide_tooltip()
-
-func _finish_equip_drag(global_pos: Vector2) -> void:
-	if not _equip_drag_active:
-		return
-	var handled := _try_drop_equip_to_inventory(global_pos)
-	if not handled:
-		_end_equip_drag()
-
-func _end_equip_drag() -> void:
-	_equip_drag_active = false
-	_equip_drag_slot_id = ""
-	_equip_drag_item = {}
-	_hide_equip_drag_icon()
-
-func _show_equip_drag_icon() -> void:
-	if _equip_drag_icon == null:
-		_equip_drag_icon = TextureRect.new()
-		_equip_drag_icon.name = "EquipDragIcon"
-		_equip_drag_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_equip_drag_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		_equip_drag_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		add_child(_equip_drag_icon)
-		_equip_drag_icon.z_index = 999
-	_update_equip_drag_icon()
-	if _equip_drag_icon != null:
-		_equip_drag_icon.visible = true
-
-func _hide_equip_drag_icon() -> void:
-	if _equip_drag_icon != null:
-		_equip_drag_icon.visible = false
-
-func _update_equip_drag_icon() -> void:
-	if _equip_drag_icon == null:
-		return
-	var id: String = String(_equip_drag_item.get("id", ""))
-	_equip_drag_icon.texture = _get_icon_texture(id)
-	_equip_drag_icon.size = Vector2(36, 36)
-	var m := get_viewport().get_mouse_position()
-	_equip_drag_icon.position = m + Vector2(12, 12)
-
-func _try_drop_equip_to_inventory(global_pos: Vector2) -> bool:
-	var inv := get_tree().root.find_child("InventoryHUD", true, false)
-	if inv != null and inv.has_method("try_handle_equipment_drop"):
-		var ok: bool = bool(inv.call("try_handle_equipment_drop", global_pos, _equip_drag_slot_id))
-		if ok:
-			_end_equip_drag()
-		return ok
-	return false
 
 func _on_unequip_pressed() -> void:
 	if _player == null or _player.c_equip == null:

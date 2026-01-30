@@ -3,13 +3,13 @@ extends CanvasLayer
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var panel: Control = $Panel
 @onready var gold_label: RichTextLabel = $Panel/GoldLabel
-@onready var grid: GridContainer = $Panel/Grid
+@onready var grid: GridContainer = $Panel/Content/Grid
 
-@onready var base_bag_button: Button = $BagBar/BaseBagButton
-@onready var bag_slot1: Button = $BagBar/BagSlot1
-@onready var bag_slot2: Button = $BagBar/BagSlot2
-@onready var bag_slot3: Button = $BagBar/BagSlot3
-@onready var bag_slot4: Button = $BagBar/BagSlot4
+@onready var bag_button: Button = $BagButton
+@onready var bag_slot1: Button = $Panel/Content/BagSlots/BagSlot1
+@onready var bag_slot2: Button = $Panel/Content/BagSlots/BagSlot2
+@onready var bag_slot3: Button = $Panel/Content/BagSlots/BagSlot3
+@onready var bag_slot4: Button = $Panel/Content/BagSlots/BagSlot4
 
 @onready var bag_full_dialog: AcceptDialog = $BagFullDialog
 
@@ -19,32 +19,22 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var tooltip_use_btn_scene: Button = $InvTooltip/Margin/VBox/UseButton
 @onready var tooltip_equip_btn_scene: Button = $InvTooltip/Margin/VBox/EquipButton
 @onready var tooltip_sell_btn_scene: Button = $InvTooltip/Margin/VBox/SellButton
+@onready var tooltip_quick_btn_scene: Button = $InvTooltip/Margin/VBox/QuickSlotButton
+@onready var tooltip_bag_btn_scene: Button = $InvTooltip/Margin/VBox/BagButton
 @onready var tooltip_close_btn_scene: Button = $InvTooltip/CloseButton
 
 var player: Node = null
 var _is_open: bool = true
 var _trade_open: bool = false
 
-# --- Inventory UI state ---
-var _selected_slot_index: int = -1
+const HOLD_THRESHOLD_MS: int = 1000
+var _slot_press_start_ms: int = 0
+var _slot_press_index: int = -1
+var _slot_press_pos: Vector2 = Vector2.ZERO
 
-# Drag state (picked item that follows cursor)
-var _drag_active: bool = false
-var _drag_from_slot: int = -1
-var _drag_from_bag_index: int = -1  # when dragging from bag equipment slot
-var _drag_from_bag: bool = false
-var _drag_item: Dictionary = {} # {"id": String, "count": int}
-var _drag_started: bool = false
-var _drag_start_pos: Vector2 = Vector2.ZERO
-var _drag_threshold: float = 10.0
-
-# Used to restore on cancel/delete "No"
-var _drag_restore_snapshot: Dictionary = {}
-
-# Click timing for double-click split
-var _last_click_time_ms: int = 0
-var _last_click_slot: int = -1
-var _double_click_ms: int = 320
+var _bag_press_start_ms: int = 0
+var _bag_press_index: int = -1
+var _bag_press_pos: Vector2 = Vector2.ZERO
 
 # Tooltip (fixed width, grows in height; supports rich color for required level)
 var _tooltip_panel: Panel = null
@@ -52,21 +42,22 @@ var _tooltip_label: RichTextLabel = null
 var _tooltip_use_btn: Button = null
 var _tooltip_equip_btn: Button = null
 var _tooltip_sell_btn: Button = null
+var _tooltip_quick_btn: Button = null
+var _tooltip_bag_btn: Button = null
 var _tooltip_close_btn: Button = null
 var _tooltip_for_slot: int = -1
+var _tooltip_for_bag_slot: int = -1
 
 # Small center toast ("hp full" / "mana full")
 var _toast_label: Label = null
 
-# Delete confirm dialog shown when drop outside panel
-var _delete_confirm: ConfirmationDialog = null
-
 # Split dialog
-var _split_dialog: Panel = null
-var _split_slider: HSlider = null
-var _split_label: Label = null
-var _split_ok: Button = null
-var _split_cancel: Button = null
+@onready var split_dialog: Panel = $SplitDialog
+@onready var split_title: Label = $SplitDialog/SplitTitle
+@onready var split_slider: HSlider = $SplitDialog/SplitSlider
+@onready var split_amount: Label = $SplitDialog/SplitAmount
+@onready var split_ok: Button = $SplitDialog/SplitOk
+@onready var split_cancel: Button = $SplitDialog/SplitCancel
 var _split_source_slot: int = -1
 
 # Settings UI (columns/rows + sort)
@@ -88,10 +79,6 @@ var _quick_bar: VBoxContainer = null
 var _quick_buttons: Array[Button] = []
 var _quick_refs: Array[String] = ["", "", "", "", ""]  # item_id per quick slot
 
-# Dragging out of quick slots only removes the quick reference (item stays in inventory).
-var _quick_drag_active: bool = false
-var _quick_drag_index: int = -1
-var _quick_drag_item: Dictionary = {}
 
 # Lightweight refresh while inventory is open (so looting updates immediately).
 var _refresh_accum: float = 0.0
@@ -112,6 +99,10 @@ var _panel_anchor_valid: bool = false
 # Icon cache for slot buttons
 var _icon_cache: Dictionary = {} # path -> Texture2D
 var _tooltip_layer: CanvasLayer = null
+var _dialog_layer: CanvasLayer = null
+var _error_layer: CanvasLayer = null
+var _initial_layout_done: bool = false
+var _initial_layout_pending: bool = false
 
 func _ready() -> void:
 	add_to_group("inventory_ui")
@@ -122,19 +113,13 @@ func _ready() -> void:
 		gold_label.fit_content = true
 		gold_label.scroll_active = false
 
-	base_bag_button.pressed.connect(_on_bag_button_pressed)
-	# Bag equipment slots (visual order: they extend left from base bag button).
-	# Logical bag order must start near base bag and go left.
-	_get_bag_button_for_logical(0).pressed.connect(_on_bag_slot_pressed.bind(0))
-	_get_bag_button_for_logical(1).pressed.connect(_on_bag_slot_pressed.bind(1))
-	_get_bag_button_for_logical(2).pressed.connect(_on_bag_slot_pressed.bind(2))
-	_get_bag_button_for_logical(3).pressed.connect(_on_bag_slot_pressed.bind(3))
-
-	# Enable dragging bags out of equipment slots (only if empty).
-	_get_bag_button_for_logical(0).gui_input.connect(_on_bag_button_gui_input.bind(0))
-	_get_bag_button_for_logical(1).gui_input.connect(_on_bag_button_gui_input.bind(1))
-	_get_bag_button_for_logical(2).gui_input.connect(_on_bag_button_gui_input.bind(2))
-	_get_bag_button_for_logical(3).gui_input.connect(_on_bag_button_gui_input.bind(3))
+	if bag_button != null:
+		bag_button.pressed.connect(_on_bag_button_pressed)
+	# Bag equipment slots (visual order: top -> bottom).
+	_get_bag_button_for_logical(0).gui_input.connect(_on_bag_slot_gui_input.bind(0))
+	_get_bag_button_for_logical(1).gui_input.connect(_on_bag_slot_gui_input.bind(1))
+	_get_bag_button_for_logical(2).gui_input.connect(_on_bag_slot_gui_input.bind(2))
+	_get_bag_button_for_logical(3).gui_input.connect(_on_bag_slot_gui_input.bind(3))
 
 	_ensure_support_ui()
 	_style_inventory_tooltip()
@@ -147,10 +132,12 @@ func _ready() -> void:
 	var rect := panel.get_global_rect()
 	_panel_anchor_br = rect.position + rect.size
 	_panel_anchor_valid = true
+	await _force_initial_layout()
 	_refresh()
 
 func set_player(p: Node) -> void:
 	player = p
+	await _force_initial_layout()
 	_refresh()
 
 func set_trade_open(state: bool) -> void:
@@ -177,9 +164,8 @@ func _auto_bind_player() -> void:
 		player = p
 
 func _process(_delta: float) -> void:
-	if _drag_active or _quick_drag_active:
-		_update_drag_visual()
-
+	if not _initial_layout_done and not _initial_layout_pending and player != null and is_instance_valid(player):
+		call_deferred("_force_initial_layout")
 	# While open, keep HUD in sync (so looting updates without requiring sort).
 	if _is_open and player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot"):
 		_refresh_accum += _delta
@@ -193,34 +179,6 @@ func _process(_delta: float) -> void:
 			# Cooldowns tick even if inventory content didn't change.
 			_update_visible_cooldowns(snap)
 
-func _input(event: InputEvent) -> void:
-	if not _is_open:
-		return
-	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-		var e := event as InputEventMouseButton
-		var m := get_viewport().get_mouse_position()
-		if e.pressed:
-			# Start quick-drag if pressed on a quick slot and we're not already dragging an inventory item.
-			if not _drag_active and not _quick_drag_active:
-				var q := _get_quick_index_under_global(m)
-				if q != -1 and _quick_refs[q] != "":
-					_start_quick_drag(q)
-		else:
-			# Release quick drag: drop onto another quick slot -> swap; otherwise remove link.
-			if _quick_drag_active:
-				var q2 := _get_quick_index_under_global(m)
-				if q2 != -1:
-					var tmp := _quick_refs[q2]
-					_quick_refs[q2] = _quick_refs[_quick_drag_index]
-					_quick_refs[_quick_drag_index] = tmp
-				else:
-					_quick_refs[_quick_drag_index] = ""
-				_quick_drag_active = false
-				_quick_drag_index = -1
-				_quick_drag_item = {}
-				_hide_drag_visual()
-				_refresh_quick_bar()
-
 func _toggle_inventory() -> void:
 	_set_open(not _is_open)
 
@@ -229,9 +187,22 @@ func _set_open(v: bool) -> void:
 	panel.visible = v
 	if not v:
 		_hide_tooltip()
-		_cancel_drag_restore()
 		_hide_split()
 		_hide_settings()
+	else:
+		await _force_initial_layout()
+		await get_tree().process_frame
+		var rect := panel.get_global_rect()
+		if rect.size.x > 10.0 and rect.size.y > 10.0:
+			_panel_anchor_br = rect.position + rect.size
+			_panel_anchor_valid = true
+		_layout_dirty = true
+		_last_applied_columns = -1
+		_refresh()
+		await get_tree().process_frame
+		_layout_dirty = true
+		_last_applied_columns = -1
+		_refresh()
 
 func _on_bag_button_pressed() -> void:
 	_toggle_inventory()
@@ -239,68 +210,53 @@ func _on_bag_button_pressed() -> void:
 # --- Bag slots ---
 
 func _get_bag_button_for_logical(logical_index: int) -> Button:
-	# UI order (left->right): BagSlot1 BagSlot2 BagSlot3 BagSlot4 BaseBagButton
-	# We want logical order from BaseBag outward to the left:
-	# logical 0 -> BagSlot4, 1 -> BagSlot3, 2 -> BagSlot2, 3 -> BagSlot1
+	# UI order (top->bottom): BagSlot1 BagSlot2 BagSlot3 BagSlot4
 	match logical_index:
-		0: return bag_slot4
-		1: return bag_slot3
-		2: return bag_slot2
-		3: return bag_slot1
-		_: return bag_slot4
+		0: return bag_slot1
+		1: return bag_slot2
+		2: return bag_slot3
+		3: return bag_slot4
+		_: return bag_slot1
 
-func _on_bag_slot_pressed(_bag_index: int) -> void:
-	# Any bag click toggles inventory open/close.
-	# Bag equip/unequip is done via drag&drop.
-	_toggle_inventory()
-
-
-# --- Bag slot drag (unequip) ---
-
-var _bag_drag_start_pos: Vector2 = Vector2.ZERO
-var _bag_drag_threshold: float = 10.0
-var _bag_drag_pending_index: int = -1
-
-func _on_bag_button_gui_input(event: InputEvent, bag_index: int) -> void:
+func _on_bag_slot_gui_input(event: InputEvent, bag_index: int) -> void:
 	if not _is_open:
 		return
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
-		if mb.button_index == MOUSE_BUTTON_LEFT:
-			if mb.pressed:
-				_bag_drag_pending_index = bag_index
-				_bag_drag_start_pos = mb.position
-			else:
-				if _drag_active and _drag_from_bag and _drag_from_bag_index == bag_index:
-					_finish_drag(mb.global_position)
-				_bag_drag_pending_index = -1
-	elif event is InputEventMouseMotion:
-		var mm := event as InputEventMouseMotion
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and _bag_drag_pending_index == bag_index:
-			if not _drag_active:
-				var dist := _bag_drag_start_pos.distance_to(mm.position)
-				if dist >= _bag_drag_threshold:
-					_start_drag_from_bag_slot(bag_index, mm.global_position)
-
-func _start_drag_from_bag_slot(bag_index: int, _global_pos: Vector2) -> void:
-	if _drag_active:
-		return
-	if player == null or not is_instance_valid(player):
-		return
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var bags: Array = snap.get("bag_slots", [])
-	if bag_index < 0 or bag_index >= bags.size():
-		return
-	var v: Variant = bags[bag_index]
-	if v == null or not (v is Dictionary):
-		return
-	_drag_item = (v as Dictionary).duplicate(true)
-	_drag_from_bag = true
-	_drag_from_bag_index = bag_index
-	_drag_from_slot = -1
-	_drag_active = true
-	_show_drag_visual()
-	_hide_tooltip()
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mb.pressed:
+			_bag_press_start_ms = Time.get_ticks_msec()
+			_bag_press_index = bag_index
+			_bag_press_pos = mb.global_position
+			return
+		if _bag_press_index != bag_index:
+			return
+		if mb.global_position.distance_to(_bag_press_pos) > 1.0:
+			_bag_press_index = -1
+			return
+		var held_ms := Time.get_ticks_msec() - _bag_press_start_ms
+		_bag_press_index = -1
+		if held_ms > HOLD_THRESHOLD_MS:
+			return
+		_show_tooltip_for_bag_slot(bag_index, mb.global_position)
+	elif event is InputEventScreenTouch:
+		var st := event as InputEventScreenTouch
+		if st.pressed:
+			_bag_press_start_ms = Time.get_ticks_msec()
+			_bag_press_index = bag_index
+			_bag_press_pos = st.position
+			return
+		if _bag_press_index != bag_index:
+			return
+		if st.position.distance_to(_bag_press_pos) > 1.0:
+			_bag_press_index = -1
+			return
+		var held_ms2 := Time.get_ticks_msec() - _bag_press_start_ms
+		_bag_press_index = -1
+		if held_ms2 > HOLD_THRESHOLD_MS:
+			return
+		_show_tooltip_for_bag_slot(bag_index, st.position)
 
 # --- Slot grid ---
 
@@ -413,282 +369,43 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 		var mb := event as InputEventMouseButton
 		if mb.button_index == MOUSE_BUTTON_LEFT:
 			if mb.pressed:
-				_drag_started = false
-				_drag_start_pos = mb.position
-				_on_slot_press(slot_index)
-			else:
-				_on_slot_release(slot_index, mb.global_position)
-	elif event is InputEventMouseMotion:
-		var mm := event as InputEventMouseMotion
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			if not _drag_active:
-				var dist := _drag_start_pos.distance_to(mm.position)
-				if dist >= _drag_threshold:
-					_start_drag_from_slot(slot_index, mm.global_position)
-
-func _on_slot_press(slot_index: int) -> void:
-	# Double click detection for split
-	var now_ms: int = Time.get_ticks_msec()
-	if _last_click_slot == slot_index and (now_ms - _last_click_time_ms) <= _double_click_ms:
-		_last_click_slot = -1
-		_last_click_time_ms = 0
-		_try_open_split(slot_index)
-		return
-	_last_click_slot = slot_index
-	_last_click_time_ms = now_ms
-
-	# Toggle tooltip on single click (only if not dragging)
-	_toggle_tooltip_for_slot(slot_index)
-
-	# Selection is still used for click-to-equip bag fallback
-	_selected_slot_index = slot_index
-
-func _on_slot_release(_slot_index: int, global_pos: Vector2) -> void:
-	if not _drag_active:
-		return
-	_finish_drag(global_pos)
-
-# --- Drag logic ---
-
-func _start_drag_from_slot(slot_index: int, _global_pos: Vector2) -> void:
-	if _drag_active:
-		return
-	if player == null or not is_instance_valid(player):
-		return
-
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var slots: Array = snap.get("slots", [])
-	if slot_index < 0 or slot_index >= slots.size():
-		return
-	var v: Variant = slots[slot_index]
-	if v == null or not (v is Dictionary):
-		return
-
-	_drag_restore_snapshot = snap.duplicate(true)
-	_drag_item = (v as Dictionary).duplicate(true)
-	_drag_from_slot = slot_index
-	_drag_from_bag = false
-	_drag_from_bag_index = -1
-	# Pick up: remove from source immediately.
-	slots[slot_index] = null
-	snap["slots"] = slots
-	player.apply_inventory_snapshot(snap)
-
-	_drag_active = true
-	_drag_started = true
-	_show_drag_visual()
-	_hide_tooltip()
-	_refresh()
-
-func _finish_drag(global_pos: Vector2) -> void:
-	if not _drag_active:
-		return
-	# If dragging a bag from equipment slot, only allow dropping into inventory slots or other bag slots.
-	if _drag_from_bag:
-		var inv_slot: int = _get_slot_index_under_global(global_pos)
-		if inv_slot != -1:
-			var ok: bool = false
-			if player != null and is_instance_valid(player):
-				ok = player.try_unequip_bag_to_inventory(_drag_from_bag_index, inv_slot)
-			if not ok:
-				bag_full_dialog.dialog_text = "can't move this bag (it may not be empty or there's no space)"
-				bag_full_dialog.popup_centered()
-			_end_drag()
-			_refresh()
-			return
-		var bag_target: int = _get_bag_index_under_global(global_pos)
-		if bag_target != -1 and player != null and is_instance_valid(player):
-			player.try_move_or_swap_bag_slots(_drag_from_bag_index, bag_target)
-		_end_drag()
-		_refresh()
-		return
-	# Determine drop target
-	var dropped: bool = false
-
-	# 1) Drop onto inventory slot
-	var target_slot: int = _get_slot_index_under_global(global_pos)
-	if target_slot != -1:
-		dropped = _drop_into_inventory_slot(target_slot)
-	else:
-		# 2) Drop onto bag equipment slot
-		var bag_target: int = _get_bag_index_under_global(global_pos)
-		if bag_target != -1:
-			dropped = _drop_into_bag_slot(bag_target)
-		else:
-			# 3) Drop onto quick slot
-			var q: int = _get_quick_index_under_global(global_pos)
-			if q != -1:
-				dropped = _drop_into_quick_slot(q)
-			else:
-				# 4) Drop onto equipment slot
-				var equip_slot: String = _get_equipment_slot_under_global(global_pos)
-				if equip_slot != "":
-					dropped = _drop_into_equipment_slot(equip_slot)
-
-	# 4.5) Drop onto merchant sell area
-	if not dropped:
-		var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
-		if merchant_ui != null and merchant_ui.has_method("try_accept_inventory_drop"):
-			var accepted: bool = bool(merchant_ui.call("try_accept_inventory_drop", global_pos, _drag_item))
-			if accepted:
-				_end_drag()
+				_slot_press_start_ms = Time.get_ticks_msec()
+				_slot_press_index = slot_index
+				_slot_press_pos = mb.global_position
 				return
-
-	# 5) Drop outside: confirm delete
-	if not dropped:
-		if not _is_point_inside_panel(global_pos):
-			_show_delete_confirm()
+			if _slot_press_index != slot_index:
+				return
+			if mb.global_position.distance_to(_slot_press_pos) > 1.0:
+				_slot_press_index = -1
+				return
+			var held_ms := Time.get_ticks_msec() - _slot_press_start_ms
+			_slot_press_index = -1
+			if held_ms > HOLD_THRESHOLD_MS:
+				_try_open_split(slot_index, mb.global_position)
+				return
+			_toggle_tooltip_for_slot(slot_index, mb.global_position)
+	elif event is InputEventScreenTouch:
+		var st := event as InputEventScreenTouch
+		if st.pressed:
+			_slot_press_start_ms = Time.get_ticks_msec()
+			_slot_press_index = slot_index
+			_slot_press_pos = st.position
 			return
-		# If dropped inside panel but nowhere valid: restore to first free (or original if possible)
-		_restore_drag_to_inventory()
-
-	_end_drag()
-
-func _end_drag() -> void:
-	_drag_active = false
-	_drag_from_slot = -1
-	_drag_from_bag = false
-	_drag_from_bag_index = -1
-	_drag_item = {}
-	_hide_drag_visual()
-	_refresh()
-
-func _cancel_drag_restore() -> void:
-	# If a delete confirm is open, leave snapshot handling to it.
-	pass
-
-func _restore_drag_to_inventory() -> void:
-	if player == null or not is_instance_valid(player):
-		return
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var slots: Array = snap.get("slots", [])
-	var preferred: int = _drag_from_slot
-	# try preferred
-	if preferred >= 0 and preferred < slots.size() and slots[preferred] == null:
-		slots[preferred] = _drag_item
-	else:
-		var idx: int = _find_first_free_slot(slots)
-		if idx != -1:
-			slots[idx] = _drag_item
-		else:
-			# nowhere: restore snapshot
-			player.apply_inventory_snapshot(_drag_restore_snapshot)
+		if _slot_press_index != slot_index:
 			return
-	snap["slots"] = slots
-	player.apply_inventory_snapshot(snap)
-
-func _drop_into_inventory_slot(target_slot: int) -> bool:
-	if player == null or not is_instance_valid(player):
-		return false
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var slots: Array = snap.get("slots", [])
-	if target_slot < 0 or target_slot >= slots.size():
-		return false
-
-	var src: Dictionary = _drag_item
-	var dst_v: Variant = slots[target_slot]
-	if dst_v == null:
-		slots[target_slot] = src
-		snap["slots"] = slots
-		player.apply_inventory_snapshot(snap)
-		return true
-
-	if dst_v is Dictionary:
-		var dst: Dictionary = dst_v as Dictionary
-		# Stack if same item and stackable
-		var src_id: String = String(src.get("id", ""))
-		var dst_id: String = String(dst.get("id", ""))
-		if src_id != "" and src_id == dst_id:
-			var max_stack: int = _get_stack_max(src_id)
-			var dst_count: int = int(dst.get("count", 0))
-			var src_count: int = int(src.get("count", 0))
-			if max_stack > 1 and dst_count < max_stack:
-				var can_add: int = min(src_count, max_stack - dst_count)
-				dst["count"] = dst_count + can_add
-				src_count -= can_add
-				if src_count <= 0:
-					# fully merged
-					slots[target_slot] = dst
-					snap["slots"] = slots
-					player.apply_inventory_snapshot(snap)
-					return true
-				# partial: leave remainder in source -> move remainder to first free
-				src["count"] = src_count
-				slots[target_slot] = dst
-				var free_idx := _find_first_free_slot(slots)
-				if free_idx != -1:
-					slots[free_idx] = src
-					snap["slots"] = slots
-					player.apply_inventory_snapshot(snap)
-					return true
-				# no free, revert and keep remainder by restoring to original
-				player.apply_inventory_snapshot(_drag_restore_snapshot)
-				return true
-
-		# Otherwise swap
-		slots[target_slot] = src
-		# put dst back to source
-		var back_idx: int = _drag_from_slot
-		if back_idx >= 0 and back_idx < slots.size():
-			if slots[back_idx] == null:
-				slots[back_idx] = dst
-			else:
-				var free2 := _find_first_free_slot(slots)
-				if free2 != -1:
-					slots[free2] = dst
-				else:
-					player.apply_inventory_snapshot(_drag_restore_snapshot)
-					return true
-		snap["slots"] = slots
-		player.apply_inventory_snapshot(snap)
-		return true
-
-	return false
-
-func _drop_into_bag_slot(bag_index: int) -> bool:
-	# Only accept bags; if not bag, return false to restore.
-	var id: String = String(_drag_item.get("id", ""))
-	if not _is_bag_item(id):
-		return false
-	if player == null or not is_instance_valid(player):
-		return false
-	# Equip: preferred slot is where it came from; player will consume from inventory slot,
-	# but we already removed it into cursor. So we must place it back temporarily to that slot,
-	# then call equip method. If slot occupied, we place into first free and use that as source.
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var slots: Array = snap.get("slots", [])
-	var src_idx: int = _drag_from_slot
-	if src_idx < 0 or src_idx >= slots.size() or slots[src_idx] != null:
-		src_idx = _find_first_free_slot(slots)
-		if src_idx == -1:
-			player.apply_inventory_snapshot(_drag_restore_snapshot)
-			return true
-	slots[src_idx] = _drag_item
-	snap["slots"] = slots
-	player.apply_inventory_snapshot(snap)
-	var ok: bool = player.try_equip_bag_from_inventory_slot(src_idx, bag_index)
-	if not ok:
-		# revert if equip failed (bag not empty / invalid)
-		player.apply_inventory_snapshot(_drag_restore_snapshot)
-		return true
-	return true
-
-func _drop_into_quick_slot(q_index: int) -> bool:
-	# Quick slot stores item_id (not slot index). Item stays in inventory.
-	var id: String = String(_drag_item.get("id", ""))
-	if id == "":
-		return false
-	if not _is_quick_allowed_item(id):
-		_restore_drag_to_inventory()
-		return true
-	_restore_drag_to_inventory()
-	_quick_refs[q_index] = id
-	_refresh_quick_bar()
-	return true
+		if st.position.distance_to(_slot_press_pos) > 1.0:
+			_slot_press_index = -1
+			return
+		var held_ms2 := Time.get_ticks_msec() - _slot_press_start_ms
+		_slot_press_index = -1
+		if held_ms2 > HOLD_THRESHOLD_MS:
+			_try_open_split(slot_index, st.position)
+			return
+		_toggle_tooltip_for_slot(slot_index, st.position)
 
 # --- Split logic ---
 
-func _try_open_split(slot_index: int) -> void:
+func _try_open_split(slot_index: int, global_pos: Vector2) -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	var snap: Dictionary = player.get_inventory_snapshot()
@@ -702,20 +419,27 @@ func _try_open_split(slot_index: int) -> void:
 	var count: int = int(d.get("count", 0))
 	if count <= 1:
 		return
-	_show_split(slot_index, count)
+	_show_split(slot_index, count, global_pos)
 
-func _show_split(slot_index: int, count: int) -> void:
-	_ensure_support_ui()
+func _show_split(slot_index: int, count: int, global_pos: Vector2) -> void:
 	_split_source_slot = slot_index
-	_split_slider.min_value = 1
-	_split_slider.max_value = count - 1
-	_split_slider.value = int(clamp(int(count / 2.0), 1, count - 1))
+	if split_slider != null:
+		split_slider.min_value = 1
+		split_slider.max_value = count
+		split_slider.value = int(clamp(int(count / 2.0), 1, count))
 	_update_split_label(count)
-	_split_dialog.visible = true
+	if split_dialog != null:
+		split_dialog.visible = true
+		_position_panel_left_of_point(split_dialog, global_pos)
+		_ensure_dialog_layer()
 
 func _hide_split() -> void:
-	if _split_dialog != null:
-		_split_dialog.visible = false
+	if split_dialog != null:
+		split_dialog.visible = false
+	if split_slider != null:
+		split_slider.value = split_slider.min_value
+	if split_amount != null:
+		split_amount.text = ""
 	_split_source_slot = -1
 
 func _on_split_value_changed(_v: float) -> void:
@@ -730,9 +454,9 @@ func _on_split_value_changed(_v: float) -> void:
 		_update_split_label(int((d as Dictionary).get("count", 0)))
 
 func _update_split_label(total: int) -> void:
-	var take: int = int(_split_slider.value)
-	var remain: int = total - take
-	_split_label.text = "Split: take %d / remain %d" % [take, remain]
+	var take: int = int(split_slider.value) if split_slider != null else 1
+	if split_amount != null:
+		split_amount.text = "%d / %d" % [take, total]
 
 func _on_split_ok_pressed() -> void:
 	if _split_source_slot == -1 or player == null:
@@ -746,23 +470,25 @@ func _on_split_ok_pressed() -> void:
 		return
 	var d: Dictionary = v as Dictionary
 	var total: int = int(d.get("count", 0))
-	var take: int = int(_split_slider.value)
-	if take < 1 or take >= total:
+	var take: int = int(split_slider.value) if split_slider != null else 1
+	if take < 1 or take > total:
 		_hide_split()
 		return
-
-	_drag_restore_snapshot = snap.duplicate(true)
-	# Reduce source stack
-	d["count"] = total - take
-	slots[_split_source_slot] = d
+	var free_idx := _find_first_free_slot(slots)
+	if free_idx == -1:
+		show_bag_full("Сумка полна")
+		_hide_split()
+		return
+	var id: String = String(d.get("id", ""))
+	var remain: int = total - take
+	if remain <= 0:
+		slots[_split_source_slot] = null
+	else:
+		d["count"] = remain
+		slots[_split_source_slot] = d
+	slots[free_idx] = {"id": id, "count": take}
 	snap["slots"] = slots
 	player.apply_inventory_snapshot(snap)
-
-	# Put taken part into cursor drag item
-	_drag_item = {"id": String(d.get("id", "")), "count": take}
-	_drag_from_slot = -1
-	_drag_active = true
-	_show_drag_visual()
 	_hide_split()
 	_refresh()
 
@@ -771,13 +497,13 @@ func _on_split_cancel_pressed() -> void:
 
 # --- Tooltip ---
 
-func _toggle_tooltip_for_slot(slot_index: int) -> void:
+func _toggle_tooltip_for_slot(slot_index: int, global_pos: Vector2) -> void:
 	if _tooltip_for_slot == slot_index and _tooltip_panel != null and _tooltip_panel.visible:
 		_hide_tooltip()
 		return
-	_show_tooltip_for_slot(slot_index)
+	_show_tooltip_for_slot(slot_index, global_pos)
 
-func _show_tooltip_for_slot(slot_index: int) -> void:
+func _show_tooltip_for_slot(slot_index: int, global_pos: Vector2) -> void:
 	_ensure_support_ui()
 	if player == null or not is_instance_valid(player):
 		_hide_tooltip()
@@ -823,17 +549,72 @@ func _show_tooltip_for_slot(slot_index: int) -> void:
 	if _tooltip_sell_btn != null:
 		_tooltip_sell_btn.visible = _trade_open
 		_tooltip_sell_btn.disabled = false
+	if _tooltip_quick_btn != null:
+		var is_cons2 := _is_consumable_item(id)
+		var quick_index := _get_quick_slot_index_for_item(id)
+		_tooltip_quick_btn.visible = is_cons2
+		_tooltip_quick_btn.text = "Снять" if quick_index != -1 else "В быстрый слот"
+		_tooltip_quick_btn.disabled = false
+	if _tooltip_bag_btn != null:
+		var is_bag := _is_bag_item(id)
+		_tooltip_bag_btn.visible = is_bag
+		_tooltip_bag_btn.text = "Экипировать"
+		_tooltip_bag_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = slot_index
+	_tooltip_for_bag_slot = -1
 
-	var mouse := get_viewport().get_mouse_position()
-	_position_tooltip_left_of_point(mouse)
+	_position_tooltip_left_of_point(global_pos)
+
+func _show_tooltip_for_bag_slot(bag_index: int, global_pos: Vector2) -> void:
+	_ensure_support_ui()
+	if player == null or not is_instance_valid(player):
+		_hide_tooltip()
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var bags: Array = snap.get("bag_slots", [])
+	if bag_index < 0 or bag_index >= bags.size():
+		_hide_tooltip()
+		return
+	var v: Variant = bags[bag_index]
+	if v == null or not (v is Dictionary):
+		_hide_tooltip()
+		return
+	var id: String = String((v as Dictionary).get("id", ""))
+	var count: int = int((v as Dictionary).get("count", 1))
+	_tooltip_panel.visible = false
+	_tooltip_panel.custom_minimum_size = Vector2(_tooltip_panel.custom_minimum_size.x, 0)
+	_tooltip_panel.size = Vector2(_tooltip_panel.size.x, 0)
+	_tooltip_label.text = ""
+	var text := _build_tooltip_text(id, count)
+	if String(text).strip_edges().is_empty():
+		_hide_tooltip()
+		return
+	_tooltip_label.text = text
+	if _tooltip_use_btn != null:
+		_tooltip_use_btn.visible = false
+	if _tooltip_equip_btn != null:
+		_tooltip_equip_btn.visible = false
+	if _tooltip_sell_btn != null:
+		_tooltip_sell_btn.visible = false
+	if _tooltip_quick_btn != null:
+		_tooltip_quick_btn.visible = false
+	if _tooltip_bag_btn != null:
+		_tooltip_bag_btn.visible = true
+		_tooltip_bag_btn.text = "Снять"
+		_tooltip_bag_btn.disabled = false
+	await _resize_tooltip_to_content()
+	_tooltip_panel.visible = true
+	_tooltip_for_slot = -1
+	_tooltip_for_bag_slot = bag_index
+	_position_tooltip_left_of_point(global_pos)
 
 func _hide_tooltip() -> void:
 	if _tooltip_panel != null:
 		_tooltip_panel.visible = false
 	_tooltip_for_slot = -1
+	_tooltip_for_bag_slot = -1
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -874,6 +655,10 @@ func _resize_tooltip_to_content() -> void:
 		btn_h += max(32.0, _tooltip_equip_btn.get_combined_minimum_size().y)
 	if _tooltip_sell_btn != null and _tooltip_sell_btn.visible:
 		btn_h += max(32.0, _tooltip_sell_btn.get_combined_minimum_size().y)
+	if _tooltip_quick_btn != null and _tooltip_quick_btn.visible:
+		btn_h += max(32.0, _tooltip_quick_btn.get_combined_minimum_size().y)
+	if _tooltip_bag_btn != null and _tooltip_bag_btn.visible:
+		btn_h += max(32.0, _tooltip_bag_btn.get_combined_minimum_size().y)
 	# label + optional button + small spacing
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
@@ -894,35 +679,21 @@ func _resize_tooltip_to_content() -> void:
 func _position_tooltip_left_of_point(p: Vector2) -> void:
 	if _tooltip_panel == null:
 		return
+	_position_panel_left_of_point(_tooltip_panel, p)
+
+func _position_panel_left_of_point(target_panel: Control, p: Vector2) -> void:
+	if target_panel == null:
+		return
 	var vp := get_viewport().get_visible_rect().size
-	var size := _tooltip_panel.size
+	var size := target_panel.size
 	var margin: float = 8.0
-	# Default: to the left of point, align top to point
 	var pos := Vector2(p.x - size.x - margin, p.y)
-	# If outside left, clamp
 	if pos.x < margin:
 		pos.x = margin
-	# If bottom overflow, try align bottom
 	if pos.y + size.y > vp.y - margin:
 		pos.y = p.y - size.y
-	# Clamp top
 	pos.y = clamp(pos.y, margin, vp.y - size.y - margin)
-	_tooltip_panel.position = pos
-
-# --- Delete confirm ---
-
-func _show_delete_confirm() -> void:
-	_ensure_support_ui()
-	_delete_confirm.popup_centered()
-	# keep drag active until user decides
-
-func _on_delete_confirmed() -> void:
-	# delete item: simply drop it (already removed from inventory)
-	_end_drag()
-
-func _on_delete_cancelled() -> void:
-	_restore_drag_to_inventory()
-	_end_drag()
+	target_panel.position = pos
 
 # --- Settings ---
 
@@ -999,8 +770,9 @@ func _measure_panel_size_for_columns(cols: int, total_slots: int) -> Vector2:
 	var grid_size: Vector2 = grid.get_combined_minimum_size()
 
 	# Padding based on current layout in the scene (matches offsets in InventoryHUD.tscn)
-	var pad_left: float = grid.position.x
-	var pad_top: float = grid.position.y
+	var grid_pos := grid.get_global_position() - panel.get_global_position()
+	var pad_left: float = grid_pos.x
+	var pad_top: float = grid_pos.y
 	var pad_right: float = 16.0
 	var pad_bottom: float = 16.0
 	# Include header (gold label + settings button row)
@@ -1125,7 +897,7 @@ func _get_default_equip_slot(item_id: String) -> String:
 func _on_tooltip_use_pressed() -> void:
 	if player == null or not is_instance_valid(player):
 		return
-	if _tooltip_for_slot < 0:
+	if _tooltip_for_slot < 0 or _tooltip_for_bag_slot != -1:
 		return
 	# Grab current item in that slot (it could have changed).
 	var snap: Dictionary = player.get_inventory_snapshot()
@@ -1155,7 +927,7 @@ func _on_tooltip_use_pressed() -> void:
 func _on_tooltip_equip_pressed() -> void:
 	if player == null or not is_instance_valid(player):
 		return
-	if _tooltip_for_slot < 0:
+	if _tooltip_for_slot < 0 or _tooltip_for_bag_slot != -1:
 		return
 	var snap: Dictionary = player.get_inventory_snapshot()
 	var slots: Array = snap.get("slots", [])
@@ -1185,6 +957,89 @@ func _on_tooltip_sell_pressed() -> void:
 		return
 	if player == null or not is_instance_valid(player):
 		return
+	if _tooltip_for_slot < 0 or _tooltip_for_bag_slot != -1:
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if _tooltip_for_slot >= slots.size():
+		_hide_tooltip()
+		return
+	var v: Variant = slots[_tooltip_for_slot]
+	if v == null or not (v is Dictionary):
+		_hide_tooltip()
+		return
+	var d := v as Dictionary
+	var id: String = String(d.get("id", ""))
+	var count: int = int(d.get("count", 0))
+	if id == "":
+		return
+	var total: int = _get_total_item_count(id)
+	if total <= 0:
+		return
+	var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
+	if merchant_ui == null:
+		return
+	if count <= 1 or _get_stack_max(id) <= 1:
+		if merchant_ui.has_method("sell_items_from_inventory_slot"):
+			merchant_ui.call("sell_items_from_inventory_slot", id, 1, _tooltip_for_slot)
+		elif merchant_ui.has_method("sell_items_from_inventory"):
+			merchant_ui.call("sell_items_from_inventory", id, 1)
+		_hide_tooltip()
+		_refresh()
+		return
+	if merchant_ui.has_method("request_sell_from_inventory_slot"):
+		merchant_ui.call("request_sell_from_inventory_slot", id, count, _tooltip_for_slot)
+	elif merchant_ui.has_method("request_sell_from_inventory"):
+		merchant_ui.call("request_sell_from_inventory", id, count)
+	_hide_tooltip()
+	_refresh()
+
+func _on_tooltip_quick_pressed() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if _tooltip_for_slot < 0 or _tooltip_for_bag_slot != -1:
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if _tooltip_for_slot >= slots.size():
+		_hide_tooltip()
+		return
+	var v: Variant = slots[_tooltip_for_slot]
+	if v == null or not (v is Dictionary):
+		_hide_tooltip()
+		return
+	var id: String = String((v as Dictionary).get("id", ""))
+	if not _is_consumable_item(id):
+		return
+	var existing := _get_quick_slot_index_for_item(id)
+	if existing != -1:
+		_quick_refs[existing] = ""
+		_refresh_quick_bar()
+		_hide_tooltip()
+		return
+	var empty := _get_first_empty_quick_slot()
+	if empty == -1:
+		show_center_toast("Нет свободных быстрых слотов")
+		return
+	_quick_refs[empty] = id
+	_refresh_quick_bar()
+	_hide_tooltip()
+
+func _on_tooltip_bag_pressed() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if _tooltip_for_bag_slot != -1:
+		var inv_slot := _find_first_free_slot(player.get_inventory_snapshot().get("slots", []))
+		if inv_slot == -1:
+			show_bag_full("Сумка полна")
+			return
+		var ok: bool = player.try_unequip_bag_to_inventory(_tooltip_for_bag_slot, inv_slot)
+		if ok:
+			_hide_tooltip()
+			_refresh()
+		else:
+			show_bag_full("Сумка полна")
+		return
 	if _tooltip_for_slot < 0:
 		return
 	var snap: Dictionary = player.get_inventory_snapshot()
@@ -1197,24 +1052,19 @@ func _on_tooltip_sell_pressed() -> void:
 		_hide_tooltip()
 		return
 	var id: String = String((v as Dictionary).get("id", ""))
-	if id == "":
+	if not _is_bag_item(id):
 		return
-	var total: int = _get_total_item_count(id)
-	if total <= 0:
+	var bag_slots: Array = snap.get("bag_slots", [])
+	var bag_index := _find_first_free_bag_slot(bag_slots)
+	if bag_index == -1:
+		show_center_toast("Нет свободных ячеек")
 		return
-	var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
-	if merchant_ui == null:
-		return
-	if total <= 1 or _get_stack_max(id) <= 1:
-		if merchant_ui.has_method("sell_items_from_inventory"):
-			merchant_ui.call("sell_items_from_inventory", id, 1)
+	var ok2: bool = player.try_equip_bag_from_inventory_slot(_tooltip_for_slot, bag_index)
+	if ok2:
 		_hide_tooltip()
 		_refresh()
-		return
-	if merchant_ui.has_method("request_sell_from_inventory"):
-		merchant_ui.call("request_sell_from_inventory", id, total)
-	_hide_tooltip()
-	_refresh()
+	else:
+		show_center_toast("Нет свободных ячеек")
 
 
 func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
@@ -1291,34 +1141,6 @@ func show_center_toast(message: String) -> void:
 		if _toast_label != null:
 			_toast_label.visible = false
 	)
-
-
-
-
-func _start_quick_drag(q_index: int) -> void:
-	if q_index < 0 or q_index >= _quick_refs.size():
-		return
-	if player == null or not is_instance_valid(player):
-		return
-	var item_id: String = _quick_refs[q_index]
-	if item_id == "":
-		return
-	# Build drag item purely for visual purposes (count = total in inventory)
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var slots: Array = snap.get("slots", [])
-	var total: int = 0
-	for v in slots:
-		if v is Dictionary and String((v as Dictionary).get("id","")) == item_id:
-			total += int((v as Dictionary).get("count", 0))
-	if total <= 0:
-		_quick_refs[q_index] = ""
-		_refresh_quick_bar()
-		return
-	_quick_drag_active = true
-	_quick_drag_index = q_index
-	_quick_drag_item = {"id": item_id, "count": total}
-	_show_drag_visual()
-
 func _show_tooltip_for_item_dict(d: Dictionary) -> void:
 	_ensure_support_ui()
 	var id: String = String(d.get("id", ""))
@@ -1333,6 +1155,16 @@ func _show_tooltip_for_item_dict(d: Dictionary) -> void:
 		await get_tree().process_frame
 		text = _build_tooltip_text(id, count)
 	_tooltip_label.text = text
+	if _tooltip_use_btn != null:
+		_tooltip_use_btn.visible = false
+	if _tooltip_equip_btn != null:
+		_tooltip_equip_btn.visible = false
+	if _tooltip_sell_btn != null:
+		_tooltip_sell_btn.visible = false
+	if _tooltip_quick_btn != null:
+		_tooltip_quick_btn.visible = false
+	if _tooltip_bag_btn != null:
+		_tooltip_bag_btn.visible = false
 	await get_tree().process_frame
 	if String(text).strip_edges() == "" or float(_tooltip_label.get_content_height()) <= 1.0:
 		await get_tree().process_frame
@@ -1341,6 +1173,7 @@ func _show_tooltip_for_item_dict(d: Dictionary) -> void:
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = -999
+	_tooltip_for_bag_slot = -1
 	var mouse := get_viewport().get_mouse_position()
 	_position_tooltip_left_of_point(mouse)
 
@@ -1542,6 +1375,24 @@ func _find_first_free_slot(slots: Array) -> int:
 			return i
 	return -1
 
+func _find_first_free_bag_slot(bag_slots: Array) -> int:
+	for i in range(min(4, bag_slots.size())):
+		if bag_slots[i] == null:
+			return i
+	return -1
+
+func _get_quick_slot_index_for_item(item_id: String) -> int:
+	for i in range(_quick_refs.size()):
+		if _quick_refs[i] == item_id:
+			return i
+	return -1
+
+func _get_first_empty_quick_slot() -> int:
+	for i in range(_quick_refs.size()):
+		if _quick_refs[i] == "":
+			return i
+	return -1
+
 func _get_total_item_count(item_id: String) -> int:
 	if item_id == "":
 		return 0
@@ -1612,70 +1463,6 @@ func _get_slot_index_under_global(global_pos: Vector2) -> int:
 		if slot_panel.get_global_rect().has_point(global_pos):
 			return i
 	return -1
-
-func _get_bag_index_under_global(global_pos: Vector2) -> int:
-	for bi in range(4):
-		var btn := _get_bag_button_for_logical(bi)
-		if btn != null and btn.get_global_rect().has_point(global_pos):
-			return bi
-	return -1
-
-func _get_quick_index_under_global(global_pos: Vector2) -> int:
-	if _quick_bar == null:
-		return -1
-	for i in range(_quick_buttons.size()):
-		var b := _quick_buttons[i]
-		if b != null and b.get_global_rect().has_point(global_pos):
-			return i
-	return -1
-
-func _get_equipment_slot_under_global(global_pos: Vector2) -> String:
-	var hud := get_tree().get_first_node_in_group("character_hud")
-	if hud != null and hud.has_method("get_equipment_slot_at_global_pos"):
-		return String(hud.call("get_equipment_slot_at_global_pos", global_pos))
-	return ""
-
-func try_handle_equipment_drop(global_pos: Vector2, slot_id: String) -> bool:
-	if not _is_open:
-		return false
-	if player == null or not is_instance_valid(player):
-		return false
-	var inv_slot := _get_slot_index_under_global(global_pos)
-	if inv_slot == -1:
-		return false
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var slots: Array = snap.get("slots", [])
-	if inv_slot >= slots.size() or slots[inv_slot] != null:
-		return false
-	var equip: Node = player.get_node_or_null("Components/Equipment")
-	if equip != null and equip.has_method("try_unequip_to_inventory"):
-		return bool(equip.call("try_unequip_to_inventory", slot_id, inv_slot))
-	return false
-
-func _drop_into_equipment_slot(slot_id: String) -> bool:
-	var id: String = String(_drag_item.get("id", ""))
-	if not _is_equippable_item(id):
-		return false
-	if player == null or not is_instance_valid(player):
-		return false
-	var snap: Dictionary = player.get_inventory_snapshot()
-	var slots: Array = snap.get("slots", [])
-	var src_idx: int = _drag_from_slot
-	if src_idx < 0 or src_idx >= slots.size() or slots[src_idx] != null:
-		src_idx = _find_first_free_slot(slots)
-		if src_idx == -1:
-			player.apply_inventory_snapshot(_drag_restore_snapshot)
-			return true
-	slots[src_idx] = _drag_item
-	snap["slots"] = slots
-	player.apply_inventory_snapshot(snap)
-	if player.has_method("try_equip_from_inventory_slot"):
-		var ok: bool = bool(player.call("try_equip_from_inventory_slot", src_idx, slot_id))
-		if not ok:
-			player.apply_inventory_snapshot(_drag_restore_snapshot)
-			_show_equip_fail_toast()
-			return true
-	return true
 
 func _build_tooltip_text(id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
@@ -1802,11 +1589,29 @@ func _sort_inventory_slots() -> void:
 		return na < nb
 	)
 
+	# Merge stacks after sorting.
+	var stacked: Array[Dictionary] = []
+	for item in items:
+		var id := String(item.get("id", ""))
+		var remaining := int(item.get("count", 0))
+		var max_stack := _get_stack_max(id)
+		while remaining > 0:
+			if stacked.size() > 0 and String(stacked[-1].get("id", "")) == id:
+				var last_count := int(stacked[-1].get("count", 0))
+				if last_count < max_stack:
+					var can_add: int = min(remaining, max_stack - last_count)
+					stacked[-1]["count"] = last_count + can_add
+					remaining -= can_add
+					continue
+			var take: int = min(remaining, max_stack)
+			stacked.append({"id": id, "count": take})
+			remaining -= take
+
 	# Refill slots sequentially, keep same total size
 	for i in range(slots.size()):
 		slots[i] = null
-	for i in range(min(slots.size(), items.size())):
-		slots[i] = items[i]
+	for i in range(min(slots.size(), stacked.size())):
+		slots[i] = stacked[i]
 	snap["slots"] = slots
 	player.apply_inventory_snapshot(snap)
 
@@ -1818,11 +1623,15 @@ func _ensure_support_ui() -> void:
 		_tooltip_use_btn = tooltip_use_btn_scene
 		_tooltip_equip_btn = tooltip_equip_btn_scene
 		_tooltip_sell_btn = tooltip_sell_btn_scene
+		_tooltip_quick_btn = tooltip_quick_btn_scene
+		_tooltip_bag_btn = tooltip_bag_btn_scene
 		_tooltip_close_btn = tooltip_close_btn_scene
 		if _tooltip_panel != null:
 			_tooltip_panel.visible = false
 			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 			_ensure_tooltip_layer()
+			_ensure_dialog_layer()
+			_ensure_error_layer()
 			# Match LootHUD tooltip styling.
 			var sb := StyleBoxFlat.new()
 			sb.bg_color = Color(0, 0, 0, 0.85)
@@ -1849,59 +1658,30 @@ func _ensure_support_ui() -> void:
 			_tooltip_equip_btn.pressed.connect(_on_tooltip_equip_pressed)
 		if _tooltip_sell_btn != null and not _tooltip_sell_btn.pressed.is_connected(_on_tooltip_sell_pressed):
 			_tooltip_sell_btn.pressed.connect(_on_tooltip_sell_pressed)
+		if _tooltip_quick_btn != null and not _tooltip_quick_btn.pressed.is_connected(_on_tooltip_quick_pressed):
+			_tooltip_quick_btn.pressed.connect(_on_tooltip_quick_pressed)
+		if _tooltip_bag_btn != null and not _tooltip_bag_btn.pressed.is_connected(_on_tooltip_bag_pressed):
+			_tooltip_bag_btn.pressed.connect(_on_tooltip_bag_pressed)
 		if _tooltip_close_btn != null and not _tooltip_close_btn.pressed.is_connected(_hide_tooltip):
 			_tooltip_close_btn.pressed.connect(_hide_tooltip)
 
-	if _delete_confirm == null:
-		_delete_confirm = ConfirmationDialog.new()
-		_delete_confirm.name = "DeleteConfirm"
-		_delete_confirm.dialog_text = "Delete this item?"
-		add_child(_delete_confirm)
-		_delete_confirm.confirmed.connect(_on_delete_confirmed)
-		_delete_confirm.canceled.connect(_on_delete_cancelled)
-
-	if _split_dialog == null:
-		_split_dialog = Panel.new()
-		_split_dialog.name = "SplitDialog"
-		_split_dialog.visible = false
-		add_child(_split_dialog)
-		_split_dialog.size = Vector2(260, 110)
-		_split_dialog.position = Vector2(40, 40)
+	if split_dialog != null:
 		var sb2 := StyleBoxFlat.new()
 		sb2.bg_color = Color(0,0,0,0.8)
 		sb2.content_margin_left = 10
 		sb2.content_margin_right = 10
 		sb2.content_margin_top = 10
 		sb2.content_margin_bottom = 10
-		_split_dialog.add_theme_stylebox_override("panel", sb2)
-		_split_label = Label.new()
-		_split_dialog.add_child(_split_label)
-		_split_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-		_split_label.offset_left = 0
-		_split_label.offset_top = 0
-		_split_label.offset_right = 0
-		_split_label.offset_bottom = 20
-
-		_split_slider = HSlider.new()
-		_split_dialog.add_child(_split_slider)
-		_split_slider.set_anchors_preset(Control.PRESET_TOP_WIDE)
-		_split_slider.offset_left = 0
-		_split_slider.offset_top = 28
-		_split_slider.offset_right = 0
-		_split_slider.offset_bottom = 52
-		_split_slider.value_changed.connect(_on_split_value_changed)
-
-		_split_ok = Button.new()
-		_split_ok.text = "OK"
-		_split_dialog.add_child(_split_ok)
-		_split_ok.position = Vector2(0, 60)
-		_split_ok.pressed.connect(_on_split_ok_pressed)
-
-		_split_cancel = Button.new()
-		_split_cancel.text = "Cancel"
-		_split_dialog.add_child(_split_cancel)
-		_split_cancel.position = Vector2(90, 60)
-		_split_cancel.pressed.connect(_on_split_cancel_pressed)
+		split_dialog.add_theme_stylebox_override("panel", sb2)
+		if split_slider != null and not split_slider.value_changed.is_connected(_on_split_value_changed):
+			split_slider.value_changed.connect(_on_split_value_changed)
+		if split_ok != null and not split_ok.pressed.is_connected(_on_split_ok_pressed):
+			split_ok.pressed.connect(_on_split_ok_pressed)
+		if split_cancel != null and not split_cancel.pressed.is_connected(_on_split_cancel_pressed):
+			split_cancel.pressed.connect(_on_split_cancel_pressed)
+		_ensure_dialog_layer()
+		if split_dialog.get_parent() != _dialog_layer:
+			split_dialog.reparent(_dialog_layer)
 
 	if _toast_label == null:
 		_toast_label = Label.new()
@@ -1911,7 +1691,8 @@ func _ensure_support_ui() -> void:
 		_toast_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		_toast_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(_toast_label)
+		_ensure_error_layer()
+		_error_layer.add_child(_toast_label)
 		# Center in viewport
 		_toast_label.set_anchors_preset(Control.PRESET_CENTER)
 		_toast_label.offset_left = -180
@@ -1930,6 +1711,11 @@ func _ensure_support_ui() -> void:
 		tsb.content_margin_top = 6
 		tsb.content_margin_bottom = 6
 		_toast_label.add_theme_stylebox_override("normal", tsb)
+
+	if bag_full_dialog != null:
+		_ensure_error_layer()
+		if bag_full_dialog.get_parent() != _error_layer:
+			bag_full_dialog.reparent(_error_layer)
 
 	if _settings_button == null:
 		_settings_button = Button.new()
@@ -2086,10 +1872,6 @@ func _refresh_quick_bar() -> void:
 		for v in slots:
 			if v is Dictionary and String((v as Dictionary).get("id","")) == item_id:
 				total += int((v as Dictionary).get("count", 0))
-		# If the player is currently dragging this item, it may be temporarily removed from slots.
-		# Keep quick slot stable during drag so it doesn't get cleared.
-		if total <= 0 and _drag_active and String(_drag_item.get("id", "")) == item_id:
-			total = int(_drag_item.get("count", 0))
 		if total <= 0:
 			# Item no longer present; clear quick slot
 			_quick_refs[i] = ""
@@ -2113,8 +1895,9 @@ func _update_panel_size_to_fit_grid(_total_slots: int) -> void:
 	await get_tree().process_frame
 	var grid_size: Vector2 = grid.get_combined_minimum_size()
 	# Padding based on current layout in the scene (matches offsets in InventoryHUD.tscn)
-	var pad_left: float = grid.position.x
-	var pad_top: float = grid.position.y
+	var grid_pos := grid.get_global_position() - panel.get_global_position()
+	var pad_left: float = grid_pos.x
+	var pad_top: float = grid_pos.y
 	var pad_right: float = 16.0
 	var pad_bottom: float = 16.0
 	# Include header (gold label + settings button row)
@@ -2171,39 +1954,6 @@ func _refresh_layout_anchor() -> void:
 	new_pos.y = clamp(new_pos.y, 0.0, vp_size.y - rect2.size.y)
 	panel.global_position = new_pos
 
-func _show_drag_visual() -> void:
-	if not has_node("DragIcon"):
-		var drag_icon := TextureRect.new()
-		drag_icon.name = "DragIcon"
-		drag_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		drag_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		drag_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		add_child(drag_icon)
-		drag_icon.z_index = 999
-	_update_drag_visual()
-	get_node("DragIcon").visible = true
-
-func _hide_drag_visual() -> void:
-	var drag_icon := get_node_or_null("DragIcon") as TextureRect
-	if drag_icon != null:
-		drag_icon.visible = false
-
-func _update_drag_visual() -> void:
-	var drag_icon := get_node_or_null("DragIcon") as TextureRect
-	if drag_icon == null:
-		return
-	var src: Dictionary = _drag_item if _drag_active else _quick_drag_item
-	var id: String = String(src.get("id",""))
-	var db := get_node_or_null("/root/DataDB")
-	var icon_path: String = ""
-	if db != null and db.has_method("get_item"):
-		var meta: Dictionary = db.call("get_item", id) as Dictionary
-		icon_path = String(meta.get("icon", meta.get("icon_path","")))
-	drag_icon.texture = _get_icon_texture(icon_path)
-	drag_icon.size = Vector2(36, 36)
-	var m := get_viewport().get_mouse_position()
-	drag_icon.position = m + Vector2(12, 12)
-
 func _format_money_bronze(bronze: int) -> String:
 	bronze = max(0, bronze)
 	var gold: int = int(bronze / 10000.0)
@@ -2227,3 +1977,43 @@ func _ensure_tooltip_layer() -> void:
 		add_child(_tooltip_layer)
 	if _tooltip_panel.get_parent() != _tooltip_layer:
 		_tooltip_panel.reparent(_tooltip_layer)
+
+func _ensure_dialog_layer() -> void:
+	if _dialog_layer == null:
+		_dialog_layer = CanvasLayer.new()
+		_dialog_layer.name = "DialogLayer"
+		_dialog_layer.layer = 210
+		add_child(_dialog_layer)
+
+func _ensure_error_layer() -> void:
+	if _error_layer == null:
+		_error_layer = CanvasLayer.new()
+		_error_layer.name = "ErrorLayer"
+		_error_layer.layer = 220
+		add_child(_error_layer)
+
+func _force_initial_layout() -> void:
+	if _initial_layout_done:
+		return
+	if _initial_layout_pending:
+		return
+	_initial_layout_pending = true
+	await _run_initial_layout()
+
+func _run_initial_layout() -> void:
+	if player == null or not is_instance_valid(player):
+		_initial_layout_pending = false
+		return
+	if not player.has_method("get_inventory_snapshot"):
+		_initial_layout_pending = false
+		return
+	_load_grid_columns()
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if slots.size() <= 0:
+		_initial_layout_pending = false
+		return
+	_layout_dirty = true
+	await _apply_inventory_layout(slots.size())
+	_initial_layout_done = true
+	_initial_layout_pending = false
