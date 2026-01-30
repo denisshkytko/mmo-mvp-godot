@@ -40,6 +40,7 @@ var _icon_cache: Dictionary = {}
 var _tooltip_item_id: String = ""
 var _names_pending: bool = false
 var _tooltip_layer: CanvasLayer = null
+var _dialog_layer: CanvasLayer = null
 
 # Quantity dialog
 var _qty_callback: Callable = Callable()
@@ -309,6 +310,13 @@ func _ensure_tooltip_layer() -> void:
 		add_child(_tooltip_layer)
 	if tooltip_panel.get_parent() != _tooltip_layer:
 		tooltip_panel.reparent(_tooltip_layer)
+
+func _ensure_dialog_layer() -> void:
+	if _dialog_layer == null:
+		_dialog_layer = CanvasLayer.new()
+		_dialog_layer.name = "DialogLayer"
+		_dialog_layer.layer = 210
+		add_child(_dialog_layer)
 
 func _format_item_label(item_id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
@@ -593,6 +601,9 @@ func _setup_qty_dialog() -> void:
 	if qty_dialog == null:
 		return
 	qty_dialog.visible = false
+	_ensure_dialog_layer()
+	if qty_dialog.get_parent() != _dialog_layer:
+		qty_dialog.reparent(_dialog_layer)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0, 0, 0, 0.8)
 	sb.border_color = Color(0.3, 0.8, 0.3)

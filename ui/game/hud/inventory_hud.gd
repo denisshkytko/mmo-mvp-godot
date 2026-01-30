@@ -97,6 +97,9 @@ var _panel_anchor_valid: bool = false
 # Icon cache for slot buttons
 var _icon_cache: Dictionary = {} # path -> Texture2D
 var _tooltip_layer: CanvasLayer = null
+var _dialog_layer: CanvasLayer = null
+var _error_layer: CanvasLayer = null
+var _initial_layout_done: bool = false
 
 func _ready() -> void:
 	add_to_group("inventory_ui")
@@ -126,6 +129,7 @@ func _ready() -> void:
 	var rect := panel.get_global_rect()
 	_panel_anchor_br = rect.position + rect.size
 	_panel_anchor_valid = true
+	await _force_initial_layout()
 	_refresh()
 
 func set_player(p: Node) -> void:
@@ -391,6 +395,7 @@ func _show_split(slot_index: int, count: int, global_pos: Vector2) -> void:
 	if split_dialog != null:
 		split_dialog.visible = true
 		_position_panel_left_of_point(split_dialog, global_pos)
+		_ensure_dialog_layer()
 
 func _hide_split() -> void:
 	if split_dialog != null:
@@ -1583,6 +1588,8 @@ func _ensure_support_ui() -> void:
 			_tooltip_panel.visible = false
 			_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 			_ensure_tooltip_layer()
+			_ensure_dialog_layer()
+			_ensure_error_layer()
 			# Match LootHUD tooltip styling.
 			var sb := StyleBoxFlat.new()
 			sb.bg_color = Color(0, 0, 0, 0.85)
@@ -1630,6 +1637,9 @@ func _ensure_support_ui() -> void:
 			split_ok.pressed.connect(_on_split_ok_pressed)
 		if split_cancel != null and not split_cancel.pressed.is_connected(_on_split_cancel_pressed):
 			split_cancel.pressed.connect(_on_split_cancel_pressed)
+		_ensure_dialog_layer()
+		if split_dialog.get_parent() != _dialog_layer:
+			split_dialog.reparent(_dialog_layer)
 
 	if _toast_label == null:
 		_toast_label = Label.new()
@@ -1639,7 +1649,8 @@ func _ensure_support_ui() -> void:
 		_toast_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		_toast_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(_toast_label)
+		_ensure_error_layer()
+		_error_layer.add_child(_toast_label)
 		# Center in viewport
 		_toast_label.set_anchors_preset(Control.PRESET_CENTER)
 		_toast_label.offset_left = -180
@@ -1658,6 +1669,11 @@ func _ensure_support_ui() -> void:
 		tsb.content_margin_top = 6
 		tsb.content_margin_bottom = 6
 		_toast_label.add_theme_stylebox_override("normal", tsb)
+
+	if bag_full_dialog != null:
+		_ensure_error_layer()
+		if bag_full_dialog.get_parent() != _error_layer:
+			bag_full_dialog.reparent(_error_layer)
 
 	if _settings_button == null:
 		_settings_button = Button.new()
@@ -1919,3 +1935,30 @@ func _ensure_tooltip_layer() -> void:
 		add_child(_tooltip_layer)
 	if _tooltip_panel.get_parent() != _tooltip_layer:
 		_tooltip_panel.reparent(_tooltip_layer)
+
+func _ensure_dialog_layer() -> void:
+	if _dialog_layer == null:
+		_dialog_layer = CanvasLayer.new()
+		_dialog_layer.name = "DialogLayer"
+		_dialog_layer.layer = 210
+		add_child(_dialog_layer)
+
+func _ensure_error_layer() -> void:
+	if _error_layer == null:
+		_error_layer = CanvasLayer.new()
+		_error_layer.name = "ErrorLayer"
+		_error_layer.layer = 220
+		add_child(_error_layer)
+
+func _force_initial_layout() -> void:
+	if _initial_layout_done:
+		return
+	if player == null or not is_instance_valid(player):
+		return
+	if not player.has_method("get_inventory_snapshot"):
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	_layout_dirty = true
+	await _apply_inventory_layout(slots.size())
+	_initial_layout_done = true
