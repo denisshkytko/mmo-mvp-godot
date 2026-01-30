@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c8qhqey2vbhkc"]
+[gd_scene load_steps=10 format=3 uid="uid://c8qhqey2vbhkc"]
 
 [ext_resource type="Script" uid="uid://cvfcjvpmn6mum" path="res://game/characters/mobs/normal_aggressive_mob.gd" id="1_tamd3"]
 [ext_resource type="PackedScene" uid="uid://nas2p81wwe7r" path="res://game/characters/mobs/projectiles/HomingProjectile.tscn" id="2_8u31h"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://bhbt685cxtod3" path="res://game/characters/mobs/normal_aggressive_mob_combat.gd" id="3_8u31h"]
 [ext_resource type="Script" uid="uid://dgcctk2ufrluw" path="res://game/characters/mobs/normal_aggressive_mob_stats.gd" id="4_q1mdw"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_tdnly"]
+[ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_1p0up"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
 size = Vector2(24, 24)
@@ -69,3 +70,6 @@ script = ExtResource("4_q1mdw")
 
 [node name="Resource" type="Node" parent="Components"]
 script = ExtResource("5_tdnly")
+
+[node name="Danger" type="Node" parent="Components"]
+script = ExtResource("6_1p0up")

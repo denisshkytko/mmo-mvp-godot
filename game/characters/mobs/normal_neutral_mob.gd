@@ -15,6 +15,7 @@ signal died(corpse: Corpse)
 @onready var c_combat: NormalNeutralMobCombat = $Components/Combat as NormalNeutralMobCombat
 @onready var c_stats: NormalNeutralMobStats = $Components/Stats as NormalNeutralMobStats
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
+@onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 
@@ -42,6 +43,7 @@ const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn"
 var is_aggressive: bool = false
 var aggressor: Node2D = null
 var _prev_aggressor: Node2D = null
+var direct_attackers := {} # instance_id -> last_hit_time_sec
 
 # Право на лут: первый удар игрока в текущем бою
 var loot_owner_player_id: int = 0
@@ -174,6 +176,8 @@ func _physics_process(delta: float) -> void:
 	if aggressor != null and not is_instance_valid(aggressor):
 		aggressor = null
 		is_aggressive = false
+	if aggressor == null and c_ai != null and not c_ai.is_returning():
+		_clear_direct_attackers()
 
 	if _prev_aggressor != null and not is_instance_valid(_prev_aggressor):
 		_prev_aggressor = null
@@ -215,6 +219,7 @@ func _on_leash_return_started() -> void:
 	loot_owner_player_id = LootRights.clear_owner()
 	regen_active = true
 	c_combat.reset_combat()
+	_clear_direct_attackers()
 
 # ---------------------------
 # Called by Spawner
@@ -365,6 +370,8 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 		return
 
 	loot_owner_player_id = LootRights.capture_first_player_hit(loot_owner_player_id, attacker)
+	if attacker != null and is_instance_valid(attacker):
+		direct_attackers[attacker.get_instance_id()] = _now_sec()
 
 	var died_now: bool = c_stats.apply_damage(raw_damage)
 	c_stats.update_hp_bar(hp_fill)
@@ -379,7 +386,7 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 			_notify_target_change(_prev_aggressor, aggressor)
 			_prev_aggressor = aggressor
 		regen_active = false
-		c_ai.on_took_damage(self)
+		c_ai.on_took_damage(attacker)
 	else:
 		# если attacker неизвестен — просто агр на игрока (если он есть)
 		var p := NodeCache.get_player(get_tree()) as Node2D
@@ -390,7 +397,7 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 				_notify_target_change(_prev_aggressor, aggressor)
 				_prev_aggressor = aggressor
 			regen_active = false
-			c_ai.on_took_damage(self)
+			c_ai.on_took_damage(aggressor)
 
 	if died_now:
 		_die()
@@ -414,6 +421,7 @@ func on_player_died() -> void:
 	c_combat.reset_combat()
 	c_ai.force_return()
 	velocity = Vector2.ZERO
+	_clear_direct_attackers()
 
 # ---------------------------
 # Death + loot/xp (как у агрессивного)
@@ -463,3 +471,13 @@ func _base_xp_l1_by_size() -> int:
 			return 10
 		_:
 			return 10
+
+func get_danger_meter() -> DangerMeterComponent:
+	return c_danger
+
+func _now_sec() -> float:
+	return float(Time.get_ticks_msec()) / 1000.0
+
+func _clear_direct_attackers() -> void:
+	if direct_attackers.size() > 0:
+		direct_attackers.clear()

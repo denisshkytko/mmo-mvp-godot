@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://dpwtpikwhfl2f"]
+[gd_scene load_steps=9 format=3 uid="uid://dpwtpikwhfl2f"]
 
 [ext_resource type="Script" uid="uid://bqkvq7otwihom" path="res://game/characters/npcs/faction_npc.gd" id="1_h35rw"]
 [ext_resource type="Script" uid="uid://cpjigvttt30kj" path="res://game/characters/npcs/faction_npc_ai.gd" id="2_vdddp"]
 [ext_resource type="Script" uid="uid://csf204hleefyv" path="res://game/characters/npcs/faction_npc_combat.gd" id="3_st7o1"]
 [ext_resource type="Script" uid="uid://0qyj1oasme43" path="res://game/characters/npcs/faction_npc_stats.gd" id="4_otmjk"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_w36hx"]
+[ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_lgduo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
 size = Vector2(24, 24)
@@ -75,3 +76,6 @@ script = ExtResource("4_otmjk")
 
 [node name="Resource" type="Node" parent="Components"]
 script = ExtResource("5_w36hx")
+
+[node name="Danger" type="Node" parent="Components"]
+script = ExtResource("6_lgduo")
