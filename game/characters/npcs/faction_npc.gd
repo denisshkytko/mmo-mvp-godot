@@ -339,7 +339,8 @@ func _physics_process(delta: float) -> void:
 
 	# pick target only if proactive aggro is enabled
 	# (yellow is non-proactive by design)
-	if current_target == null and proactive_aggro:
+	var is_returning := (c_ai != null and c_ai.state == FactionNPCAI.State.RETURN)
+	if current_target == null and proactive_aggro and not is_returning:
 		current_target = _pick_target()
 	if current_target != null and is_instance_valid(current_target):
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
