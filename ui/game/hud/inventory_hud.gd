@@ -199,6 +199,10 @@ func _set_open(v: bool) -> void:
 		_layout_dirty = true
 		_last_applied_columns = -1
 		_refresh()
+		await get_tree().process_frame
+		_layout_dirty = true
+		_last_applied_columns = -1
+		_refresh()
 
 func _on_bag_button_pressed() -> void:
 	_toggle_inventory()
