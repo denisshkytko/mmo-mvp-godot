@@ -17,6 +17,7 @@ signal died(corpse: Corpse)
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
 @onready var c_stats: FactionNPCStats = $Components/Stats as FactionNPCStats
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
+@onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 const BASE_XP_L1_FACTION: int = 3
@@ -44,6 +45,7 @@ var home_position: Vector2 = Vector2.ZERO
 var current_target: Node2D = null
 var proactive_aggro: bool = true
 var _prev_target: Node2D = null
+var direct_attackers := {} # instance_id -> last_hit_time_sec
 
 # Право на лут: первый удар игрока в текущем бою
 var loot_owner_player_id: int = 0
@@ -55,6 +57,8 @@ var _merchant_sale_seq: int = 0
 # Реген после сброса боя
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
+const THREAT_RECHECK_SEC: float = 0.25
+var _threat_recheck_timer: float = 0.0
 
 # -----------------------------
 # Inspector (Common)
@@ -292,6 +296,8 @@ func _physics_process(delta: float) -> void:
 	if c_stats.is_dead:
 		return
 
+	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
+
 	# regen after combat reset (2%/sec)
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
 		c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
@@ -333,7 +339,8 @@ func _physics_process(delta: float) -> void:
 
 	# pick target only if proactive aggro is enabled
 	# (yellow is non-proactive by design)
-	if current_target == null and proactive_aggro:
+	var is_returning := (c_ai != null and c_ai.state == FactionNPCAI.State.RETURN)
+	if current_target == null and proactive_aggro and not is_returning:
 		current_target = _pick_target()
 	if current_target != null and is_instance_valid(current_target):
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
@@ -344,6 +351,7 @@ func _physics_process(delta: float) -> void:
 		_prev_target = null
 	if current_target != null and not is_instance_valid(current_target):
 		current_target = null
+	_refresh_threat_target()
 
 	if _prev_target != current_target:
 		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
@@ -354,6 +362,9 @@ func _physics_process(delta: float) -> void:
 			regen_active = true
 		_notify_target_change(_prev_target, current_target)
 		_prev_target = current_target
+
+	if current_target == null and c_ai != null and c_ai.state != FactionNPCAI.State.RETURN:
+		_clear_direct_attackers()
 
 	# AI tick
 	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
@@ -366,6 +377,16 @@ func _physics_process(delta: float) -> void:
 
 func _pick_target() -> Node2D:
 	var radius: float = c_ai.aggro_radius if c_ai != null else 0.0
+	var threat_target := ThreatTargeting.pick_target_by_threat(
+		self,
+		faction_id,
+		home_position,
+		leash_distance,
+		radius,
+		direct_attackers
+	)
+	if threat_target != null:
+		return threat_target
 	return FactionTargeting.pick_hostile_target(self, faction_id, radius)
 
 func take_damage(raw_damage: int) -> void:
@@ -387,9 +408,12 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 	# retaliation
 	if attacker != null and is_instance_valid(attacker):
 		current_target = attacker
+		direct_attackers[attacker.get_instance_id()] = _now_sec()
 		if _prev_target != current_target:
 			_notify_target_change(_prev_target, current_target)
 			_prev_target = current_target
+		if c_ai != null:
+			c_ai.on_took_damage(attacker)
 
 	# Yellow: реагирует на насилие (как нейтральные)
 	if faction_id == "yellow" and attacker != null and is_instance_valid(attacker):
@@ -477,6 +501,7 @@ func _on_leash_return_started() -> void:
 	regen_active = true
 	retaliation_active = false
 	retaliation_target_id = 0
+	_clear_direct_attackers()
 
 func _notify_target_change(old_t, new_t) -> void:
 	if old_t != null and is_instance_valid(old_t):
@@ -485,6 +510,35 @@ func _notify_target_change(old_t, new_t) -> void:
 	if new_t != null and is_instance_valid(new_t):
 		if new_t.is_in_group("player") and new_t.has_method("on_targeted_by"):
 			new_t.call("on_targeted_by", self)
+
+func get_danger_meter() -> DangerMeterComponent:
+	return c_danger
+
+func _now_sec() -> float:
+	return float(Time.get_ticks_msec()) / 1000.0
+
+func _refresh_threat_target() -> void:
+	if c_ai == null or c_ai.state != FactionNPCAI.State.CHASE:
+		return
+	if current_target == null:
+		return
+	if _threat_recheck_timer > 0.0:
+		return
+	_threat_recheck_timer = THREAT_RECHECK_SEC
+	var threat_target := ThreatTargeting.pick_target_by_threat(
+		self,
+		faction_id,
+		home_position,
+		leash_distance,
+		c_ai.aggro_radius,
+		direct_attackers
+	)
+	if threat_target != null and threat_target != current_target:
+		current_target = threat_target
+
+func _clear_direct_attackers() -> void:
+	if direct_attackers.size() > 0:
+		direct_attackers.clear()
 
 func _update_merchant_interaction() -> void:
 	if interaction_type != InteractionType.MERCHANT:

@@ -21,27 +21,19 @@ var _patrol_target: Vector2 = Vector2.ZERO
 var _has_patrol_target: bool = false
 var _patrol_wait: float = 0.0
 
-# RETURN → re-aggro if damaged
-var _force_chase_timer: float = 0.0
-var force_chase_seconds: float = 0.6
-
 func reset_to_idle() -> void:
 	_state = AIState.IDLE
 	_has_patrol_target = false
 	_patrol_wait = 0.0
-	_force_chase_timer = 0.0
 
 func force_return() -> void:
 	_state = AIState.RETURN
-	_force_chase_timer = 0.0
 	emit_signal("leash_return_started")
 
 func is_returning() -> bool:
 	return _state == AIState.RETURN
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
-	_force_chase_timer = max(0.0, _force_chase_timer - delta)
-
 	# выключение CHASE по leash_distance
 	var dist_to_home: float = actor.global_position.distance_to(home_position)
 	if _state == AIState.CHASE and dist_to_home > leash_distance:
@@ -67,15 +59,15 @@ func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAg
 	# IDLE
 	_do_idle(delta, actor)
 
-func on_took_damage(actor: CharacterBody2D) -> void:
-	# ре-агро во время RETURN, но только если ещё в leash
+func on_took_damage(attacker: Node2D) -> void:
+	if attacker == null or not is_instance_valid(attacker):
+		return
 	if _state == AIState.RETURN:
-		var dist_home: float = actor.global_position.distance_to(home_position)
+		var dist_home: float = attacker.global_position.distance_to(home_position)
 		if dist_home <= leash_distance:
-			_force_chase_timer = force_chase_seconds
 			_state = AIState.CHASE
-	else:
-		_state = AIState.CHASE
+		return
+	_state = AIState.CHASE
 
 func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 	if behavior == Behavior.PATROL:
@@ -132,13 +124,6 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMo
 	actor.move_and_slide()
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
-	# если во время RETURN получили урон и всё ещё в leash — снова CHASE
-	if _force_chase_timer > 0.0:
-		var dist_home: float = actor.global_position.distance_to(home_position)
-		if dist_home <= leash_distance:
-			_state = AIState.CHASE
-			return
-
 	var to_home: Vector2 = home_position - actor.global_position
 	var dist: float = to_home.length()
 

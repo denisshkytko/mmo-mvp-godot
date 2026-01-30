@@ -184,6 +184,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_inv: PlayerInventoryComponent = $Components/Inventory as PlayerInventoryComponent
 @onready var c_equip: PlayerEquipmentComponent = $Components/Equipment as PlayerEquipmentComponent
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
+@onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 
 
 func _ready() -> void:
@@ -221,6 +222,9 @@ func _ready() -> void:
 			c_resource.sync_from_owner_fields_if_mana()
 		else:
 			c_resource.set_empty()
+
+func get_danger_meter() -> DangerMeterComponent:
+	return c_danger
 
 
 func _physics_process(_delta: float) -> void:

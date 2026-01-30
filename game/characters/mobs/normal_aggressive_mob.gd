@@ -15,6 +15,7 @@ signal died(corpse: Corpse)
 @onready var c_combat: NormalAggresiveMobCombat = $Components/Combat as NormalAggresiveMobCombat
 @onready var c_stats: NormalAggresiveMobStats = $Components/Stats as NormalAggresiveMobStats
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
+@onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 
 enum AttackMode { MELEE, RANGED }
 
@@ -104,11 +105,15 @@ var player: Node2D = null
 var faction_id: String = "aggressive_mob"
 var current_target: Node2D = null
 var _prev_target: Node2D = null
+var direct_attackers := {} # instance_id -> last_hit_time_sec
 
 var first_attacker: Node2D = null
 var last_attacker: Node2D = null
 
 var loot_owner_player_id: int = 0
+
+const THREAT_RECHECK_SEC: float = 0.25
+var _threat_recheck_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -149,6 +154,8 @@ func _physics_process(delta: float) -> void:
 	if c_stats.is_dead:
 		return
 
+	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
+
 	if current_target == null or not is_instance_valid(current_target):
 		current_target = _pick_target()
 	else:
@@ -165,11 +172,15 @@ func _physics_process(delta: float) -> void:
 	if current_target != null and c_ai != null and c_ai.is_returning():
 		current_target = null
 		regen_active = true
+	if current_target == null and c_ai != null and not c_ai.is_returning():
+		_clear_direct_attackers()
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
 		_prev_target = null
 	if current_target != null and not is_instance_valid(current_target):
 		current_target = null
+
+	_refresh_threat_target()
 
 	if _prev_target != current_target:
 		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
@@ -324,6 +335,9 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 		first_attacker = attacker
 	if attacker != null and is_instance_valid(attacker):
 		last_attacker = attacker
+		direct_attackers[attacker.get_instance_id()] = _now_sec()
+		if c_ai != null:
+			c_ai.on_took_damage(attacker)
 
 	var died_now: bool = c_stats.apply_damage(raw_damage)
 	c_stats.update_hp_bar(hp_fill)
@@ -350,6 +364,7 @@ func on_player_died() -> void:
 		_notify_target_change(current_target, null)
 	current_target = null
 	_prev_target = null
+	_clear_direct_attackers()
 
 # ------------------------------------------------------------
 # Internals
@@ -443,6 +458,7 @@ func _on_leash_return_started() -> void:
 		_notify_target_change(current_target, null)
 	current_target = null
 	_prev_target = null
+	_clear_direct_attackers()
 
 
 func get_faction_id() -> String:
@@ -450,6 +466,16 @@ func get_faction_id() -> String:
 
 
 func _pick_target() -> Node2D:
+	var threat_target := ThreatTargeting.pick_target_by_threat(
+		self,
+		faction_id,
+		home_position,
+		leash_distance,
+		aggro_radius,
+		direct_attackers
+	)
+	if threat_target != null:
+		return threat_target
 	return FactionTargeting.pick_hostile_target(self, faction_id, aggro_radius)
 
 func _notify_target_change(old_t, new_t) -> void:
@@ -468,3 +494,32 @@ func _set_loot_owner_if_first(attacker: Node2D) -> void:
 
 func _clear_loot_owner() -> void:
 	loot_owner_player_id = LootRights.clear_owner()
+
+func get_danger_meter() -> DangerMeterComponent:
+	return c_danger
+
+func _now_sec() -> float:
+	return float(Time.get_ticks_msec()) / 1000.0
+
+func _refresh_threat_target() -> void:
+	if c_ai == null or c_ai.is_returning():
+		return
+	if current_target == null:
+		return
+	if _threat_recheck_timer > 0.0:
+		return
+	_threat_recheck_timer = THREAT_RECHECK_SEC
+	var threat_target := ThreatTargeting.pick_target_by_threat(
+		self,
+		faction_id,
+		home_position,
+		leash_distance,
+		aggro_radius,
+		direct_attackers
+	)
+	if threat_target != null and threat_target != current_target:
+		current_target = threat_target
+
+func _clear_direct_attackers() -> void:
+	if direct_attackers.size() > 0:
+		direct_attackers.clear()

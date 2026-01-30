@@ -27,6 +27,16 @@ func reset_to_idle() -> void:
 	_has_patrol_target = false
 	_wait = 0.0
 
+func on_took_damage(attacker: Node2D) -> void:
+	if attacker == null or not is_instance_valid(attacker):
+		return
+	if state == State.RETURN:
+		var dist_home: float = attacker.global_position.distance_to(home_position)
+		if dist_home <= leash_distance:
+			state = State.CHASE
+		return
+	state = State.CHASE
+
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat, proactive: bool) -> void:
 	var dist_home: float = actor.global_position.distance_to(home_position)
 	if state == State.CHASE and dist_home > leash_distance:

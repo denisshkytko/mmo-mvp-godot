@@ -10,5 +10,25 @@ static func apply_damage(attacker: Node, target: Node, dmg: int) -> void:
 		target.call("take_damage_from", dmg, attacker)
 	elif target.has_method("take_damage"):
 		target.call("take_damage", dmg)
+	if attacker != null:
+		var danger_meter := _get_danger_meter(attacker)
+		if danger_meter != null:
+			danger_meter.on_damage_dealt(float(dmg), target)
 	if attacker != null and "c_resource" in attacker and attacker.c_resource != null:
 		attacker.c_resource.on_damage_dealt()
+
+static func _get_danger_meter(attacker: Node) -> DangerMeterComponent:
+	if attacker == null:
+		return null
+	if attacker.has_method("get_danger_meter"):
+		var meter = attacker.call("get_danger_meter")
+		if meter is DangerMeterComponent:
+			return meter
+	if "c_danger" in attacker:
+		var meter = attacker.c_danger
+		if meter is DangerMeterComponent:
+			return meter
+	var node := attacker.get_node_or_null("Components/Danger")
+	if node is DangerMeterComponent:
+		return node
+	return null
