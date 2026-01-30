@@ -126,14 +126,14 @@ func _ready() -> void:
 	_hook_slot_panels()
 	_auto_bind_player()
 	_load_grid_columns()
-	await _force_initial_layout()
-	_refresh()
-	# Capture the bottom-right anchor after at least one refresh so the rect is valid.
+	# Capture the bottom-right anchor based on where you placed the panel in the scene.
+	# This anchor will be used for all future resizes so the panel grows up+left.
 	await get_tree().process_frame
 	var rect := panel.get_global_rect()
-	if rect.size.x > 10.0 and rect.size.y > 10.0:
-		_panel_anchor_br = rect.position + rect.size
-		_panel_anchor_valid = true
+	_panel_anchor_br = rect.position + rect.size
+	_panel_anchor_valid = true
+	await _force_initial_layout()
+	_refresh()
 
 func set_player(p: Node) -> void:
 	player = p
@@ -197,12 +197,7 @@ func _set_open(v: bool) -> void:
 		_last_applied_columns = -1
 		_refresh()
 		await get_tree().process_frame
-		var rect := panel.get_global_rect()
-		if rect.size.x > 10.0 and rect.size.y > 10.0:
-			_panel_anchor_br = rect.position + rect.size
-			_panel_anchor_valid = true
 		_layout_dirty = true
-		_last_applied_columns = -1
 		_refresh()
 
 func _on_bag_button_pressed() -> void:
