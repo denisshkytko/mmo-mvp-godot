@@ -102,6 +102,7 @@ var _tooltip_layer: CanvasLayer = null
 var _dialog_layer: CanvasLayer = null
 var _error_layer: CanvasLayer = null
 var _initial_layout_done: bool = false
+var _initial_layout_pending: bool = false
 
 func _ready() -> void:
 	add_to_group("inventory_ui")
@@ -163,6 +164,9 @@ func _auto_bind_player() -> void:
 		player = p
 
 func _process(_delta: float) -> void:
+	if not _initial_layout_done and not _initial_layout_pending and player != null and is_instance_valid(player):
+		_initial_layout_pending = true
+		call_deferred("_run_initial_layout")
 	# While open, keep HUD in sync (so looting updates without requiring sort).
 	if _is_open and player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot"):
 		_refresh_accum += _delta
@@ -1990,3 +1994,7 @@ func _force_initial_layout() -> void:
 	_layout_dirty = true
 	await _apply_inventory_layout(slots.size())
 	_initial_layout_done = true
+
+func _run_initial_layout() -> void:
+	await _force_initial_layout()
+	_initial_layout_pending = false

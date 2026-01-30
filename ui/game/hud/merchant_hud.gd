@@ -283,11 +283,13 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 
 func _format_action_text(action_text: String, item_id: String, count: int, is_buy: bool) -> String:
 	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
-	return "%s\n%s" % [action_text, _format_money_short(price_per)]
+	var total: int = price_per if is_buy else price_per * max(1, count)
+	return "%s\n%s" % [action_text, _format_money_short(total)]
 
 func _format_action_bbcode(action_text: String, item_id: String, count: int, is_buy: bool) -> String:
 	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
-	return "%s\n%s" % [action_text, TOOLTIP_BUILDER.format_money_bbcode(price_per)]
+	var total: int = price_per if is_buy else price_per * max(1, count)
+	return "%s\n%s" % [action_text, TOOLTIP_BUILDER.format_money_bbcode(total)]
 
 func _format_money_short(bronze_total: int) -> String:
 	var total: int = max(0, int(bronze_total))
