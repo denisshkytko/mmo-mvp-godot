@@ -28,6 +28,7 @@ var _tooltip_layer: CanvasLayer = null
 var _slots_built: bool = false
 var _tooltip_press_ms: int = 0
 var _tooltip_press_view_index: int = -1
+var _tooltip_press_pos: Vector2 = Vector2.ZERO
 
 # UI index -> {type:"gold"} OR {type:"item", slot_index:int}
 var _view_map: Array = []
@@ -510,8 +511,12 @@ func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
 		if mouse.pressed:
 			_tooltip_press_ms = Time.get_ticks_msec()
 			_tooltip_press_view_index = view_index
+			_tooltip_press_pos = mouse.global_position
 			return
 		if _tooltip_press_view_index != view_index:
+			return
+		if mouse.global_position.distance_to(_tooltip_press_pos) > 1.0:
+			_tooltip_press_view_index = -1
 			return
 		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
 		_tooltip_press_view_index = -1
@@ -522,8 +527,12 @@ func _on_slot_tapped(event: InputEvent, view_index: int) -> void:
 		if st.pressed:
 			_tooltip_press_ms = Time.get_ticks_msec()
 			_tooltip_press_view_index = view_index
+			_tooltip_press_pos = st.position
 			return
 		if _tooltip_press_view_index != view_index:
+			return
+		if st.position.distance_to(_tooltip_press_pos) > 1.0:
+			_tooltip_press_view_index = -1
 			return
 		var held_ms2 := Time.get_ticks_msec() - _tooltip_press_ms
 		_tooltip_press_view_index = -1

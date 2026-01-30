@@ -48,12 +48,14 @@ var _qty_max: int = 1
 var _qty_title: String = ""
 var _qty_item_id: String = ""
 var _qty_is_buy: bool = false
+var _qty_slot_index: int = -1
 
 # Sell refresh
 var _sell_refresh_accum: float = 0.0
 
 var _tooltip_press_ms: int = 0
 var _tooltip_press_item_id: String = ""
+var _tooltip_press_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	panel.visible = false
@@ -332,27 +334,35 @@ func _on_item_tooltip_input(event: InputEvent, item_id: String, count: int) -> v
 		var mb := event as InputEventMouseButton
 		if mb.button_index != MOUSE_BUTTON_LEFT:
 			return
-		if mb.pressed:
-			_tooltip_press_ms = Time.get_ticks_msec()
-			_tooltip_press_item_id = item_id
-			return
-		if _tooltip_press_item_id != item_id:
-			return
-		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
-		_tooltip_press_item_id = ""
-		if held_ms > TOOLTIP_HOLD_MAX_MS:
-			return
-		_toggle_tooltip(item_id, count, mb.global_position)
+			if mb.pressed:
+				_tooltip_press_ms = Time.get_ticks_msec()
+				_tooltip_press_item_id = item_id
+				_tooltip_press_pos = mb.global_position
+				return
+			if _tooltip_press_item_id != item_id:
+				return
+			if mb.global_position.distance_to(_tooltip_press_pos) > 1.0:
+				_tooltip_press_item_id = ""
+				return
+			var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+			_tooltip_press_item_id = ""
+			if held_ms > TOOLTIP_HOLD_MAX_MS:
+				return
+			_toggle_tooltip(item_id, count, mb.global_position)
 	elif event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
-		if st.pressed:
-			_tooltip_press_ms = Time.get_ticks_msec()
-			_tooltip_press_item_id = item_id
-			return
-		if _tooltip_press_item_id != item_id:
-			return
-		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
-		_tooltip_press_item_id = ""
+			if st.pressed:
+				_tooltip_press_ms = Time.get_ticks_msec()
+				_tooltip_press_item_id = item_id
+				_tooltip_press_pos = st.position
+				return
+			if _tooltip_press_item_id != item_id:
+				return
+			if st.position.distance_to(_tooltip_press_pos) > 1.0:
+				_tooltip_press_item_id = ""
+				return
+			var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+			_tooltip_press_item_id = ""
 		if held_ms > TOOLTIP_HOLD_MAX_MS:
 			return
 		_toggle_tooltip(item_id, count, st.position)
@@ -381,8 +391,19 @@ func request_sell_from_inventory(item_id: String, max_count: int) -> void:
 	_show_quantity_dialog(max_count, "Продать", item_id, false)
 	_qty_callback = Callable(self, "_on_sell_quantity_selected").bind(item_id)
 
+func request_sell_from_inventory_slot(item_id: String, max_count: int, slot_index: int) -> void:
+	_qty_slot_index = slot_index
+	if max_count <= 1:
+		sell_items_from_inventory_slot(item_id, 1, slot_index)
+		return
+	_show_quantity_dialog(max_count, "Продать", item_id, false)
+	_qty_callback = Callable(self, "_on_sell_slot_quantity_selected").bind(item_id, slot_index)
+
 func _on_sell_quantity_selected(amount: int, item_id: String) -> void:
 	sell_items_from_inventory(item_id, amount)
+
+func _on_sell_slot_quantity_selected(amount: int, item_id: String, slot_index: int) -> void:
+	sell_items_from_inventory_slot(item_id, amount, slot_index)
 
 func _on_buyback_button_pressed(item_id: String, count: int, sale_id: int) -> void:
 	if sale_id == -1:
@@ -442,6 +463,42 @@ func sell_items_from_inventory(item_id: String, count: int) -> void:
 		removed = int(_player.call("consume_item", item_id, count))
 	if removed <= 0:
 		return
+	var gold_gain: int = _get_base_price(item_id) * removed
+	_player.call("add_gold", gold_gain)
+	if _merchant.has_method("add_merchant_sale"):
+		_merchant.call("add_merchant_sale", _player.get_instance_id(), item_id, removed)
+	_refresh_sell_grid()
+
+func sell_items_from_inventory_slot(item_id: String, count: int, slot_index: int) -> void:
+	if _player == null or _merchant == null:
+		return
+	if count <= 0:
+		return
+	if not _player.has_method("get_inventory_snapshot") or not _player.has_method("apply_inventory_snapshot"):
+		return
+	var snap: Dictionary = _player.call("get_inventory_snapshot") as Dictionary
+	var slots: Array = snap.get("slots", [])
+	if slot_index < 0 or slot_index >= slots.size():
+		return
+	var v: Variant = slots[slot_index]
+	if v == null or not (v is Dictionary):
+		return
+	var d: Dictionary = v as Dictionary
+	if String(d.get("id", "")) != item_id:
+		return
+	var current: int = int(d.get("count", 0))
+	if current <= 0:
+		return
+	var removed := min(count, current)
+	if removed <= 0:
+		return
+	if removed >= current:
+		slots[slot_index] = null
+	else:
+		d["count"] = current - removed
+		slots[slot_index] = d
+	snap["slots"] = slots
+	_player.call("apply_inventory_snapshot", snap)
 	var gold_gain: int = _get_base_price(item_id) * removed
 	_player.call("add_gold", gold_gain)
 	if _merchant.has_method("add_merchant_sale"):
@@ -640,6 +697,7 @@ func _hide_quantity_dialog() -> void:
 	_qty_callback = Callable()
 	_qty_item_id = ""
 	_qty_is_buy = false
+	_qty_slot_index = -1
 
 func _on_qty_value_changed(_v: float) -> void:
 	_update_qty_label()
@@ -655,9 +713,10 @@ func _update_qty_label() -> void:
 
 func _on_qty_ok_pressed() -> void:
 	var amount: int = int(qty_slider.value) if qty_slider != null else 1
+	var cb := _qty_callback
 	_hide_quantity_dialog()
-	if _qty_callback.is_valid():
-		_qty_callback.call(amount)
+	if cb.is_valid():
+		cb.call(amount)
 
 func _on_qty_cancel_pressed() -> void:
 	_hide_quantity_dialog()

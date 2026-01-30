@@ -30,9 +30,11 @@ var _trade_open: bool = false
 const HOLD_THRESHOLD_MS: int = 1000
 var _slot_press_start_ms: int = 0
 var _slot_press_index: int = -1
+var _slot_press_pos: Vector2 = Vector2.ZERO
 
 var _bag_press_start_ms: int = 0
 var _bag_press_index: int = -1
+var _bag_press_pos: Vector2 = Vector2.ZERO
 
 # Tooltip (fixed width, grows in height; supports rich color for required level)
 var _tooltip_panel: Panel = null
@@ -134,6 +136,7 @@ func _ready() -> void:
 
 func set_player(p: Node) -> void:
 	player = p
+	await _force_initial_layout()
 	_refresh()
 
 func set_trade_open(state: bool) -> void:
@@ -183,6 +186,8 @@ func _set_open(v: bool) -> void:
 		_hide_tooltip()
 		_hide_split()
 		_hide_settings()
+	else:
+		await _force_initial_layout()
 
 func _on_bag_button_pressed() -> void:
 	_toggle_inventory()
@@ -208,8 +213,12 @@ func _on_bag_slot_gui_input(event: InputEvent, bag_index: int) -> void:
 		if mb.pressed:
 			_bag_press_start_ms = Time.get_ticks_msec()
 			_bag_press_index = bag_index
+			_bag_press_pos = mb.global_position
 			return
 		if _bag_press_index != bag_index:
+			return
+		if mb.global_position.distance_to(_bag_press_pos) > 1.0:
+			_bag_press_index = -1
 			return
 		var held_ms := Time.get_ticks_msec() - _bag_press_start_ms
 		_bag_press_index = -1
@@ -221,8 +230,12 @@ func _on_bag_slot_gui_input(event: InputEvent, bag_index: int) -> void:
 		if st.pressed:
 			_bag_press_start_ms = Time.get_ticks_msec()
 			_bag_press_index = bag_index
+			_bag_press_pos = st.position
 			return
 		if _bag_press_index != bag_index:
+			return
+		if st.position.distance_to(_bag_press_pos) > 1.0:
+			_bag_press_index = -1
 			return
 		var held_ms2 := Time.get_ticks_msec() - _bag_press_start_ms
 		_bag_press_index = -1
@@ -343,8 +356,12 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 			if mb.pressed:
 				_slot_press_start_ms = Time.get_ticks_msec()
 				_slot_press_index = slot_index
+				_slot_press_pos = mb.global_position
 				return
 			if _slot_press_index != slot_index:
+				return
+			if mb.global_position.distance_to(_slot_press_pos) > 1.0:
+				_slot_press_index = -1
 				return
 			var held_ms := Time.get_ticks_msec() - _slot_press_start_ms
 			_slot_press_index = -1
@@ -357,8 +374,12 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 		if st.pressed:
 			_slot_press_start_ms = Time.get_ticks_msec()
 			_slot_press_index = slot_index
+			_slot_press_pos = st.position
 			return
 		if _slot_press_index != slot_index:
+			return
+		if st.position.distance_to(_slot_press_pos) > 1.0:
+			_slot_press_index = -1
 			return
 		var held_ms2 := Time.get_ticks_msec() - _slot_press_start_ms
 		_slot_press_index = -1
@@ -941,14 +962,18 @@ func _on_tooltip_sell_pressed() -> void:
 	var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
 	if merchant_ui == null:
 		return
-	if total <= 1 or _get_stack_max(id) <= 1:
-		if merchant_ui.has_method("sell_items_from_inventory"):
+	if count <= 1 or _get_stack_max(id) <= 1:
+		if merchant_ui.has_method("sell_items_from_inventory_slot"):
+			merchant_ui.call("sell_items_from_inventory_slot", id, 1, _tooltip_for_slot)
+		elif merchant_ui.has_method("sell_items_from_inventory"):
 			merchant_ui.call("sell_items_from_inventory", id, 1)
 		_hide_tooltip()
 		_refresh()
 		return
-	if merchant_ui.has_method("request_sell_from_inventory"):
-		merchant_ui.call("request_sell_from_inventory", id, total)
+	if merchant_ui.has_method("request_sell_from_inventory_slot"):
+		merchant_ui.call("request_sell_from_inventory_slot", id, count, _tooltip_for_slot)
+	elif merchant_ui.has_method("request_sell_from_inventory"):
+		merchant_ui.call("request_sell_from_inventory", id, count)
 	_hide_tooltip()
 	_refresh()
 
@@ -1957,6 +1982,7 @@ func _force_initial_layout() -> void:
 		return
 	if not player.has_method("get_inventory_snapshot"):
 		return
+	_load_grid_columns()
 	var snap: Dictionary = player.get_inventory_snapshot()
 	var slots: Array = snap.get("slots", [])
 	_layout_dirty = true

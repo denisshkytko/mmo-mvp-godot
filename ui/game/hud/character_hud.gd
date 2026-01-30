@@ -53,6 +53,7 @@ var _tooltip_slot: String = ""
 const TOOLTIP_HOLD_MAX_MS: int = 1000
 var _equip_press_start_ms: int = 0
 var _equip_press_slot_id: String = ""
+var _equip_press_pos: Vector2 = Vector2.ZERO
 var _tooltip_anchor_pos: Vector2 = Vector2.ZERO
 var _tooltip_layer: CanvasLayer = null
 
@@ -296,8 +297,12 @@ func _on_equipment_slot_gui_input(event: InputEvent, slot_id: String) -> void:
 		if mb.pressed:
 			_equip_press_start_ms = Time.get_ticks_msec()
 			_equip_press_slot_id = slot_id
+			_equip_press_pos = mb.global_position
 			return
 		if _equip_press_slot_id != slot_id:
+			return
+		if mb.global_position.distance_to(_equip_press_pos) > 1.0:
+			_equip_press_slot_id = ""
 			return
 		var held_ms := Time.get_ticks_msec() - _equip_press_start_ms
 		_equip_press_slot_id = ""
@@ -310,8 +315,12 @@ func _on_equipment_slot_gui_input(event: InputEvent, slot_id: String) -> void:
 		if st.pressed:
 			_equip_press_start_ms = Time.get_ticks_msec()
 			_equip_press_slot_id = slot_id
+			_equip_press_pos = st.position
 			return
 		if _equip_press_slot_id != slot_id:
+			return
+		if st.position.distance_to(_equip_press_pos) > 1.0:
+			_equip_press_slot_id = ""
 			return
 		var held_ms2 := Time.get_ticks_msec() - _equip_press_start_ms
 		_equip_press_slot_id = ""
