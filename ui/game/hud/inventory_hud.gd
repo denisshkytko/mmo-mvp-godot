@@ -132,8 +132,6 @@ func _ready() -> void:
 	var rect := panel.get_global_rect()
 	_panel_anchor_br = rect.position + rect.size
 	_panel_anchor_valid = true
-	await _force_initial_layout()
-	_refresh()
 
 func set_player(p: Node) -> void:
 	player = p
@@ -190,18 +188,15 @@ func _set_open(v: bool) -> void:
 		_hide_split()
 		_hide_settings()
 	else:
-		await _force_initial_layout()
+		# Two-frame stabilization so GridContainer lays out correctly on first open.
 		await get_tree().process_frame
-		var rect := panel.get_global_rect()
-		if rect.size.x > 10.0 and rect.size.y > 10.0:
-			_panel_anchor_br = rect.position + rect.size
-			_panel_anchor_valid = true
+		_initial_layout_done = false
+		await _force_initial_layout()
 		_layout_dirty = true
 		_last_applied_columns = -1
 		_refresh()
 		await get_tree().process_frame
 		_layout_dirty = true
-		_last_applied_columns = -1
 		_refresh()
 
 func _on_bag_button_pressed() -> void:
