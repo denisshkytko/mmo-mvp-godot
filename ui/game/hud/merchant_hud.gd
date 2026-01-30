@@ -3,7 +3,7 @@ extends CanvasLayer
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 
 const BUY_PRICE_MULTIPLIER: float = 1.25
-const DRAG_THRESHOLD: float = 8.0
+const TOOLTIP_HOLD_MAX_MS: int = 1000
 
 @onready var panel: Panel = $Panel
 @onready var title_label: Label = $Panel/Title
@@ -22,6 +22,13 @@ const DRAG_THRESHOLD: float = 8.0
 @onready var tooltip_unequip_btn: Button = $TooltipPanel/Margin/VBox/UnequipButton
 @onready var tooltip_close_button: Button = $TooltipPanel/CloseButton
 
+@onready var qty_dialog: Panel = $QtyDialog
+@onready var qty_title: Label = $QtyDialog/QtyTitle
+@onready var qty_slider: HSlider = $QtyDialog/QtySlider
+@onready var qty_price: Label = $QtyDialog/QtyPrice
+@onready var qty_ok: Button = $QtyDialog/QtyOk
+@onready var qty_cancel: Button = $QtyDialog/QtyCancel
+
 var _player: Node = null
 var _merchant: Node = null
 var _is_open: bool = false
@@ -34,27 +41,18 @@ var _tooltip_item_id: String = ""
 var _names_pending: bool = false
 var _tooltip_layer: CanvasLayer = null
 
-# Drag state for buy tab
-var _drag_active: bool = false
-var _drag_pending: bool = false
-var _drag_start_pos: Vector2 = Vector2.ZERO
-var _drag_item_id: String = ""
-var _drag_item_count: int = 0
-var _drag_item_icon: Texture2D = null
-var _drag_visual: TextureRect = null
-
 # Quantity dialog
-var _qty_dialog: Panel = null
-var _qty_slider: HSlider = null
-var _qty_label: Label = null
-var _qty_ok: Button = null
-var _qty_cancel: Button = null
 var _qty_callback: Callable = Callable()
 var _qty_max: int = 1
 var _qty_title: String = ""
+var _qty_item_id: String = ""
+var _qty_is_buy: bool = false
 
 # Sell refresh
 var _sell_refresh_accum: float = 0.0
+
+var _tooltip_press_ms: int = 0
+var _tooltip_press_item_id: String = ""
 
 func _ready() -> void:
 	panel.visible = false
@@ -88,7 +86,7 @@ func _ready() -> void:
 		tooltip_unequip_btn.visible = false
 	if tooltip_close_button != null and not tooltip_close_button.pressed.is_connected(_hide_tooltip):
 		tooltip_close_button.pressed.connect(_hide_tooltip)
-	_ensure_qty_dialog()
+	_setup_qty_dialog()
 
 func is_open() -> bool:
 	return _is_open
@@ -118,7 +116,6 @@ func close() -> void:
 	_is_open = false
 	panel.visible = false
 	_hide_tooltip()
-	_stop_drag()
 	_sync_inventory_trade_state(false)
 	_merchant = null
 
@@ -128,8 +125,6 @@ func _process(delta: float) -> void:
 	if _merchant != null and not is_instance_valid(_merchant):
 		close()
 		return
-	if _drag_active:
-		_update_drag_visual()
 	_sell_refresh_accum += delta
 	if _sell_refresh_accum >= 1.0:
 		_sell_refresh_accum = 0.0
@@ -144,18 +139,7 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not _is_open:
 		return
-	if _drag_pending and event is InputEventMouseButton:
-		var mb := event as InputEventMouseButton
-		if mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed:
-			if _drag_active:
-				_finish_drag(mb.global_position)
-			_stop_drag()
-			_drag_pending = false
-	elif _drag_active and event is InputEventScreenTouch:
-		if not (event as InputEventScreenTouch).pressed:
-			_finish_drag((event as InputEventScreenTouch).position)
-			_stop_drag()
-	elif tooltip_panel != null and tooltip_panel.visible:
+	if tooltip_panel != null and tooltip_panel.visible:
 		if event is InputEventMouseButton:
 			var mb2 := event as InputEventMouseButton
 			if mb2.button_index == MOUSE_BUTTON_LEFT and mb2.pressed:
@@ -169,22 +153,6 @@ func _unhandled_input(event: InputEvent) -> void:
 					_hide_tooltip()
 					return
 				_hide_tooltip()
-
-func try_accept_inventory_drop(global_pos: Vector2, item: Dictionary) -> bool:
-	if not _is_open:
-		return false
-	if not _is_sell_tab_active():
-		return false
-	if item.is_empty():
-		return false
-	if not _is_point_over_sell_area(global_pos):
-		return false
-	var id: String = String(item.get("id", ""))
-	var count: int = int(item.get("count", 0))
-	if id == "" or count <= 0:
-		return false
-	_sell_dragged_item(id, count)
-	return true
 
 func _sync_inventory_trade_state(state: bool) -> void:
 	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
@@ -305,7 +273,6 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 	if action_button != null:
 		if is_buy:
 			action_button.pressed.connect(_on_buy_button_pressed.bind(item_id, count))
-			cell.gui_input.connect(_on_buy_cell_input.bind(item_id, count))
 		else:
 			action_button.pressed.connect(_on_buyback_button_pressed.bind(item_id, count, sale_id))
 
@@ -313,13 +280,11 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 
 func _format_action_text(action_text: String, item_id: String, count: int, is_buy: bool) -> String:
 	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
-	var total: int = max(0, price_per * max(1, count))
-	return "%s\n%s" % [action_text, _format_money_short(total)]
+	return "%s\n%s" % [action_text, _format_money_short(price_per)]
 
 func _format_action_bbcode(action_text: String, item_id: String, count: int, is_buy: bool) -> String:
 	var price_per: int = _get_buy_price(item_id) if is_buy else _get_base_price(item_id)
-	var total: int = max(0, price_per * max(1, count))
-	return "%s\n%s" % [action_text, TOOLTIP_BUILDER.format_money_bbcode(total)]
+	return "%s\n%s" % [action_text, TOOLTIP_BUILDER.format_money_bbcode(price_per)]
 
 func _format_money_short(bronze_total: int) -> String:
 	var total: int = max(0, int(bronze_total))
@@ -357,12 +322,30 @@ func _format_item_label(item_id: String, count: int) -> String:
 func _on_item_tooltip_input(event: InputEvent, item_id: String, count: int) -> void:
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
-		if mb.button_index != MOUSE_BUTTON_LEFT or not mb.pressed:
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mb.pressed:
+			_tooltip_press_ms = Time.get_ticks_msec()
+			_tooltip_press_item_id = item_id
+			return
+		if _tooltip_press_item_id != item_id:
+			return
+		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+		_tooltip_press_item_id = ""
+		if held_ms > TOOLTIP_HOLD_MAX_MS:
 			return
 		_toggle_tooltip(item_id, count, mb.global_position)
 	elif event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
-		if not st.pressed:
+		if st.pressed:
+			_tooltip_press_ms = Time.get_ticks_msec()
+			_tooltip_press_item_id = item_id
+			return
+		if _tooltip_press_item_id != item_id:
+			return
+		var held_ms := Time.get_ticks_msec() - _tooltip_press_ms
+		_tooltip_press_item_id = ""
+		if held_ms > TOOLTIP_HOLD_MAX_MS:
 			return
 		_toggle_tooltip(item_id, count, st.position)
 
@@ -372,81 +355,12 @@ func _toggle_tooltip(item_id: String, count: int, global_pos: Vector2) -> void:
 		return
 	_show_tooltip(item_id, count, global_pos)
 
-func _on_buy_cell_input(event: InputEvent, item_id: String, count: int) -> void:
-	if not _is_buy_tab_active():
-		return
-	if event is InputEventMouseButton:
-		var mb := event as InputEventMouseButton
-		if mb.button_index == MOUSE_BUTTON_LEFT:
-			if mb.pressed:
-				_drag_pending = true
-				_drag_start_pos = mb.position
-				_drag_item_id = item_id
-				_drag_item_count = count
-				_drag_item_icon = _get_item_icon(item_id)
-			else:
-				if _drag_active:
-					_finish_drag(mb.global_position)
-				_stop_drag()
-				_drag_pending = false
-	elif event is InputEventMouseMotion and _drag_pending:
-		var mm := event as InputEventMouseMotion
-		if mm.position.distance_to(_drag_start_pos) >= DRAG_THRESHOLD:
-			_start_drag()
-
-func _start_drag() -> void:
-	if _drag_item_id == "" or _drag_item_count <= 0:
-		_drag_pending = false
-		return
-	_drag_active = true
-	_show_drag_visual()
-	_hide_tooltip()
-
-func _stop_drag() -> void:
-	_drag_active = false
-	_drag_pending = false
-	_drag_item_id = ""
-	_drag_item_count = 0
-	_drag_item_icon = null
-	_hide_drag_visual()
-
-func _show_drag_visual() -> void:
-	if _drag_visual == null:
-		_drag_visual = TextureRect.new()
-		_drag_visual.name = "DragVisual"
-		_drag_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(_drag_visual)
-		_drag_visual.z_index = 200
-	_drag_visual.texture = _drag_item_icon
-	_drag_visual.custom_minimum_size = Vector2(40, 40)
-	_drag_visual.size = Vector2(40, 40)
-	_drag_visual.visible = true
-	_update_drag_visual()
-
-func _update_drag_visual() -> void:
-	if _drag_visual == null:
-		return
-	var pos := get_viewport().get_mouse_position()
-	_drag_visual.global_position = pos + Vector2(12, 12)
-
-func _hide_drag_visual() -> void:
-	if _drag_visual != null:
-		_drag_visual.visible = false
-
-func _finish_drag(global_pos: Vector2) -> void:
-	if not _drag_active:
-		return
-	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
-	if inv_ui != null and inv_ui.has_method("is_point_over_inventory"):
-		var over: bool = bool(inv_ui.call("is_point_over_inventory", global_pos))
-		if over:
-			_try_buy_item(_drag_item_id, _drag_item_count)
-
 func _on_buy_button_pressed(item_id: String, count: int) -> void:
-	if count <= 1:
+	var stack_max := _get_stack_max(item_id)
+	if stack_max <= 1:
 		_try_buy_item(item_id, 1)
 		return
-	_show_quantity_dialog(count, "Купить")
+	_show_quantity_dialog(stack_max, "Купить", item_id, true)
 	_qty_callback = Callable(self, "_on_buy_quantity_selected").bind(item_id)
 
 func _on_buy_quantity_selected(amount: int, item_id: String) -> void:
@@ -456,7 +370,7 @@ func request_sell_from_inventory(item_id: String, max_count: int) -> void:
 	if max_count <= 1:
 		sell_items_from_inventory(item_id, 1)
 		return
-	_show_quantity_dialog(max_count, "Продать")
+	_show_quantity_dialog(max_count, "Продать", item_id, false)
 	_qty_callback = Callable(self, "_on_sell_quantity_selected").bind(item_id)
 
 func _on_sell_quantity_selected(amount: int, item_id: String) -> void:
@@ -526,15 +440,6 @@ func sell_items_from_inventory(item_id: String, count: int) -> void:
 		_merchant.call("add_merchant_sale", _player.get_instance_id(), item_id, removed)
 	_refresh_sell_grid()
 
-func _sell_dragged_item(item_id: String, count: int) -> void:
-	if _player == null or _merchant == null:
-		return
-	var gold_gain: int = _get_base_price(item_id) * count
-	_player.call("add_gold", gold_gain)
-	if _merchant.has_method("add_merchant_sale"):
-		_merchant.call("add_merchant_sale", _player.get_instance_id(), item_id, count)
-	_refresh_sell_grid()
-
 func _has_gold(cost: int) -> bool:
 	if _player == null:
 		return false
@@ -593,12 +498,6 @@ func _is_sell_tab_active() -> bool:
 
 func _is_buy_tab_active() -> bool:
 	return tabs.current_tab == 0
-
-func _is_point_over_sell_area(global_pos: Vector2) -> bool:
-	if sell_scroll == null:
-		return false
-	var rect := sell_scroll.get_global_rect()
-	return rect.has_point(global_pos)
 
 func _get_item_icon(item_id: String) -> Texture2D:
 	if _icon_cache.has(item_id):
@@ -690,15 +589,10 @@ func _position_tooltip_left_of_point(p: Vector2) -> void:
 	pos.y = clamp(pos.y, margin, vp.y - size.y - margin)
 	tooltip_panel.position = pos
 
-func _ensure_qty_dialog() -> void:
-	if _qty_dialog != null:
+func _setup_qty_dialog() -> void:
+	if qty_dialog == null:
 		return
-	_qty_dialog = Panel.new()
-	_qty_dialog.name = "QtyDialog"
-	_qty_dialog.visible = false
-	add_child(_qty_dialog)
-	_qty_dialog.size = Vector2(260, 120)
-	_qty_dialog.position = Vector2(40, 40)
+	qty_dialog.visible = false
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0, 0, 0, 0.8)
 	sb.border_color = Color(0.3, 0.8, 0.3)
@@ -706,62 +600,50 @@ func _ensure_qty_dialog() -> void:
 	sb.border_width_right = 2
 	sb.border_width_top = 2
 	sb.border_width_bottom = 2
-	_qty_dialog.add_theme_stylebox_override("panel", sb)
+	qty_dialog.add_theme_stylebox_override("panel", sb)
+	if qty_slider != null and not qty_slider.value_changed.is_connected(_on_qty_value_changed):
+		qty_slider.value_changed.connect(_on_qty_value_changed)
+	if qty_ok != null and not qty_ok.pressed.is_connected(_on_qty_ok_pressed):
+		qty_ok.pressed.connect(_on_qty_ok_pressed)
+	if qty_cancel != null and not qty_cancel.pressed.is_connected(_on_qty_cancel_pressed):
+		qty_cancel.pressed.connect(_on_qty_cancel_pressed)
 
-	_qty_label = Label.new()
-	_qty_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_qty_label.offset_left = 8
-	_qty_label.offset_top = 6
-	_qty_label.offset_right = -8
-	_qty_label.offset_bottom = 28
-	_qty_dialog.add_child(_qty_label)
-
-	_qty_slider = HSlider.new()
-	_qty_slider.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_qty_slider.offset_left = 8
-	_qty_slider.offset_top = 32
-	_qty_slider.offset_right = -8
-	_qty_slider.offset_bottom = 56
-	_qty_slider.value_changed.connect(_on_qty_value_changed)
-	_qty_dialog.add_child(_qty_slider)
-
-	_qty_ok = Button.new()
-	_qty_ok.text = "OK"
-	_qty_ok.position = Vector2(8, 66)
-	_qty_ok.pressed.connect(_on_qty_ok_pressed)
-	_qty_dialog.add_child(_qty_ok)
-
-	_qty_cancel = Button.new()
-	_qty_cancel.text = "Cancel"
-	_qty_cancel.position = Vector2(88, 66)
-	_qty_cancel.pressed.connect(_on_qty_cancel_pressed)
-	_qty_dialog.add_child(_qty_cancel)
-
-func _show_quantity_dialog(max_value: int, title_text: String) -> void:
+func _show_quantity_dialog(max_value: int, title_text: String, item_id: String, is_buy: bool) -> void:
 	_qty_max = max(1, max_value)
 	_qty_title = title_text
-	_qty_slider.min_value = 1
-	_qty_slider.max_value = _qty_max
-	_qty_slider.value = int(clamp(int(_qty_max / 2.0), 1, _qty_max))
+	_qty_item_id = item_id
+	_qty_is_buy = is_buy
+	if qty_slider != null:
+		qty_slider.min_value = 1
+		qty_slider.max_value = _qty_max
+		qty_slider.value = int(clamp(int(_qty_max / 2.0), 1, _qty_max))
 	_update_qty_label()
-	_qty_dialog.visible = true
+	if qty_dialog != null:
+		qty_dialog.visible = true
 
 func _hide_quantity_dialog() -> void:
-	if _qty_dialog != null:
-		_qty_dialog.visible = false
+	if qty_dialog != null:
+		qty_dialog.visible = false
+	if qty_slider != null:
+		qty_slider.value = qty_slider.min_value
 	_qty_callback = Callable()
+	_qty_item_id = ""
+	_qty_is_buy = false
 
 func _on_qty_value_changed(_v: float) -> void:
 	_update_qty_label()
 
 func _update_qty_label() -> void:
-	if _qty_label == null:
-		return
-	var amount: int = int(_qty_slider.value)
-	_qty_label.text = "%s: %d / %d" % [_qty_title, amount, _qty_max]
+	var amount: int = int(qty_slider.value) if qty_slider != null else 1
+	if qty_title != null:
+		qty_title.text = "%s: %d / %d" % [_qty_title, amount, _qty_max]
+	if qty_price != null:
+		var price_per := _get_buy_price(_qty_item_id) if _qty_is_buy else _get_base_price(_qty_item_id)
+		var total := price_per * amount
+		qty_price.text = "Цена: %s" % _format_money_short(total)
 
 func _on_qty_ok_pressed() -> void:
-	var amount: int = int(_qty_slider.value)
+	var amount: int = int(qty_slider.value) if qty_slider != null else 1
 	_hide_quantity_dialog()
 	if _qty_callback.is_valid():
 		_qty_callback.call(amount)

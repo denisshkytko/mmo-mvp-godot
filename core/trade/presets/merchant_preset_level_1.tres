@@ -10,22 +10,22 @@ item_id = "bag_6s_rl01"
 [sub_resource type="Resource" id="Resource_b4j1g"]
 script = ExtResource("2_lxm4a")
 item_id = "cons_food_01_09"
-count = 20
+count = 1
 
 [sub_resource type="Resource" id="Resource_e5vgm"]
 script = ExtResource("2_lxm4a")
 item_id = "cons_drink_01_09"
-count = 20
+count = 1
 
 [sub_resource type="Resource" id="Resource_3m6r1"]
 script = ExtResource("2_lxm4a")
 item_id = "cons_potion_hp_01_09"
-count = 10
+count = 1
 
 [sub_resource type="Resource" id="Resource_v7h8o"]
 script = ExtResource("2_lxm4a")
 item_id = "cons_potion_mp_01_09"
-count = 10
+count = 1
 
 [resource]
 script = ExtResource("1_qog5x")
