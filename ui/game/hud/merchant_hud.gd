@@ -489,7 +489,7 @@ func sell_items_from_inventory_slot(item_id: String, count: int, slot_index: int
 	var current: int = int(d.get("count", 0))
 	if current <= 0:
 		return
-	var removed := min(count, current)
+	var removed: int = min(count, current)
 	if removed <= 0:
 		return
 	if removed >= current:
