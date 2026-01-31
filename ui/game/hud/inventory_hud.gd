@@ -176,11 +176,14 @@ func _get_total_slots_from_player_fallback() -> int:
 		return int(inv.call("get_total_slot_count"))
 	return Inventory.SLOT_COUNT
 
+func _deferred_force_initial_layout() -> void:
+	await _force_initial_layout()
+
 func _process(_delta: float) -> void:
 	if _is_open and not _is_player_ready():
 		_auto_bind_player()
 	if _is_open and not _initial_layout_done and not _initial_layout_pending and _is_player_ready():
-		call_deferred("_force_initial_layout")
+		call_deferred("_deferred_force_initial_layout")
 	# While open, keep HUD in sync (so looting updates without requiring sort).
 	if _is_open and _is_player_ready():
 		_refresh_accum += _delta
