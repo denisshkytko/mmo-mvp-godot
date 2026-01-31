@@ -180,6 +180,15 @@ func _get_total_slots_from_player_fallback() -> int:
 func _deferred_force_initial_layout() -> void:
 	await _force_initial_layout()
 
+func _set_grid_cells_visible(is_visible: bool) -> void:
+	if grid == null:
+		return
+	for i in range(grid.get_child_count()):
+		var slot_panel: Panel = grid.get_child(i) as Panel
+		if slot_panel == null:
+			continue
+		slot_panel.visible = is_visible
+
 func _process(_delta: float) -> void:
 	if _is_open and not _is_player_ready():
 		_auto_bind_player()
@@ -1213,6 +1222,8 @@ func _refresh() -> void:
 	var total_slots: int = slots.size()
 	if total_slots == 0:
 		total_slots = _get_total_slots_from_player_fallback()
+	if _is_open:
+		_set_grid_cells_visible(false)
 
 	# Mark layout dirty only when geometry changes.
 	if total_slots != _last_total_slots:
@@ -1242,6 +1253,11 @@ func _refresh() -> void:
 	_update_bag_buttons(bag_slots)
 	_refresh_quick_bar()
 	if _is_open:
+		for i in range(grid.get_child_count()):
+			var slot_panel: Panel = grid.get_child(i) as Panel
+			if slot_panel == null:
+				continue
+			slot_panel.visible = i < total_slots
 		grid.visible = true
 		grid.modulate.a = 1.0
 	_refresh_in_progress = false
