@@ -91,6 +91,7 @@ var _layout_recalc_in_progress: bool = false
 var _last_total_slots: int = -1
 var _last_applied_columns: int = -1
 var _last_snap_hash: int = 0
+var _refresh_in_progress: bool = false
 
 # Layout anchor: keep panel growing towards screen center (up + left) from a stable bottom-right point
 var _panel_anchor_br: Vector2 = Vector2.ZERO
@@ -193,7 +194,10 @@ func _process(_delta: float) -> void:
 			var h: int = str(snap).hash()
 			if h != _last_snap_hash:
 				_last_snap_hash = h
-				await _refresh()
+				if _refresh_in_progress:
+					_layout_dirty = true
+				else:
+					await _refresh()
 			# Cooldowns tick even if inventory content didn't change.
 			_update_visible_cooldowns(snap)
 
@@ -777,11 +781,8 @@ func _save_grid_columns() -> void:
 func _measure_panel_size_for_columns(cols: int, total_slots: int) -> Vector2:
 	# Measuring should not permanently mutate the live grid.
 	var prev_cols: int = grid.columns
-	var prev_grid_vis: bool = grid.visible
 	# Ensure we have enough slot panels to measure accurately.
 	_ensure_grid_child_count(total_slots)
-	# Hide the grid while probing to avoid any visible "jump" when inventory is open.
-	grid.visible = false
 	grid.columns = max(1, cols)
 	await get_tree().process_frame
 	var grid_size: Vector2 = grid.get_combined_minimum_size()
@@ -799,7 +800,6 @@ func _measure_panel_size_for_columns(cols: int, total_slots: int) -> Vector2:
 	var size := Vector2(pad_left + grid_size.x + pad_right, header_h + grid_size.y + pad_bottom)
 	# Restore previous grid columns to avoid visual jumps when a candidate doesn't apply.
 	grid.columns = prev_cols
-	grid.visible = prev_grid_vis
 	return size
 
 func _can_fit_columns(cols: int, total_slots: int) -> bool:
@@ -1197,10 +1197,14 @@ func _show_tooltip_for_item_dict(d: Dictionary) -> void:
 # --- Refresh & render ---
 
 func _refresh() -> void:
+	if _refresh_in_progress:
+		_layout_dirty = true
+		return
 	if player == null or not is_instance_valid(player):
 		return
 	if not player.has_method("get_inventory_snapshot"):
 		return
+	_refresh_in_progress = true
 
 	var snap: Dictionary = player.get_inventory_snapshot()
 	var slots: Array = snap.get("slots", [])
@@ -1236,6 +1240,10 @@ func _refresh() -> void:
 
 	_update_bag_buttons(bag_slots)
 	_refresh_quick_bar()
+	if _is_open:
+		grid.visible = true
+		grid.modulate.a = 1.0
+	_refresh_in_progress = false
 
 func _render_slot(slot_panel: Panel, i: int, slots: Array) -> void:
 	var icon: TextureRect = slot_panel.get_node_or_null("Icon") as TextureRect
