@@ -165,11 +165,16 @@ func _auto_bind_player() -> void:
 	if p != null:
 		player = p
 
+func _is_player_ready() -> bool:
+	return player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot")
+
 func _process(_delta: float) -> void:
-	if _is_open and not _initial_layout_done and not _initial_layout_pending and player != null and is_instance_valid(player):
+	if _is_open and not _is_player_ready():
+		_auto_bind_player()
+	if _is_open and not _initial_layout_done and not _initial_layout_pending and _is_player_ready():
 		call_deferred("_force_initial_layout")
 	# While open, keep HUD in sync (so looting updates without requiring sort).
-	if _is_open and player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot"):
+	if _is_open and _is_player_ready():
 		_refresh_accum += _delta
 		if _refresh_accum >= 0.12:
 			_refresh_accum = 0.0
@@ -196,6 +201,10 @@ func _set_open(v: bool) -> void:
 		await get_tree().process_frame
 		_layout_dirty = true
 		_last_applied_columns = -1
+		_auto_bind_player()
+		if not _is_player_ready():
+			_initial_layout_done = false
+			return
 		await _refresh()
 		await get_tree().process_frame
 		_layout_dirty = true
