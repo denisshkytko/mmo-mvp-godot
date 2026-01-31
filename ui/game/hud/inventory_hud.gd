@@ -97,7 +97,7 @@ var _last_snap_hash: int = 0
 var _refresh_in_progress: bool = false
 
 # Layout anchor: keep panel growing towards screen center (up + left) from a stable bottom-right point
-var _panel_anchor_br: Vector2 = Vector2.ZERO
+var _panel_anchor_br_local: Vector2 = Vector2.ZERO
 var _panel_anchor_valid: bool = false
 
 # Icon cache for slot buttons
@@ -133,8 +133,7 @@ func _ready() -> void:
 	# Capture the bottom-right anchor based on where you placed the panel in the scene.
 	# This anchor will be used for all future resizes so the panel grows up+left.
 	await get_tree().process_frame
-	var rect := panel.get_global_rect()
-	_panel_anchor_br = rect.position + rect.size
+	_panel_anchor_br_local = panel.position + panel.size
 	_panel_anchor_valid = true
 
 func set_player(p: Node) -> void:
@@ -789,26 +788,26 @@ func _get_panel_max_size_from_anchor() -> Vector2:
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
 	if not _panel_anchor_valid:
 		return vp_size
-	var max_panel_w: float = min(vp_size.x, _panel_anchor_br.x)
-	var max_panel_h: float = min(vp_size.y, _panel_anchor_br.y)
+	var max_panel_w: float = min(vp_size.x, _panel_anchor_br_local.x)
+	var max_panel_h: float = min(vp_size.y, _panel_anchor_br_local.y)
 	return Vector2(max_panel_w, max_panel_h)
 
 func _compute_fixed_padding() -> Dictionary:
-	var header_h: float = 50.0
 	var pad_right: float = 5.0
 	var pad_bottom: float = 5.0
-	var pad_left: float = 0.0
-	var pad_top: float = 0.0
-	if grid_scroll != null and panel != null:
-		var grid_pos := grid_scroll.get_global_position() - panel.get_global_position()
-		pad_left = grid_pos.x
-		pad_top = grid_pos.y
+	var left_margin_x: float = 0.0
+	var top_margin_y: float = 0.0
+	var separation: float = 0.0
+	if content != null:
+		left_margin_x = content.position.x
+		top_margin_y = content.position.y
+		separation = float(content.get_theme_constant("separation"))
 	return {
-		"pad_left": pad_left,
-		"pad_top": pad_top,
+		"left_margin_x": left_margin_x,
+		"top_margin_y": top_margin_y,
 		"pad_right": pad_right,
 		"pad_bottom": pad_bottom,
-		"header_h": header_h
+		"separation": separation
 	}
 
 func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
@@ -818,21 +817,23 @@ func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 	var grid_min: Vector2 = grid.get_combined_minimum_size()
 	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
 	var pads: Dictionary = _compute_fixed_padding()
-	var pad_left: float = float(pads.get("pad_left", 0.0))
+	var left_margin_x: float = float(pads.get("left_margin_x", 0.0))
+	var top_margin_y: float = float(pads.get("top_margin_y", 0.0))
 	var pad_right: float = float(pads.get("pad_right", 5.0))
 	var pad_bottom: float = float(pads.get("pad_bottom", 5.0))
-	var header_h: float = float(pads.get("header_h", 50.0))
+	var separation: float = float(pads.get("separation", 0.0))
 	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
 	var scroll_w: float = grid_min.x
 	var scroll_h: float = grid_min.y
 	var content_h: float = max(bag_min.y, scroll_h)
-	var panel_w: float = pad_left + scroll_w + pad_right
-	var panel_h: float = header_h + content_h + pad_bottom
+	var content_w: float = bag_min.x + separation + scroll_w
+	var panel_w: float = left_margin_x + content_w + pad_right
+	var panel_h: float = top_margin_y + content_h + pad_bottom
 	var use_scroll: bool = panel_h > max_panel.y
 	var scroll_view_h: float = scroll_h
 	if use_scroll:
 		panel_h = max_panel.y
-		var available_content_h: float = max_panel.y - header_h - pad_bottom
+		var available_content_h: float = max_panel.y - top_margin_y - pad_bottom
 		scroll_view_h = clamp(available_content_h, 65.0, grid_min.y)
 		content_h = max(bag_min.y, scroll_view_h)
 	var scroll_view_size := Vector2(scroll_w, scroll_view_h)
@@ -861,7 +862,7 @@ func _ensure_columns_fit_view(total_slots: int) -> void:
 	if not _panel_anchor_valid:
 		return
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	if _panel_anchor_br.x > vp_size.x or _panel_anchor_br.y > vp_size.y:
+	if _panel_anchor_br_local.x > vp_size.x or _panel_anchor_br_local.y > vp_size.y:
 		return
 
 	var current: int = clamp(_grid_columns, 1, 20)
@@ -1969,12 +1970,12 @@ func _update_panel_size_to_fit_grid(total_slots: int) -> void:
 
 	grid.columns = max(1, _grid_columns)
 	grid.custom_minimum_size = grid_min
-	grid.size = grid_min
 
 	grid_scroll.custom_minimum_size = scroll_view
-	grid_scroll.size = scroll_view
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
+	grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	grid_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 
 	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
 	var separation: float = 0.0
@@ -1982,7 +1983,6 @@ func _update_panel_size_to_fit_grid(total_slots: int) -> void:
 		separation = float(content.get_theme_constant("separation"))
 	var content_size := Vector2(bag_min.x + separation + scroll_view.x, max(bag_min.y, scroll_view.y))
 	content.custom_minimum_size = content_size
-	content.size = content_size
 
 	panel.custom_minimum_size = panel_size
 	panel.size = panel_size
@@ -2001,6 +2001,7 @@ func _apply_inventory_layout(total_slots: int) -> void:
 	await _ensure_columns_fit_view(total_slots)
 	grid.columns = max(1, _grid_columns)
 	await _update_panel_size_to_fit_grid(total_slots)
+	await get_tree().process_frame
 	await _refresh_layout_anchor()
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
@@ -2010,20 +2011,20 @@ func _refresh_layout_anchor() -> void:
 	# Keep bottom-right of inventory panel stable, grow up + left (towards screen center).
 	# Capture anchor if it wasn't set yet (normally set in _ready from scene placement).
 	if not _panel_anchor_valid:
-		var rect := panel.get_global_rect()
-		_panel_anchor_br = rect.position + rect.size
+		_panel_anchor_br_local = panel.position + panel.size
 		_panel_anchor_valid = true
 	# After content changes, re-anchor
 	await get_tree().process_frame
-	var rect2 := panel.get_global_rect()
-	var new_pos := _panel_anchor_br - rect2.size
+	var new_pos := _panel_anchor_br_local - panel.size
 	# Clamp so panel can't go off the bottom/right edges.
 	# InventoryHUD isn't necessarily a Control, so get_viewport_rect() may not exist.
 	# Use the Viewport's visible rect instead.
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	new_pos.x = clamp(new_pos.x, 0.0, vp_size.x - rect2.size.x)
-	new_pos.y = clamp(new_pos.y, 0.0, vp_size.y - rect2.size.y)
-	panel.global_position = new_pos
+	var max_x: float = max(0.0, vp_size.x - panel.size.x)
+	var max_y: float = max(0.0, vp_size.y - panel.size.y)
+	new_pos.x = clamp(new_pos.x, 0.0, max_x)
+	new_pos.y = clamp(new_pos.y, 0.0, max_y)
+	panel.position = new_pos
 
 func _format_money_bronze(bronze: int) -> String:
 	bronze = max(0, bronze)
