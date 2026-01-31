@@ -135,8 +135,12 @@ func _ready() -> void:
 
 func set_player(p: Node) -> void:
 	player = p
-	await _force_initial_layout()
-	_refresh()
+	_initial_layout_done = false
+	_layout_dirty = true
+	_last_applied_columns = -1
+	if _is_open:
+		await _force_initial_layout()
+		_refresh()
 
 func set_trade_open(state: bool) -> void:
 	_trade_open = state
@@ -162,7 +166,7 @@ func _auto_bind_player() -> void:
 		player = p
 
 func _process(_delta: float) -> void:
-	if not _initial_layout_done and not _initial_layout_pending and player != null and is_instance_valid(player):
+	if _is_open and not _initial_layout_done and not _initial_layout_pending and player != null and is_instance_valid(player):
 		call_deferred("_force_initial_layout")
 	# While open, keep HUD in sync (so looting updates without requiring sort).
 	if _is_open and player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot"):
@@ -190,8 +194,6 @@ func _set_open(v: bool) -> void:
 	else:
 		# Two-frame stabilization so GridContainer lays out correctly on first open.
 		await get_tree().process_frame
-		_initial_layout_done = false
-		await _force_initial_layout()
 		_layout_dirty = true
 		_last_applied_columns = -1
 		_refresh()
@@ -1915,10 +1917,8 @@ func _apply_inventory_layout(total_slots: int) -> void:
 	if panel == null or grid == null:
 		return
 	_layout_recalc_in_progress = true
-	var was_vis: bool = panel.visible
-	# Hide panel during reflow to avoid visible "jump".
-	if was_vis:
-		panel.visible = false
+	var was_grid_vis: bool = grid.visible
+	grid.visible = false
 	await _ensure_columns_fit_view(total_slots)
 	grid.columns = max(1, _grid_columns)
 	await _update_panel_size_to_fit_grid(total_slots)
@@ -1926,9 +1926,7 @@ func _apply_inventory_layout(total_slots: int) -> void:
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
 	_layout_recalc_in_progress = false
-	if was_vis:
-		await get_tree().process_frame
-		panel.visible = true
+	grid.visible = was_grid_vis
 
 func _refresh_layout_anchor() -> void:
 	# Keep bottom-right of inventory panel stable, grow up + left (towards screen center).
