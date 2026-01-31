@@ -1917,8 +1917,6 @@ func _apply_inventory_layout(total_slots: int) -> void:
 	if panel == null or grid == null:
 		return
 	_layout_recalc_in_progress = true
-	var was_grid_vis: bool = grid.visible
-	grid.visible = false
 	await _ensure_columns_fit_view(total_slots)
 	grid.columns = max(1, _grid_columns)
 	await _update_panel_size_to_fit_grid(total_slots)
@@ -1926,7 +1924,6 @@ func _apply_inventory_layout(total_slots: int) -> void:
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
 	_layout_recalc_in_progress = false
-	grid.visible = was_grid_vis
 
 func _refresh_layout_anchor() -> void:
 	# Keep bottom-right of inventory panel stable, grow up + left (towards screen center).
