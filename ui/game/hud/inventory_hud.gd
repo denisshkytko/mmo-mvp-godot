@@ -3,7 +3,10 @@ extends CanvasLayer
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var panel: Control = $Panel
 @onready var gold_label: RichTextLabel = $Panel/GoldLabel
+@onready var content: Control = $Panel/Content
+@onready var grid_scroll: ScrollContainer = $Panel/Content/GridScroll
 @onready var grid: GridContainer = $Panel/Content/GridScroll/Grid
+@onready var bag_slots: Control = $Panel/Content/BagSlots
 
 @onready var bag_button: Button = $BagButton
 @onready var bag_slot1: Button = $Panel/Content/BagSlots/BagSlot1
@@ -68,7 +71,7 @@ var _settings_input: LineEdit = null
 var _settings_apply: Button = null
 var _settings_sort: Button = null
 
-var _grid_columns: int = 4 # default layout for 16 slots
+var _grid_columns: int = 6 # default layout for inventory
 
 const _GRID_CFG_PATH := "user://inventory_grid.cfg"
 const _GRID_CFG_SECTION := "inventory_hud"
@@ -782,40 +785,75 @@ func _save_grid_columns() -> void:
 	cfg.set_value(_GRID_CFG_SECTION, _GRID_CFG_KEY_COLUMNS, _grid_columns)
 	cfg.save(_GRID_CFG_PATH)
 
-func _measure_panel_size_for_columns(cols: int, total_slots: int) -> Vector2:
-	# Measuring should not permanently mutate the live grid.
-	var prev_cols: int = grid.columns
-	# Ensure we have enough slot panels to measure accurately.
+func _get_panel_max_size_from_anchor() -> Vector2:
+	var vp_size: Vector2 = get_viewport().get_visible_rect().size
+	if not _panel_anchor_valid:
+		return vp_size
+	var max_panel_w: float = min(vp_size.x, _panel_anchor_br.x)
+	var max_panel_h: float = min(vp_size.y, _panel_anchor_br.y)
+	return Vector2(max_panel_w, max_panel_h)
+
+func _compute_fixed_padding() -> Dictionary:
+	var header_h: float = 50.0
+	var pad_right: float = 5.0
+	var pad_bottom: float = 5.0
+	var pad_left: float = 0.0
+	var pad_top: float = 0.0
+	if grid_scroll != null and panel != null:
+		var grid_pos := grid_scroll.get_global_position() - panel.get_global_position()
+		pad_left = grid_pos.x
+		pad_top = grid_pos.y
+	return {
+		"pad_left": pad_left,
+		"pad_top": pad_top,
+		"pad_right": pad_right,
+		"pad_bottom": pad_bottom,
+		"header_h": header_h
+	}
+
+func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 	_ensure_grid_child_count(total_slots)
 	grid.columns = max(1, cols)
 	await get_tree().process_frame
-	var grid_size: Vector2 = grid.get_combined_minimum_size()
-
-	# Padding based on current layout in the scene (matches offsets in InventoryHUD.tscn)
-	var grid_pos := grid.get_global_position() - panel.get_global_position()
-	var pad_left: float = grid_pos.x
-	var pad_top: float = grid_pos.y
-	var pad_right: float = 5.0
-	var pad_bottom: float = 5.0
-	# Include header (gold label + settings button row)
-	pad_top = min(pad_top, gold_label.position.y)
-	var header_h: float = 50.0
-
-	var size := Vector2(pad_left + grid_size.x + pad_right, header_h + grid_size.y + pad_bottom)
-	# Restore previous grid columns to avoid visual jumps when a candidate doesn't apply.
-	grid.columns = prev_cols
-	return size
+	var grid_min: Vector2 = grid.get_combined_minimum_size()
+	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
+	var pads: Dictionary = _compute_fixed_padding()
+	var pad_left: float = float(pads.get("pad_left", 0.0))
+	var pad_right: float = float(pads.get("pad_right", 5.0))
+	var pad_bottom: float = float(pads.get("pad_bottom", 5.0))
+	var header_h: float = float(pads.get("header_h", 50.0))
+	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
+	var scroll_w: float = grid_min.x
+	var scroll_h: float = grid_min.y
+	var content_h: float = max(bag_min.y, scroll_h)
+	var panel_w: float = pad_left + scroll_w + pad_right
+	var panel_h: float = header_h + content_h + pad_bottom
+	var use_scroll: bool = panel_h > max_panel.y
+	var scroll_view_h: float = scroll_h
+	if use_scroll:
+		panel_h = max_panel.y
+		var available_content_h: float = max_panel.y - header_h - pad_bottom
+		scroll_view_h = clamp(available_content_h, 65.0, grid_min.y)
+		content_h = max(bag_min.y, scroll_view_h)
+	var scroll_view_size := Vector2(scroll_w, scroll_view_h)
+	var panel_size := Vector2(panel_w, panel_h)
+	return {
+		"grid_min": grid_min,
+		"scroll_view_size": scroll_view_size,
+		"panel_size": panel_size,
+		"use_scroll": use_scroll
+	}
 
 func _can_fit_columns(cols: int, total_slots: int) -> bool:
 	if not _panel_anchor_valid:
 		return true
-	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	# Anchor must itself be on-screen for the "bottom-right fixed" guarantee to make sense.
-	if _panel_anchor_br.x > vp_size.x or _panel_anchor_br.y > vp_size.y:
+	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
+	var layout: Dictionary = await _compute_layout_for_columns(cols, total_slots)
+	var panel_size: Vector2 = layout.get("panel_size", Vector2.ZERO)
+	var scroll_view: Vector2 = layout.get("scroll_view_size", Vector2.ZERO)
+	if scroll_view.y < 65.0:
 		return false
-	var size: Vector2 = await _measure_panel_size_for_columns(cols, total_slots)
-	var new_pos: Vector2 = _panel_anchor_br - size
-	return new_pos.x >= 0.0 and new_pos.y >= 0.0
+	return panel_size.x <= max_panel.x
 
 func _ensure_columns_fit_view(total_slots: int) -> void:
 	# If the current grid layout would push the panel off-screen, automatically choose a
@@ -1918,29 +1956,36 @@ func _refresh_quick_bar() -> void:
 		_update_quick_cooldown(b, item_id)
 
 
-func _update_panel_size_to_fit_grid(_total_slots: int) -> void:
-	# Make the background panel resize to fully contain the grid.
+func _update_panel_size_to_fit_grid(total_slots: int) -> void:
+	# Size grid scroll viewport first, then derive Content + Panel sizes.
 	# We keep bottom-right stable via _refresh_layout_anchor().
-	if panel == null or grid == null:
+	if panel == null or grid == null or grid_scroll == null or content == null:
 		return
-	# Ensure grid has correct column count before measuring.
+	var layout: Dictionary = await _compute_layout_for_columns(_grid_columns, total_slots)
+	var grid_min: Vector2 = layout.get("grid_min", Vector2.ZERO)
+	var scroll_view: Vector2 = layout.get("scroll_view_size", Vector2.ZERO)
+	var panel_size: Vector2 = layout.get("panel_size", Vector2.ZERO)
+	var use_scroll: bool = bool(layout.get("use_scroll", false))
+
 	grid.columns = max(1, _grid_columns)
-	await get_tree().process_frame
-	var grid_size: Vector2 = grid.get_combined_minimum_size()
-	# Padding based on current layout in the scene (matches offsets in InventoryHUD.tscn)
-	var grid_pos := grid.get_global_position() - panel.get_global_position()
-	var pad_left: float = grid_pos.x
-	var pad_top: float = grid_pos.y
-	var pad_right: float = 5.0
-	var pad_bottom: float = 5.0
-	# Include header (gold label + settings button row)
-	pad_top = min(pad_top, gold_label.position.y)
-	var header_h: float = 50.0
-	# Resize grid and panel
-	grid.size = grid_size
-	var new_size := Vector2(pad_left + grid_size.x + pad_right, header_h + grid_size.y + pad_bottom)
-	panel.custom_minimum_size = new_size
-	panel.size = new_size
+	grid.custom_minimum_size = grid_min
+	grid.size = grid_min
+
+	grid_scroll.custom_minimum_size = scroll_view
+	grid_scroll.size = scroll_view
+	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
+
+	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
+	var separation: float = 0.0
+	if content != null:
+		separation = float(content.get_theme_constant("separation"))
+	var content_size := Vector2(bag_min.x + separation + scroll_view.x, max(bag_min.y, scroll_view.y))
+	content.custom_minimum_size = content_size
+	content.size = content_size
+
+	panel.custom_minimum_size = panel_size
+	panel.size = panel_size
 	# Keep the settings UI pinned to the panel's top-right corner.
 	var m: float = 6.0
 	if _settings_button != null:
