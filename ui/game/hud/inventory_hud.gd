@@ -168,6 +168,14 @@ func _auto_bind_player() -> void:
 func _is_player_ready() -> bool:
 	return player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot")
 
+func _get_total_slots_from_player_fallback() -> int:
+	if not _is_player_ready():
+		return 0
+	var inv: Variant = player.get("inventory")
+	if inv != null and inv.has_method("get_total_slot_count"):
+		return int(inv.call("get_total_slot_count"))
+	return Inventory.SLOT_COUNT
+
 func _process(_delta: float) -> void:
 	if _is_open and not _is_player_ready():
 		_auto_bind_player()
@@ -1195,6 +1203,8 @@ func _refresh() -> void:
 	var slots: Array = snap.get("slots", [])
 	var bag_slots: Array = snap.get("bag_slots", [])
 	var total_slots: int = slots.size()
+	if total_slots == 0:
+		total_slots = _get_total_slots_from_player_fallback()
 
 	# Mark layout dirty only when geometry changes.
 	if total_slots != _last_total_slots:
