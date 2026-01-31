@@ -3,7 +3,7 @@ extends CanvasLayer
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var panel: Control = $Panel
 @onready var gold_label: RichTextLabel = $Panel/GoldLabel
-@onready var grid: GridContainer = $Panel/Content/Grid
+@onready var grid: GridContainer = $Panel/Content/GridScroll/Grid
 
 @onready var bag_button: Button = $BagButton
 @onready var bag_slot1: Button = $Panel/Content/BagSlots/BagSlot1
@@ -748,15 +748,7 @@ func _on_settings_apply() -> void:
 	if total <= 0:
 		return
 
-	var target_cols: int = _grid_columns
-	if _settings_mode.selected == 0:
-		# Columns
-		target_cols = max(1, n)
-	else:
-		# Rows -> columns derived
-		var rows: int = max(1, n)
-		target_cols = int(ceil(float(total) / float(rows)))
-	target_cols = clamp(target_cols, 1, 20)
+	var target_cols: int = clamp(max(1, n), 1, 20)
 
 	# Before applying, verify the resized panel will remain fully visible when anchored at
 	# the bottom-right point where you placed it in the scene.
@@ -1785,7 +1777,6 @@ func _ensure_support_ui() -> void:
 
 		_settings_mode = OptionButton.new()
 		_settings_mode.add_item("Columns", 0)
-		_settings_mode.add_item("Rows", 1)
 		_settings_panel.add_child(_settings_mode)
 		_settings_mode.position = Vector2(8, 8)
 		_settings_mode.size = Vector2(90, 26)
