@@ -140,7 +140,7 @@ func set_player(p: Node) -> void:
 	_last_applied_columns = -1
 	if _is_open:
 		await _force_initial_layout()
-		_refresh()
+		await _refresh()
 
 func set_trade_open(state: bool) -> void:
 	_trade_open = state
@@ -177,7 +177,7 @@ func _process(_delta: float) -> void:
 			var h: int = str(snap).hash()
 			if h != _last_snap_hash:
 				_last_snap_hash = h
-				_refresh()
+				await _refresh()
 			# Cooldowns tick even if inventory content didn't change.
 			_update_visible_cooldowns(snap)
 
@@ -196,10 +196,10 @@ func _set_open(v: bool) -> void:
 		await get_tree().process_frame
 		_layout_dirty = true
 		_last_applied_columns = -1
-		_refresh()
+		await _refresh()
 		await get_tree().process_frame
 		_layout_dirty = true
-		_refresh()
+		await _refresh()
 
 func _on_bag_button_pressed() -> void:
 	_toggle_inventory()
@@ -487,7 +487,7 @@ func _on_split_ok_pressed() -> void:
 	snap["slots"] = slots
 	player.apply_inventory_snapshot(snap)
 	_hide_split()
-	_refresh()
+	await _refresh()
 
 func _on_split_cancel_pressed() -> void:
 	_hide_split()
@@ -733,7 +733,7 @@ func _on_settings_apply() -> void:
 	_save_grid_columns()
 	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
-	_refresh()
+	await _refresh()
 
 
 
@@ -823,7 +823,7 @@ func _ensure_columns_fit_view(total_slots: int) -> void:
 
 func _on_settings_sort() -> void:
 	_sort_inventory_slots()
-	_refresh()
+	await _refresh()
 
 # --- Quick bar ---
 
@@ -848,7 +848,7 @@ func _on_quick_pressed(_index: int) -> void:
 			# no item actually removed; revert effect? for now just ignore.
 			return
 	# Refresh UI
-	_refresh()
+	await _refresh()
 
 
 func _is_quick_allowed_item(item_id: String) -> bool:
@@ -919,7 +919,7 @@ func _on_tooltip_use_pressed() -> void:
 		if removed <= 0:
 			return
 	_hide_tooltip()
-	_refresh()
+	await _refresh()
 
 func _on_tooltip_equip_pressed() -> void:
 	if player == null or not is_instance_valid(player):
@@ -945,7 +945,7 @@ func _on_tooltip_equip_pressed() -> void:
 		var ok: bool = bool(player.call("try_equip_from_inventory_slot", _tooltip_for_slot, target_slot))
 		if ok:
 			_hide_tooltip()
-			_refresh()
+			await _refresh()
 		else:
 			_show_equip_fail_toast()
 
@@ -982,14 +982,14 @@ func _on_tooltip_sell_pressed() -> void:
 		elif merchant_ui.has_method("sell_items_from_inventory"):
 			merchant_ui.call("sell_items_from_inventory", id, 1)
 		_hide_tooltip()
-		_refresh()
+		await _refresh()
 		return
 	if merchant_ui.has_method("request_sell_from_inventory_slot"):
 		merchant_ui.call("request_sell_from_inventory_slot", id, count, _tooltip_for_slot)
 	elif merchant_ui.has_method("request_sell_from_inventory"):
 		merchant_ui.call("request_sell_from_inventory", id, count)
 	_hide_tooltip()
-	_refresh()
+	await _refresh()
 
 func _on_tooltip_quick_pressed() -> void:
 	if player == null or not is_instance_valid(player):
@@ -1033,7 +1033,7 @@ func _on_tooltip_bag_pressed() -> void:
 		var ok: bool = player.try_unequip_bag_to_inventory(_tooltip_for_bag_slot, inv_slot)
 		if ok:
 			_hide_tooltip()
-			_refresh()
+			await _refresh()
 		else:
 			show_bag_full("Сумка полна")
 		return
@@ -1059,7 +1059,7 @@ func _on_tooltip_bag_pressed() -> void:
 	var ok2: bool = player.try_equip_bag_from_inventory_slot(_tooltip_for_slot, bag_index)
 	if ok2:
 		_hide_tooltip()
-		_refresh()
+		await _refresh()
 	else:
 		show_center_toast("Нет свободных ячеек")
 
