@@ -214,16 +214,17 @@ func _set_open(v: bool) -> void:
 	else:
 		# Two-frame stabilization so GridContainer lays out correctly on first open.
 		await get_tree().process_frame
-		_layout_dirty = true
-		_last_applied_columns = -1
 		_auto_bind_player()
 		if not _is_player_ready():
 			_initial_layout_done = false
 			return
-		await _refresh()
-		await get_tree().process_frame
-		_layout_dirty = true
-		await _refresh()
+		if not _initial_layout_done:
+			await _force_initial_layout()
+			await _refresh()
+			await get_tree().process_frame
+			await _refresh()
+		else:
+			await _refresh()
 
 func _on_bag_button_pressed() -> void:
 	_toggle_inventory()
