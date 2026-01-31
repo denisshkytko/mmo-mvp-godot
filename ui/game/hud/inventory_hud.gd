@@ -795,8 +795,8 @@ func _measure_panel_size_for_columns(cols: int, total_slots: int) -> Vector2:
 	var grid_pos := grid.get_global_position() - panel.get_global_position()
 	var pad_left: float = grid_pos.x
 	var pad_top: float = grid_pos.y
-	var pad_right: float = 16.0
-	var pad_bottom: float = 16.0
+	var pad_right: float = 5.0
+	var pad_bottom: float = 5.0
 	# Include header (gold label + settings button row)
 	pad_top = min(pad_top, gold_label.position.y)
 	var header_h: float = 50.0
@@ -1931,8 +1931,8 @@ func _update_panel_size_to_fit_grid(_total_slots: int) -> void:
 	var grid_pos := grid.get_global_position() - panel.get_global_position()
 	var pad_left: float = grid_pos.x
 	var pad_top: float = grid_pos.y
-	var pad_right: float = 16.0
-	var pad_bottom: float = 16.0
+	var pad_right: float = 5.0
+	var pad_bottom: float = 5.0
 	# Include header (gold label + settings button row)
 	pad_top = min(pad_top, gold_label.position.y)
 	var header_h: float = 50.0
