@@ -228,6 +228,8 @@ func _set_open(v: bool) -> void:
 			_initial_layout_done = false
 			return
 		if not _initial_layout_done:
+			grid.visible = true
+			grid.modulate.a = 0.0
 			await _force_initial_layout()
 			await _refresh()
 			await get_tree().process_frame
