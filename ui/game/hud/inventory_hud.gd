@@ -1974,7 +1974,7 @@ func _update_panel_size_to_fit_grid(total_slots: int) -> void:
 	grid_scroll.custom_minimum_size = scroll_view
 	grid_scroll.size = scroll_view
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
+	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
 
 	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
 	var separation: float = 0.0
