@@ -775,6 +775,9 @@ func _on_settings_apply() -> void:
 	_save_grid_columns()
 	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
+	if not _is_open:
+		return
+	await _apply_inventory_layout(total)
 	await _refresh()
 
 
@@ -824,9 +827,12 @@ func _compute_fixed_padding() -> Dictionary:
 
 func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 	_ensure_grid_child_count(total_slots)
+	var previous_columns := grid.columns
 	grid.columns = max(1, cols)
 	await get_tree().process_frame
 	var grid_min: Vector2 = grid.get_combined_minimum_size()
+	grid.columns = previous_columns
+	await get_tree().process_frame
 	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
 	var pads: Dictionary = _compute_fixed_padding()
 	var left_margin_x: float = float(pads.get("left_margin_x", 0.0))
@@ -1306,6 +1312,7 @@ func _refresh() -> void:
 	if _is_open:
 		grid.visible = true
 		grid.modulate.a = 1.0
+	grid.columns = max(1, _grid_columns)
 	_refresh_in_progress = false
 
 func _render_slot(slot_panel: Panel, i: int, slots: Array) -> void:
