@@ -2022,7 +2022,7 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 
 	grid.custom_minimum_size = grid_min
 	grid_scroll.custom_minimum_size = Vector2(scroll_w, scroll_view_h)
-	grid_scroll.size = Vector2.ZERO
+	grid_scroll.size = Vector2(scroll_w, scroll_view_h)
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
