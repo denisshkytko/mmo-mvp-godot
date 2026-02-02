@@ -90,13 +90,17 @@ var _refresh_accum: float = 0.0
 # apply settings, or bag slots changing total slot count). Regular item moves
 # should not trigger any resizing/re-anchoring.
 var _layout_dirty: bool = true
-var _layout_recalc_in_progress: bool = false
 var _last_total_slots: int = -1
 var _last_applied_columns: int = -1
 var _last_snap_hash: int = 0
 var _refresh_in_progress: bool = false
 var _last_scroll_view: Vector2 = Vector2.ZERO
 var _last_use_scroll: bool = false
+var _last_bag_slots_hash: int = 0
+
+var _rebuild_in_progress: bool = false
+var _rebuild_requested: bool = false
+var _auto_fit_enabled: bool = true
 
 # Layout anchor: keep panel growing towards screen center (up + left) from a stable bottom-right point
 var _panel_anchor_br_local: Vector2 = Vector2.ZERO
@@ -244,9 +248,9 @@ func _set_open(v: bool) -> void:
 		if not _initial_layout_done:
 			grid.visible = true
 			grid.modulate.a = 0.0
-			await _force_initial_layout()
-			await _refresh()
+			await _rebuild_inventory_layout("open")
 			await get_tree().process_frame
+			await _rebuild_inventory_layout("open_stabilize")
 			await _refresh()
 		else:
 			await _refresh()
@@ -753,6 +757,11 @@ func _hide_settings() -> void:
 	if _settings_panel != null:
 		_settings_panel.visible = false
 
+func _sync_settings_columns_input(cols: int) -> void:
+	if _settings_input == null:
+		return
+	_settings_input.text = str(cols)
+
 func _on_settings_apply() -> void:
 	var txt: String = _settings_input.text.strip_edges()
 	var n: int = int(txt) if txt.is_valid_int() else 0
@@ -763,18 +772,12 @@ func _on_settings_apply() -> void:
 		return
 
 	var target_cols: int = clamp(max(1, n), 1, 20)
-
-	# Before applying, verify the resized panel will remain fully visible when anchored at
-	# the bottom-right point where you placed it in the scene.
-	var ok_fit: bool = await _can_fit_columns(target_cols, total)
-	if not ok_fit:
-		# Do nothing (no message) if it would go off-screen.
-		return
-
+	_auto_fit_enabled = false
 	_grid_columns = target_cols
 	_save_grid_columns()
 	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
+	await _rebuild_inventory_layout("settings_apply")
 	await _refresh()
 
 
@@ -798,11 +801,7 @@ func _save_grid_columns() -> void:
 
 func _get_panel_max_size_from_anchor() -> Vector2:
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	if not _panel_anchor_valid:
-		return vp_size
-	var max_panel_w: float = min(vp_size.x, _panel_anchor_br_local.x)
-	var max_panel_h: float = min(vp_size.y, _panel_anchor_br_local.y)
-	return Vector2(max_panel_w, max_panel_h)
+	return vp_size
 
 func _compute_fixed_padding() -> Dictionary:
 	var pad_right: float = 10.0
@@ -860,13 +859,14 @@ func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 func _can_fit_columns(cols: int, total_slots: int) -> bool:
 	if not _panel_anchor_valid:
 		return true
-	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
+	var vp_size: Vector2 = get_viewport().get_visible_rect().size
+	var max_panel_w: float = vp_size.x
 	var layout: Dictionary = await _compute_layout_for_columns(cols, total_slots)
 	var panel_size: Vector2 = layout.get("panel_size", Vector2.ZERO)
 	var scroll_view: Vector2 = layout.get("scroll_view_size", Vector2.ZERO)
 	if scroll_view.y < 65.0:
 		return false
-	return panel_size.x <= max_panel.x
+	return panel_size.x <= max_panel_w
 
 func _ensure_columns_fit_view(total_slots: int) -> void:
 	# If the current grid layout would push the panel off-screen, automatically choose a
@@ -878,6 +878,7 @@ func _ensure_columns_fit_view(total_slots: int) -> void:
 		return
 
 	var current: int = clamp(_grid_columns, 1, 20)
+	var current_fits: bool = await _can_fit_columns(current, total_slots)
 	var best: int = current
 	var best_delta: int = 999
 	for c in range(1, 21):
@@ -892,9 +893,10 @@ func _ensure_columns_fit_view(total_slots: int) -> void:
 			# Prefer a slightly wider grid if equally close (usually reduces height).
 			best = c
 
-	if best != current:
+	if best != current and (_auto_fit_enabled or not current_fits):
 		_grid_columns = best
 		_save_grid_columns()
+		_sync_settings_columns_input(best)
 
 func _on_settings_sort() -> void:
 	_sort_inventory_slots()
@@ -1267,10 +1269,14 @@ func _refresh() -> void:
 	var total_slots: int = slots.size()
 	if total_slots == 0:
 		total_slots = _get_total_slots_from_player_fallback()
+	var bag_hash: int = str(bag_slots).hash()
 
 	# Mark layout dirty only when geometry changes.
 	if total_slots != _last_total_slots:
 		_last_total_slots = total_slots
+		_layout_dirty = true
+	if bag_hash != _last_bag_slots_hash:
+		_last_bag_slots_hash = bag_hash
 		_layout_dirty = true
 	if _grid_columns != _last_applied_columns:
 		_layout_dirty = true
@@ -1282,14 +1288,8 @@ func _refresh() -> void:
 	_ensure_grid_child_count(total_slots)
 	_hook_slot_panels()
 
-	# Apply/rescale panel only when required (startup / apply settings / bag slots change).
-	var layout_preview: Dictionary = await _compute_layout_for_columns(_grid_columns, total_slots)
-	var preview_scroll_view: Vector2 = layout_preview.get("scroll_view_size", Vector2.ZERO)
-	var preview_use_scroll: bool = bool(layout_preview.get("use_scroll", false))
-	if preview_scroll_view != _last_scroll_view or preview_use_scroll != _last_use_scroll:
-		_layout_dirty = true
-	if _layout_dirty and not _layout_recalc_in_progress:
-		await _apply_inventory_layout(total_slots)
+	if _layout_dirty:
+		await _rebuild_inventory_layout("refresh_dirty")
 
 	# Gold
 	gold_label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))
@@ -1973,10 +1973,29 @@ func _refresh_quick_bar() -> void:
 		b.text = str(total) if total > 1 else ""
 		_update_quick_cooldown(b, item_id)
 
+func _rebuild_inventory_layout(reason: String) -> void:
+	if _rebuild_in_progress:
+		_rebuild_requested = true
+		return
+	_rebuild_in_progress = true
+	if not _is_player_ready():
+		_rebuild_in_progress = false
+		return
+	var total_slots: int = _get_total_inventory_slots()
+	if total_slots <= 0:
+		total_slots = _get_total_slots_from_player_fallback()
+	grid.columns = max(1, _grid_columns)
+	await _apply_inventory_layout(total_slots)
+	if _is_open:
+		grid.modulate.a = 1.0
+	_rebuild_in_progress = false
+	if _rebuild_requested:
+		_rebuild_requested = false
+		call_deferred("_rebuild_inventory_layout", "queued")
+
 
 func _update_panel_size_to_fit_grid(total_slots: int) -> void:
 	# Size grid scroll viewport first, then derive Content + Panel sizes.
-	# We keep bottom-right stable via _refresh_layout_anchor().
 	if panel == null or grid == null or grid_scroll == null or content == null:
 		return
 	var layout: Dictionary = await _compute_layout_for_columns(_grid_columns, total_slots)
@@ -2010,29 +2029,21 @@ func _apply_inventory_layout(total_slots: int) -> void:
 	# Recalculate grid columns (fit) + panel size + anchoring, but only when needed.
 	if panel == null or grid == null:
 		return
-	_layout_recalc_in_progress = true
 	await _ensure_columns_fit_view(total_slots)
 	grid.columns = max(1, _grid_columns)
 	await _update_panel_size_to_fit_grid(total_slots)
 	await get_tree().process_frame
-	await _refresh_layout_anchor()
+	_apply_panel_br_anchor_and_clamp()
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
-	_layout_recalc_in_progress = false
 
-func _refresh_layout_anchor() -> void:
-	# Keep bottom-right of inventory panel stable, grow up + left (towards screen center).
-	# Capture anchor if it wasn't set yet (normally set in _ready from scene placement).
-	if not _panel_anchor_valid:
-		_panel_anchor_br_local = panel.position + panel.size
-		_panel_anchor_valid = true
-	# After content changes, re-anchor
-	await get_tree().process_frame
-	var new_pos := _panel_anchor_br_local - panel.size
-	# Clamp so panel can't go off the bottom/right edges.
-	# InventoryHUD isn't necessarily a Control, so get_viewport_rect() may not exist.
-	# Use the Viewport's visible rect instead.
+func _apply_panel_br_anchor_and_clamp() -> void:
+	if panel == null or not _panel_anchor_valid:
+		return
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
+	panel.size.x = min(panel.size.x, vp_size.x)
+	panel.size.y = min(panel.size.y, vp_size.y)
+	var new_pos := _panel_anchor_br_local - panel.size
 	var max_x: float = max(0.0, vp_size.x - panel.size.x)
 	var max_y: float = max(0.0, vp_size.y - panel.size.y)
 	new_pos.x = clamp(new_pos.x, 0.0, max_x)
@@ -2099,6 +2110,6 @@ func _run_initial_layout() -> void:
 		_initial_layout_pending = false
 		return
 	_layout_dirty = true
-	await _apply_inventory_layout(slots.size())
+	await _rebuild_inventory_layout("initial")
 	_initial_layout_done = true
 	_initial_layout_pending = false
