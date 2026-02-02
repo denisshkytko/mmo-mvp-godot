@@ -95,6 +95,7 @@ var _last_total_slots: int = -1
 var _last_applied_columns: int = -1
 var _last_snap_hash: int = 0
 var _refresh_in_progress: bool = false
+var _refresh_requested: bool = false
 var _last_scroll_view: Vector2 = Vector2.ZERO
 var _last_use_scroll: bool = false
 
@@ -775,7 +776,7 @@ func _on_settings_apply() -> void:
 	_save_grid_columns()
 	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
-	await _refresh()
+	_refresh()
 
 
 
@@ -858,15 +859,13 @@ func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 	}
 
 func _can_fit_columns(cols: int, total_slots: int) -> bool:
-	if not _panel_anchor_valid:
-		return true
-	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
 	var layout: Dictionary = await _compute_layout_for_columns(cols, total_slots)
 	var panel_size: Vector2 = layout.get("panel_size", Vector2.ZERO)
 	var scroll_view: Vector2 = layout.get("scroll_view_size", Vector2.ZERO)
 	if scroll_view.y < 65.0:
 		return false
-	return panel_size.x <= max_panel.x
+	var vp_size: Vector2 = get_viewport().get_visible_rect().size
+	return panel_size.x <= vp_size.x
 
 func _ensure_columns_fit_view(total_slots: int) -> void:
 	# If the current grid layout would push the panel off-screen, automatically choose a
@@ -1254,6 +1253,7 @@ func _show_tooltip_for_item_dict(d: Dictionary) -> void:
 func _refresh() -> void:
 	if _refresh_in_progress:
 		_layout_dirty = true
+		_refresh_requested = true
 		return
 	if player == null or not is_instance_valid(player):
 		return
@@ -1307,6 +1307,10 @@ func _refresh() -> void:
 		grid.visible = true
 		grid.modulate.a = 1.0
 	_refresh_in_progress = false
+	if _refresh_requested:
+		_refresh_requested = false
+		call_deferred("_refresh")
+		return
 
 func _render_slot(slot_panel: Panel, i: int, slots: Array) -> void:
 	var icon: TextureRect = slot_panel.get_node_or_null("Icon") as TextureRect
