@@ -1987,11 +1987,7 @@ func _rebuild_layout(reason: String) -> void:
 	var total_slots: int = _get_total_inventory_slots()
 	if total_slots <= 0:
 		total_slots = _get_total_slots_from_player_fallback()
-	var first_pass: Dictionary = await _apply_layout_sizes(total_slots)
-	await get_tree().process_frame
-	var second_pass: Dictionary = await _apply_layout_sizes(total_slots)
-	if first_pass.get("panel_size") != second_pass.get("panel_size") or first_pass.get("scroll_view") != second_pass.get("scroll_view"):
-		await _apply_layout_sizes(total_slots)
+	await _apply_layout_sizes(total_slots)
 	if _is_open:
 		grid.modulate.a = 1.0
 	_rebuild_in_progress = false
@@ -2004,10 +2000,10 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 		return {}
 	_ensure_grid_child_count(total_slots)
 	grid.columns = max(1, _grid_columns)
+	grid.custom_minimum_size = Vector2.ZERO
+	grid.size = Vector2.ZERO
 	await get_tree().process_frame
 	var grid_min: Vector2 = grid.get_combined_minimum_size()
-	grid.custom_minimum_size = grid_min
-	grid.size = Vector2.ZERO
 	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
 	var separation: float = float(content.get_theme_constant("separation")) if content != null else 0.0
 	var left_offset: float = content.offset_left if content != null else 0.0
@@ -2031,7 +2027,6 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	panel_h = desired_content_h + top_offset + pad_bottom
 	panel_h = min(panel_h, max_panel.y)
 
-	grid.custom_minimum_size = grid_min
 	if grid_scroll_wrapper != null:
 		grid_scroll_wrapper.size = Vector2(scroll_w, scroll_view_h)
 		grid_scroll_wrapper.custom_minimum_size = grid_scroll_wrapper.size
