@@ -87,32 +87,44 @@ layout_mode = 2
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-[node name="GridScroll" type="ScrollContainer" parent="Panel/Content"]
+[node name="GridScrollWrapper" type="Control" parent="Panel/Content"]
 custom_minimum_size = Vector2(65, 65)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
 offset_left = 0.0
 offset_top = 0.0
 offset_right = -5.0
 offset_bottom = -5.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="GridScroll" type="ScrollContainer" parent="Panel/Content/GridScrollWrapper"]
+layout_mode = 1
+anchors_preset = 15
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 
-[node name="Grid" type="GridContainer" parent="Panel/Content/GridScroll"]
+[node name="Grid" type="GridContainer" parent="Panel/Content/GridScrollWrapper/GridScroll"]
 custom_minimum_size = Vector2(65, 65)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 4
 
-[node name="Slot0" type="Panel" parent="Panel/Content/GridScroll/Grid"]
+[node name="Slot0" type="Panel" parent="Panel/Content/GridScrollWrapper/GridScroll/Grid"]
 custom_minimum_size = Vector2(65, 65)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
 
-[node name="Text" type="Label" parent="Panel/Content/GridScroll/Grid/Slot0"]
+[node name="Text" type="Label" parent="Panel/Content/GridScrollWrapper/GridScroll/Grid/Slot0"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

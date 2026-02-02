@@ -4,8 +4,9 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var panel: Control = $Panel
 @onready var gold_label: RichTextLabel = $Panel/GoldLabel
 @onready var content: Control = $Panel/Content
-@onready var grid_scroll: ScrollContainer = $Panel/Content/GridScroll
-@onready var grid: GridContainer = $Panel/Content/GridScroll/Grid
+@onready var grid_scroll_wrapper: Control = $Panel/Content/GridScrollWrapper
+@onready var grid_scroll: ScrollContainer = $Panel/Content/GridScrollWrapper/GridScroll
+@onready var grid: GridContainer = $Panel/Content/GridScrollWrapper/GridScroll/Grid
 @onready var bag_slots: Control = $Panel/Content/BagSlots
 
 @onready var bag_button: Button = $BagButton
@@ -122,13 +123,23 @@ func _ready() -> void:
 
 	if bag_button != null:
 		bag_button.pressed.connect(_on_bag_button_pressed)
+	if grid_scroll_wrapper != null:
+		grid_scroll_wrapper.layout_mode = 2
+		grid_scroll_wrapper.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		grid_scroll_wrapper.anchor_left = 0
+		grid_scroll_wrapper.anchor_top = 0
+		grid_scroll_wrapper.anchor_right = 0
+		grid_scroll_wrapper.anchor_bottom = 0
+		grid_scroll_wrapper.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		grid_scroll_wrapper.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		grid_scroll_wrapper.size_flags_stretch_ratio = 0.0
 	if grid_scroll != null:
 		grid_scroll.layout_mode = 2
-		grid_scroll.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		grid_scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 		grid_scroll.anchor_left = 0
 		grid_scroll.anchor_top = 0
-		grid_scroll.anchor_right = 0
-		grid_scroll.anchor_bottom = 0
+		grid_scroll.anchor_right = 1
+		grid_scroll.anchor_bottom = 1
 		grid_scroll.offset_left = 0
 		grid_scroll.offset_top = 0
 		grid_scroll.offset_right = 0
@@ -2021,8 +2032,9 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	panel_h = min(panel_h, max_panel.y)
 
 	grid.custom_minimum_size = grid_min
-	grid_scroll.custom_minimum_size = Vector2(scroll_w, scroll_view_h)
-	grid_scroll.size = Vector2(scroll_w, scroll_view_h)
+	if grid_scroll_wrapper != null:
+		grid_scroll_wrapper.size = Vector2(scroll_w, scroll_view_h)
+		grid_scroll_wrapper.custom_minimum_size = grid_scroll_wrapper.size
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
