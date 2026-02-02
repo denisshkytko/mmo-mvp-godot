@@ -95,6 +95,8 @@ var _last_total_slots: int = -1
 var _last_applied_columns: int = -1
 var _last_snap_hash: int = 0
 var _refresh_in_progress: bool = false
+var _last_scroll_view: Vector2 = Vector2.ZERO
+var _last_use_scroll: bool = false
 
 # Layout anchor: keep panel growing towards screen center (up + left) from a stable bottom-right point
 var _panel_anchor_br_local: Vector2 = Vector2.ZERO
@@ -119,6 +121,16 @@ func _ready() -> void:
 
 	if bag_button != null:
 		bag_button.pressed.connect(_on_bag_button_pressed)
+	if grid_scroll != null:
+		grid_scroll.layout_mode = 2
+		grid_scroll.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		grid_scroll.offset_left = 0
+		grid_scroll.offset_top = 0
+		grid_scroll.offset_right = 0
+		grid_scroll.offset_bottom = 0
+		grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		grid_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	# Bag equipment slots (visual order: top -> bottom).
 	_get_bag_button_for_logical(0).gui_input.connect(_on_bag_slot_gui_input.bind(0))
 	_get_bag_button_for_logical(1).gui_input.connect(_on_bag_slot_gui_input.bind(1))
@@ -793,8 +805,8 @@ func _get_panel_max_size_from_anchor() -> Vector2:
 	return Vector2(max_panel_w, max_panel_h)
 
 func _compute_fixed_padding() -> Dictionary:
-	var pad_right: float = 5.0
-	var pad_bottom: float = 5.0
+	var pad_right: float = 10.0
+	var pad_bottom: float = 10.0
 	var left_margin_x: float = 0.0
 	var top_margin_y: float = 0.0
 	var separation: float = 0.0
@@ -819,8 +831,8 @@ func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 	var pads: Dictionary = _compute_fixed_padding()
 	var left_margin_x: float = float(pads.get("left_margin_x", 0.0))
 	var top_margin_y: float = float(pads.get("top_margin_y", 0.0))
-	var pad_right: float = float(pads.get("pad_right", 5.0))
-	var pad_bottom: float = float(pads.get("pad_bottom", 5.0))
+	var pad_right: float = float(pads.get("pad_right", 10.0))
+	var pad_bottom: float = float(pads.get("pad_bottom", 10.0))
 	var separation: float = float(pads.get("separation", 0.0))
 	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
 	var scroll_w: float = grid_min.x
@@ -1271,6 +1283,11 @@ func _refresh() -> void:
 	_hook_slot_panels()
 
 	# Apply/rescale panel only when required (startup / apply settings / bag slots change).
+	var layout_preview: Dictionary = await _compute_layout_for_columns(_grid_columns, total_slots)
+	var preview_scroll_view: Vector2 = layout_preview.get("scroll_view_size", Vector2.ZERO)
+	var preview_use_scroll: bool = bool(layout_preview.get("use_scroll", false))
+	if preview_scroll_view != _last_scroll_view or preview_use_scroll != _last_use_scroll:
+		_layout_dirty = true
 	if _layout_dirty and not _layout_recalc_in_progress:
 		await _apply_inventory_layout(total_slots)
 
@@ -1977,12 +1994,8 @@ func _update_panel_size_to_fit_grid(total_slots: int) -> void:
 	grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	grid_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 
-	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
-	var separation: float = 0.0
-	if content != null:
-		separation = float(content.get_theme_constant("separation"))
-	var content_size := Vector2(bag_min.x + separation + scroll_view.x, max(bag_min.y, scroll_view.y))
-	content.custom_minimum_size = content_size
+	_last_scroll_view = scroll_view
+	_last_use_scroll = use_scroll
 
 	panel.custom_minimum_size = panel_size
 	panel.size = panel_size
