@@ -125,12 +125,17 @@ func _ready() -> void:
 	if grid_scroll != null:
 		grid_scroll.layout_mode = 2
 		grid_scroll.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		grid_scroll.anchor_left = 0
+		grid_scroll.anchor_top = 0
+		grid_scroll.anchor_right = 0
+		grid_scroll.anchor_bottom = 0
 		grid_scroll.offset_left = 0
 		grid_scroll.offset_top = 0
 		grid_scroll.offset_right = 0
 		grid_scroll.offset_bottom = 0
 		grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		grid_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		grid_scroll.size_flags_stretch_ratio = 0.0
 		grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	# Bag equipment slots (visual order: top -> bottom).
 	_get_bag_button_for_logical(0).gui_input.connect(_on_bag_slot_gui_input.bind(0))
@@ -1990,6 +1995,8 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	grid.columns = max(1, _grid_columns)
 	await get_tree().process_frame
 	var grid_min: Vector2 = grid.get_combined_minimum_size()
+	grid.custom_minimum_size = grid_min
+	grid.size = Vector2.ZERO
 	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
 	var separation: float = float(content.get_theme_constant("separation")) if content != null else 0.0
 	var left_offset: float = content.offset_left if content != null else 0.0
@@ -2015,10 +2022,15 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 
 	grid.custom_minimum_size = grid_min
 	grid_scroll.custom_minimum_size = Vector2(scroll_w, scroll_view_h)
+	grid_scroll.size = Vector2.ZERO
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	grid_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	grid_scroll.size_flags_stretch_ratio = 0.0
+	if content != null:
+		content.queue_sort()
+	await get_tree().process_frame
 
 	panel.custom_minimum_size = Vector2(panel_w, panel_h)
 	panel.size = Vector2(panel_w, panel_h)
