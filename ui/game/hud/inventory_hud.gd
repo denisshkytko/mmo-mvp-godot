@@ -94,16 +94,13 @@ var _last_total_slots: int = -1
 var _last_applied_columns: int = -1
 var _last_snap_hash: int = 0
 var _refresh_in_progress: bool = false
-var _last_scroll_view: Vector2 = Vector2.ZERO
-var _last_use_scroll: bool = false
 var _last_bag_slots_hash: int = 0
 
 var _rebuild_in_progress: bool = false
 var _rebuild_requested: bool = false
-var _auto_fit_enabled: bool = true
 
 # Layout anchor: keep panel growing towards screen center (up + left) from a stable bottom-right point
-var _panel_anchor_br_local: Vector2 = Vector2.ZERO
+var _panel_br_anchor: Vector2 = Vector2.ZERO
 var _panel_anchor_valid: bool = false
 
 # Icon cache for slot buttons
@@ -146,10 +143,17 @@ func _ready() -> void:
 	_hook_slot_panels()
 	_auto_bind_player()
 	_load_grid_columns()
+	if content != null:
+		var left_offset: float = content.offset_left
+		var top_offset: float = content.offset_top
+		content.offset_left = left_offset
+		content.offset_top = top_offset
+		content.offset_right = -10.0
+		content.offset_bottom = -10.0
 	# Capture the bottom-right anchor based on where you placed the panel in the scene.
 	# This anchor will be used for all future resizes so the panel grows up+left.
 	await get_tree().process_frame
-	_panel_anchor_br_local = panel.position + panel.size
+	_panel_br_anchor = panel.position + panel.size
 	_panel_anchor_valid = true
 
 func set_player(p: Node) -> void:
@@ -248,9 +252,9 @@ func _set_open(v: bool) -> void:
 		if not _initial_layout_done:
 			grid.visible = true
 			grid.modulate.a = 0.0
-			await _rebuild_inventory_layout("open")
+			await _rebuild_layout("open")
 			await get_tree().process_frame
-			await _rebuild_inventory_layout("open_stabilize")
+			await _rebuild_layout("open_stabilize")
 			await _refresh()
 		else:
 			await _refresh()
@@ -772,12 +776,19 @@ func _on_settings_apply() -> void:
 		return
 
 	var target_cols: int = clamp(max(1, n), 1, 20)
-	_auto_fit_enabled = false
-	_grid_columns = target_cols
+	var best_cols: int = target_cols
+	var fits: bool = await _can_fit_columns(target_cols, total)
+	if not fits:
+		for c in range(target_cols, 0, -1):
+			if await _can_fit_columns(c, total):
+				best_cols = c
+				break
+		_sync_settings_columns_input(best_cols)
+	_grid_columns = best_cols
 	_save_grid_columns()
 	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
-	await _rebuild_inventory_layout("settings_apply")
+	await _rebuild_layout("settings_apply")
 	await _refresh()
 
 
@@ -801,7 +812,11 @@ func _save_grid_columns() -> void:
 
 func _get_panel_max_size_from_anchor() -> Vector2:
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	return vp_size
+	if not _panel_anchor_valid:
+		return vp_size
+	var max_w: float = min(vp_size.x, _panel_br_anchor.x)
+	var max_h: float = min(vp_size.y, _panel_br_anchor.y)
+	return Vector2(max_w, max_h)
 
 func _compute_fixed_padding() -> Dictionary:
 	var pad_right: float = 10.0
@@ -810,8 +825,8 @@ func _compute_fixed_padding() -> Dictionary:
 	var top_margin_y: float = 0.0
 	var separation: float = 0.0
 	if content != null:
-		left_margin_x = content.position.x
-		top_margin_y = content.position.y
+		left_margin_x = content.offset_left
+		top_margin_y = content.offset_top
 		separation = float(content.get_theme_constant("separation"))
 	return {
 		"left_margin_x": left_margin_x,
@@ -840,13 +855,11 @@ func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 	var content_w: float = bag_min.x + separation + scroll_w
 	var panel_w: float = left_margin_x + content_w + pad_right
 	var panel_h: float = top_margin_y + content_h + pad_bottom
-	var use_scroll: bool = panel_h > max_panel.y
-	var scroll_view_h: float = scroll_h
-	if use_scroll:
-		panel_h = max_panel.y
-		var available_content_h: float = max_panel.y - top_margin_y - pad_bottom
-		scroll_view_h = clamp(available_content_h, 65.0, grid_min.y)
-		content_h = max(bag_min.y, scroll_view_h)
+	var available_content_h: float = max(0.0, max_panel.y - top_margin_y - pad_bottom)
+	var use_scroll: bool = grid_min.y > available_content_h + 0.5
+	var scroll_view_h: float = min(grid_min.y, available_content_h)
+	if not use_scroll:
+		scroll_view_h = grid_min.y
 	var scroll_view_size := Vector2(scroll_w, scroll_view_h)
 	var panel_size := Vector2(panel_w, panel_h)
 	return {
@@ -859,44 +872,18 @@ func _compute_layout_for_columns(cols: int, total_slots: int) -> Dictionary:
 func _can_fit_columns(cols: int, total_slots: int) -> bool:
 	if not _panel_anchor_valid:
 		return true
-	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	var max_panel_w: float = vp_size.x
+	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
 	var layout: Dictionary = await _compute_layout_for_columns(cols, total_slots)
 	var panel_size: Vector2 = layout.get("panel_size", Vector2.ZERO)
-	var scroll_view: Vector2 = layout.get("scroll_view_size", Vector2.ZERO)
-	if scroll_view.y < 65.0:
-		return false
-	return panel_size.x <= max_panel_w
+	return panel_size.x <= max_panel.x
 
-func _ensure_columns_fit_view(total_slots: int) -> void:
-	# If the current grid layout would push the panel off-screen, automatically choose a
-	# nearby columns value that fits so the settings button stays reachable.
-	if not _panel_anchor_valid:
+func _apply_panel_br_anchor() -> void:
+	if panel == null or not _panel_anchor_valid:
 		return
-	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	if _panel_anchor_br_local.x > vp_size.x or _panel_anchor_br_local.y > vp_size.y:
-		return
-
-	var current: int = clamp(_grid_columns, 1, 20)
-	var current_fits: bool = await _can_fit_columns(current, total_slots)
-	var best: int = current
-	var best_delta: int = 999
-	for c in range(1, 21):
-		var fits: bool = await _can_fit_columns(c, total_slots)
-		if not fits:
-			continue
-		var d: int = abs(c - current)
-		if d < best_delta:
-			best_delta = d
-			best = c
-		elif d == best_delta and c > best:
-			# Prefer a slightly wider grid if equally close (usually reduces height).
-			best = c
-
-	if best != current and (_auto_fit_enabled or not current_fits):
-		_grid_columns = best
-		_save_grid_columns()
-		_sync_settings_columns_input(best)
+	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
+	panel.size.x = min(panel.size.x, max_panel.x)
+	panel.size.y = min(panel.size.y, max_panel.y)
+	panel.position = _panel_br_anchor - panel.size
 
 func _on_settings_sort() -> void:
 	_sort_inventory_slots()
@@ -1289,7 +1276,7 @@ func _refresh() -> void:
 	_hook_slot_panels()
 
 	if _layout_dirty:
-		await _rebuild_inventory_layout("refresh_dirty")
+		await _rebuild_layout("refresh_dirty")
 
 	# Gold
 	gold_label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))
@@ -1973,7 +1960,7 @@ func _refresh_quick_bar() -> void:
 		b.text = str(total) if total > 1 else ""
 		_update_quick_cooldown(b, item_id)
 
-func _rebuild_inventory_layout(reason: String) -> void:
+func _rebuild_layout(reason: String) -> void:
 	if _rebuild_in_progress:
 		_rebuild_requested = true
 		return
@@ -1984,71 +1971,71 @@ func _rebuild_inventory_layout(reason: String) -> void:
 	var total_slots: int = _get_total_inventory_slots()
 	if total_slots <= 0:
 		total_slots = _get_total_slots_from_player_fallback()
-	grid.columns = max(1, _grid_columns)
-	await _apply_inventory_layout(total_slots)
+	var first_pass: Dictionary = await _apply_layout_sizes(total_slots)
+	await get_tree().process_frame
+	var second_pass: Dictionary = await _apply_layout_sizes(total_slots)
+	if first_pass.get("panel_size") != second_pass.get("panel_size") or first_pass.get("scroll_view") != second_pass.get("scroll_view"):
+		await _apply_layout_sizes(total_slots)
 	if _is_open:
 		grid.modulate.a = 1.0
 	_rebuild_in_progress = false
 	if _rebuild_requested:
 		_rebuild_requested = false
-		call_deferred("_rebuild_inventory_layout", "queued")
+		call_deferred("_rebuild_layout", "queued")
 
-
-func _update_panel_size_to_fit_grid(total_slots: int) -> void:
-	# Size grid scroll viewport first, then derive Content + Panel sizes.
+func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	if panel == null or grid == null or grid_scroll == null or content == null:
-		return
-	var layout: Dictionary = await _compute_layout_for_columns(_grid_columns, total_slots)
-	var grid_min: Vector2 = layout.get("grid_min", Vector2.ZERO)
-	var scroll_view: Vector2 = layout.get("scroll_view_size", Vector2.ZERO)
-	var panel_size: Vector2 = layout.get("panel_size", Vector2.ZERO)
-	var use_scroll: bool = bool(layout.get("use_scroll", false))
-
+		return {}
+	_ensure_grid_child_count(total_slots)
 	grid.columns = max(1, _grid_columns)
-	grid.custom_minimum_size = grid_min
+	await get_tree().process_frame
+	var grid_min: Vector2 = grid.get_combined_minimum_size()
+	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
+	var separation: float = float(content.get_theme_constant("separation")) if content != null else 0.0
+	var left_offset: float = content.offset_left if content != null else 0.0
+	var top_offset: float = content.offset_top if content != null else 0.0
+	var pad_right: float = 10.0
+	var pad_bottom: float = 10.0
+	var scroll_w: float = grid_min.x
+	var desired_content_w: float = bag_min.x + separation + scroll_w
+	var panel_w: float = desired_content_w + left_offset + pad_right
+	var desired_content_h: float = max(bag_min.y, grid_min.y)
+	var panel_h: float = desired_content_h + top_offset + pad_bottom
+	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
+	panel_w = min(panel_w, max_panel.x)
+	panel_h = min(panel_h, max_panel.y)
+	var available_content_h: float = max(0.0, panel_h - top_offset - pad_bottom)
+	var use_scroll: bool = grid_min.y > available_content_h + 0.5
+	var scroll_view_h: float = min(grid_min.y, available_content_h)
+	if not use_scroll:
+		scroll_view_h = grid_min.y
+	desired_content_h = max(bag_min.y, scroll_view_h)
+	panel_h = desired_content_h + top_offset + pad_bottom
+	panel_h = min(panel_h, max_panel.y)
 
-	grid_scroll.custom_minimum_size = scroll_view
+	grid.custom_minimum_size = grid_min
+	grid_scroll.custom_minimum_size = Vector2(scroll_w, scroll_view_h)
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	grid_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 
-	_last_scroll_view = scroll_view
-	_last_use_scroll = use_scroll
+	panel.custom_minimum_size = Vector2(panel_w, panel_h)
+	panel.size = Vector2(panel_w, panel_h)
+	_apply_panel_br_anchor()
+	_last_applied_columns = _grid_columns
+	_layout_dirty = false
 
-	panel.custom_minimum_size = panel_size
-	panel.size = panel_size
 	# Keep the settings UI pinned to the panel's top-right corner.
 	var m: float = 6.0
 	if _settings_button != null:
 		_settings_button.position = Vector2(panel.size.x - _settings_button.size.x - m, m)
 	if _settings_panel != null:
 		_settings_panel.position = Vector2(panel.size.x - _settings_panel.size.x - m, m + 30.0)
-
-func _apply_inventory_layout(total_slots: int) -> void:
-	# Recalculate grid columns (fit) + panel size + anchoring, but only when needed.
-	if panel == null or grid == null:
-		return
-	await _ensure_columns_fit_view(total_slots)
-	grid.columns = max(1, _grid_columns)
-	await _update_panel_size_to_fit_grid(total_slots)
-	await get_tree().process_frame
-	_apply_panel_br_anchor_and_clamp()
-	_last_applied_columns = _grid_columns
-	_layout_dirty = false
-
-func _apply_panel_br_anchor_and_clamp() -> void:
-	if panel == null or not _panel_anchor_valid:
-		return
-	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	panel.size.x = min(panel.size.x, vp_size.x)
-	panel.size.y = min(panel.size.y, vp_size.y)
-	var new_pos := _panel_anchor_br_local - panel.size
-	var max_x: float = max(0.0, vp_size.x - panel.size.x)
-	var max_y: float = max(0.0, vp_size.y - panel.size.y)
-	new_pos.x = clamp(new_pos.x, 0.0, max_x)
-	new_pos.y = clamp(new_pos.y, 0.0, max_y)
-	panel.position = new_pos
+	return {
+		"panel_size": panel.size,
+		"scroll_view": Vector2(scroll_w, scroll_view_h)
+	}
 
 func _format_money_bronze(bronze: int) -> String:
 	bronze = max(0, bronze)
@@ -2110,6 +2097,6 @@ func _run_initial_layout() -> void:
 		_initial_layout_pending = false
 		return
 	_layout_dirty = true
-	await _rebuild_inventory_layout("initial")
+	await _rebuild_layout("initial")
 	_initial_layout_done = true
 	_initial_layout_pending = false
