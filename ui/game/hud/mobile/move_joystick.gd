@@ -82,6 +82,8 @@ func _set_dir(dir: Vector2) -> void:
 
 
 func _update_knob(delta: Vector2) -> void:
+	if knob == null:
+		return
 	var offset := Vector2.ZERO
 	if delta.length() > 0.0:
 		offset = delta.normalized() * min(delta.length(), KNOB_RADIUS_PX)
