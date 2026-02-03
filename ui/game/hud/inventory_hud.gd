@@ -830,7 +830,7 @@ func _get_panel_max_size_from_anchor() -> Vector2:
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
 	if not _panel_anchor_valid:
 		return vp_size
-	var top_padding: float = 50.0
+	var top_padding: float = 20.0
 	var max_w: float = min(vp_size.x, _panel_br_anchor.x)
 	var max_h: float = min(vp_size.y - top_padding, _panel_br_anchor.y - top_padding)
 	max_h = max(0.0, max_h)
