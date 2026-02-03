@@ -4,7 +4,6 @@ class_name MoveJoystick
 signal move_dir_changed(dir: Vector2)
 
 const DEADZONE_PX := 12.0
-const KNOB_RADIUS_PX := 60.0
 
 var _active_touch_id: int = -1
 var _center: Vector2 = Vector2.ZERO
