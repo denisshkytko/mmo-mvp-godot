@@ -60,14 +60,18 @@ func _handle_drag(event: InputEventScreenDrag) -> void:
 
 
 func _update_from_global_pos(global_pos: Vector2) -> void:
-	var local_pos := to_local(global_pos)
-	var delta := local_pos - _center
-	var distance := delta.length()
-	var dir := Vector2.ZERO
+	var local_pos: Vector2 = _to_local_canvas(global_pos)
+	var delta: Vector2 = local_pos - _center
+	var distance: float = delta.length()
+	var dir: Vector2 = Vector2.ZERO
 	if distance > DEADZONE_PX:
 		dir = delta.normalized()
 	_set_dir(dir)
 	_update_knob(delta)
+
+
+func _to_local_canvas(global_pos: Vector2) -> Vector2:
+	return get_global_transform_with_canvas().affine_inverse().xform(global_pos)
 
 
 func _set_dir(dir: Vector2) -> void:
