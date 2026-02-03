@@ -1913,8 +1913,15 @@ func _ensure_support_ui() -> void:
 		for i in range(5):
 			var b := _quick_buttons[i]
 			b.text = ""
-			b.expand_icon = true
+			b.icon = null
 			_ensure_quick_button_visuals(b)
+			var icon := _get_quick_icon(b)
+			var count_label := _get_quick_count_label(b)
+			if icon == null or count_label == null:
+				push_error("InventoryHUD: QuickBar button %d missing Icon/Count nodes." % i)
+				return
+			icon.texture = null
+			count_label.text = ""
 			var cb := Callable(self, "_on_quick_pressed").bind(i)
 			if not b.pressed.is_connected(cb):
 				b.pressed.connect(cb)
@@ -1972,6 +1979,16 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 		cd_lbl.offset_right = 0
 		cd_lbl.offset_bottom = 0
 
+func _get_quick_icon(btn: Button) -> TextureRect:
+	if btn == null:
+		return null
+	return btn.get_node_or_null("Icon") as TextureRect
+
+func _get_quick_count_label(btn: Button) -> Label:
+	if btn == null:
+		return null
+	return btn.get_node_or_null("Count") as Label
+
 func _refresh_quick_bar() -> void:
 	if _quick_buttons.size() != 5:
 		return
@@ -1982,10 +1999,14 @@ func _refresh_quick_bar() -> void:
 	var db := get_node_or_null("/root/DataDB")
 	for i in range(5):
 		var b := _quick_buttons[i]
+		var icon := _get_quick_icon(b)
+		var count_label := _get_quick_count_label(b)
+		if icon == null or count_label == null:
+			continue
 		var item_id: String = _quick_refs[i]
 		if item_id == "":
-			b.icon = null
-			b.text = ""
+			icon.texture = null
+			count_label.text = ""
 			_update_quick_cooldown(b, "")
 			continue
 		# Sum counts across all stacks in inventory
@@ -1996,13 +2017,13 @@ func _refresh_quick_bar() -> void:
 		if total <= 0:
 			# Item no longer present; clear quick slot
 			_quick_refs[i] = ""
-			b.icon = null
-			b.text = ""
+			icon.texture = null
+			count_label.text = ""
 			continue
 		var meta: Dictionary = db.call("get_item", item_id) as Dictionary if db != null and db.has_method("get_item") else {}
 		var icon_path: String = String(meta.get("icon", meta.get("icon_path","")))
-		b.icon = _get_icon_texture(icon_path)
-		b.text = str(total) if total > 1 else ""
+		icon.texture = _get_icon_texture(icon_path)
+		count_label.text = str(total) if total > 1 else ""
 		_update_quick_cooldown(b, item_id)
 
 func _rebuild_layout(reason: String) -> void:
