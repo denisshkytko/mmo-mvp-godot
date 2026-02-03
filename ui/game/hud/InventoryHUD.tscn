@@ -138,21 +138,6 @@ vertical_alignment = 1
 autowrap_mode = 2
 clip_text = true
 
-[node name="BagButton" type="Button" parent="."]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 975.0
-offset_top = -92.0
-offset_right = -8.0
-offset_bottom = -61.0
-grow_horizontal = 2
-grow_vertical = 0
-custom_minimum_size = Vector2(24, 24)
-layout_mode = 2
-text = "Bag"
-
 [node name="QuickBar" type="HBoxContainer" parent="."]
 anchors_preset = 12
 anchor_top = 1.0

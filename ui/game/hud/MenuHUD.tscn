@@ -7,15 +7,6 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_ft3am")
 
-[node name="MenuButton" type="Button" parent="."]
-custom_minimum_size = Vector2(60, 35)
-layout_mode = 0
-offset_left = 1077.0
-offset_top = 595.0
-offset_right = 1137.0
-offset_bottom = 630.0
-text = "Menu"
-
 [node name="Panel" type="Panel" parent="."]
 visible = false
 custom_minimum_size = Vector2(100, 100)

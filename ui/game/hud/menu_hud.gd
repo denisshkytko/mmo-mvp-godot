@@ -1,13 +1,15 @@
 extends Control
 
-@onready var menu_button: Button = $MenuButton
+@onready var menu_button: Button = get_node_or_null("MenuButton")
 @onready var panel: Panel = $Panel
 @onready var exit_world: Button = $Panel/Margin/VBox/ExitWorldButton
 @onready var exit_game: Button = $Panel/Margin/VBox/ExitGameButton
 
 func _ready() -> void:
+	add_to_group("menu_hud")
 	panel.visible = false
-	menu_button.pressed.connect(_toggle)
+	if menu_button != null:
+		menu_button.pressed.connect(_toggle)
 	exit_world.pressed.connect(_exit_world)
 	exit_game.pressed.connect(_exit_game)
 	_connect_app_state()
@@ -28,6 +30,10 @@ func _on_state_changed(_old_state: int, new_state: int) -> void:
 
 func _toggle() -> void:
 	panel.visible = not panel.visible
+
+
+func toggle_menu() -> void:
+	_toggle()
 
 func _save_now() -> void:
 	var gm: Node = get_tree().get_first_node_in_group("game_manager")

@@ -9,7 +9,7 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 @onready var grid: GridContainer = $Panel/Content/GridScrollWrapper/GridScroll/Grid
 @onready var bag_slots: Control = $Panel/Content/BagSlots
 
-@onready var bag_button: Button = $BagButton
+@onready var bag_button: Button = get_node_or_null("BagButton")
 @onready var bag_slot1: Button = $Panel/Content/BagSlots/BagSlot1
 @onready var bag_slot2: Button = $Panel/Content/BagSlots/BagSlot2
 @onready var bag_slot3: Button = $Panel/Content/BagSlots/BagSlot3
@@ -304,6 +304,10 @@ func _set_open(v: bool) -> void:
 			await _refresh()
 
 func _on_bag_button_pressed() -> void:
+	_toggle_inventory()
+
+
+func toggle_inventory() -> void:
 	_toggle_inventory()
 
 # --- Bag slots ---
