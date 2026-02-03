@@ -1,0 +1,99 @@
+[gd_scene load_steps=4 format=3 uid="uid://d2ddrgn4o57x6"]
+
+[ext_resource type="Script" uid="uid://b7e5m42bkbq1m" path="res://ui/game/hud/mobile/mobile_hud.gd" id="1_8po1h"]
+[ext_resource type="Script" uid="uid://bb7b2tu1ctf4b" path="res://ui/game/hud/mobile/move_joystick.gd" id="2_65rcb"]
+[ext_resource type="Script" uid="uid://cnu19o2rnoanu" path="res://ui/game/hud/mobile/skill_pad.gd" id="3_g1q8d"]
+
+[node name="MobileHUD" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_8po1h")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftPad" type="Control" parent="Root"]
+layout_mode = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -300.0
+offset_right = 300.0
+offset_bottom = -20.0
+
+[node name="MoveStick" type="Control" parent="Root/LeftPad"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_65rcb")
+
+[node name="Base" type="TextureRect" parent="Root/LeftPad/MoveStick"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+modulate = Color(1, 1, 1, 0.2)
+
+[node name="Knob" type="TextureRect" parent="Root/LeftPad/MoveStick"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 0
+modulate = Color(1, 1, 1, 0.45)
+
+[node name="RightPad" type="Control" parent="Root"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -380.0
+offset_top = -380.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="SkillPad" type="Control" parent="Root/RightPad"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_g1q8d")
+
+[node name="QuickSkillBtn" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 0
+metadata/slot_index = 0
+
+[node name="SkillBtn1" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 0
+metadata/slot_index = 1
+
+[node name="SkillBtn2" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 0
+metadata/slot_index = 2
+
+[node name="SkillBtn3" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 0
+metadata/slot_index = 3
+
+[node name="SkillBtn4" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 0
+metadata/slot_index = 4
+
+[node name="InteractBtn" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 0
+visible = false
