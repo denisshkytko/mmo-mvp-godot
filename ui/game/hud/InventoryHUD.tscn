@@ -153,7 +153,7 @@ custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 text = "Bag"
 
-[node name="QuickBar" type="VBoxContainer" parent="."]
+[node name="QuickBar" type="HBoxContainer" parent="."]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
