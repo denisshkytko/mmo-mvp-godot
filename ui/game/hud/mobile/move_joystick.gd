@@ -71,7 +71,7 @@ func _update_from_global_pos(global_pos: Vector2) -> void:
 
 
 func _to_local_canvas(global_pos: Vector2) -> Vector2:
-	return get_global_transform_with_canvas().affine_inverse().xform(global_pos)
+	return get_global_transform_with_canvas().affine_inverse() * global_pos
 
 
 func _set_dir(dir: Vector2) -> void:
