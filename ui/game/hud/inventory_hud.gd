@@ -79,9 +79,10 @@ const _GRID_CFG_SECTION := "inventory_hud"
 const _GRID_CFG_KEY_COLUMNS := "grid_columns"
 
 # Quick slots (5) - references to inventory slot indices
-var _quick_bar: VBoxContainer = null
+var _quick_bar: HBoxContainer = null
 var _quick_buttons: Array[Button] = []
 var _quick_refs: Array[String] = ["", "", "", "", ""]  # item_id per quick slot
+var _quick_slots_syncing: bool = false
 
 
 # Lightweight refresh while inventory is open (so looting updates immediately).
@@ -1125,6 +1126,7 @@ func _on_tooltip_quick_pressed() -> void:
 	var existing := _get_quick_slot_index_for_item(id)
 	if existing != -1:
 		_quick_refs[existing] = ""
+		_persist_quick_slots()
 		_refresh_quick_bar()
 		_hide_tooltip()
 		return
@@ -1133,6 +1135,7 @@ func _on_tooltip_quick_pressed() -> void:
 		show_center_toast("Нет свободных быстрых слотов")
 		return
 	_quick_refs[empty] = id
+	_persist_quick_slots()
 	_refresh_quick_bar()
 	_hide_tooltip()
 
@@ -1301,6 +1304,7 @@ func _refresh() -> void:
 	_refresh_in_progress = true
 
 	var snap: Dictionary = player.get_inventory_snapshot()
+	_sync_quick_slots_from_snapshot(snap)
 	var slots: Array = snap.get("slots", [])
 	var bag_slots: Array = snap.get("bag_slots", [])
 	var total_slots: int = slots.size()
@@ -1896,33 +1900,35 @@ func _ensure_support_ui() -> void:
 
 	# Quick bar is part of the scene (InventoryHUD.tscn) so you can edit it visually.
 	if _quick_bar == null:
-		_quick_bar = get_node_or_null("QuickBar") as VBoxContainer
+		_quick_bar = get_node_or_null("QuickBar") as HBoxContainer
 		if _quick_bar == null:
-			# Fallback (should not happen, but keeps project from breaking if node is removed).
-			_quick_bar = VBoxContainer.new()
-			_quick_bar.name = "QuickBar"
-			add_child(_quick_bar)
-			_quick_bar.position = Vector2(10, 10)
-			_quick_bar.size = Vector2(44, 220)
-		# Collect or create 5 buttons
+			push_error("InventoryHUD: QuickBar node missing from scene; quick slots disabled.")
+			return
+		# Collect 5 buttons from the scene (no runtime-created quick bar).
 		_quick_buttons = []
 		var kids := _quick_bar.get_children()
 		for i in range(min(5, kids.size())):
 			var b := kids[i] as Button
 			if b != null:
 				_quick_buttons.append(b)
-		while _quick_buttons.size() < 5:
-			var nb := Button.new()
-			nb.text = ""
-			nb.custom_minimum_size = Vector2(24, 24)
-			_quick_bar.add_child(nb)
-			_quick_buttons.append(nb)
+		if _quick_buttons.size() < 5:
+			push_error("InventoryHUD: QuickBar needs 5 buttons in the scene.")
+			return
 		for i in range(5):
 			var b := _quick_buttons[i]
 			b.text = ""
-			b.expand_icon = true
+			b.icon = null
 			_ensure_quick_button_visuals(b)
-			b.pressed.connect(_on_quick_pressed.bind(i))
+			var icon := _get_quick_icon(b)
+			var count_label := _get_quick_count_label(b)
+			if icon == null or count_label == null:
+				push_error("InventoryHUD: QuickBar button %d missing Icon/Count nodes." % i)
+				return
+			icon.texture = null
+			count_label.text = ""
+			var cb := Callable(self, "_on_quick_pressed").bind(i)
+			if not b.pressed.is_connected(cb):
+				b.pressed.connect(cb)
 		_refresh_quick_bar()
 
 
@@ -1977,6 +1983,46 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 		cd_lbl.offset_right = 0
 		cd_lbl.offset_bottom = 0
 
+func _get_quick_icon(btn: Button) -> TextureRect:
+	if btn == null:
+		return null
+	return btn.get_node_or_null("Icon") as TextureRect
+
+func _get_quick_count_label(btn: Button) -> Label:
+	if btn == null:
+		return null
+	return btn.get_node_or_null("Count") as Label
+
+func _sync_quick_slots_from_snapshot(snap: Dictionary) -> void:
+	if _quick_slots_syncing:
+		return
+	if not snap.has("quick_slots"):
+		return
+	var quick_v: Variant = snap.get("quick_slots", [])
+	if not (quick_v is Array):
+		return
+	var quick_arr: Array = quick_v as Array
+	var next: Array[String] = []
+	next.resize(5)
+	for i in range(5):
+		next[i] = String(quick_arr[i]) if i < quick_arr.size() else ""
+	if next != _quick_refs:
+		_quick_refs = next
+
+func _persist_quick_slots() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if _quick_slots_syncing:
+		return
+	_quick_slots_syncing = true
+	if player.has_method("set_quick_slots"):
+		player.call("set_quick_slots", _quick_refs.duplicate())
+	elif player.has_method("get_inventory_snapshot") and player.has_method("apply_inventory_snapshot"):
+		var snap: Dictionary = player.get_inventory_snapshot()
+		snap["quick_slots"] = _quick_refs.duplicate()
+		player.apply_inventory_snapshot(snap)
+	_quick_slots_syncing = false
+
 func _refresh_quick_bar() -> void:
 	if _quick_buttons.size() != 5:
 		return
@@ -1985,12 +2031,17 @@ func _refresh_quick_bar() -> void:
 	var snap: Dictionary = player.get_inventory_snapshot()
 	var slots: Array = snap.get("slots", [])
 	var db := get_node_or_null("/root/DataDB")
+	var quick_changed: bool = false
 	for i in range(5):
 		var b := _quick_buttons[i]
+		var icon := _get_quick_icon(b)
+		var count_label := _get_quick_count_label(b)
+		if icon == null or count_label == null:
+			continue
 		var item_id: String = _quick_refs[i]
 		if item_id == "":
-			b.icon = null
-			b.text = ""
+			icon.texture = null
+			count_label.text = ""
 			_update_quick_cooldown(b, "")
 			continue
 		# Sum counts across all stacks in inventory
@@ -2000,15 +2051,19 @@ func _refresh_quick_bar() -> void:
 				total += int((v as Dictionary).get("count", 0))
 		if total <= 0:
 			# Item no longer present; clear quick slot
-			_quick_refs[i] = ""
-			b.icon = null
-			b.text = ""
+			if _quick_refs[i] != "":
+				_quick_refs[i] = ""
+				quick_changed = true
+			icon.texture = null
+			count_label.text = ""
 			continue
 		var meta: Dictionary = db.call("get_item", item_id) as Dictionary if db != null and db.has_method("get_item") else {}
 		var icon_path: String = String(meta.get("icon", meta.get("icon_path","")))
-		b.icon = _get_icon_texture(icon_path)
-		b.text = str(total) if total > 1 else ""
+		icon.texture = _get_icon_texture(icon_path)
+		count_label.text = str(total) if total > 1 else ""
 		_update_quick_cooldown(b, item_id)
+	if quick_changed:
+		_persist_quick_slots()
 
 func _rebuild_layout(reason: String) -> void:
 	if _rebuild_in_progress:
