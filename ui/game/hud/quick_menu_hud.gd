@@ -9,7 +9,7 @@ class_name QuickMenuHUD
 @onready var toggle_button: Button = $ToggleButton
 
 var _expanded: bool = false
-@export var spacing: float = 6.0
+@export var spacing: float = 5.0
 var _menu_hud: Node = null
 var _inventory_hud: Node = null
 var _character_hud: Node = null
@@ -38,8 +38,8 @@ func _cache_layout() -> void:
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	_expanded = is_expanded
 	toggle_button.text = "▲" if _expanded else "▼"
-	var target_panel_pos := _collapsed_pos + Vector2(0.0, toggle_button.size.y + spacing)
-	var target_toggle_pos := _collapsed_pos + Vector2(0.0, panel.size.y + toggle_button.size.y + spacing * 2.0)
+	var target_panel_pos := _collapsed_pos + Vector2(0.0, 0.0)
+	var target_toggle_pos := _collapsed_pos + Vector2(0.0, panel.size.y - toggle_button.size.y)
 	var final_panel_pos := target_panel_pos if _expanded else _collapsed_pos
 	var final_toggle_pos := target_toggle_pos if _expanded else _collapsed_pos
 	if _expanded:

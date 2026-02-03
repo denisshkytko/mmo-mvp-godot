@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bq1obwgfdui1f"]
 
 [ext_resource type="Script" uid="uid://dv5t17eg8j84f" path="res://ui/game/hud/inventory_hud.gd" id="1_wqexf"]
-[ext_resource type="PackedScene" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_0n5q6"]
+[ext_resource type="PackedScene" uid="uid://bt2tbslwfrutf" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_0n5q6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wqexf"]
 border_width_left = 2
@@ -35,10 +35,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -368.0
-offset_top = -463.0
-offset_right = -38.0
-offset_bottom = -98.0
+offset_left = -390.0
+offset_top = -416.0
+offset_right = -60.0
+offset_bottom = -51.0
 grow_horizontal = 0
 grow_vertical = 0
 
@@ -63,52 +63,45 @@ offset_left = 5.0
 offset_top = 50.0
 offset_right = -5.0
 offset_bottom = -5.0
-theme_override_constants/separation = 8
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
 
 [node name="BagSlots" type="VBoxContainer" parent="Panel/Content"]
 custom_minimum_size = Vector2(32, 140)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_constants/separation = 6
+theme_override_constants/separation = 5
 
 [node name="BagSlot1" type="Button" parent="Panel/Content/BagSlots"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="BagSlot2" type="Button" parent="Panel/Content/BagSlots"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="BagSlot3" type="Button" parent="Panel/Content/BagSlots"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="BagSlot4" type="Button" parent="Panel/Content/BagSlots"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="GridScrollWrapper" type="Control" parent="Panel/Content"]
 custom_minimum_size = Vector2(65, 65)
 layout_mode = 2
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = -5.0
-offset_bottom = -5.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
 [node name="GridScroll" type="ScrollContainer" parent="Panel/Content/GridScrollWrapper"]
 layout_mode = 1
 anchors_preset = 15
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 
@@ -139,35 +132,38 @@ autowrap_mode = 2
 clip_text = true
 
 [node name="QuickBar" type="HBoxContainer" parent="."]
-anchors_preset = 12
+custom_minimum_size = Vector2(200, 36)
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1120.0
-offset_top = -230.0
-offset_right = -8.0
-offset_bottom = -94.0
-grow_horizontal = 2
+offset_left = -220.0
+offset_top = -46.0
+offset_right = -20.0
+offset_bottom = -10.0
+grow_horizontal = 0
 grow_vertical = 0
+theme_override_constants/separation = 5
 
 [node name="Quick0" type="Button" parent="QuickBar"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="Quick1" type="Button" parent="QuickBar"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="Quick2" type="Button" parent="QuickBar"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="Quick3" type="Button" parent="QuickBar"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="Quick4" type="Button" parent="QuickBar"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 
 [node name="InvTooltip" parent="." instance=ExtResource("2_0n5q6")]

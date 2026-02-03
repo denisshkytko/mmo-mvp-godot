@@ -78,10 +78,10 @@ script = ExtResource("1_0kcyj")
 
 [node name="Panel" type="Panel" parent="."]
 custom_minimum_size = Vector2(170, 80)
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 190.0
-offset_bottom = 100.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 180.0
+offset_bottom = 90.0
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
 custom_minimum_size = Vector2(160, 80)

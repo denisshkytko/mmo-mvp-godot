@@ -11,14 +11,14 @@ z_index = 50
 
 [node name="Panel" type="Panel" parent="."]
 custom_minimum_size = Vector2(300, 360)
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 420.0
-offset_top = -304.0
-offset_right = 680.0
-offset_bottom = 54.0
-grow_vertical = 2
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 410.0
+grow_horizontal = 2
 
 [node name="Title" type="Label" parent="Panel"]
 layout_mode = 0
@@ -106,4 +106,4 @@ offset_left = 265.0
 offset_top = 5.0
 offset_right = 295.0
 offset_bottom = 36.0
-text = "x"
+text = "Х"

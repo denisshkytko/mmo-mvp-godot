@@ -59,10 +59,10 @@ text = "Отмена"
 [node name="Panel" type="Panel" parent="."]
 visible = false
 custom_minimum_size = Vector2(385, 585)
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 404.0
-offset_bottom = 609.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 395.0
+offset_bottom = 595.0
 
 [node name="Title" type="Label" parent="Panel"]
 layout_mode = 0
@@ -152,9 +152,10 @@ offset_left = 12.0
 offset_top = 38.0
 offset_right = 372.0
 offset_bottom = 569.0
-current_tab = 0
+current_tab = 1
 
 [node name="Покупка" type="Control" parent="Panel/Tabs"]
+visible = false
 custom_minimum_size = Vector2(360, 500)
 layout_mode = 2
 metadata/_tab_index = 0
@@ -181,7 +182,6 @@ theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 
 [node name="Продажа" type="Control" parent="Panel/Tabs"]
-visible = false
 custom_minimum_size = Vector2(360, 500)
 layout_mode = 2
 metadata/_tab_index = 1
@@ -192,7 +192,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = -31.0
+offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 
