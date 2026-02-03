@@ -90,6 +90,8 @@ func _update_knob(delta: Vector2) -> void:
 
 func _update_center() -> void:
 	_center = size * 0.5
-	base.position = Vector2.ZERO
-	base.size = size
-	knob.position = _center - knob.size * 0.5
+	if base != null:
+		base.position = Vector2.ZERO
+		base.size = size
+	if knob != null:
+		knob.position = _center - knob.size * 0.5
