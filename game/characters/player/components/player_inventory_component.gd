@@ -1,6 +1,8 @@
 extends Node
 class_name PlayerInventoryComponent
 
+signal inventory_changed
+
 var p: Player = null
 var inventory: Inventory = null
 
@@ -12,18 +14,26 @@ func add_gold(amount: int) -> void:
 	if inventory == null:
 		return
 	inventory.add_gold(amount)
+	if amount != 0:
+		inventory_changed.emit()
 
 func add_item(item_id: String, amount: int) -> int:
 	if inventory == null:
 		return amount
-	return inventory.add_item(item_id, amount)
+	var remaining: int = inventory.add_item(item_id, amount)
+	if amount - remaining > 0:
+		inventory_changed.emit()
+	return remaining
 
 
 func consume_item(item_id: String, amount: int = 1) -> int:
 	# Removes up to `amount` items from the inventory. Returns how many were removed.
 	if inventory == null:
 		return 0
-	return inventory.remove_item_by_id(item_id, amount)
+	var removed: int = inventory.remove_item_by_id(item_id, amount)
+	if removed > 0:
+		inventory_changed.emit()
+	return removed
 
 
 # --- Bag equipment (4 slots) ---
@@ -61,6 +71,7 @@ func try_equip_bag_from_inventory_slot(inv_slot_index: int, bag_index: int) -> b
 		# rollback
 		inventory.slots[inv_slot_index] = {"id": id, "count": 1}
 		return false
+	inventory_changed.emit()
 	return true
 
 
@@ -105,6 +116,7 @@ func try_unequip_bag_to_inventory(bag_index: int, preferred_slot_index: int = -1
 		return false
 
 	inventory.slots[target] = bag_item
+	inventory_changed.emit()
 	return true
 
 
@@ -113,7 +125,11 @@ func try_move_or_swap_bag_slots(from_bag_index: int, to_bag_index: int) -> bool:
 	if inventory == null:
 		return false
 	inventory.ensure_layout()
-	return inventory.move_or_swap_bag_slots(from_bag_index, to_bag_index)
+	var moved: bool = inventory.move_or_swap_bag_slots(from_bag_index, to_bag_index)
+	if moved:
+		inventory_changed.emit()
+	return moved
+
 func get_inventory_snapshot() -> Dictionary:
 	if inventory == null:
 		return {"gold": 0, "slots": [], "bag_slots": []}
@@ -180,3 +196,4 @@ func apply_inventory_snapshot(snapshot: Dictionary) -> void:
 				inventory.slots[i] = null
 		else:
 			inventory.slots[i] = null
+	inventory_changed.emit()

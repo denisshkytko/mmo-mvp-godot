@@ -93,9 +93,10 @@ var _refresh_accum: float = 0.0
 var _layout_dirty: bool = true
 var _last_total_slots: int = -1
 var _last_applied_columns: int = -1
-var _last_snap_hash: int = 0
 var _refresh_in_progress: bool = false
 var _last_bag_slots_hash: int = 0
+var _refresh_requested: bool = false
+var _inventory_signal_source: Object = null
 
 var _rebuild_in_progress: bool = false
 var _rebuild_requested: bool = false
@@ -177,6 +178,7 @@ func set_player(p: Node) -> void:
 	_initial_layout_done = false
 	_layout_dirty = true
 	_last_applied_columns = -1
+	_bind_inventory_signal()
 	if _is_open:
 		await _force_initial_layout()
 		await _refresh()
@@ -195,6 +197,7 @@ func _auto_bind_player() -> void:
 	var nodes := get_tree().get_nodes_in_group("player")
 	if nodes.size() > 0:
 		player = nodes[0]
+		_bind_inventory_signal()
 		return
 	# Fallback by common node name.
 	var root := get_tree().current_scene
@@ -203,6 +206,35 @@ func _auto_bind_player() -> void:
 	var p := root.find_child("Player", true, false)
 	if p != null:
 		player = p
+		_bind_inventory_signal()
+
+func _bind_inventory_signal() -> void:
+	var source: Object = null
+	if player != null and is_instance_valid(player):
+		var inv_candidate: Variant = player.get("inventory")
+		if inv_candidate != null and inv_candidate is Object and (inv_candidate as Object).has_signal("inventory_changed"):
+			source = inv_candidate as Object
+		if source == null and player.has_method("get_node_or_null"):
+			var component := player.get_node_or_null("Components/Inventory")
+			if component != null and component.has_signal("inventory_changed"):
+				source = component
+		if source == null:
+			var component_alt: Variant = player.get("c_inv")
+			if component_alt != null and component_alt is Object and (component_alt as Object).has_signal("inventory_changed"):
+				source = component_alt as Object
+
+	if _inventory_signal_source != null and _inventory_signal_source.has_signal("inventory_changed"):
+		if _inventory_signal_source.inventory_changed.is_connected(_on_inventory_changed):
+			_inventory_signal_source.inventory_changed.disconnect(_on_inventory_changed)
+
+	_inventory_signal_source = source
+	if _inventory_signal_source != null:
+		if not _inventory_signal_source.inventory_changed.is_connected(_on_inventory_changed):
+			_inventory_signal_source.inventory_changed.connect(_on_inventory_changed)
+
+func _on_inventory_changed() -> void:
+	_layout_dirty = true
+	_refresh_requested = true
 
 func _is_player_ready() -> bool:
 	return player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot")
@@ -234,17 +266,13 @@ func _process(_delta: float) -> void:
 		call_deferred("_deferred_force_initial_layout")
 	# While open, keep HUD in sync (so looting updates without requiring sort).
 	if _is_open and _is_player_ready():
+		if _refresh_requested:
+			_refresh_requested = false
+			await _refresh()
 		_refresh_accum += _delta
 		if _refresh_accum >= 0.12:
 			_refresh_accum = 0.0
 			var snap: Dictionary = player.get_inventory_snapshot()
-			var h: int = str(snap).hash()
-			if h != _last_snap_hash:
-				_last_snap_hash = h
-				if _refresh_in_progress:
-					_layout_dirty = true
-				else:
-					await _refresh()
 			# Cooldowns tick even if inventory content didn't change.
 			_update_visible_cooldowns(snap)
 
