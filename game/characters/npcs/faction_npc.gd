@@ -576,6 +576,26 @@ func _try_open_merchant(_player_node: Node) -> void:
 	if ui != null and ui.has_method("toggle_for_merchant"):
 		ui.call("toggle_for_merchant", self)
 
+
+func can_interact_with(player_node: Node) -> bool:
+	if interaction_type != InteractionType.MERCHANT:
+		return false
+	if player_node == null or not is_instance_valid(player_node):
+		return false
+	if not _can_trade_with(player_node):
+		return false
+	if player_node is Node2D:
+		var dist: float = global_position.distance_to((player_node as Node2D).global_position)
+		if dist > merchant_interact_radius:
+			return false
+	return true
+
+
+func try_interact(player_node: Node) -> void:
+	if not can_interact_with(player_node):
+		return
+	_try_open_merchant(player_node)
+
 func get_merchant_preset() -> MerchantPreset:
 	return merchant_preset
 

@@ -170,6 +170,27 @@ func _try_open_loot() -> void:
 		loot_ui.call("toggle_for_corpse", self)
 
 
+func can_interact_with(player_node: Node) -> bool:
+	if player_node == null or not is_instance_valid(player_node):
+		return false
+	if not has_loot():
+		return false
+	if not _can_be_looted_by(player_node):
+		return false
+	if player_node is Node2D:
+		var dist: float = global_position.distance_to((player_node as Node2D).global_position)
+		if dist > interact_radius:
+			return false
+	return true
+
+
+func try_interact(player_node: Node) -> void:
+	if not can_interact_with(player_node):
+		return
+	_player_cached = player_node as Node2D
+	_try_open_loot()
+
+
 func loot_all_to_player(player_node: Node) -> void:
 	# Используется кнопкой "Забрать всё" из LootHUD
 	if player_node == null:

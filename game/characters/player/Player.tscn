@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://rwedipw6jwwn"]
+[gd_scene load_steps=13 format=3 uid="uid://rwedipw6jwwn"]
 
 [ext_resource type="Script" uid="uid://bat5o7j41jp0r" path="res://game/characters/player/player.gd" id="1_p0vlq"]
 [ext_resource type="Script" uid="uid://chlq040cx6wia" path="res://game/characters/player/components/player_stats.gd" id="2_dcag1"]
@@ -9,9 +9,13 @@
 [ext_resource type="Script" uid="uid://dkfplh5q5mr6t" path="res://game/characters/player/components/player_equipment_component.gd" id="7_21vdf"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="8_3yo6h"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="9_uox5w"]
+[ext_resource type="Script" uid="uid://cmfp07uiqwjw0" path="res://game/characters/player/interaction_detector.gd" id="10_8sru1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5q5h1"]
 size = Vector2(24, 24)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1f6e5"]
+radius = 80.0
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
@@ -48,6 +52,12 @@ limit_right = 2000
 limit_bottom = 1200
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
+
+[node name="InteractionDetector" type="Area2D" parent="."]
+script = ExtResource("10_8sru1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionDetector"]
+shape = SubResource("CircleShape2D_1f6e5")
 
 [node name="Components" type="Node" parent="."]
 

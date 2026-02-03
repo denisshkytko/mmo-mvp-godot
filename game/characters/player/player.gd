@@ -64,6 +64,9 @@ var skill_3_attack_bonus: int = 6
 var faction_id: String = "blue"
 var class_id: String = "warrior"
 
+# Mobile input
+var mobile_move_dir: Vector2 = Vector2.ZERO
+
 # --- Public “state” fields (HUD/UI читает их напрямую) ---
 var inventory: Inventory = null
 
@@ -185,6 +188,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_equip: PlayerEquipmentComponent = $Components/Equipment as PlayerEquipmentComponent
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
+@onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
 
 
 func _ready() -> void:
@@ -233,10 +237,14 @@ func _physics_process(_delta: float) -> void:
 		move_and_slide()
 		return
 		
-	var input_dir := Vector2(
-		Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
-		Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-	)
+	var input_dir := Vector2.ZERO
+	if mobile_move_dir != Vector2.ZERO:
+		input_dir = mobile_move_dir
+	else:
+		input_dir = Vector2(
+			Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
+			Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+		)
 
 	if input_dir.length() > 0.0:
 		input_dir = input_dir.normalized()
@@ -274,6 +282,26 @@ func try_cast_skill_2() -> void:
 
 func try_cast_skill_3() -> void:
 	c_skills.try_cast_skill_3()
+
+func set_mobile_move_dir(dir: Vector2) -> void:
+	mobile_move_dir = dir
+
+func try_use_skill_slot(slot_index: int) -> void:
+	if c_skills == null:
+		return
+	match slot_index:
+		0:
+			c_skills.try_cast_skill_1()
+		1:
+			c_skills.try_cast_skill_2()
+		2:
+			c_skills.try_cast_skill_3()
+		_:
+			return
+
+func try_interact() -> void:
+	if c_interaction != null:
+		c_interaction.try_interact(self)
 
 func get_skill_1_cooldown_left() -> float:
 	return c_skills.get_skill_1_cooldown_left()
