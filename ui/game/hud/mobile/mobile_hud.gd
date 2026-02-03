@@ -28,7 +28,8 @@ func _is_mobile_enabled() -> bool:
 	var mobile_flag := false
 	if ProjectSettings.has_setting("application/config/mobile_ui_enabled"):
 		mobile_flag = bool(ProjectSettings.get_setting("application/config/mobile_ui_enabled"))
-	return mobile_flag \
+	return true \
+		or mobile_flag \
 		or OS.has_feature("mobile") \
 		or OS.has_feature("android") \
 		or OS.has_feature("ios")
