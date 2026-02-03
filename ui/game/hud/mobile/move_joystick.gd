@@ -16,6 +16,7 @@ var _last_dir: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_update_center()
+	_set_knob_visible(false)
 	_update_knob(Vector2.ZERO)
 
 
@@ -37,9 +38,10 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 	if event.pressed:
 		if _active_touch_id != -1:
 			return
-		if not get_global_rect().has_point(event.position):
+		if not _is_within_bounds(event.position):
 			return
 		_active_touch_id = event.index
+		_set_knob_visible(true)
 		_update_from_global_pos(event.position)
 		accept_event()
 		return
@@ -49,6 +51,7 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 	_active_touch_id = -1
 	_set_dir(Vector2.ZERO)
 	_update_knob(Vector2.ZERO)
+	_set_knob_visible(false)
 	accept_event()
 
 
@@ -86,7 +89,7 @@ func _update_knob(delta: Vector2) -> void:
 		return
 	var offset := Vector2.ZERO
 	if delta.length() > 0.0:
-		offset = delta.normalized() * min(delta.length(), KNOB_RADIUS_PX)
+		offset = delta.normalized() * min(delta.length(), _get_radius())
 	knob.position = _center + offset - knob.size * 0.5
 
 
@@ -97,3 +100,17 @@ func _update_center() -> void:
 		base.size = size
 	if knob != null:
 		knob.position = _center - knob.size * 0.5
+
+
+func _get_radius() -> float:
+	return min(size.x, size.y) * 0.5
+
+
+func _is_within_bounds(global_pos: Vector2) -> bool:
+	var local_pos := _to_local_canvas(global_pos)
+	return local_pos.distance_to(_center) <= _get_radius()
+
+
+func _set_knob_visible(is_visible: bool) -> void:
+	if knob != null:
+		knob.visible = is_visible
