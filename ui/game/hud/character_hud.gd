@@ -34,7 +34,7 @@ const DERIVED_PRIMARY_COEFFS := {
 	"crit_damage_rating": {"per": STAT_CONST.CDMG_FROM_PER},
 }
 
-@onready var character_button: Button = $CharacterButton
+@onready var character_button: Button = get_node_or_null("CharacterButton")
 @onready var panel: Panel = %Panel
 @onready var title_label: Label = %TitleLabel
 @onready var stats_text: RichTextLabel = %StatsText
@@ -59,7 +59,8 @@ var _tooltip_layer: CanvasLayer = null
 
 func _ready() -> void:
 	add_to_group("character_hud")
-	character_button.pressed.connect(_on_button)
+	if character_button != null:
+		character_button.pressed.connect(_on_button)
 	set_process(true)
 	if get_viewport() != null:
 		get_viewport().size_changed.connect(_on_viewport_resized)
@@ -100,6 +101,10 @@ func _on_button() -> void:
 		_refresh()
 	else:
 		_hide_tooltip()
+
+
+func toggle_character() -> void:
+	_on_button()
 
 func _on_stats_changed(_snapshot: Dictionary) -> void:
 	if panel.visible:

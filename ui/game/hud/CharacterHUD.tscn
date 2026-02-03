@@ -10,15 +10,6 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_6op8q")
 
-[node name="CharacterButton" type="Button" parent="."]
-custom_minimum_size = Vector2(90, 35)
-layout_mode = 0
-offset_left = 967.0
-offset_top = 595.0
-offset_right = 1057.0
-offset_bottom = 630.0
-text = "Character"
-
 [node name="Panel" type="Panel" parent="."]
 unique_name_in_owner = true
 layout_mode = 0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://csbowtuv1xh0o"]
+[gd_scene load_steps=14 format=3 uid="uid://csbowtuv1xh0o"]
 
 [ext_resource type="PackedScene" uid="uid://167bw0aqye6e" path="res://ui/game/hud/XpHUD.tscn" id="1_rs8we"]
 [ext_resource type="PackedScene" uid="uid://dqcx34335ljdy" path="res://ui/game/hud/SkillButtonHUD.tscn" id="2_qdv4i"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://k52s76musmbr" path="res://ui/game/hud/CharacterHUD.tscn" id="10_lj31k"]
 [ext_resource type="PackedScene" uid="uid://z2n5el699p5r" path="res://ui/game/hud/MerchantHUD.tscn" id="11_6i0yq"]
 [ext_resource type="PackedScene" uid="uid://d2ddrgn4o57x6" path="res://ui/game/hud/mobile/mobile_hud.tscn" id="12_6yqyx"]
+[ext_resource type="PackedScene" uid="uid://d0uicm7r3xgxa" path="res://ui/game/hud/QuickMenuHUD.tscn" id="13_4p0o0"]
 
 [node name="GameUI" type="CanvasLayer"]
 
@@ -55,3 +56,5 @@ offset_right = 0.0
 offset_bottom = 0.0
 
 [node name="MobileHUD" parent="." instance=ExtResource("12_6yqyx")]
+
+[node name="QuickMenuHUD" parent="Root" instance=ExtResource("13_4p0o0")]
