@@ -82,6 +82,7 @@ const _GRID_CFG_KEY_COLUMNS := "grid_columns"
 var _quick_bar: HBoxContainer = null
 var _quick_buttons: Array[Button] = []
 var _quick_refs: Array[String] = ["", "", "", "", ""]  # item_id per quick slot
+var _quick_slots_syncing: bool = false
 
 
 # Lightweight refresh while inventory is open (so looting updates immediately).
@@ -1125,6 +1126,7 @@ func _on_tooltip_quick_pressed() -> void:
 	var existing := _get_quick_slot_index_for_item(id)
 	if existing != -1:
 		_quick_refs[existing] = ""
+		_persist_quick_slots()
 		_refresh_quick_bar()
 		_hide_tooltip()
 		return
@@ -1133,6 +1135,7 @@ func _on_tooltip_quick_pressed() -> void:
 		show_center_toast("Нет свободных быстрых слотов")
 		return
 	_quick_refs[empty] = id
+	_persist_quick_slots()
 	_refresh_quick_bar()
 	_hide_tooltip()
 
@@ -1301,6 +1304,7 @@ func _refresh() -> void:
 	_refresh_in_progress = true
 
 	var snap: Dictionary = player.get_inventory_snapshot()
+	_sync_quick_slots_from_snapshot(snap)
 	var slots: Array = snap.get("slots", [])
 	var bag_slots: Array = snap.get("bag_slots", [])
 	var total_slots: int = slots.size()
@@ -1989,6 +1993,36 @@ func _get_quick_count_label(btn: Button) -> Label:
 		return null
 	return btn.get_node_or_null("Count") as Label
 
+func _sync_quick_slots_from_snapshot(snap: Dictionary) -> void:
+	if _quick_slots_syncing:
+		return
+	if not snap.has("quick_slots"):
+		return
+	var quick_v: Variant = snap.get("quick_slots", [])
+	if not (quick_v is Array):
+		return
+	var quick_arr: Array = quick_v as Array
+	var next: Array[String] = []
+	next.resize(5)
+	for i in range(5):
+		next[i] = String(quick_arr[i]) if i < quick_arr.size() else ""
+	if next != _quick_refs:
+		_quick_refs = next
+
+func _persist_quick_slots() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if _quick_slots_syncing:
+		return
+	_quick_slots_syncing = true
+	if player.has_method("set_quick_slots"):
+		player.call("set_quick_slots", _quick_refs.duplicate())
+	elif player.has_method("get_inventory_snapshot") and player.has_method("apply_inventory_snapshot"):
+		var snap: Dictionary = player.get_inventory_snapshot()
+		snap["quick_slots"] = _quick_refs.duplicate()
+		player.apply_inventory_snapshot(snap)
+	_quick_slots_syncing = false
+
 func _refresh_quick_bar() -> void:
 	if _quick_buttons.size() != 5:
 		return
@@ -1997,6 +2031,7 @@ func _refresh_quick_bar() -> void:
 	var snap: Dictionary = player.get_inventory_snapshot()
 	var slots: Array = snap.get("slots", [])
 	var db := get_node_or_null("/root/DataDB")
+	var quick_changed: bool = false
 	for i in range(5):
 		var b := _quick_buttons[i]
 		var icon := _get_quick_icon(b)
@@ -2016,7 +2051,9 @@ func _refresh_quick_bar() -> void:
 				total += int((v as Dictionary).get("count", 0))
 		if total <= 0:
 			# Item no longer present; clear quick slot
-			_quick_refs[i] = ""
+			if _quick_refs[i] != "":
+				_quick_refs[i] = ""
+				quick_changed = true
 			icon.texture = null
 			count_label.text = ""
 			continue
@@ -2025,6 +2062,8 @@ func _refresh_quick_bar() -> void:
 		icon.texture = _get_icon_texture(icon_path)
 		count_label.text = str(total) if total > 1 else ""
 		_update_quick_cooldown(b, item_id)
+	if quick_changed:
+		_persist_quick_slots()
 
 func _rebuild_layout(reason: String) -> void:
 	if _rebuild_in_progress:

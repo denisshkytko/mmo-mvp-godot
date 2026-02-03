@@ -5,6 +5,7 @@ signal inventory_changed
 
 var p: Player = null
 var inventory: Inventory = null
+var quick_slots: Array[String] = ["", "", "", "", ""]
 
 func setup(player: Player) -> void:
 	p = player
@@ -132,8 +133,8 @@ func try_move_or_swap_bag_slots(from_bag_index: int, to_bag_index: int) -> bool:
 
 func get_inventory_snapshot() -> Dictionary:
 	if inventory == null:
-		return {"gold": 0, "slots": [], "bag_slots": []}
-	return {"gold": inventory.gold, "slots": inventory.slots, "bag_slots": inventory.bag_slots}
+		return {"gold": 0, "slots": [], "bag_slots": [], "quick_slots": quick_slots.duplicate()}
+	return {"gold": inventory.gold, "slots": inventory.slots, "bag_slots": inventory.bag_slots, "quick_slots": quick_slots.duplicate()}
 
 
 func apply_inventory_snapshot(snapshot: Dictionary) -> void:
@@ -196,4 +197,25 @@ func apply_inventory_snapshot(snapshot: Dictionary) -> void:
 				inventory.slots[i] = null
 		else:
 			inventory.slots[i] = null
+	# quick slots (optional)
+	var quick_v: Variant = snapshot.get("quick_slots", null)
+	if quick_v is Array:
+		var quick_arr: Array = quick_v as Array
+		quick_slots.resize(5)
+		for qi in range(quick_slots.size()):
+			quick_slots[qi] = String(quick_arr[qi]) if qi < quick_arr.size() else ""
+	else:
+		quick_slots.resize(5)
+		for qj in range(quick_slots.size()):
+			if quick_slots[qj] == null:
+				quick_slots[qj] = ""
 	inventory_changed.emit()
+
+func set_quick_slots(slots: Array) -> void:
+	quick_slots.resize(5)
+	for i in range(quick_slots.size()):
+		quick_slots[i] = String(slots[i]) if i < slots.size() else ""
+	inventory_changed.emit()
+
+func get_quick_slots() -> Array[String]:
+	return quick_slots.duplicate()

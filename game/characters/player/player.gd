@@ -389,6 +389,11 @@ func add_xp(amount: int) -> void:
 func get_inventory_snapshot() -> Dictionary:
 	return c_inv.get_inventory_snapshot()
 
+func get_quick_slots() -> Array[String]:
+	if c_inv == null:
+		return []
+	return c_inv.get_quick_slots()
+
 func get_equipment_snapshot() -> Dictionary:
 	if c_equip == null:
 		return {}
@@ -399,6 +404,12 @@ func apply_inventory_snapshot(snapshot: Dictionary) -> void:
 	# UI / save helpers: apply inventory slots + equipped bags back to component.
 	if c_inv != null:
 		c_inv.apply_inventory_snapshot(snapshot)
+
+func set_quick_slots(slots: Array) -> void:
+	if c_inv == null:
+		return
+	c_inv.set_quick_slots(slots)
+	_request_save("item")
 
 func apply_equipment_snapshot(snapshot: Dictionary) -> void:
 	if c_equip != null:
