@@ -2001,6 +2001,9 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	_ensure_grid_child_count(total_slots)
 	grid.columns = max(1, _grid_columns)
 	grid.custom_minimum_size = Vector2.ZERO
+	grid_scroll.custom_minimum_size = Vector2.ZERO
+	if grid_scroll_wrapper != null:
+		grid_scroll_wrapper.custom_minimum_size = Vector2.ZERO
 	grid.size = Vector2.ZERO
 	await get_tree().process_frame
 	var grid_min: Vector2 = grid.get_combined_minimum_size()
@@ -2010,26 +2013,16 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	var top_offset: float = content.offset_top if content != null else 0.0
 	var pad_right: float = 10.0
 	var pad_bottom: float = 10.0
-	var scroll_w: float = grid_min.x
-	var desired_content_w: float = bag_min.x + separation + scroll_w
-	var panel_w: float = desired_content_w + left_offset + pad_right
-	var desired_content_h: float = max(bag_min.y, grid_min.y)
-	var panel_h: float = desired_content_h + top_offset + pad_bottom
 	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
-	panel_w = min(panel_w, max_panel.x)
-	panel_h = min(panel_h, max_panel.y)
-	var available_content_h: float = max(0.0, panel_h - top_offset - pad_bottom)
+	var available_content_h: float = max(0.0, max_panel.y - top_offset - pad_bottom)
 	var use_scroll: bool = grid_min.y > available_content_h + 0.5
 	var scroll_view_h: float = min(grid_min.y, available_content_h)
 	if not use_scroll:
 		scroll_view_h = grid_min.y
-	desired_content_h = max(bag_min.y, scroll_view_h)
-	panel_h = desired_content_h + top_offset + pad_bottom
-	panel_h = min(panel_h, max_panel.y)
 
 	if grid_scroll_wrapper != null:
-		grid_scroll_wrapper.size = Vector2(scroll_w, scroll_view_h)
-		grid_scroll_wrapper.custom_minimum_size = grid_scroll_wrapper.size
+		grid_scroll_wrapper.custom_minimum_size = Vector2(grid_min.x, scroll_view_h)
+	grid_scroll.custom_minimum_size = Vector2(grid_min.x, scroll_view_h)
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if use_scroll else ScrollContainer.SCROLL_MODE_DISABLED
 	grid_scroll.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -2039,8 +2032,10 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 		content.queue_sort()
 	await get_tree().process_frame
 
+	var panel_w: float = left_offset + bag_min.x + separation + grid_min.x + pad_right
+	var panel_h: float = top_offset + max(bag_min.y, scroll_view_h) + pad_bottom
 	panel.custom_minimum_size = Vector2(panel_w, panel_h)
-	panel.size = Vector2(panel_w, panel_h)
+	panel.size = panel.custom_minimum_size
 	_apply_panel_br_anchor()
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
@@ -2053,7 +2048,7 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 		_settings_panel.position = Vector2(panel.size.x - _settings_panel.size.x - m, m + 30.0)
 	return {
 		"panel_size": panel.size,
-		"scroll_view": Vector2(scroll_w, scroll_view_h)
+		"scroll_view": Vector2(grid_min.x, scroll_view_h)
 	}
 
 func _format_money_bronze(bronze: int) -> String:
