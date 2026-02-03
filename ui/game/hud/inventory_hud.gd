@@ -79,7 +79,7 @@ const _GRID_CFG_SECTION := "inventory_hud"
 const _GRID_CFG_KEY_COLUMNS := "grid_columns"
 
 # Quick slots (5) - references to inventory slot indices
-var _quick_bar: VBoxContainer = null
+var _quick_bar: HBoxContainer = null
 var _quick_buttons: Array[Button] = []
 var _quick_refs: Array[String] = ["", "", "", "", ""]  # item_id per quick slot
 
@@ -1896,33 +1896,28 @@ func _ensure_support_ui() -> void:
 
 	# Quick bar is part of the scene (InventoryHUD.tscn) so you can edit it visually.
 	if _quick_bar == null:
-		_quick_bar = get_node_or_null("QuickBar") as VBoxContainer
+		_quick_bar = get_node_or_null("QuickBar") as HBoxContainer
 		if _quick_bar == null:
-			# Fallback (should not happen, but keeps project from breaking if node is removed).
-			_quick_bar = VBoxContainer.new()
-			_quick_bar.name = "QuickBar"
-			add_child(_quick_bar)
-			_quick_bar.position = Vector2(10, 10)
-			_quick_bar.size = Vector2(44, 220)
-		# Collect or create 5 buttons
+			push_error("InventoryHUD: QuickBar node missing from scene; quick slots disabled.")
+			return
+		# Collect 5 buttons from the scene (no runtime-created quick bar).
 		_quick_buttons = []
 		var kids := _quick_bar.get_children()
 		for i in range(min(5, kids.size())):
 			var b := kids[i] as Button
 			if b != null:
 				_quick_buttons.append(b)
-		while _quick_buttons.size() < 5:
-			var nb := Button.new()
-			nb.text = ""
-			nb.custom_minimum_size = Vector2(24, 24)
-			_quick_bar.add_child(nb)
-			_quick_buttons.append(nb)
+		if _quick_buttons.size() < 5:
+			push_error("InventoryHUD: QuickBar needs 5 buttons in the scene.")
+			return
 		for i in range(5):
 			var b := _quick_buttons[i]
 			b.text = ""
 			b.expand_icon = true
 			_ensure_quick_button_visuals(b)
-			b.pressed.connect(_on_quick_pressed.bind(i))
+			var cb := Callable(self, "_on_quick_pressed").bind(i)
+			if not b.pressed.is_connected(cb):
+				b.pressed.connect(cb)
 		_refresh_quick_bar()
 
 
