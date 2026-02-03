@@ -9,7 +9,7 @@ signal interact_pressed()
 @onready var skill_btn_2: BaseButton = $SkillBtn2
 @onready var skill_btn_3: BaseButton = $SkillBtn3
 @onready var skill_btn_4: BaseButton = $SkillBtn4
-@onready var interact_btn: BaseButton = $InteractBtn
+@onready var interact_btn: BaseButton = $"../InteractBtn"
 
 var _skill_buttons: Array[BaseButton] = []
 

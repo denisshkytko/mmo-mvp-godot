@@ -99,7 +99,9 @@ texture_normal = ExtResource("4_xlyuy")
 script = ExtResource("4_hwcof")
 metadata/slot_index = 4
 
-[node name="InteractBtn" type="TextureButton" parent="Root/RightPad/SkillPad"]
+[node name="InteractBtn" type="TextureButton" parent="Root/RightPad"]
 custom_minimum_size = Vector2(110, 110)
 layout_mode = 0
+texture_normal = ExtResource("4_xlyuy")
+script = ExtResource("4_hwcof")
 visible = false
