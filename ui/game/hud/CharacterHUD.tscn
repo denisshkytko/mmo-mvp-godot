@@ -17,7 +17,7 @@ mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(698, 345)
+custom_minimum_size = Vector2(700, 380)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -50,11 +50,13 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(290, 30)
 layout_mode = 2
 text = "Character"
+vertical_alignment = 1
 
 [node name="Tabs" type="TabContainer" parent="Root/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+current_tab = 0
 
 [node name="Персонаж" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
 layout_mode = 2
@@ -63,53 +65,14 @@ size_flags_vertical = 3
 metadata/_tab_index = 0
 
 [node name="ContentRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж"]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
-
-[node name="Заклинания" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-metadata/_tab_index = 1
-
-[node name="SpellsVBox" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 6
-
-[node name="SpellsPanelA" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="SpellsPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Способности" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-metadata/_tab_index = 2
-
-[node name="AbilitiesVBox" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 6
-
-[node name="AbilitiesPanelA" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности/AbilitiesVBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="AbilitiesPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности/AbilitiesVBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 
 [node name="EquipmentPanel" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow"]
 unique_name_in_owner = true
@@ -133,6 +96,7 @@ theme_override_constants/margin_bottom = 6
 [node name="EquipmentVBox" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 6
+alignment = 1
 
 [node name="ClothingRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
 layout_mode = 2
@@ -514,6 +478,62 @@ custom_minimum_size = Vector2(320, 255)
 layout_mode = 2
 size_flags_vertical = 3
 fit_content = true
+
+[node name="Заклинания" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/_tab_index = 1
+
+[node name="SpellsVBox" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="SpellsPanelA" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SpellsPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Способности" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/_tab_index = 2
+
+[node name="AbilitiesVBox" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="AbilitiesPanelA" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности/AbilitiesVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AbilitiesPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности/AbilitiesVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="TooltipPanel" parent="Root" instance=ExtResource("2_0n5q6")]
 z_index = 500
