@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
+signal visibility_changed(is_open: bool)
 
 const BUY_PRICE_MULTIPLIER: float = 1.25
 const TOOLTIP_HOLD_MAX_MS: int = 1000
@@ -58,7 +59,9 @@ var _tooltip_press_item_id: String = ""
 var _tooltip_press_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
+	add_to_group("merchant_hud")
 	panel.visible = false
+	emit_signal("visibility_changed", false)
 	tooltip_panel.visible = false
 	_ensure_tooltip_layer()
 	if tooltip_panel != null:
@@ -105,6 +108,7 @@ func open_for_merchant(merchant_node: Node) -> void:
 	_player = NodeCache.get_player(get_tree())
 	_is_open = true
 	panel.visible = true
+	emit_signal("visibility_changed", true)
 	if title_label != null:
 		var t: String = ""
 		if _merchant != null and _merchant.has_method("get_merchant_title"):
@@ -118,6 +122,7 @@ func open_for_merchant(merchant_node: Node) -> void:
 func close() -> void:
 	_is_open = false
 	panel.visible = false
+	emit_signal("visibility_changed", false)
 	_hide_tooltip()
 	_sync_inventory_trade_state(false)
 	_merchant = null

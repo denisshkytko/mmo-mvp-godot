@@ -4,6 +4,7 @@ const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
+signal visibility_changed(is_open: bool)
 
 const TOOLTIP_MIN_W: float = 260.0
 const TOOLTIP_MAX_W: float = 420.0
@@ -66,6 +67,7 @@ func _ready() -> void:
 		get_viewport().size_changed.connect(_on_viewport_resized)
 
 	panel.visible = false
+	emit_signal("visibility_changed", panel.visible)
 	stats_text.bbcode_enabled = true
 	stats_text.fit_content = true
 	stats_text.meta_clicked.connect(_on_meta_clicked)
@@ -96,6 +98,7 @@ func _ready() -> void:
 
 func _on_button() -> void:
 	panel.visible = not panel.visible
+	emit_signal("visibility_changed", panel.visible)
 	if panel.visible:
 		call_deferred("_refresh_layout")
 		_refresh()
@@ -105,6 +108,9 @@ func _on_button() -> void:
 
 func toggle_character() -> void:
 	_on_button()
+
+func is_open() -> bool:
+	return panel.visible
 
 func _on_stats_changed(_snapshot: Dictionary) -> void:
 	if panel.visible:
