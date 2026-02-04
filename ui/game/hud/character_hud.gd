@@ -1,4 +1,4 @@
-extends Control
+extends CanvasLayer
 
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
@@ -40,10 +40,10 @@ const DERIVED_PRIMARY_COEFFS := {
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var equipment_panel: Panel = %EquipmentPanel
 
-@onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_rich: RichTextLabel = $TooltipPanel/Margin/VBox/Text
-@onready var tooltip_unequip: Button = $TooltipPanel/Margin/VBox/UnequipButton
-@onready var tooltip_close_button: Button = $TooltipPanel/CloseButton
+@onready var tooltip_panel: Panel = $Root/TooltipPanel
+@onready var tooltip_rich: RichTextLabel = $Root/TooltipPanel/Margin/VBox/Text
+@onready var tooltip_unequip: Button = $Root/TooltipPanel/Margin/VBox/UnequipButton
+@onready var tooltip_close_button: Button = $Root/TooltipPanel/CloseButton
 
 var _player: Player = null
 var _breakdown_cache: Dictionary = {}

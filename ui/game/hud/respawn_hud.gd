@@ -1,10 +1,10 @@
 extends CanvasLayer
 class_name RespawnHUD
 
-@onready var panel: Panel = $Panel
-@onready var title_label: Label = $Panel/VBox/TitleLabel
-@onready var timer_label: Label = $Panel/VBox/TimerLabel
-@onready var respawn_button: Button = $Panel/VBox/RespawnButton
+@onready var panel: Panel = $Root/Panel
+@onready var title_label: Label = $Root/Panel/VBox/TitleLabel
+@onready var timer_label: Label = $Root/Panel/VBox/TimerLabel
+@onready var respawn_button: Button = $Root/Panel/VBox/RespawnButton
 
 var _player: Node = null
 var _time_left: float = 0.0

@@ -1,31 +1,31 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
-@onready var panel: Control = $Panel
-@onready var gold_label: RichTextLabel = $Panel/GoldLabel
-@onready var content: Control = $Panel/Content
-@onready var grid_scroll_wrapper: Control = $Panel/Content/GridScrollWrapper
-@onready var grid_scroll: ScrollContainer = $Panel/Content/GridScrollWrapper/GridScroll
-@onready var grid: GridContainer = $Panel/Content/GridScrollWrapper/GridScroll/Grid
-@onready var bag_slots: Control = $Panel/Content/BagSlots
+@onready var panel: Control = $Root/Panel
+@onready var gold_label: RichTextLabel = $Root/Panel/GoldLabel
+@onready var content: Control = $Root/Panel/Content
+@onready var grid_scroll_wrapper: Control = $Root/Panel/Content/GridScrollWrapper
+@onready var grid_scroll: ScrollContainer = $Root/Panel/Content/GridScrollWrapper/GridScroll
+@onready var grid: GridContainer = $Root/Panel/Content/GridScrollWrapper/GridScroll/Grid
+@onready var bag_slots: Control = $Root/Panel/Content/BagSlots
 
 @onready var bag_button: Button = get_node_or_null("BagButton")
-@onready var bag_slot1: Button = $Panel/Content/BagSlots/BagSlot1
-@onready var bag_slot2: Button = $Panel/Content/BagSlots/BagSlot2
-@onready var bag_slot3: Button = $Panel/Content/BagSlots/BagSlot3
-@onready var bag_slot4: Button = $Panel/Content/BagSlots/BagSlot4
+@onready var bag_slot1: Button = $Root/Panel/Content/BagSlots/BagSlot1
+@onready var bag_slot2: Button = $Root/Panel/Content/BagSlots/BagSlot2
+@onready var bag_slot3: Button = $Root/Panel/Content/BagSlots/BagSlot3
+@onready var bag_slot4: Button = $Root/Panel/Content/BagSlots/BagSlot4
 
-@onready var bag_full_dialog: AcceptDialog = $BagFullDialog
+@onready var bag_full_dialog: AcceptDialog = $Root/BagFullDialog
 
 # Tooltip is defined in the scene (like LootHUD), not created dynamically.
-@onready var tooltip_panel_scene: Panel = $InvTooltip
-@onready var tooltip_label_scene: RichTextLabel = $InvTooltip/Margin/VBox/Text
-@onready var tooltip_use_btn_scene: Button = $InvTooltip/Margin/VBox/UseButton
-@onready var tooltip_equip_btn_scene: Button = $InvTooltip/Margin/VBox/EquipButton
-@onready var tooltip_sell_btn_scene: Button = $InvTooltip/Margin/VBox/SellButton
-@onready var tooltip_quick_btn_scene: Button = $InvTooltip/Margin/VBox/QuickSlotButton
-@onready var tooltip_bag_btn_scene: Button = $InvTooltip/Margin/VBox/BagButton
-@onready var tooltip_close_btn_scene: Button = $InvTooltip/CloseButton
+@onready var tooltip_panel_scene: Panel = $Root/InvTooltip
+@onready var tooltip_label_scene: RichTextLabel = $Root/InvTooltip/Margin/VBox/Text
+@onready var tooltip_use_btn_scene: Button = $Root/InvTooltip/Margin/VBox/UseButton
+@onready var tooltip_equip_btn_scene: Button = $Root/InvTooltip/Margin/VBox/EquipButton
+@onready var tooltip_sell_btn_scene: Button = $Root/InvTooltip/Margin/VBox/SellButton
+@onready var tooltip_quick_btn_scene: Button = $Root/InvTooltip/Margin/VBox/QuickSlotButton
+@onready var tooltip_bag_btn_scene: Button = $Root/InvTooltip/Margin/VBox/BagButton
+@onready var tooltip_close_btn_scene: Button = $Root/InvTooltip/CloseButton
 
 var player: Node = null
 var _is_open: bool = true
@@ -56,12 +56,12 @@ var _tooltip_for_bag_slot: int = -1
 var _toast_label: Label = null
 
 # Split dialog
-@onready var split_dialog: Panel = $SplitDialog
-@onready var split_title: Label = $SplitDialog/SplitTitle
-@onready var split_slider: HSlider = $SplitDialog/SplitSlider
-@onready var split_amount: Label = $SplitDialog/SplitAmount
-@onready var split_ok: Button = $SplitDialog/SplitOk
-@onready var split_cancel: Button = $SplitDialog/SplitCancel
+@onready var split_dialog: Panel = $Root/SplitDialog
+@onready var split_title: Label = $Root/SplitDialog/SplitTitle
+@onready var split_slider: HSlider = $Root/SplitDialog/SplitSlider
+@onready var split_amount: Label = $Root/SplitDialog/SplitAmount
+@onready var split_ok: Button = $Root/SplitDialog/SplitOk
+@onready var split_cancel: Button = $Root/SplitDialog/SplitCancel
 var _split_source_slot: int = -1
 
 # Settings UI (columns/rows + sort)

@@ -2,7 +2,10 @@
 
 [ext_resource type="Script" uid="uid://f5fltgdb3c86" path="res://ui/game/hud/quick_menu_hud.gd" id="1_8arqo"]
 
-[node name="QuickMenuHUD" type="Control"]
+[node name="QuickMenuHUD" type="CanvasLayer"]
+script = ExtResource("1_8arqo")
+
+[node name="Root" type="Control" parent="."]
 custom_minimum_size = Vector2(45, 118)
 layout_mode = 3
 anchors_preset = 1
@@ -13,9 +16,8 @@ offset_top = -95.0
 offset_right = -5.0
 offset_bottom = 23.0
 grow_horizontal = 0
-script = ExtResource("1_8arqo")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="Panel" parent="Root"]
 clip_contents = true
 custom_minimum_size = Vector2(45, 124)
 layout_mode = 1
@@ -26,7 +28,7 @@ offset_left = -35.0
 offset_bottom = 95.0
 grow_horizontal = 0
 
-[node name="ButtonStack" type="VBoxContainer" parent="Panel"]
+[node name="ButtonStack" type="VBoxContainer" parent="Root/Panel"]
 custom_minimum_size = Vector2(35, 119)
 layout_mode = 1
 anchors_preset = 5
@@ -39,25 +41,25 @@ offset_bottom = 124.0
 grow_horizontal = 2
 theme_override_constants/separation = 6
 
-[node name="MenuButton" type="Button" parent="Panel/ButtonStack"]
+[node name="MenuButton" type="Button" parent="Root/Panel/ButtonStack"]
 custom_minimum_size = Vector2(35, 25)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "M"
 
-[node name="InventoryButton" type="Button" parent="Panel/ButtonStack"]
+[node name="InventoryButton" type="Button" parent="Root/Panel/ButtonStack"]
 custom_minimum_size = Vector2(35, 25)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "I"
 
-[node name="CharacterButton" type="Button" parent="Panel/ButtonStack"]
+[node name="CharacterButton" type="Button" parent="Root/Panel/ButtonStack"]
 custom_minimum_size = Vector2(35, 25)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "C"
 
-[node name="ToggleButton" type="Button" parent="."]
+[node name="ToggleButton" type="Button" parent="Root"]
 custom_minimum_size = Vector2(45, 24)
 layout_mode = 1
 anchors_preset = 1
