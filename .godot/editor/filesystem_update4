@@ -1,4 +1,2 @@
-res://ui/game/hud/mobile/MobileHUD.tscn
-res://ui/game/GameUI.tscn
+res://ui/game/hud/CharacterHUD.tscn
 res://core/trade/presets/merchant_preset_level_1.tres
-res://ui/game/hud/BuffsHUD.tscn
