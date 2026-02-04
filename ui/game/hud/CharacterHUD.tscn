@@ -73,7 +73,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 metadata/_tab_index = 1
 
-[node name="SpellsVBox" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания"]
+[node name="SpellsVBox" type="RBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -95,7 +95,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 metadata/_tab_index = 2
 
-[node name="AbilitiesVBox" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности"]
+[node name="AbilitiesVBox" type="RBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
