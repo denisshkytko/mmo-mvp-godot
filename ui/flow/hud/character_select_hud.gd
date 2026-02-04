@@ -1,9 +1,9 @@
 extends CanvasLayer
 
-@onready var list: ItemList = $Root/Center/Panel/Margin/VBox/CharacterList
-@onready var delete_button: Button = $Root/Center/Panel/Margin/VBox/Buttons/DeleteButton
-@onready var enter_button: Button = $Root/Center/Panel/Margin/VBox/Buttons/EnterButton
-@onready var logout_button: Button = $Root/Center/Panel/Margin/VBox/Buttons/LogoutButton
+@onready var list: ItemList = $Root/Panel/Margin/VBox/CharacterList
+@onready var delete_button: Button = $Root/Panel/Margin/VBox/Buttons/DeleteButton
+@onready var enter_button: Button = $Root/Panel/Margin/VBox/Buttons/EnterButton
+@onready var logout_button: Button = $Root/Panel/Margin/VBox/Buttons/LogoutButton
 
 var _selected_id: String = ""
 var _allow_enter: bool = false

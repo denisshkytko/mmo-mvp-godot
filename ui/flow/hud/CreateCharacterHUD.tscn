@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dg6fkxddowx6"]
 
-[ext_resource type="Script" uid="uid://b0xa85p25qwvq" path="res://ui/flow/create_character_hud.gd" id="1_0x13s"]
+[ext_resource type="Script" uid="uid://b0xa85p25qwvq" path="res://ui/flow/hud/create_character_hud.gd" id="1_0x13s"]
 
 [node name="CreateCharacterHUD" type="CanvasLayer"]
 layout_mode = 3
@@ -15,21 +15,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Bg" type="ColorRect" parent="Root"]
+[node name="Panel" type="Panel" parent="Root"]
 layout_mode = 0
 offset_right = 250.0
 offset_bottom = 160.0
-color = Color(0.45452422, 0.45452428, 0.45452422, 1)
 
-[node name="Panel" type="Panel" parent="Root/Bg"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Margin" type="MarginContainer" parent="Root/Bg/Panel"]
+[node name="Margin" type="MarginContainer" parent="Root/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,36 +32,36 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="VBox" type="VBoxContainer" parent="Root/Bg/Panel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="Root/Panel/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 5
 alignment = 1
 
-[node name="Title" type="Label" parent="Root/Bg/Panel/Margin/VBox"]
+[node name="Title" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
 text = "Create character"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="NameEdit" type="LineEdit" parent="Root/Bg/Panel/Margin/VBox"]
+[node name="NameEdit" type="LineEdit" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
 placeholder_text = "Enter Name"
 
-[node name="ClassOption" type="OptionButton" parent="Root/Bg/Panel/Margin/VBox"]
+[node name="ClassOption" type="OptionButton" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
 
-[node name="Buttons" type="HBoxContainer" parent="Root/Bg/Panel/Margin/VBox"]
+[node name="Buttons" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 80
 alignment = 1
 
-[node name="CreateButton" type="Button" parent="Root/Bg/Panel/Margin/VBox/Buttons"]
+[node name="CreateButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2
 text = "Create"
 
-[node name="CancelButton" type="Button" parent="Root/Bg/Panel/Margin/VBox/Buttons"]
+[node name="CancelButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2
 text = "Cancel"
 
-[node name="ErrorLabel" type="Label" parent="Root/Bg/Panel/Margin/VBox"]
+[node name="ErrorLabel" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
