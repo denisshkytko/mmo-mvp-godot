@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
+signal hud_visibility_changed(is_open: bool)
 @onready var panel: Control = $Root/Panel
 @onready var gold_label: RichTextLabel = $Root/Panel/GoldLabel
 @onready var content: Control = $Root/Panel/Content
@@ -118,6 +119,7 @@ func _ready() -> void:
 	add_to_group("inventory_ui")
 	# default to closed in actual gameplay; keep current behavior
 	_is_open = panel.visible
+	emit_signal("hud_visibility_changed", _is_open)
 	if gold_label != null:
 		gold_label.bbcode_enabled = true
 		gold_label.fit_content = true
@@ -160,6 +162,7 @@ func _ready() -> void:
 	_style_inventory_tooltip()
 	_hook_slot_panels()
 	_auto_bind_player()
+	_refresh_quick_bar_snapshot()
 	_load_grid_columns()
 	if content != null:
 		var left_offset: float = content.offset_left
@@ -180,6 +183,7 @@ func set_player(p: Node) -> void:
 	_layout_dirty = true
 	_last_applied_columns = -1
 	_bind_inventory_signal()
+	_refresh_quick_bar_snapshot()
 	if _is_open:
 		await _force_initial_layout()
 		await _refresh()
@@ -232,10 +236,16 @@ func _bind_inventory_signal() -> void:
 	if _inventory_signal_source != null:
 		if not _inventory_signal_source.inventory_changed.is_connected(_on_inventory_changed):
 			_inventory_signal_source.inventory_changed.connect(_on_inventory_changed)
+	_refresh_quick_bar_snapshot()
 
 func _on_inventory_changed() -> void:
 	_layout_dirty = true
 	_refresh_requested = true
+	if not _is_open:
+		_refresh_quick_bar_snapshot()
+
+func is_open() -> bool:
+	return _is_open
 
 func _is_player_ready() -> bool:
 	return player != null and is_instance_valid(player) and player.has_method("get_inventory_snapshot")
@@ -283,6 +293,7 @@ func _toggle_inventory() -> void:
 func _set_open(v: bool) -> void:
 	_is_open = v
 	panel.visible = v
+	emit_signal("hud_visibility_changed", _is_open)
 	if not v:
 		_hide_tooltip()
 		_hide_split()
@@ -1348,6 +1359,14 @@ func _refresh() -> void:
 		grid.visible = true
 		grid.modulate.a = 1.0
 	_refresh_in_progress = false
+
+func _refresh_quick_bar_snapshot() -> void:
+	_ensure_support_ui()
+	if not _is_player_ready():
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	_sync_quick_slots_from_snapshot(snap)
+	_refresh_quick_bar()
 
 func _render_slot(slot_panel: Panel, i: int, slots: Array) -> void:
 	var icon: TextureRect = slot_panel.get_node_or_null("Icon") as TextureRect

@@ -50,6 +50,8 @@ func _on_body_exited(body: Node2D) -> void:
 func _add_candidate(node: Node2D) -> void:
 	if node == null or not node.has_method("try_interact"):
 		return
+	if node == _player:
+		return
 	if _candidates.has(node):
 		return
 	_candidates.append(node)
@@ -72,6 +74,8 @@ func _update_current_interactable() -> void:
 
 	for candidate in _candidates:
 		if candidate == null or not is_instance_valid(candidate):
+			continue
+		if candidate == _player:
 			continue
 		if candidate is Node2D:
 			var dist := (candidate as Node2D).global_position.distance_to(_player.global_position)

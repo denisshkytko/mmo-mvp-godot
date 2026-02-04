@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+signal hud_visibility_changed(is_open: bool)
+
 @onready var menu_button: Button = get_node_or_null("MenuButton")
 @onready var panel: Panel = $Root/Panel
 @onready var exit_world: Button = $Root/Panel/Margin/VBox/ExitWorldButton
@@ -8,6 +10,7 @@ extends CanvasLayer
 func _ready() -> void:
 	add_to_group("menu_hud")
 	panel.visible = false
+	emit_signal("hud_visibility_changed", panel.visible)
 	if menu_button != null:
 		menu_button.pressed.connect(_toggle)
 	exit_world.pressed.connect(_exit_world)
@@ -27,13 +30,18 @@ func _on_state_changed(_old_state: int, new_state: int) -> void:
 		panel.visible = false
 	else:
 		panel.visible = false
+	emit_signal("hud_visibility_changed", panel.visible)
 
 func _toggle() -> void:
 	panel.visible = not panel.visible
+	emit_signal("hud_visibility_changed", panel.visible)
 
 
 func toggle_menu() -> void:
 	_toggle()
+
+func is_open() -> bool:
+	return panel.visible
 
 func _save_now() -> void:
 	var gm: Node = get_tree().get_first_node_in_group("game_manager")

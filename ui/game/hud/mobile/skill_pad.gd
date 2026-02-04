@@ -20,6 +20,7 @@ func _ready() -> void:
 	for btn in _skill_buttons:
 		btn.pressed.connect(_on_skill_button_pressed.bind(int(btn.get_meta("slot_index"))))
 	interact_btn.pressed.connect(_on_interact_pressed)
+	set_interact_visible(false)
 
 
 func _setup_slot_meta() -> void:
