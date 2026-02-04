@@ -575,7 +575,8 @@ func _position_tooltip(anchor_pos: Vector2) -> void:
 	if tooltip_panel == null or panel == null:
 		return
 
-	var vp: Rect2 = get_viewport_rect()
+	var viewport := get_viewport()
+	var vp: Rect2 = viewport.get_visible_rect() if viewport != null else Rect2()
 	var desired := anchor_pos + TOOLTIP_OFFSET
 	var tsize := tooltip_panel.size
 
