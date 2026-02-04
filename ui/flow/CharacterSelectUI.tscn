@@ -5,12 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://c6qtdmbb5804r" path="res://ui/flow/hud/CharacterSelectHUD.tscn" id="2"]
 
 [node name="CharacterSelectUI" type="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("1_fpjqy")
 
 [node name="Root" type="Control" parent="."]
@@ -20,23 +14,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Root"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="CreateCharacterHUD" parent="Root" instance=ExtResource("1_opyui")]
 
-[node name="CenterContainer" type="CenterContainer" parent="Root/HBoxContainer"]
-custom_minimum_size = Vector2(576, 560)
-layout_mode = 2
-
-[node name="CreateCharacterHUD" parent="Root/HBoxContainer/CenterContainer" instance=ExtResource("1_opyui")]
-custom_minimum_size = Vector2(250, 160)
-layout_mode = 2
-
-[node name="CharacterSelectHUD" parent="Root/HBoxContainer" instance=ExtResource("2")]
-custom_minimum_size = Vector2(576, 560)
-layout_mode = 2
+[node name="CharacterSelectHUD" parent="Root" instance=ExtResource("2")]

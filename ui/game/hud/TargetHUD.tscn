@@ -96,18 +96,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 clip_contents = true
 custom_minimum_size = Vector2(170, 80)
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -386.0
+layout_mode = 1
+offset_left = 190.0
 offset_top = 10.0
-offset_right = -216.0
+offset_right = 360.0
 offset_bottom = 90.0
-grow_horizontal = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel_outline")
 
 [node name="Margin" type="MarginContainer" parent="Root/Panel"]

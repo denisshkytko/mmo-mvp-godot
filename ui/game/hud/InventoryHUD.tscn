@@ -35,9 +35,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 visible = false
+layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -141,6 +143,7 @@ clip_text = true
 
 [node name="QuickBar" type="HBoxContainer" parent="Root"]
 custom_minimum_size = Vector2(200, 36)
+layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -331,12 +334,14 @@ text_overrun_behavior = 3
 
 [node name="InvTooltip" parent="Root" instance=ExtResource("2_0n5q6")]
 z_index = 60
+layout_mode = 0
 offset_right = 360.0
 offset_bottom = 10.0
 
 [node name="SplitDialog" type="Panel" parent="Root"]
 visible = false
 custom_minimum_size = Vector2(260, 130)
+layout_mode = 0
 offset_left = 40.0
 offset_top = 40.0
 offset_right = 300.0

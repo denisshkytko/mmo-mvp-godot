@@ -8,24 +8,27 @@ script = ExtResource("1_qpvh6")
 [node name="Root" type="Control" parent="."]
 custom_minimum_size = Vector2(600, 20)
 layout_mode = 3
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 288.0
-offset_top = -28.0
-offset_right = -264.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="BarPanel" type="Panel" parent="Root"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+
+[node name="BarPanel" type="Panel" parent="Root"]
+custom_minimum_size = Vector2(600, 20)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -30.0
+offset_right = 300.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="XpBar" type="Control" parent="Root/BarPanel"]
 custom_minimum_size = Vector2(580, 10)

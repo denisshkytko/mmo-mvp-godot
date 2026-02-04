@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://02n5el7bap5r"]
 
 [ext_resource type="Script" uid="uid://31wu7f4vmesd" path="res://ui/game/hud/merchant_hud.gd" id="1_yj2p2"]
-[ext_resource type="PackedScene" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_2u4xq"]
+[ext_resource type="PackedScene" uid="uid://bt2tbslwfrutf" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_2u4xq"]
 
 [node name="MerchantHUD" type="CanvasLayer"]
 script = ExtResource("1_yj2p2")
@@ -13,13 +13,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="TooltipPanel" parent="Root" instance=ExtResource("2_2u4xq")]
 z_index = 50
+layout_mode = 0
 
 [node name="QtyDialog" type="Panel" parent="Root"]
 visible = false
 custom_minimum_size = Vector2(260, 140)
+layout_mode = 0
 offset_left = 40.0
 offset_top = 40.0
 offset_right = 300.0
@@ -67,6 +70,7 @@ text = "Отмена"
 [node name="Panel" type="Panel" parent="Root"]
 visible = false
 custom_minimum_size = Vector2(385, 585)
+layout_mode = 1
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 395.0

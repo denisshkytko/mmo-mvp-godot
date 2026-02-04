@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cyfwx2chmt82i"]
 
 [ext_resource type="Script" uid="uid://65yhursyacwe" path="res://ui/game/hud/loot_hud.gd" id="1_784ee"]
-[ext_resource type="PackedScene" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_4g0os"]
+[ext_resource type="PackedScene" uid="uid://bt2tbslwfrutf" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_4g0os"]
 
 [node name="LootHUD" type="CanvasLayer"]
 script = ExtResource("1_784ee")
@@ -13,12 +13,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="TooltipPanel" parent="Root" instance=ExtResource("2_4g0os")]
 z_index = 50
+layout_mode = 0
 
 [node name="Panel" type="Panel" parent="Root"]
 custom_minimum_size = Vector2(300, 360)
+layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5

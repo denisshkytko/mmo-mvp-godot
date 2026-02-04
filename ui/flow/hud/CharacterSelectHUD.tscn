@@ -3,12 +3,6 @@
 [ext_resource type="Script" uid="uid://puaxctvtde21" path="res://ui/flow/hud/character_select_hud.gd" id="1_wuons"]
 
 [node name="CharacterSelectHUD" type="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("1_wuons")
 
 [node name="Root" type="Control" parent="."]
@@ -18,10 +12,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 custom_minimum_size = Vector2(520, 360)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -592.0
+offset_top = -180.0
+offset_right = -72.0
+offset_bottom = 180.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [node name="Margin" type="MarginContainer" parent="Root/Panel"]
 layout_mode = 0
