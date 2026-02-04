@@ -2,11 +2,11 @@ extends CanvasLayer
 
 signal character_created(char_id: String)
 
-@onready var name_edit: LineEdit = $Root/Bg/Panel/Margin/VBox/NameEdit
-@onready var class_option: OptionButton = $Root/Bg/Panel/Margin/VBox/ClassOption
-@onready var create_button: Button = $Root/Bg/Panel/Margin/VBox/Buttons/CreateButton
-@onready var cancel_button: Button = $Root/Bg/Panel/Margin/VBox/Buttons/CancelButton
-@onready var error_label: Label = $Root/Bg/Panel/Margin/VBox/ErrorLabel
+@onready var name_edit: LineEdit = $Root/Panel/Margin/VBox/NameEdit
+@onready var class_option: OptionButton = $Root/Panel/Margin/VBox/ClassOption
+@onready var create_button: Button = $Root/Panel/Margin/VBox/Buttons/CreateButton
+@onready var cancel_button: Button = $Root/Panel/Margin/VBox/Buttons/CancelButton
+@onready var error_label: Label = $Root/Panel/Margin/VBox/ErrorLabel
 
 func _ready() -> void:
 	error_label.text = ""
