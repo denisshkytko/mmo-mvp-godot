@@ -1,7 +1,7 @@
 extends CanvasLayer
 
-@onready var create_hud: Node = $Root/HBoxContainer/CenterContainer/CreateCharacterHUD
-@onready var select_hud: Node = $Root/HBoxContainer/CharacterSelectHUD
+@onready var create_hud: Node = $Root/CreateCharacterHUD
+@onready var select_hud: Node = $Root/CharacterSelectHUD
 
 func _ready() -> void:
 	if create_hud != null and create_hud.has_signal("character_created"):

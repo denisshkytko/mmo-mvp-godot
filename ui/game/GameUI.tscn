@@ -30,8 +30,6 @@ scale = Vector2(0.5, 0.5)
 transform = Transform2D(0.5, 0, 0, 0.5, 320, 320)
 
 [node name="BuffsHUD" parent="Root" instance=ExtResource("3_wemh1")]
-offset = Vector2(1072, 20)
-transform = Transform2D(1, 0, 0, 1, 1072, 20)
 
 [node name="TargetHUD" parent="Root" instance=ExtResource("4_3pola")]
 
@@ -48,24 +46,9 @@ transform = Transform2D(1, 0, 0, 1, 476, 285)
 [node name="MerchantHUD" parent="Root" groups=["merchant_ui"] instance=ExtResource("11_6i0yq")]
 
 [node name="MenuHUD" parent="Root" instance=ExtResource("9_48nlf")]
-layout_mode = 0
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-grow_horizontal = 1
-grow_vertical = 1
 
 [node name="CharacterHUD" parent="Root" instance=ExtResource("10_lj31k")]
-layout_mode = 0
-offset_right = 0.0
-offset_bottom = 0.0
 
 [node name="QuickMenuHUD" parent="Root" instance=ExtResource("13_4p0o0")]
-layout_mode = 1
-offset_left = 997.0
-offset_right = 1107.0
-offset_bottom = 200.0
 
 [node name="MobileHUD" parent="Root" instance=ExtResource("13_kywc6")]
