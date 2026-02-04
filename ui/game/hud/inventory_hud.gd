@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
-signal visibility_changed(is_open: bool)
+signal hud_visibility_changed(is_open: bool)
 @onready var panel: Control = $Root/Panel
 @onready var gold_label: RichTextLabel = $Root/Panel/GoldLabel
 @onready var content: Control = $Root/Panel/Content
@@ -119,7 +119,7 @@ func _ready() -> void:
 	add_to_group("inventory_ui")
 	# default to closed in actual gameplay; keep current behavior
 	_is_open = panel.visible
-	emit_signal("visibility_changed", _is_open)
+	emit_signal("hud_visibility_changed", _is_open)
 	if gold_label != null:
 		gold_label.bbcode_enabled = true
 		gold_label.fit_content = true
@@ -293,7 +293,7 @@ func _toggle_inventory() -> void:
 func _set_open(v: bool) -> void:
 	_is_open = v
 	panel.visible = v
-	emit_signal("visibility_changed", _is_open)
+	emit_signal("hud_visibility_changed", _is_open)
 	if not v:
 		_hide_tooltip()
 		_hide_split()

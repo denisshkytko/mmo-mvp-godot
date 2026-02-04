@@ -36,18 +36,18 @@ func _ready() -> void:
 
 func _init_window_tracking() -> void:
 	_inventory_ui = get_tree().get_first_node_in_group("inventory_ui")
-	if _inventory_ui != null and _inventory_ui.has_signal("visibility_changed"):
-		_inventory_ui.visibility_changed.connect(_on_inventory_visibility_changed)
+	if _inventory_ui != null and _inventory_ui.has_signal("hud_visibility_changed"):
+		_inventory_ui.hud_visibility_changed.connect(_on_inventory_visibility_changed)
 		if _inventory_ui.has_method("is_open"):
 			_inventory_open = bool(_inventory_ui.call("is_open"))
 	_character_ui = get_tree().get_first_node_in_group("character_hud")
-	if _character_ui != null and _character_ui.has_signal("visibility_changed"):
-		_character_ui.visibility_changed.connect(_on_character_visibility_changed)
+	if _character_ui != null and _character_ui.has_signal("hud_visibility_changed"):
+		_character_ui.hud_visibility_changed.connect(_on_character_visibility_changed)
 		if _character_ui.has_method("is_open"):
 			_character_open = bool(_character_ui.call("is_open"))
 	_merchant_ui = get_tree().get_first_node_in_group("merchant_hud")
-	if _merchant_ui != null and _merchant_ui.has_signal("visibility_changed"):
-		_merchant_ui.visibility_changed.connect(_on_merchant_visibility_changed)
+	if _merchant_ui != null and _merchant_ui.has_signal("hud_visibility_changed"):
+		_merchant_ui.hud_visibility_changed.connect(_on_merchant_visibility_changed)
 		if _merchant_ui.has_method("is_open"):
 			_merchant_open = bool(_merchant_ui.call("is_open"))
 	_update_visibility()
