@@ -561,13 +561,13 @@ func _update_merchant_interaction() -> void:
 func _can_trade_with(player_node: Node) -> bool:
 	if player_node == null or c_stats == null or c_stats.is_dead:
 		return false
+	if is_in_combat():
+		return false
 	var pf: String = "blue"
 	if player_node.has_method("get_faction_id"):
 		pf = String(player_node.call("get_faction_id"))
 	var rel: int = FactionRules.relation(pf, faction_id)
 	if rel == FactionRules.Relation.HOSTILE:
-		return false
-	if rel == FactionRules.Relation.NEUTRAL and is_in_combat():
 		return false
 	return true
 

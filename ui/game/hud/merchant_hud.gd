@@ -124,6 +124,7 @@ func close() -> void:
 	panel.visible = false
 	emit_signal("hud_visibility_changed", false)
 	_hide_tooltip()
+	_hide_quantity_dialog()
 	_sync_inventory_trade_state(false)
 	_merchant = null
 
@@ -133,6 +134,19 @@ func _process(delta: float) -> void:
 	if _merchant != null and not is_instance_valid(_merchant):
 		close()
 		return
+	if _merchant != null and _player != null:
+		if _merchant.has_method("can_interact_with"):
+			if not bool(_merchant.call("can_interact_with", _player)):
+				close()
+				return
+		elif _merchant is Node2D and _player is Node2D:
+			var dist := (_merchant as Node2D).global_position.distance_to((_player as Node2D).global_position)
+			var radius := 0.0
+			if "merchant_interact_radius" in _merchant:
+				radius = float(_merchant.get("merchant_interact_radius"))
+			if radius > 0.0 and dist > radius:
+				close()
+				return
 	_sell_refresh_accum += delta
 	if _sell_refresh_accum >= 1.0:
 		_sell_refresh_accum = 0.0
