@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dw6ww27thp6uo"]
 
-[ext_resource type="Script" uid="uid://q4dkexirsq6q" path="res://ui/flow/login_hud.gd" id="1_4g51g"]
+[ext_resource type="Script" uid="uid://q4dkexirsq6q" path="res://ui/flow/hud/login_hud.gd" id="1_4g51g"]
 
 [node name="LoginHUD" type="CanvasLayer"]
 layout_mode = 3

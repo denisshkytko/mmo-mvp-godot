@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dg6fkxddowx6"]
 
-[ext_resource type="Script" uid="uid://b0xa85p25qwvq" path="res://ui/flow/create_character_hud.gd" id="1_0x13s"]
+[ext_resource type="Script" uid="uid://b0xa85p25qwvq" path="res://ui/flow/hud/create_character_hud.gd" id="1_0x13s"]
 
 [node name="CreateCharacterHUD" type="CanvasLayer"]
 layout_mode = 3

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b67tq3k0i7m7c"]
 
-[ext_resource type="PackedScene" uid="uid://dw6ww27thp6uo" path="res://ui/flow/LoginHUD.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://dw6ww27thp6uo" path="res://ui/flow/hud/LoginHUD.tscn" id="2"]
 
 [node name="LoginUI" type="CanvasLayer"]
 layout_mode = 3

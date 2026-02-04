@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c6qtdmbb5804r"]
 
-[ext_resource type="Script" uid="uid://puaxctvtde21" path="res://ui/flow/character_select_hud.gd" id="1_wuons"]
+[ext_resource type="Script" uid="uid://puaxctvtde21" path="res://ui/flow/hud/character_select_hud.gd" id="1_wuons"]
 
 [node name="CharacterSelectHUD" type="CanvasLayer"]
 layout_mode = 3
