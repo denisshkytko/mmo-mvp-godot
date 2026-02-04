@@ -1,12 +1,12 @@
-extends Control
+extends CanvasLayer
 class_name QuickMenuHUD
 
-@onready var panel: Panel = $Panel
-@onready var button_stack: VBoxContainer = $Panel/ButtonStack
-@onready var menu_button: Button = $Panel/ButtonStack/MenuButton
-@onready var inventory_button: Button = $Panel/ButtonStack/InventoryButton
-@onready var character_button: Button = $Panel/ButtonStack/CharacterButton
-@onready var toggle_button: Button = $ToggleButton
+@onready var panel: Panel = $Root/Panel
+@onready var button_stack: VBoxContainer = $Root/Panel/ButtonStack
+@onready var menu_button: Button = $Root/Panel/ButtonStack/MenuButton
+@onready var inventory_button: Button = $Root/Panel/ButtonStack/InventoryButton
+@onready var character_button: Button = $Root/Panel/ButtonStack/CharacterButton
+@onready var toggle_button: Button = $Root/ToggleButton
 
 var _expanded: bool = false
 @export var spacing: float = 5.0

@@ -10,15 +10,15 @@ const TOOLTIP_HOLD_MAX_MS: int = 1000
 # - Tooltip panel rendered beside the window (not under mouse)
 const SLOT_COUNT := 6
 
-@onready var panel: Control = $Panel
-@onready var scroll: ScrollContainer = $Panel/Scroll
-@onready var grid: GridContainer = $Panel/Scroll/Grid
-@onready var loot_all_button: Button = $Panel/LootAllButton
-@onready var close_button: Button = $Panel/CloseButton
+@onready var panel: Control = $Root/Panel
+@onready var scroll: ScrollContainer = $Root/Panel/Scroll
+@onready var grid: GridContainer = $Root/Panel/Scroll/Grid
+@onready var loot_all_button: Button = $Root/Panel/LootAllButton
+@onready var close_button: Button = $Root/Panel/CloseButton
 
-@onready var tooltip_panel: Panel = $TooltipPanel
-@onready var tooltip_text: RichTextLabel = $TooltipPanel/Margin/VBox/Text
-@onready var tooltip_close_button: Button = $TooltipPanel/CloseButton
+@onready var tooltip_panel: Panel = $Root/TooltipPanel
+@onready var tooltip_text: RichTextLabel = $Root/TooltipPanel/Margin/VBox/Text
+@onready var tooltip_close_button: Button = $Root/TooltipPanel/CloseButton
 
 var _corpse: Node = null
 var _player: Node = null

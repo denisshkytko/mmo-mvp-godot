@@ -4,8 +4,8 @@ class_name BuffsHUD
 @export var buff_icon_scene: PackedScene
 @export var buffs_per_row: int = 7
 @export var newest_on_right: bool = true  # если RTL недоступен, это всё равно даст правильный визуал
-@onready var panel: Panel = $Panel
-@onready var grid: GridContainer = $Panel/Grid
+@onready var panel: Panel = $Root/Panel
+@onready var grid: GridContainer = $Root/Panel/Grid
 
 var _player: Node = null
 var _icons: Dictionary = {} # buff_id:String -> BuffIcon (Node)

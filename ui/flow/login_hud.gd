@@ -1,9 +1,9 @@
-extends Control
+extends CanvasLayer
 
-@onready var username_edit: LineEdit = $Center/Panel/Margin/VBox/UsernameEdit
-@onready var password_edit: LineEdit = $Center/Panel/Margin/VBox/PasswordEdit
-@onready var login_button: Button = $Center/Panel/Margin/VBox/LoginButton
-@onready var error_label: Label = $Center/Panel/Margin/VBox/ErrorLabel
+@onready var username_edit: LineEdit = $Root/Center/Panel/Margin/VBox/UsernameEdit
+@onready var password_edit: LineEdit = $Root/Center/Panel/Margin/VBox/PasswordEdit
+@onready var login_button: Button = $Root/Center/Panel/Margin/VBox/LoginButton
+@onready var error_label: Label = $Root/Center/Panel/Margin/VBox/ErrorLabel
 
 func _ready() -> void:
 	error_label.text = ""

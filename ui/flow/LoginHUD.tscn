@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://q4dkexirsq6q" path="res://ui/flow/login_hud.gd" id="1_4g51g"]
 
-[node name="LoginHUD" type="Control"]
+[node name="LoginHUD" type="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,22 +11,30 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4g51g")
 
-[node name="Bg" type="ColorRect" parent="."]
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Bg" type="ColorRect" parent="Root"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.07, 0.08, 0.11, 1)
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Center" type="CenterContainer" parent="Root"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Panel" type="Panel" parent="Center"]
+[node name="Panel" type="Panel" parent="Root/Center"]
 custom_minimum_size = Vector2(420, 280)
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+[node name="Margin" type="MarginContainer" parent="Root/Center/Panel"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -35,30 +43,30 @@ theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 18
 
-[node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="Root/Center/Panel/Margin"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
+[node name="Title" type="Label" parent="Root/Center/Panel/Margin/VBox"]
 layout_mode = 2
 text = "Login"
 horizontal_alignment = 1
 
-[node name="UsernameEdit" type="LineEdit" parent="Center/Panel/Margin/VBox"]
+[node name="UsernameEdit" type="LineEdit" parent="Root/Center/Panel/Margin/VBox"]
 layout_mode = 2
 placeholder_text = "Username"
 
-[node name="PasswordEdit" type="LineEdit" parent="Center/Panel/Margin/VBox"]
+[node name="PasswordEdit" type="LineEdit" parent="Root/Center/Panel/Margin/VBox"]
 layout_mode = 2
 placeholder_text = "Password"
 secret = true
 
-[node name="LoginButton" type="Button" parent="Center/Panel/Margin/VBox"]
+[node name="LoginButton" type="Button" parent="Root/Center/Panel/Margin/VBox"]
 layout_mode = 2
 text = "Sign in"
 
-[node name="ErrorLabel" type="Label" parent="Center/Panel/Margin/VBox"]
+[node name="ErrorLabel" type="Label" parent="Root/Center/Panel/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
 horizontal_alignment = 1

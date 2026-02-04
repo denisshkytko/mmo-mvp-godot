@@ -76,14 +76,22 @@ cache/0/16/0/scale = 1.0
 [node name="PlayerHUD" type="CanvasLayer"]
 script = ExtResource("1_0kcyj")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Root"]
 custom_minimum_size = Vector2(170, 80)
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 180.0
 offset_bottom = 90.0
 
-[node name="Margin" type="MarginContainer" parent="Panel"]
+[node name="Margin" type="MarginContainer" parent="Root/Panel"]
 custom_minimum_size = Vector2(160, 80)
 layout_mode = 1
 anchors_preset = 15
@@ -96,26 +104,26 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="Root/Panel/Margin"]
 custom_minimum_size = Vector2(160, 70)
 layout_mode = 2
 theme_override_constants/separation = 6
 alignment = 1
 
-[node name="Header" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="Header" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(150, 20)
 layout_mode = 2
 theme_override_constants/separation = 50
 alignment = 1
 
-[node name="NameLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+[node name="NameLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontFile_p0abl")
 theme_override_font_sizes/font_size = 12
 text = "Player"
 vertical_alignment = 1
 
-[node name="LevelLabel" type="Label" parent="Panel/Margin/VBox/Header"]
+[node name="LevelLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 1
@@ -125,14 +133,14 @@ text = "lvl 1"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="HpRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="HpRow" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(160, 20)
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="HpBar" type="ProgressBar" parent="Panel/Margin/VBox/HpRow"]
+[node name="HpBar" type="ProgressBar" parent="Root/Panel/Margin/VBox/HpRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -141,7 +149,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_uhx4l")
 value = 100.0
 show_percentage = false
 
-[node name="HpText" type="Label" parent="Panel/Margin/VBox/HpRow/HpBar"]
+[node name="HpText" type="Label" parent="Root/Panel/Margin/VBox/HpRow/HpBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -155,12 +163,12 @@ text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ManaRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="ManaRow" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(160, 20)
 layout_mode = 2
 size_flags_vertical = 10
 
-[node name="ManaBar" type="ProgressBar" parent="Panel/Margin/VBox/ManaRow"]
+[node name="ManaBar" type="ProgressBar" parent="Root/Panel/Margin/VBox/ManaRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -169,7 +177,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_fnqv5")
 value = 100.0
 show_percentage = false
 
-[node name="ManaText" type="Label" parent="Panel/Margin/VBox/ManaRow/ManaBar"]
+[node name="ManaText" type="Label" parent="Root/Panel/Margin/VBox/ManaRow/ManaBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

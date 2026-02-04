@@ -1,9 +1,9 @@
-extends Control
+extends CanvasLayer
 
 @onready var menu_button: Button = get_node_or_null("MenuButton")
-@onready var panel: Panel = $Panel
-@onready var exit_world: Button = $Panel/Margin/VBox/ExitWorldButton
-@onready var exit_game: Button = $Panel/Margin/VBox/ExitGameButton
+@onready var panel: Panel = $Root/Panel
+@onready var exit_world: Button = $Root/Panel/Margin/VBox/ExitWorldButton
+@onready var exit_game: Button = $Root/Panel/Margin/VBox/ExitGameButton
 
 func _ready() -> void:
 	add_to_group("menu_hud")
