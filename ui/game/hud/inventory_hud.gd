@@ -1900,7 +1900,7 @@ func _ensure_support_ui() -> void:
 
 	# Quick bar is part of the scene (InventoryHUD.tscn) so you can edit it visually.
 	if _quick_bar == null:
-		_quick_bar = get_node_or_null("QuickBar") as HBoxContainer
+		_quick_bar = get_node_or_null("Root/QuickBar") as HBoxContainer
 		if _quick_bar == null:
 			push_error("InventoryHUD: QuickBar node missing from scene; quick slots disabled.")
 			return
