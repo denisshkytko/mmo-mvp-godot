@@ -600,6 +600,8 @@ func _try_open_trainer(player_node: Node) -> void:
 	var trainer_class := ""
 	if c_stats != null:
 		trainer_class = c_stats.class_id
+	if OS.is_debug_build():
+		print("[TRAINER] npc_class=", trainer_class, " player_class=", (player_node as Player).class_id, " npc_id=", get_instance_id())
 	ui.call("open_for_trainer", self, player_node, (player_node as Player).c_spellbook, trainer_class)
 
 
