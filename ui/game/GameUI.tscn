@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://csbowtuv1xh0o"]
+[gd_scene load_steps=17 format=3 uid="uid://csbowtuv1xh0o"]
 
 [ext_resource type="PackedScene" uid="uid://167bw0aqye6e" path="res://ui/game/hud/XpHUD.tscn" id="1_rs8we"]
 [ext_resource type="PackedScene" uid="uid://dqcx34335ljdy" path="res://ui/game/hud/SkillButtonHUD.tscn" id="2_qdv4i"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://d0uicm7r3xgxa" path="res://ui/game/hud/QuickMenuHUD.tscn" id="13_4p0o0"]
 [ext_resource type="PackedScene" uid="uid://d2ddrgn4o57x6" path="res://ui/game/hud/mobile/MobileHUD.tscn" id="13_kywc6"]
 [ext_resource type="PackedScene" uid="uid://c4q0bn4cdut8e" path="res://ui/game/ui/ability_tooltip.tscn" id="14_8p6r6"]
+[ext_resource type="PackedScene" uid="uid://hbn3bq3q4n0fk" path="res://ui/game/hud/BuffsAuraHUD.tscn" id="15_8s0mq"]
 
 [node name="GameUI" type="CanvasLayer"]
 
@@ -59,3 +60,5 @@ transform = Transform2D(1, 0, 0, 1, 476, 285)
 
 [node name="AbilityTooltip" parent="Root" instance=ExtResource("14_8p6r6")]
 z_index = 200
+
+[node name="BuffsAuraHUD" parent="Root" instance=ExtResource("15_8s0mq")]
