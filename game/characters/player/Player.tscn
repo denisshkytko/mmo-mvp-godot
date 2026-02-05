@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://rwedipw6jwwn"]
+[gd_scene load_steps=14 format=3 uid="uid://rwedipw6jwwn"]
 
 [ext_resource type="Script" uid="uid://bat5o7j41jp0r" path="res://game/characters/player/player.gd" id="1_p0vlq"]
 [ext_resource type="Script" uid="uid://chlq040cx6wia" path="res://game/characters/player/components/player_stats.gd" id="2_dcag1"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://ci7uwg4kea5rj" path="res://game/characters/player/components/player_skills.gd" id="5_dh85s"]
 [ext_resource type="Script" uid="uid://ytmhmr63eges" path="res://game/characters/player/components/player_inventory_component.gd" id="6_bvo31"]
 [ext_resource type="Script" uid="uid://dkfplh5q5mr6t" path="res://game/characters/player/components/player_equipment_component.gd" id="7_21vdf"]
+[ext_resource type="Script" uid="uid://cgncjs4h0h1j" path="res://game/characters/player/components/player_spellbook.gd" id="8_6r5p8"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="8_3yo6h"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="9_uox5w"]
 [ext_resource type="Script" uid="uid://cmfp07uiqwjw0" path="res://game/characters/player/interaction_detector.gd" id="10_8sru1"]
@@ -78,6 +79,9 @@ script = ExtResource("6_bvo31")
 
 [node name="Equipment" type="Node" parent="Components"]
 script = ExtResource("7_21vdf")
+
+[node name="Spellbook" type="Node" parent="Components"]
+script = ExtResource("8_6r5p8")
 
 [node name="Resource" type="Node" parent="Components"]
 script = ExtResource("8_3yo6h")

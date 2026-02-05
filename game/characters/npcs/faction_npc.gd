@@ -22,6 +22,7 @@ signal died(corpse: Corpse)
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 const BASE_XP_L1_FACTION: int = 3
 const MERCHANT_HINT_TEXT: String = "\"E\" to trade"
+const TRAINER_HINT_TEXT: String = "\"E\" to train"
 const MERCHANT_BUYBACK_TTL_MSEC: int = 10 * 60 * 1000
 
 enum FighterType { CIVILIAN, COMBATANT }
@@ -289,7 +290,7 @@ func _process(_delta: float) -> void:
 	if current_target != null and is_instance_valid(current_target):
 		is_aggro_on_player = current_target.is_in_group("player")
 	TargetMarkerHelper.set_marker_visible(target_marker, is_aggro_on_player)
-	_update_merchant_interaction()
+	_update_interaction()
 
 
 func _physics_process(delta: float) -> void:
@@ -540,8 +541,8 @@ func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:
 		direct_attackers.clear()
 
-func _update_merchant_interaction() -> void:
-	if interaction_type != InteractionType.MERCHANT:
+func _update_interaction() -> void:
+	if interaction_type != InteractionType.MERCHANT and interaction_type != InteractionType.TRAINER:
 		if merchant_hint != null:
 			merchant_hint.visible = false
 		return
@@ -552,11 +553,20 @@ func _update_merchant_interaction() -> void:
 		merchant_hint.visible = false
 		return
 	var dist: float = global_position.distance_to(p.global_position)
-	var can_trade: bool = _can_trade_with(p)
-	var show_hint: bool = can_trade and dist <= merchant_interact_radius
+	var can_interact: bool = false
+	if interaction_type == InteractionType.MERCHANT:
+		merchant_hint.text = MERCHANT_HINT_TEXT
+		can_interact = _can_trade_with(p)
+	else:
+		merchant_hint.text = TRAINER_HINT_TEXT
+		can_interact = _can_train_with(p)
+	var show_hint: bool = can_interact and dist <= merchant_interact_radius
 	merchant_hint.visible = show_hint
 	if show_hint and Input.is_action_just_pressed("loot"):
-		_try_open_merchant(p)
+		if interaction_type == InteractionType.MERCHANT:
+			_try_open_merchant(p)
+		else:
+			_try_open_trainer(p)
 
 func _can_trade_with(player_node: Node) -> bool:
 	if player_node == null or c_stats == null or c_stats.is_dead:
@@ -571,18 +581,36 @@ func _can_trade_with(player_node: Node) -> bool:
 		return false
 	return true
 
+func _can_train_with(player_node: Node) -> bool:
+	return _can_trade_with(player_node)
+
 func _try_open_merchant(_player_node: Node) -> void:
 	var ui := get_tree().get_first_node_in_group("merchant_ui")
 	if ui != null and ui.has_method("toggle_for_merchant"):
 		ui.call("toggle_for_merchant", self)
 
+func _try_open_trainer(player_node: Node) -> void:
+	var ui := get_tree().get_first_node_in_group("trainer_ui")
+	if ui == null or not ui.has_method("open_for_trainer"):
+		return
+	if player_node == null or not is_instance_valid(player_node):
+		return
+	if not (player_node is Player):
+		return
+	var trainer_class := ""
+	if c_stats != null:
+		trainer_class = c_stats.class_id
+	ui.call("open_for_trainer", self, player_node, (player_node as Player).c_spellbook, trainer_class)
+
 
 func can_interact_with(player_node: Node) -> bool:
-	if interaction_type != InteractionType.MERCHANT:
+	if interaction_type != InteractionType.MERCHANT and interaction_type != InteractionType.TRAINER:
 		return false
 	if player_node == null or not is_instance_valid(player_node):
 		return false
-	if not _can_trade_with(player_node):
+	if interaction_type == InteractionType.MERCHANT and not _can_trade_with(player_node):
+		return false
+	if interaction_type == InteractionType.TRAINER and not _can_train_with(player_node):
 		return false
 	if player_node is Node2D:
 		var dist: float = global_position.distance_to((player_node as Node2D).global_position)
@@ -594,7 +622,10 @@ func can_interact_with(player_node: Node) -> bool:
 func try_interact(player_node: Node) -> void:
 	if not can_interact_with(player_node):
 		return
-	_try_open_merchant(player_node)
+	if interaction_type == InteractionType.MERCHANT:
+		_try_open_merchant(player_node)
+	elif interaction_type == InteractionType.TRAINER:
+		_try_open_trainer(player_node)
 
 func get_merchant_preset() -> MerchantPreset:
 	return merchant_preset

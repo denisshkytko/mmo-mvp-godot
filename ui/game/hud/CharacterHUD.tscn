@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://k52s76musmbr"]
+[gd_scene load_steps=5 format=3 uid="uid://k52s76musmbr"]
 
 [ext_resource type="Script" uid="uid://benifso7efdrw" path="res://ui/game/hud/character_hud.gd" id="1_6op8q"]
 [ext_resource type="PackedScene" uid="uid://bt2tbslwfrutf" path="res://ui/game/hud/SharedTooltipPanel.tscn" id="2_0n5q6"]
+[ext_resource type="Script" uid="uid://cp7u4xk1x7sl7" path="res://ui/game/hud/character/spells/spells_tab.gd" id="3_7l3j0"]
+[ext_resource type="PackedScene" uid="uid://dw3wxnk0s0qom" path="res://ui/game/hud/character/spells/loadout_pad.tscn" id="4_7s14y"]
 
 [node name="CharacterHUD" type="CanvasLayer"]
 script = ExtResource("1_6op8q")
@@ -485,6 +487,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 metadata/_tab_index = 1
+script = ExtResource("3_7l3j0")
 
 [node name="SpellsVBox" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания"]
 layout_mode = 1
@@ -502,10 +505,81 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="SpellsMargin" type="MarginContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="SpellsScroll" type="ScrollContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA/SpellsMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SpellsGrid" type="GridContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA/SpellsMargin/SpellsScroll"]
+layout_mode = 2
+columns = 2
+size_flags_horizontal = 3
+theme_override_constants/v_separation = 4
+theme_override_constants/h_separation = 6
+
 [node name="SpellsPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="LoadoutMargin" type="MarginContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="LoadoutVBox" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="LoadoutPadRoot" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox" instance=ExtResource("4_7s14y")]
+layout_mode = 2
+
+[node name="SlotLabels" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Slot0" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox/SlotLabels"]
+layout_mode = 2
+text = "slot0"
+
+[node name="Slot1" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox/SlotLabels"]
+layout_mode = 2
+text = "slot1"
+
+[node name="Slot2" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox/SlotLabels"]
+layout_mode = 2
+text = "slot2"
+
+[node name="Slot3" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox/SlotLabels"]
+layout_mode = 2
+text = "slot3"
+
+[node name="Slot4" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox/SlotLabels"]
+layout_mode = 2
+text = "slot4"
 
 [node name="Способности" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
 visible = false

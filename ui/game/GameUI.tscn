@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://csbowtuv1xh0o"]
+[gd_scene load_steps=16 format=3 uid="uid://csbowtuv1xh0o"]
 
 [ext_resource type="PackedScene" uid="uid://167bw0aqye6e" path="res://ui/game/hud/XpHUD.tscn" id="1_rs8we"]
 [ext_resource type="PackedScene" uid="uid://dqcx34335ljdy" path="res://ui/game/hud/SkillButtonHUD.tscn" id="2_qdv4i"]
@@ -11,8 +11,10 @@
 [ext_resource type="PackedScene" uid="uid://cfogpoavpomnd" path="res://ui/game/hud/MenuHUD.tscn" id="9_48nlf"]
 [ext_resource type="PackedScene" uid="uid://k52s76musmbr" path="res://ui/game/hud/CharacterHUD.tscn" id="10_lj31k"]
 [ext_resource type="PackedScene" uid="uid://02n5el7bap5r" path="res://ui/game/hud/MerchantHUD.tscn" id="11_6i0yq"]
+[ext_resource type="PackedScene" uid="uid://c3m26r5shq0h0" path="res://ui/game/hud/trainer/trainer_window.tscn" id="12_8g3gq"]
 [ext_resource type="PackedScene" uid="uid://d0uicm7r3xgxa" path="res://ui/game/hud/QuickMenuHUD.tscn" id="13_4p0o0"]
 [ext_resource type="PackedScene" uid="uid://d2ddrgn4o57x6" path="res://ui/game/hud/mobile/MobileHUD.tscn" id="13_kywc6"]
+[ext_resource type="PackedScene" uid="uid://c4q0bn4cdut8e" path="res://ui/game/ui/ability_tooltip.tscn" id="14_8p6r6"]
 
 [node name="GameUI" type="CanvasLayer"]
 
@@ -49,6 +51,11 @@ transform = Transform2D(1, 0, 0, 1, 476, 285)
 
 [node name="CharacterHUD" parent="Root" instance=ExtResource("10_lj31k")]
 
+[node name="TrainerHUD" parent="Root" groups=["trainer_ui"] instance=ExtResource("12_8g3gq")]
+
 [node name="QuickMenuHUD" parent="Root" instance=ExtResource("13_4p0o0")]
 
 [node name="MobileHUD" parent="Root" instance=ExtResource("13_kywc6")]
+
+[node name="AbilityTooltip" parent="Root" instance=ExtResource("14_8p6r6")]
+z_index = 200

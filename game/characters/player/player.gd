@@ -186,6 +186,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_skills: PlayerSkills = $Components/Skills as PlayerSkills
 @onready var c_inv: PlayerInventoryComponent = $Components/Inventory as PlayerInventoryComponent
 @onready var c_equip: PlayerEquipmentComponent = $Components/Equipment as PlayerEquipmentComponent
+@onready var c_spellbook: PlayerSpellbook = $Components/Spellbook as PlayerSpellbook
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
@@ -215,6 +216,8 @@ func _ready() -> void:
 	c_inv.setup(self)
 	inventory = c_inv.inventory
 	c_equip.setup(self)
+	if c_spellbook != null:
+		c_spellbook.setup(self)
 
 	# init stats
 	c_stats.recalculate_for_level(true)

@@ -22,6 +22,7 @@ FlowRouter="*res://core/managers/flow_router.gd"
 SaveSystem="*res://core/save/save_system.gd"
 DataDB="*res://core/data/data_db.gd"
 LootSystem="*res://core/data/loot_system.gd"
+AbilityDB="*res://core/abilities/ability_database.gd"
 
 [input]
 

@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://bfxwg0dd8la7j"]
+
+[ext_resource type="Script" uid="uid://t3hpfk83t0wy" path="res://ui/game/hud/trainer/trainer_spell_row.gd" id="1_9s4x4"]
+
+[node name="TrainerSpellRow" type="HBoxContainer"]
+custom_minimum_size = Vector2(260, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_9s4x4")
+
+theme_override_constants/separation = 8
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameBtn" type="LinkButton" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Spell"
+
+[node name="RankLabel" type="Label" parent="."]
+layout_mode = 2
+text = "R0/1"
+
+[node name="LearnButton" type="Button" parent="."]
+layout_mode = 2
+text = "Изучить"
