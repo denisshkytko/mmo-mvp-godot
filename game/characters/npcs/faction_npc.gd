@@ -34,7 +34,6 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 var faction_id: String = "blue"
 var fighter_type: int = FighterType.COMBATANT
 var interaction_type: int = InteractionType.NONE
-var trainer_class_id: String = ""
 
 var retaliation_target_id: int = 0
 var retaliation_active: bool = false
@@ -184,7 +183,6 @@ func apply_spawn_init(
 	loot_profile_in: LootProfile,
 	projectile_scene_in: PackedScene,
 	class_id_in: String = "",
-	trainer_class_id_in: String = "",
 	growth_profile_id_in: String = "",
 	merchant_preset_in: MerchantPreset = null,
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL
@@ -196,7 +194,6 @@ func apply_spawn_init(
 	_update_faction_color()
 	fighter_type = fighter_in
 	interaction_type = interaction_in
-	trainer_class_id = trainer_class_id_in
 	npc_level = max(1, level_in)
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
@@ -206,7 +203,7 @@ func apply_spawn_init(
 	proactive_aggro = (faction_id != "yellow")
 
 	if OS.is_debug_build():
-		print("[INIT][FNPC] class_id_in=", class_id_in, " trainer_class_id_in=", trainer_class_id_in, " growth_profile_id_in=", growth_profile_id_in, " lvl=", level_in, " pos=", spawn_pos)
+		print("[INIT][FNPC] class_id_in=", class_id_in, " growth_profile_id_in=", growth_profile_id_in, " lvl=", level_in, " pos=", spawn_pos)
 
 	# common params (если спавнер не передал — берём из инспектора)
 	c_ai.behavior = behavior_in
@@ -600,8 +597,8 @@ func _try_open_trainer(player_node: Node) -> void:
 		return
 	if not (player_node is Player):
 		return
-	var trainer_class := trainer_class_id
-	if trainer_class == "" and c_stats != null:
+	var trainer_class := ""
+	if c_stats != null:
 		trainer_class = c_stats.class_id
 	ui.call("open_for_trainer", self, player_node, (player_node as Player).c_spellbook, trainer_class)
 
