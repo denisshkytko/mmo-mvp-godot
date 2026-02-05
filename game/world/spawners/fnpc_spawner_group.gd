@@ -12,8 +12,16 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export_group("Faction NPC Setup")
 @export_enum("blue", "red", "yellow", "green") var faction_id: String = "blue"
 @export_enum("Civilian", "Combatant") var fighter_type: int = FighterType.CIVILIAN
+
+@export_group("Interaction Profile")
 @export_enum("None", "Merchant", "Quest", "Trainer") var interaction_type: int = InteractionType.NONE
 @export var merchant_preset: MerchantPreset = preload("res://core/trade/presets/merchant_preset_level_1.tres")
+@export_enum("Paladin", "Warrior", "Shaman", "Mage", "Priest", "Hunter")
+var trainer_class_choice: int:
+	get:
+		return _trainer_class_choice_internal
+	set(v):
+		_trainer_class_choice_internal = int(v)
 
 @export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 @export var level_min: int = 1
@@ -41,6 +49,7 @@ const C_PRIEST := 4
 const C_HUNTER := 5
 
 var _class_choice_internal: int = C_SHAMAN
+var _trainer_class_choice_internal: int = C_SHAMAN
 
 
 func _get_spawn_scene() -> PackedScene:
@@ -64,6 +73,7 @@ func _ready() -> void:
 
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var class_id: String = CLASS_IDS[_class_choice_internal]
+	var trainer_class_id: String = CLASS_IDS[_trainer_class_choice_internal]
 	var profile_id: String = "npc_citizen" if fighter_type == FighterType.CIVILIAN else "humanoid_hostile"
 
 	if OS.is_debug_build():
@@ -85,6 +95,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		loot_profile,
 		DEFAULT_PROJECTILE,
 		class_id,
+		trainer_class_id,
 		profile_id,
 		merchant_preset,
 		mob_variant
