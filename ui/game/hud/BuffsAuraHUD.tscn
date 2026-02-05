@@ -6,7 +6,7 @@
 script = ExtResource("1_5g8he")
 
 [node name="Root" type="Control" parent="."]
-custom_minimum_size = Vector2(220, 36)
+custom_minimum_size = Vector2(240, 90)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,19 +18,19 @@ mouse_filter = 2
 [node name="Panel" type="Panel" parent="Root"]
 visible = false
 clip_contents = true
-custom_minimum_size = Vector2(210, 34)
+custom_minimum_size = Vector2(230, 84)
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 0.0
 anchor_bottom = 0.0
-offset_left = -210.0
+offset_left = -230.0
 offset_top = 40.0
 offset_right = 0.0
-offset_bottom = 74.0
+offset_bottom = 124.0
 grow_vertical = 0
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel"]
-custom_minimum_size = Vector2(210, 34)
+custom_minimum_size = Vector2(230, 84)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,11 +40,42 @@ grow_vertical = 2
 alignment = 1
 theme_override_constants/separation = 6
 
-[node name="Slot0" type="TextureButton" parent="Root/Panel/SlotRow"]
+[node name="SlotContainer0" type="VBoxContainer" parent="Root/Panel/SlotRow"]
+custom_minimum_size = Vector2(32, 84)
+layout_mode = 2
+alignment = 2
+
+[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer0"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer0/Expander"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0/Expander/Slots"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/Slot0"]
+[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer0/SlotButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,11 +89,42 @@ stretch_mode = 5
 custom_minimum_size = Vector2(16, 1)
 layout_mode = 2
 
-[node name="Slot1" type="TextureButton" parent="Root/Panel/SlotRow"]
+[node name="SlotContainer1" type="VBoxContainer" parent="Root/Panel/SlotRow"]
+custom_minimum_size = Vector2(32, 84)
+layout_mode = 2
+alignment = 2
+
+[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer1"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer1/Expander"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1/Expander/Slots"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/Slot1"]
+[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer1/SlotButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,11 +138,46 @@ stretch_mode = 5
 custom_minimum_size = Vector2(16, 1)
 layout_mode = 2
 
-[node name="Slot2" type="TextureButton" parent="Root/Panel/SlotRow"]
+[node name="SlotContainer2" type="VBoxContainer" parent="Root/Panel/SlotRow"]
+custom_minimum_size = Vector2(36, 84)
+layout_mode = 2
+alignment = 2
+
+[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer2"]
+visible = false
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+
+[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer2/Expander"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/Expander/Slots"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/Slot2"]
+[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/SlotRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer2/SlotRow/SlotButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -89,16 +186,56 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+
+[node name="ArrowButton" type="Button" parent="Root/Panel/SlotRow/SlotContainer2/SlotRow"]
+custom_minimum_size = Vector2(12, 28)
+layout_mode = 2
+text = "▲"
 
 [node name="GapSmall1" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(6, 1)
 layout_mode = 2
 
-[node name="Slot3" type="TextureButton" parent="Root/Panel/SlotRow"]
+[node name="SlotContainer3" type="VBoxContainer" parent="Root/Panel/SlotRow"]
+custom_minimum_size = Vector2(36, 84)
+layout_mode = 2
+alignment = 2
+
+[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer3"]
+visible = false
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+
+[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer3/Expander"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/Expander/Slots"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/Slot3"]
+[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/SlotRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer3/SlotRow/SlotButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -107,16 +244,56 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+
+[node name="ArrowButton" type="Button" parent="Root/Panel/SlotRow/SlotContainer3/SlotRow"]
+custom_minimum_size = Vector2(12, 28)
+layout_mode = 2
+text = "▲"
 
 [node name="GapSmall2" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(6, 1)
 layout_mode = 2
 
-[node name="Slot4" type="TextureButton" parent="Root/Panel/SlotRow"]
+[node name="SlotContainer4" type="VBoxContainer" parent="Root/Panel/SlotRow"]
+custom_minimum_size = Vector2(36, 84)
+layout_mode = 2
+alignment = 2
+
+[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer4"]
+visible = false
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+
+[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer4/Expander"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/Expander/Slots"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/Slot4"]
+[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/Expander/Slots"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer4"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/SlotRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer4/SlotRow/SlotButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -125,6 +302,11 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+
+[node name="ArrowButton" type="Button" parent="Root/Panel/SlotRow/SlotContainer4/SlotRow"]
+custom_minimum_size = Vector2(12, 28)
+layout_mode = 2
+text = "▲"
 
 [node name="ToggleButton" type="Button" parent="Root"]
 custom_minimum_size = Vector2(30, 30)
