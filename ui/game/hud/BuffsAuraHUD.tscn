@@ -25,9 +25,9 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -17.0
-offset_top = -319.0
+offset_top = -49.0
 offset_right = 242.0
-offset_bottom = -275.0
+offset_bottom = -5.0
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel"]
 custom_minimum_size = Vector2(259, 61)
@@ -64,6 +64,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("2_8u40u")
+mouse_filter = 2
 
 [node name="GapLarge1" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(15, 1)
@@ -89,6 +90,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("2_8u40u")
+mouse_filter = 2
 
 [node name="GapLarge2" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(15, 1)
@@ -126,6 +128,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("2_8u40u")
+mouse_filter = 2
 
 [node name="GapSmall1" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(5, 1)
@@ -162,6 +165,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("2_8u40u")
+mouse_filter = 2
 
 [node name="GapSmall2" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(5, 1)
@@ -198,6 +202,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("2_8u40u")
+mouse_filter = 2
 
 [node name="ToggleButton" type="Button" parent="Root"]
 custom_minimum_size = Vector2(17, 44)
@@ -208,8 +213,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -17.0
-offset_top = -319.0
-offset_bottom = -275.0
+offset_top = -49.0
+offset_bottom = -5.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 10
