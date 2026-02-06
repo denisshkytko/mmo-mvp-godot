@@ -6,7 +6,7 @@
 script = ExtResource("1_5g8he")
 
 [node name="Root" type="Control" parent="."]
-custom_minimum_size = Vector2(240, 90)
+custom_minimum_size = Vector2(240, 36)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,7 +18,7 @@ mouse_filter = 2
 [node name="Panel" type="Panel" parent="Root"]
 visible = false
 clip_contents = true
-custom_minimum_size = Vector2(230, 84)
+custom_minimum_size = Vector2(230, 34)
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 0.0
@@ -26,11 +26,11 @@ anchor_bottom = 0.0
 offset_left = -230.0
 offset_top = 40.0
 offset_right = 0.0
-offset_bottom = 124.0
+offset_bottom = 74.0
 grow_vertical = 0
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel"]
-custom_minimum_size = Vector2(230, 84)
+custom_minimum_size = Vector2(230, 34)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,35 +41,9 @@ alignment = 1
 theme_override_constants/separation = 6
 
 [node name="SlotContainer0" type="VBoxContainer" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(32, 84)
+custom_minimum_size = Vector2(32, 34)
 layout_mode = 2
 alignment = 2
-
-[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer0"]
-visible = false
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer0/Expander"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 4
-
-[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
 
 [node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0"]
 custom_minimum_size = Vector2(28, 28)
@@ -90,35 +64,9 @@ custom_minimum_size = Vector2(16, 1)
 layout_mode = 2
 
 [node name="SlotContainer1" type="VBoxContainer" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(32, 84)
+custom_minimum_size = Vector2(32, 34)
 layout_mode = 2
 alignment = 2
-
-[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer1"]
-visible = false
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer1/Expander"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 4
-
-[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
 
 [node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1"]
 custom_minimum_size = Vector2(28, 28)
@@ -139,35 +87,9 @@ custom_minimum_size = Vector2(16, 1)
 layout_mode = 2
 
 [node name="SlotContainer2" type="VBoxContainer" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(36, 84)
+custom_minimum_size = Vector2(40, 34)
 layout_mode = 2
 alignment = 2
-
-[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer2"]
-visible = false
-custom_minimum_size = Vector2(36, 32)
-layout_mode = 2
-
-[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer2/Expander"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 4
-
-[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer2"]
 layout_mode = 2
@@ -197,35 +119,9 @@ custom_minimum_size = Vector2(6, 1)
 layout_mode = 2
 
 [node name="SlotContainer3" type="VBoxContainer" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(36, 84)
+custom_minimum_size = Vector2(40, 34)
 layout_mode = 2
 alignment = 2
-
-[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer3"]
-visible = false
-custom_minimum_size = Vector2(36, 32)
-layout_mode = 2
-
-[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer3/Expander"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 4
-
-[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer3"]
 layout_mode = 2
@@ -255,35 +151,9 @@ custom_minimum_size = Vector2(6, 1)
 layout_mode = 2
 
 [node name="SlotContainer4" type="VBoxContainer" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(36, 84)
+custom_minimum_size = Vector2(40, 34)
 layout_mode = 2
 alignment = 2
-
-[node name="Expander" type="Control" parent="Root/Panel/SlotRow/SlotContainer4"]
-visible = false
-custom_minimum_size = Vector2(36, 32)
-layout_mode = 2
-
-[node name="Slots" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer4/Expander"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 4
-
-[node name="ExpSlot0" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot1" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-
-[node name="ExpSlot2" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/Expander/Slots"]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer4"]
 layout_mode = 2
@@ -321,3 +191,13 @@ offset_bottom = 70.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 12
 text = "▶"
+
+[node name="FlyoutsLayer" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+z_index = 5
