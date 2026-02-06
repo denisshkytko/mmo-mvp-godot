@@ -19,11 +19,7 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export var level_min: int = 1
 @export var level_max: int = 1
 @export_enum("Paladin", "Warrior", "Shaman", "Mage", "Priest", "Hunter")
-var class_choice: int:
-	get:
-		return _class_choice_internal
-	set(v):
-		_class_choice_internal = int(v)
+var class_choice: int = C_SHAMAN
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 
 @export_group("Behavior After Spawn")
@@ -39,9 +35,6 @@ const C_SHAMAN := 2
 const C_MAGE := 3
 const C_PRIEST := 4
 const C_HUNTER := 5
-
-var _class_choice_internal: int = C_SHAMAN
-
 
 func _get_spawn_scene() -> PackedScene:
 	return NPC_SCENE
@@ -63,7 +56,7 @@ func _ready() -> void:
 
 
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
-	var class_id: String = CLASS_IDS[_class_choice_internal]
+	var class_id: String = CLASS_IDS[class_choice]
 	var profile_id: String = "npc_citizen" if fighter_type == FighterType.CIVILIAN else "humanoid_hostile"
 
 	if OS.is_debug_build():
