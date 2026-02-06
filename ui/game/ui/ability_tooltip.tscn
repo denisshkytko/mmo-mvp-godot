@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c4q0bn4cdut8e"]
 
-[ext_resource type="Script" uid="uid://bpns0q2d23o0x" path="res://ui/game/ui/ability_tooltip.gd" id="1_7g6di"]
+[ext_resource type="Script" uid="uid://saa6nce1hcw6" path="res://ui/game/ui/ability_tooltip.gd" id="1_7g6di"]
 
 [node name="AbilityTooltip" type="PanelContainer"]
 visible = false
@@ -8,12 +8,7 @@ custom_minimum_size = Vector2(260, 0)
 script = ExtResource("1_7g6di")
 
 [node name="Margin" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 8
@@ -33,6 +28,6 @@ text = "Rank 1/1"
 
 [node name="Description" type="RichTextLabel" parent="Margin/VBox"]
 layout_mode = 2
+text = "Description"
 fit_content = true
 scroll_active = false
-text = "Description"

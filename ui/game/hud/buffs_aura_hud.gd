@@ -72,12 +72,11 @@ func _create_flyouts() -> void:
 		_flyout_slot_abilities.append(sub_arr)
 
 func _cache_layout() -> void:
-	panel.size = slot_row.size
 	_collapsed_pos = toggle_button.position
 
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	_expanded = is_expanded
-	toggle_button.text = "◀" if _expanded else "▶"
+	toggle_button.text = "▶" if _expanded else "◀"
 	var shift_x := panel.size.x - toggle_button.size.x
 	var final_panel_pos := _collapsed_pos + Vector2(-shift_x, 0.0) if _expanded else _collapsed_pos
 	var final_toggle_pos := _collapsed_pos + Vector2(-shift_x, 0.0) if _expanded else _collapsed_pos

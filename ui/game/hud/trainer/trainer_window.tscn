@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c3m26r5shq0h0"]
 
-[ext_resource type="Script" uid="uid://d3f2y7l1q4x4m" path="res://ui/game/hud/trainer/trainer_window.gd" id="1_7ix0s"]
+[ext_resource type="Script" uid="uid://hqmgynd4q0e" path="res://ui/game/hud/trainer/trainer_window.gd" id="1_7ix0s"]
 
 [node name="TrainerHUD" type="CanvasLayer"]
 script = ExtResource("1_7ix0s")
@@ -12,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 custom_minimum_size = Vector2(520, 360)
@@ -65,11 +66,6 @@ horizontal_scroll_mode = 0
 
 [node name="Margin" type="MarginContainer" parent="Root/Panel/Scroll"]
 layout_mode = 2
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="List" type="VBoxContainer" parent="Root/Panel/Scroll/Margin"]
 layout_mode = 2
