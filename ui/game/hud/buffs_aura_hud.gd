@@ -13,6 +13,7 @@ const FLYOUT_MARGIN := 8.0
 
 var _expanded: bool = false
 var _collapsed_pos: Vector2 = Vector2.ZERO
+var _panel_width: float = 0.0
 var _flyouts: Array[Control] = []
 var _open_flyout_slot: int = -1
 var _primary_slots: Array[TextureButton] = []
@@ -72,16 +73,19 @@ func _create_flyouts() -> void:
 		_flyout_slot_abilities.append(sub_arr)
 
 func _cache_layout() -> void:
+	_panel_width = _resolve_panel_width()
 	_collapsed_pos = toggle_button.position
 
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	_expanded = is_expanded
-	toggle_button.text = "▶" if _expanded else "◀"
-	var shift_x := panel.size.x - toggle_button.size.x
+	toggle_button.text = "◀" if _expanded else "▶"
+	var shift_x := _panel_width - toggle_button.size.x
 	var final_panel_pos := _collapsed_pos + Vector2(-shift_x, 0.0) if _expanded else _collapsed_pos
 	var final_toggle_pos := _collapsed_pos + Vector2(-shift_x, 0.0) if _expanded else _collapsed_pos
 	if _expanded:
 		panel.visible = true
+	else:
+		_close_open_flyout()
 	if immediate:
 		panel.position = final_panel_pos
 		toggle_button.position = final_toggle_pos
@@ -141,6 +145,22 @@ func _close_flyout(slot_index: int) -> void:
 	if flyout == null:
 		return
 	flyout.visible = false
+
+func _close_open_flyout() -> void:
+	if _open_flyout_slot == -1:
+		return
+	_close_flyout(_open_flyout_slot)
+	_open_flyout_slot = -1
+
+func _resolve_panel_width() -> float:
+	if panel == null:
+		return 0.0
+	var width := panel.size.x
+	if width <= 0.0:
+		width = panel.custom_minimum_size.x
+	if width <= 0.0 and slot_row != null:
+		width = slot_row.size.x
+	return width
 
 func _on_flyout_subslot_pressed(slot_index: int, sub_index: int) -> void:
 	print_debug("flyout subslot pressed", slot_index, sub_index)
