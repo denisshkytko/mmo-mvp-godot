@@ -132,7 +132,7 @@ func _open_flyout(slot_index: int) -> void:
 	var fly_size := flyout.size
 	var x := btn_pos.x + (btn_size.x - fly_size.x) * 0.5
 	var y := btn_pos.y - fly_size.y - FLYOUT_MARGIN
-	var vp := get_viewport_rect().size
+	var vp: Vector2 = get_viewport().get_visible_rect().size
 	x = clamp(x, FLYOUT_MARGIN, vp.x - fly_size.x - FLYOUT_MARGIN)
 	y = clamp(y, FLYOUT_MARGIN, vp.y - fly_size.y - FLYOUT_MARGIN)
 	flyout.global_position = Vector2(x, y)
