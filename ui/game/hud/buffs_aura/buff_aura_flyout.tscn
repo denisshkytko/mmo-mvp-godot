@@ -20,14 +20,17 @@ theme_override_constants/separation = 6
 [node name="SubSlot0" type="TextureButton" parent="SlotsVBox"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+stretch_mode = 5
 texture_normal = ExtResource("2_2kp2p")
 
 [node name="SubSlot1" type="TextureButton" parent="SlotsVBox"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+stretch_mode = 5
 texture_normal = ExtResource("2_2kp2p")
 
 [node name="SubSlot2" type="TextureButton" parent="SlotsVBox"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+stretch_mode = 5
 texture_normal = ExtResource("2_2kp2p")
