@@ -57,6 +57,7 @@ func _setup_slots() -> void:
 		if arrow_button == null:
 			arrow_button = container.get_node_or_null("SlotRow/ArrowButton") as Button
 		if slot_button != null:
+			slot_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			slot_button.pressed.connect(_on_primary_slot_pressed.bind(i))
 		if arrow_button != null:
 			arrow_button.pressed.connect(_on_arrow_pressed.bind(i))
