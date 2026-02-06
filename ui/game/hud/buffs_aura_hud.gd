@@ -55,10 +55,10 @@ func set_slot_icon(slot_index: int, texture: Texture2D) -> void:
 		icon.texture = texture
 
 func set_expander_slot_count(slot_index: int, count: int) -> void:
-	var data := _expanders.get(slot_index, null)
-	if data == null:
+	var data: Dictionary = _expanders.get(slot_index, {}) as Dictionary
+	if data.is_empty():
 		return
-	var slots: Array = data.get("slots", [])
+	var slots: Array = data.get("slots", []) as Array
 	for i in range(slots.size()):
 		var btn := slots[i] as TextureButton
 		if btn != null:
@@ -67,10 +67,10 @@ func set_expander_slot_count(slot_index: int, count: int) -> void:
 	_expanders[slot_index] = data
 
 func _get_slot_button(slot_index: int) -> TextureButton:
-	var data := _expanders.get(slot_index, null)
-	if data == null:
+	var data: Dictionary = _expanders.get(slot_index, {}) as Dictionary
+	if data.is_empty():
 		return null
-	return data.get("slot_button", null)
+	return data.get("slot_button", null) as TextureButton
 
 func _setup_expanders() -> void:
 	for slot_index in range(5):
@@ -109,8 +109,8 @@ func _setup_expanders() -> void:
 		set_expander_slot_count(slot_index, DEFAULT_EXPANDER_SLOTS)
 
 func _on_slot_toggle(slot_index: int) -> void:
-	var data := _expanders.get(slot_index, null)
-	if data == null:
+	var data: Dictionary = _expanders.get(slot_index, {}) as Dictionary
+	if data.is_empty():
 		return
 	var expander := data.get("expander", null) as Control
 	if expander == null:
