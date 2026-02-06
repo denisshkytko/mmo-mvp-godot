@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://df87po6ikg4ns"]
+[gd_scene load_steps=3 format=3 uid="uid://df87po6ikg4ns"]
 
 [ext_resource type="Script" uid="uid://cajyjgkxkgjr" path="res://ui/game/hud/buffs_aura_hud.gd" id="1_5g8he"]
+[ext_resource type="Texture2D" uid="uid://dwa0gwv7k4u7x" path="res://icon.svg" id="2_8u40u"]
 
 [node name="BuffsAuraHUD" type="CanvasLayer"]
 script = ExtResource("1_5g8he")
@@ -55,6 +56,7 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+texture = ExtResource("2_8u40u")
 
 [node name="GapLarge1" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(15, 1)
@@ -79,6 +81,7 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+texture = ExtResource("2_8u40u")
 
 [node name="GapLarge2" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(15, 1)
@@ -115,6 +118,7 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+texture = ExtResource("2_8u40u")
 
 [node name="GapSmall1" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(5, 1)
@@ -150,6 +154,7 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+texture = ExtResource("2_8u40u")
 
 [node name="GapSmall2" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(5, 1)
@@ -185,6 +190,7 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
+texture = ExtResource("2_8u40u")
 
 [node name="ToggleButton" type="Button" parent="Root"]
 custom_minimum_size = Vector2(17, 44)
