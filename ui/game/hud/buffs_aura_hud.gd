@@ -33,6 +33,10 @@ func _ready() -> void:
 		toggle_button.pressed.connect(_on_toggle_pressed)
 	if flyouts_layer != null:
 		flyouts_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if panel != null:
+		panel.gui_input.connect(_on_debug_gui_input.bind("Panel"))
+	if toggle_button != null:
+		toggle_button.gui_input.connect(_on_debug_gui_input.bind("ToggleButton"))
 	_setup_slots()
 	_create_flyouts()
 	await get_tree().process_frame
@@ -58,8 +62,10 @@ func _setup_slots() -> void:
 			arrow_button = container.get_node_or_null("SlotRow/ArrowButton") as Button
 		if slot_button != null:
 			slot_button.mouse_filter = Control.MOUSE_FILTER_STOP
+			slot_button.gui_input.connect(_on_debug_gui_input.bind("SlotButton%d" % i))
 			slot_button.pressed.connect(_on_primary_slot_pressed.bind(i))
 		if arrow_button != null:
+			arrow_button.gui_input.connect(_on_debug_gui_input.bind("ArrowButton%d" % i))
 			arrow_button.pressed.connect(_on_arrow_pressed.bind(i))
 		_primary_slots.append(slot_button)
 		_arrow_buttons.append(arrow_button)
@@ -100,6 +106,9 @@ func _cache_layout() -> void:
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	_expanded = is_expanded
 	toggle_button.text = "▶" if _expanded else "◀"
+	if not _expanded and _open_flyout_slot != -1:
+		_close_flyout(_open_flyout_slot)
+		_open_flyout_slot = -1
 	var shift_x := panel.size.x - toggle_button.size.x
 	var final_panel_pos := _collapsed_panel_pos + Vector2(-shift_x + EXPANDED_RIGHT_OVERFLOW, 0.0) if _expanded else _collapsed_panel_pos
 	var final_toggle_pos := _collapsed_toggle_pos
@@ -235,3 +244,8 @@ func _reset_arrow(slot_index: int) -> void:
 	if slot_index < _arrow_home_pos.size():
 		arrow_button.position = _arrow_home_pos[slot_index]
 	arrow_button.text = _arrow_up_text
+
+func _on_debug_gui_input(control_name: String, event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		var btn_event := event as InputEventMouseButton
+		print_debug("BuffsAuraHUD: click", control_name, "btn:", btn_event.button_index, "pos:", btn_event.position)
