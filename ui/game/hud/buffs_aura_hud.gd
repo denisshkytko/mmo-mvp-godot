@@ -214,6 +214,7 @@ func _move_arrow_to_flyout(slot_index: int, flyout: Control, slot_button: Contro
 	var arrow_button := _arrow_buttons[slot_index]
 	if arrow_button == null:
 		return
+	arrow_button.top_level = true
 	var arrow_size := _get_control_size(arrow_button)
 	var btn_pos := slot_button.global_position
 	var btn_size := _get_control_size(slot_button)
@@ -230,6 +231,7 @@ func _reset_arrow(slot_index: int) -> void:
 	var arrow_button := _arrow_buttons[slot_index]
 	if arrow_button == null:
 		return
+	arrow_button.top_level = false
 	if slot_index < _arrow_home_pos.size():
 		arrow_button.position = _arrow_home_pos[slot_index]
 	arrow_button.text = _arrow_up_text
