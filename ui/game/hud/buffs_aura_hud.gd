@@ -14,7 +14,6 @@ const TOGGLE_PANEL_GAP := 1.0
 @onready var slot_row: HBoxContainer = $Root/Panel/SlotRow
 @onready var toggle_button: Button = $Root/ToggleButton
 @onready var flyouts_layer: Control = $Root/FlyoutsLayer
-@onready var root_control: Control = $Root
 
 var _expanded: bool = false
 var _collapsed_panel_pos: Vector2 = Vector2.ZERO
@@ -32,10 +31,6 @@ var _arrow_down_text: String = "▼"
 func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
 		toggle_button.pressed.connect(_on_toggle_pressed)
-	if panel != null:
-		panel.gui_input.connect(_on_debug_gui_input.bind("Panel"))
-	if toggle_button != null:
-		toggle_button.gui_input.connect(_on_debug_gui_input.bind("ToggleButton"))
 	_setup_slots()
 	_create_flyouts()
 	await get_tree().process_frame
@@ -60,10 +55,8 @@ func _setup_slots() -> void:
 		if arrow_button == null:
 			arrow_button = container.get_node_or_null("SlotRow/ArrowButton") as Button
 		if slot_button != null:
-			slot_button.gui_input.connect(_on_debug_gui_input.bind("SlotButton%d" % i))
 			slot_button.pressed.connect(_on_primary_slot_pressed.bind(i))
 		if arrow_button != null:
-			arrow_button.gui_input.connect(_on_debug_gui_input.bind("ArrowButton%d" % i))
 			arrow_button.pressed.connect(_on_arrow_pressed.bind(i))
 		_primary_slots.append(slot_button)
 		_arrow_buttons.append(arrow_button)
@@ -242,33 +235,3 @@ func _reset_arrow(slot_index: int) -> void:
 	if slot_index < _arrow_home_pos.size():
 		arrow_button.position = _arrow_home_pos[slot_index]
 	arrow_button.text = _arrow_up_text
-
-func _on_debug_gui_input(event: InputEvent, control_name: String) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		var btn_event := event as InputEventMouseButton
-		print_debug("BuffsAuraHUD: click", control_name, "btn:", btn_event.button_index, "pos:", btn_event.position)
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		var click_pos := (event as InputEventMouseButton).position
-		var hovered := get_viewport().gui_get_hovered_control()
-		if hovered == null:
-			print_debug("BuffsAuraHUD: click hover none")
-		var chain: Array[String] = []
-		var current: Node = hovered
-		while current != null:
-			chain.append(str(current.get_path()))
-			current = current.get_parent()
-		print_debug("BuffsAuraHUD: click hover chain", " > ".join(chain))
-		if root_control != null:
-			var visible_controls: Array[String] = []
-			_collect_controls_under_point(root_control, click_pos, visible_controls)
-			print_debug("BuffsAuraHUD: click visible controls", ", ".join(visible_controls))
-
-func _collect_controls_under_point(node: Node, pos: Vector2, out: Array[String]) -> void:
-	var control := node as Control
-	if control != null and control.is_visible_in_tree():
-		if control.get_global_rect().has_point(pos):
-			out.append(str(control.get_path()))
-	for child in node.get_children():
-		_collect_controls_under_point(child, pos, out)
