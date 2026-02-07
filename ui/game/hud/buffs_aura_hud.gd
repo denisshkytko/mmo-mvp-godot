@@ -31,10 +31,6 @@ var _arrow_down_text: String = "▼"
 func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
 		toggle_button.pressed.connect(_on_toggle_pressed)
-	if flyouts_layer != null:
-		flyouts_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if slot_row != null:
-		slot_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if panel != null:
 		panel.gui_input.connect(_on_debug_gui_input.bind("Panel"))
 	if toggle_button != null:
@@ -56,7 +52,6 @@ func _setup_slots() -> void:
 			_arrow_buttons.append(null)
 			_arrow_home_pos.append(Vector2.ZERO)
 			continue
-		container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var slot_button := container.get_node_or_null("SlotButton") as TextureButton
 		if slot_button == null:
 			slot_button = container.get_node_or_null("SlotRow/SlotButton") as TextureButton
@@ -64,11 +59,9 @@ func _setup_slots() -> void:
 		if arrow_button == null:
 			arrow_button = container.get_node_or_null("SlotRow/ArrowButton") as Button
 		if slot_button != null:
-			slot_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			slot_button.gui_input.connect(_on_debug_gui_input.bind("SlotButton%d" % i))
 			slot_button.pressed.connect(_on_primary_slot_pressed.bind(i))
 		if arrow_button != null:
-			arrow_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			arrow_button.gui_input.connect(_on_debug_gui_input.bind("ArrowButton%d" % i))
 			arrow_button.pressed.connect(_on_arrow_pressed.bind(i))
 		_primary_slots.append(slot_button)
@@ -253,3 +246,16 @@ func _on_debug_gui_input(event: InputEvent, control_name: String) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		var btn_event := event as InputEventMouseButton
 		print_debug("BuffsAuraHUD: click", control_name, "btn:", btn_event.button_index, "pos:", btn_event.position)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		var hovered := get_viewport().gui_get_hovered_control()
+		if hovered == null:
+			print_debug("BuffsAuraHUD: click hover none")
+			return
+		var chain: Array[String] = []
+		var current: Node = hovered
+		while current != null:
+			chain.append(current.get_path())
+			current = current.get_parent()
+		print_debug("BuffsAuraHUD: click hover chain", " > ".join(chain))
