@@ -3,9 +3,9 @@ extends Control
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const SPELL_LIST_ITEM_SCENE := preload("res://ui/game/hud/character/spells/spell_list_item.tscn")
 
-@onready var spells_grid: GridContainer = $SpellsVBox/SpellsPanelA/SpellsMargin/SpellsScroll/SpellsGrid
+@onready var spells_grid: GridContainer = $SpellsVBox/SpellsPanelA/SpellsVBox/SpellsMargin/SpellsScroll/SpellsGrid
 @onready var loadout_pad: Control = $SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox/LoadoutPadRoot
-@onready var filter_option: OptionButton = $SpellsVBox/SpellsPanelA/FilterRow/SpellFilterOption
+@onready var filter_option: OptionButton = $SpellsVBox/SpellsPanelA/SpellsVBox/SpellFilterOption
 
 var _player: Player = null
 var _spellbook: PlayerSpellbook = null
