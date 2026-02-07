@@ -5,6 +5,7 @@ const SPELL_LIST_ITEM_SCENE := preload("res://ui/game/hud/character/spells/spell
 
 @onready var spells_grid: GridContainer = $SpellsVBox/SpellsPanelA/SpellsMargin/SpellsScroll/SpellsGrid
 @onready var loadout_pad: Control = $SpellsVBox/SpellsPanelB/LoadoutMargin/LoadoutVBox/LoadoutPadRoot
+@onready var filter_option: OptionButton = $SpellsVBox/SpellsPanelA/FilterRow/SpellFilterOption
 
 var _player: Player = null
 var _spellbook: PlayerSpellbook = null
@@ -14,6 +15,11 @@ var _selected_ability_id: String = ""
 
 func _ready() -> void:
 	_player = NODE_CACHE.get_player(get_tree()) as Player
+	if filter_option != null and filter_option.item_count == 0:
+		filter_option.add_item("Все")
+		filter_option.add_item("Активные")
+		filter_option.add_item("Ауры/бафы")
+		filter_option.select(0)
 	if _player != null:
 		_spellbook = _player.c_spellbook
 	_ability_db = get_node_or_null("/root/AbilityDB") as AbilityDatabase

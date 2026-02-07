@@ -506,6 +506,20 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="FilterRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 32.0
+theme_override_constants/separation = 6
+
+[node name="SpellFilterOption" type="OptionButton" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA/FilterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="SpellsMargin" type="MarginContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA"]
 layout_mode = 1
 anchors_preset = 15
@@ -514,7 +528,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
+theme_override_constants/margin_top = 38
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 6
 
