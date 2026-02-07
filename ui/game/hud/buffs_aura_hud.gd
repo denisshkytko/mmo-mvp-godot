@@ -245,7 +245,7 @@ func _reset_arrow(slot_index: int) -> void:
 		arrow_button.position = _arrow_home_pos[slot_index]
 	arrow_button.text = _arrow_up_text
 
-func _on_debug_gui_input(control_name: String, event: InputEvent) -> void:
+func _on_debug_gui_input(event: InputEvent, control_name: String) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		var btn_event := event as InputEventMouseButton
 		print_debug("BuffsAuraHUD: click", control_name, "btn:", btn_event.button_index, "pos:", btn_event.position)
