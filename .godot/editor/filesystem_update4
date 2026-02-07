@@ -1,0 +1,6 @@
+res://ui/game/hud/CharacterHUD.tscn
+res://core/trade/presets/merchant_preset_level_1.tres
+res://ui/game/hud/character/spells/spells_tab.gd
+res://ui/game/hud/BuffsAuraHUD.tscn
+res://ui/game/hud/buffs_aura_hud.gd
+res://ui/game/hud/mobile/MobileHUD.tscn

@@ -5,7 +5,6 @@ const DEFAULT_FLYOUT_SLOTS := 3
 const FLYOUT_MARGIN := 8.0
 const FLYOUT_SPACING := 6.0
 const ARROW_MARGIN := 6.0
-const EXPANDED_RIGHT_OVERFLOW := -5.0
 const TOGGLE_PANEL_GAP := 1.0
 
 @export var flyout_scene: PackedScene = preload("res://ui/game/hud/buffs_aura/buff_aura_flyout.tscn")
@@ -101,7 +100,7 @@ func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 		_close_flyout(_open_flyout_slot)
 		_open_flyout_slot = -1
 	var shift_x := panel.size.x - toggle_button.size.x
-	var final_panel_pos := _collapsed_panel_pos + Vector2(-shift_x + EXPANDED_RIGHT_OVERFLOW, 0.0) if _expanded else _collapsed_panel_pos
+	var final_panel_pos := _collapsed_panel_pos + Vector2(-shift_x, 0.0) if _expanded else _collapsed_panel_pos
 	var final_toggle_pos := _collapsed_toggle_pos
 	if _expanded:
 		final_toggle_pos = Vector2(final_panel_pos.x - toggle_button.size.x - TOGGLE_PANEL_GAP, _collapsed_toggle_pos.y)

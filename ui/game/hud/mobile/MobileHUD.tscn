@@ -29,6 +29,7 @@ offset_left = 20.0
 offset_top = -218.0
 offset_right = 220.0
 offset_bottom = -18.0
+mouse_filter = 2
 
 [node name="MoveStick" type="Control" parent="Root/LeftPad"]
 layout_mode = 1
@@ -82,6 +83,7 @@ offset_right = -20.0
 offset_bottom = -66.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 2
 
 [node name="SkillPad" type="Control" parent="Root/RightPad"]
 custom_minimum_size = Vector2(200, 200)
@@ -95,6 +97,7 @@ offset_left = -200.0
 offset_top = -200.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 2
 script = ExtResource("3_g1q8d")
 
 [node name="QuickSkillBtn" type="TextureButton" parent="Root/RightPad/SkillPad"]
