@@ -14,6 +14,7 @@ const TOGGLE_PANEL_GAP := 1.0
 @onready var slot_row: HBoxContainer = $Root/Panel/SlotRow
 @onready var toggle_button: Button = $Root/ToggleButton
 @onready var flyouts_layer: Control = $Root/FlyoutsLayer
+@onready var root_control: Control = $Root
 
 var _expanded: bool = false
 var _collapsed_panel_pos: Vector2 = Vector2.ZERO
@@ -249,13 +250,25 @@ func _on_debug_gui_input(event: InputEvent, control_name: String) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
+		var click_pos := (event as InputEventMouseButton).position
 		var hovered := get_viewport().gui_get_hovered_control()
 		if hovered == null:
 			print_debug("BuffsAuraHUD: click hover none")
-			return
 		var chain: Array[String] = []
 		var current: Node = hovered
 		while current != null:
-			chain.append(current.get_path())
+			chain.append(str(current.get_path()))
 			current = current.get_parent()
 		print_debug("BuffsAuraHUD: click hover chain", " > ".join(chain))
+		if root_control != null:
+			var visible_controls: Array[String] = []
+			_collect_controls_under_point(root_control, click_pos, visible_controls)
+			print_debug("BuffsAuraHUD: click visible controls", ", ".join(visible_controls))
+
+func _collect_controls_under_point(node: Node, pos: Vector2, out: Array[String]) -> void:
+	var control := node as Control
+	if control != null and control.is_visible_in_tree():
+		if control.get_global_rect().has_point(pos):
+			out.append(str(control.get_path()))
+	for child in node.get_children():
+		_collect_controls_under_point(child, pos, out)
