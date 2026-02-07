@@ -33,6 +33,8 @@ func _ready() -> void:
 		toggle_button.pressed.connect(_on_toggle_pressed)
 	if flyouts_layer != null:
 		flyouts_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if slot_row != null:
+		slot_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if panel != null:
 		panel.gui_input.connect(_on_debug_gui_input.bind("Panel"))
 	if toggle_button != null:
@@ -54,6 +56,7 @@ func _setup_slots() -> void:
 			_arrow_buttons.append(null)
 			_arrow_home_pos.append(Vector2.ZERO)
 			continue
+		container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var slot_button := container.get_node_or_null("SlotButton") as TextureButton
 		if slot_button == null:
 			slot_button = container.get_node_or_null("SlotRow/SlotButton") as TextureButton
@@ -65,6 +68,7 @@ func _setup_slots() -> void:
 			slot_button.gui_input.connect(_on_debug_gui_input.bind("SlotButton%d" % i))
 			slot_button.pressed.connect(_on_primary_slot_pressed.bind(i))
 		if arrow_button != null:
+			arrow_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			arrow_button.gui_input.connect(_on_debug_gui_input.bind("ArrowButton%d" % i))
 			arrow_button.pressed.connect(_on_arrow_pressed.bind(i))
 		_primary_slots.append(slot_button)
