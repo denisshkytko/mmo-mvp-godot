@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b8eicj3o0nddy"]
+[gd_scene load_steps=3 format=3 uid="uid://b8eicj3o0nddy"]
 
 [ext_resource type="Script" uid="uid://c7m3xg0v1p3fw" path="res://ui/game/hud/buffs_aura/buff_aura_flyout.gd" id="1_4d4h2"]
+[ext_resource type="Texture2D" uid="uid://dwa0gwv7k4u7x" path="res://icon.svg" id="2_2kp2p"]
 
 [node name="BuffAuraFlyout" type="Control"]
 custom_minimum_size = Vector2(36, 108)
@@ -19,11 +20,20 @@ theme_override_constants/separation = 6
 [node name="SubSlot0" type="TextureButton" parent="SlotsVBox"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+ignore_texture_size = true
+stretch_mode = 5
+texture_normal = ExtResource("2_2kp2p")
 
 [node name="SubSlot1" type="TextureButton" parent="SlotsVBox"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+ignore_texture_size = true
+stretch_mode = 5
+texture_normal = ExtResource("2_2kp2p")
 
 [node name="SubSlot2" type="TextureButton" parent="SlotsVBox"]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+ignore_texture_size = true
+stretch_mode = 5
+texture_normal = ExtResource("2_2kp2p")
