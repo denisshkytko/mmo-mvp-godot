@@ -88,7 +88,9 @@ func _get_current_class_id() -> String:
 func _filter_abilities_for_class(values: Array[String]) -> Array[String]:
 	var out: Array[String] = []
 	var class_id := _get_current_class_id()
-	var db := get_node_or_null("/root/AbilityDB")
+	var db: Node = null
+	if is_inside_tree():
+		db = get_node_or_null("/root/AbilityDB")
 	for ability_id in values:
 		if ability_id == "":
 			continue

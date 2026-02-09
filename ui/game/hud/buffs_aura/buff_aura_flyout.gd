@@ -44,7 +44,7 @@ func _on_subslot_pressed(sub_index: int) -> void:
 func _refresh_layout() -> void:
 	if slots_vbox == null:
 		return
-	slots_vbox.theme_override_constants.separation = _spacing
+	slots_vbox.add_theme_constant_override("separation", int(_spacing))
 	var slot_count := slots_vbox.get_child_count()
 	var slot_height := _ref_size.y * slot_count
 	var total_spacing: float = _spacing * float(max(slot_count - 1, 0))
