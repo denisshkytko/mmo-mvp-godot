@@ -5,6 +5,8 @@ class_name MobileHUD
 @onready var skill_pad: SkillPad = $Root/RightPad/SkillPad
 
 var _player: Node = null
+var _spellbook: PlayerSpellbook = null
+var _ability_db: AbilityDatabase = null
 var _base_visible: bool = false
 var _inventory_ui: Node = null
 var _character_ui: Node = null
@@ -24,6 +26,11 @@ func _ready() -> void:
 	_player = NodeCache.get_player(get_tree())
 	if _player == null or not is_instance_valid(_player):
 		return
+	_ability_db = get_node_or_null("/root/AbilityDB") as AbilityDatabase
+	if _player.has_method("get") and _player.get("c_spellbook") != null:
+		_spellbook = _player.get("c_spellbook") as PlayerSpellbook
+		if _spellbook != null and not _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
+			_spellbook.spellbook_changed.connect(_on_spellbook_changed)
 	if move_stick != null:
 		move_stick.move_dir_changed.connect(_on_move_dir_changed)
 	if skill_pad != null:
@@ -34,6 +41,7 @@ func _ready() -> void:
 			detector.interactable_changed.connect(_on_interactable_changed)
 			_on_interactable_changed(bool(detector.get("interact_available")), detector.get("current_interactable"))
 	_init_window_tracking()
+	_refresh_skill_pad_icons()
 
 
 func _init_window_tracking() -> void:
@@ -99,10 +107,21 @@ func _on_move_dir_changed(dir: Vector2) -> void:
 	if _player != null and _player.has_method("set_mobile_move_dir"):
 		_player.call("set_mobile_move_dir", dir)
 
+func _process(_delta: float) -> void:
+	if _player == null or skill_pad == null or _spellbook == null:
+		return
+	for i in range(_spellbook.loadout_slots.size()):
+		var ability_id: String = _spellbook.loadout_slots[i]
+		var pct: float = 0.0
+		if _player.has_method("get") and _player.get("c_ability_caster") != null:
+			var caster: PlayerAbilityCaster = _player.get("c_ability_caster") as PlayerAbilityCaster
+			if caster != null:
+				pct = caster.get_cooldown_pct(ability_id)
+		skill_pad.set_slot_cooldown(i, pct)
 
 func _on_skill_pressed(slot_index: int) -> void:
-	if _player != null and _player.has_method("try_use_skill_slot"):
-		_player.call("try_use_skill_slot", slot_index)
+	if _player != null and _player.has_method("try_use_ability_slot"):
+		_player.call("try_use_ability_slot", slot_index)
 
 
 func _on_interact_pressed() -> void:
@@ -113,3 +132,19 @@ func _on_interact_pressed() -> void:
 func _on_interactable_changed(available: bool, _target: Node) -> void:
 	if skill_pad != null:
 		skill_pad.set_interact_visible(available)
+
+func _on_spellbook_changed() -> void:
+	_refresh_skill_pad_icons()
+
+func _refresh_skill_pad_icons() -> void:
+	if skill_pad == null or _spellbook == null:
+		return
+	for i in range(_spellbook.loadout_slots.size()):
+		var ability_id: String = _spellbook.loadout_slots[i]
+		var icon: Texture2D = null
+		if _ability_db != null and ability_id != "":
+			var def := _ability_db.get_ability(ability_id)
+			if def != null:
+				icon = def.icon
+		skill_pad.set_slot_icon(i, icon)
+		skill_pad.set_slot_enabled(i, ability_id != "")

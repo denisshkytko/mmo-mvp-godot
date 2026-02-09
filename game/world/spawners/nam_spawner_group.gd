@@ -17,6 +17,12 @@ var class_choice: int:
 		return _class_choice_internal
 	set(v):
 		_class_choice_internal = int(v)
+		_abilities_internal = _filter_abilities_for_class(_abilities_internal)
+@export var abilities: Array[String]:
+	get:
+		return _abilities_internal
+	set(value):
+		_abilities_internal = _filter_abilities_for_class(value)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 
 
@@ -35,6 +41,7 @@ const C_PRIEST := 4
 const C_HUNTER := 5
 
 var _class_choice_internal: int = C_PALADIN
+var _abilities_internal: Array[String] = []
 
 # BaseSpawnerGroup уже содержит respawn_seconds
 
@@ -70,6 +77,25 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		loot_profile,
 		class_id,
 		profile_id,
-		mob_variant
+		mob_variant,
+		_abilities_internal
 	)
 	return true
+
+func _get_current_class_id() -> String:
+	return CLASS_IDS[_class_choice_internal]
+
+func _filter_abilities_for_class(values: Array[String]) -> Array[String]:
+	var out: Array[String] = []
+	var class_id := _get_current_class_id()
+	var db := get_node_or_null("/root/AbilityDB")
+	for ability_id in values:
+		if ability_id == "":
+			continue
+		if db != null and db.has_method("get_ability"):
+			var def: AbilityDefinition = db.call("get_ability", ability_id)
+			if def != null and (class_id == "" or def.class_id == class_id):
+				out.append(ability_id)
+		else:
+			out.append(ability_id)
+	return out

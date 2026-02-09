@@ -6,6 +6,9 @@ class_name AbilityDefinition
 @export var icon: Texture2D
 @export var description: String = ""
 @export var class_id: String = ""
+@export var ability_type: String = "active"
+@export var target_type: String = "enemy"
+@export var aura_radius: float = 0.0
 @export var ranks: Array[RankData] = []
 
 func get_display_name() -> String:

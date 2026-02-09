@@ -2,6 +2,7 @@ extends Control
 class_name BuffIcon
 
 @onready var time_label: Label = $TimeText
+@onready var icon_rect: TextureRect = $Icon
 
 var _player: Node = null
 var _buff_id: String = ""
@@ -11,6 +12,7 @@ func setup(player: Node, data: Dictionary) -> void:
 	_player = player
 	_buff_id = String(data.get("id", ""))
 	_time_left = float(data.get("time_left", 0.0))
+	_refresh_icon(data)
 	_refresh_time()
 
 func update_time(left: float) -> void:
@@ -32,6 +34,19 @@ func _refresh_time() -> void:
 	if time_label == null:
 		return
 	time_label.text = _format_time(_time_left)
+
+func _refresh_icon(data: Dictionary) -> void:
+	if icon_rect == null:
+		return
+	var ability_id: String = String(data.get("ability_id", data.get("source_ability", "")))
+	if ability_id == "":
+		return
+	var db := get_node_or_null("/root/AbilityDB")
+	if db == null or not db.has_method("get_ability"):
+		return
+	var def: AbilityDefinition = db.call("get_ability", ability_id)
+	if def != null:
+		icon_rect.texture = def.icon
 
 func _format_time(seconds: float) -> String:
 	var s: int = int(ceil(max(0.0, seconds)))
