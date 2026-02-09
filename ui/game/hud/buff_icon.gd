@@ -38,7 +38,15 @@ func _refresh_time() -> void:
 func _refresh_icon(data: Dictionary) -> void:
 	if icon_rect == null:
 		return
-	var ability_id: String = String(data.get("ability_id", data.get("source_ability", "")))
+	var ability_id := ""
+	if data.has("ability_id"):
+		ability_id = String(data.get("ability_id", ""))
+	elif data.has("data") and data.get("data") is Dictionary:
+		var inner: Dictionary = data.get("data", {}) as Dictionary
+		if inner.has("ability_id"):
+			ability_id = String(inner.get("ability_id", ""))
+		elif inner.has("source_ability"):
+			ability_id = String(inner.get("source_ability", ""))
 	if ability_id == "":
 		return
 	var db := get_node_or_null("/root/AbilityDB")
