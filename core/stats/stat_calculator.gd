@@ -77,6 +77,7 @@ static func build_player_snapshot(
         "spell_power": 0.0,
         "defense": 0.0,
         "magic_resist": 0.0,
+        "flat_physical_bonus": 0.0,
 
         "speed": 0,
         "attack_speed_rating": 0,
@@ -94,6 +95,7 @@ static func build_player_snapshot(
         "spell_power": [],
         "defense": [],
         "magic_resist": [],
+        "flat_physical_bonus": [],
         "speed": [],
         "attack_speed_rating": [],
         "cast_speed_rating": [],
@@ -404,6 +406,7 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "spell_power",
         "defense",
         "magic_resist",
+        "flat_physical_bonus",
         "crit_chance_rating",
         "crit_damage_rating",
         "attack_speed_rating",
@@ -449,6 +452,17 @@ static func apply_crit_to_damage(base_damage: int, snap: Dictionary) -> int:
     if randf() * 100.0 < crit_chance:
         dmg = int(round(float(dmg) * crit_mult))
     return max(1, dmg)
+
+
+static func apply_crit_to_heal(base_heal: int, snap: Dictionary) -> int:
+    var heal := base_heal
+    var crit_chance := float(snap.get("crit_chance_pct", 0.0))
+    var crit_mult := float(snap.get("crit_multiplier", 2.0))
+    if randf() * 100.0 < crit_chance:
+        heal = int(round(float(heal) * crit_mult))
+    if base_heal > 0:
+        return max(1, heal)
+    return heal
 
 
 static func compute_mob_unarmed_hit(ap: float) -> int:

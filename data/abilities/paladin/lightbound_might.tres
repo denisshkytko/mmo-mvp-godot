@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/lightbound_might.png" id=2]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+required_level = 1
+train_cost_gold = 0
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 1800.0
+resource_cost = 8
+value = 10
+value2 = 0
+value3 = 0
+
+[resource]
+id = "lightbound_might"
+name = "Lightbound Might"
+icon = ExtResource("2")
+description = "Bless an ally with increased attack power."
+class_id = "paladin"
+ability_type = "buff"
+target_type = "ally"
+range_mode = "ranged"
+aura_radius = 0.0
+ranks = [SubResource("1")]

@@ -400,24 +400,32 @@ func _diff_stats(total_snapshot: Dictionary, base_snapshot: Dictionary) -> Dicti
 		out[key] = float(total_stats.get(key, 0)) - float(base_stats.get(key, 0))
 	return out
 
-func take_damage(raw_damage: int) -> void:
+func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 	if p == null:
-		return
+		return 0
 	if "c_resource" in p and p.c_resource != null:
 		p.c_resource.on_damage_taken()
 
 	# неуязвимость через баф (если есть)
 	var buffs: PlayerBuffs = p.c_buffs
 	if buffs != null and buffs.is_invulnerable():
-		return
+		return 0
 
-	var phys_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
-	var final: int = int(ceil(float(raw_damage) * (1.0 - phys_pct / 100.0)))
+	var pct: float
+	if dmg_type == "magic":
+		pct = float(_snapshot.get("magic_reduction_pct", 0.0))
+	else:
+		pct = float(_snapshot.get("physical_reduction_pct", 0.0))
+	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
 	p.current_hp = max(0, p.current_hp - final)
 
 	if p.current_hp <= 0:
 		_on_death()
+	return final
+
+func take_damage(raw_damage: int) -> void:
+	take_damage_typed(raw_damage, "physical")
 
 func _on_death() -> void:
 	# 1) помечаем игрока мёртвым (останавливаем движение/атаки)

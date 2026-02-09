@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/path_of_light.png" id=2]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+required_level = 1
+train_cost_gold = 0
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value = 20
+value2 = 0
+value3 = 0
+
+[resource]
+id = "path_of_light"
+name = "Path of Light"
+icon = ExtResource("2")
+description = "A stance that steals life with each hit."
+class_id = "paladin"
+ability_type = "stance"
+target_type = "self"
+range_mode = "self"
+aura_radius = 0.0
+ranks = [SubResource("1")]

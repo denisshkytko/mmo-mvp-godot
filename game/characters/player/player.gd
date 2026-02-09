@@ -428,6 +428,9 @@ func try_move_or_swap_bag_slots(from_bag_index: int, to_bag_index: int) -> bool:
 func take_damage(raw_damage: int) -> void:
 	c_stats.take_damage(raw_damage)
 
+func take_damage_typed(raw_damage: int, dmg_type: String = "physical") -> void:
+	c_stats.take_damage_typed(raw_damage, dmg_type)
+
 func respawn_now() -> void:
 	# телепорт на ближайший graveyard
 	var gm: Node = _get_game_manager()

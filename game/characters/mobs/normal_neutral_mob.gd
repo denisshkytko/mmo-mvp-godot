@@ -366,17 +366,29 @@ func _notify_target_change(old_t, new_t) -> void:
 # ---------------------------
 func take_damage(raw_damage: int) -> void:
 	# fallback, если кто-то бьёт без attacker
-	take_damage_from(raw_damage, null)
+	take_damage_from_typed(raw_damage, null, "physical")
 
 func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
+	take_damage_from_typed(raw_damage, attacker, "physical")
+
+func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String) -> int:
 	if c_stats.is_dead:
-		return
+		return 0
 
 	loot_owner_player_id = LootRights.capture_first_player_hit(loot_owner_player_id, attacker)
 	if attacker != null and is_instance_valid(attacker):
 		direct_attackers[attacker.get_instance_id()] = _now_sec()
 
-	var died_now: bool = c_stats.apply_damage(raw_damage)
+	var snap: Dictionary = c_stats.get_stats_snapshot()
+	var pct: float
+	if dmg_type == "magic":
+		pct = float(snap.get("magic_reduction_pct", 0.0))
+	else:
+		pct = float(snap.get("physical_reduction_pct", 0.0))
+	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
+	final = max(1, final)
+	c_stats.current_hp = max(0, c_stats.current_hp - final)
+	var died_now: bool = c_stats.current_hp <= 0
 	c_stats.update_hp_bar(hp_fill)
 	if c_resource != null:
 		c_resource.on_damage_taken()
@@ -404,6 +416,7 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 
 	if died_now:
 		_die()
+	return final
 
 func is_in_combat() -> bool:
 	if aggressor == null or not is_instance_valid(aggressor):

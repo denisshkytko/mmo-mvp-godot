@@ -63,6 +63,6 @@ func _apply_hit() -> void:
 		if "is_dead" in _target and bool(_target.get("is_dead")):
 			queue_free()
 			return
-		DAMAGE_HELPER.apply_damage(_source, _target, _damage)
+		DAMAGE_HELPER.apply_damage_typed(_source, _target, _damage, "physical")
 
 	queue_free()

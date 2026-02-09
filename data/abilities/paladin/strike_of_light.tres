@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/strike_of_light.png" id=2]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+required_level = 1
+train_cost_gold = 0
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 6
+value = 80
+value2 = 15
+value3 = 0
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+required_level = 4
+train_cost_gold = 0
+cooldown_sec = 2.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 6
+value = 90
+value2 = 25
+value3 = 0
+
+[resource]
+id = "strike_of_light"
+name = "Strike of Light"
+icon = ExtResource("2")
+description = "Strike with steel and a burst of light."
+class_id = "paladin"
+ability_type = "damage"
+target_type = "enemy"
+range_mode = "melee"
+aura_radius = 0.0
+ranks = [SubResource("1"), SubResource("2")]
