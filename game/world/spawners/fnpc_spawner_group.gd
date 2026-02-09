@@ -45,7 +45,7 @@ const C_SHAMAN := 2
 const C_MAGE := 3
 const C_PRIEST := 4
 const C_HUNTER := 5
-var _class_choice_internal: int = C_SHAMAN
+var _class_choice_internal: int = C_PALADIN
 var _abilities_internal: Array[String] = []
 
 func _get_spawn_scene() -> PackedScene:

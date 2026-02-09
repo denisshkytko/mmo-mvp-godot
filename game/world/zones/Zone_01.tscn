@@ -161,6 +161,17 @@ class_choice = 2
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-1659, -163)
 
+[node name="FNPCSpawnersGroup5" type="Node2D" parent="."]
+script = ExtResource("7_nldw7")
+fighter_type = 1
+interaction_type = 3
+loot_profile = SubResource("Resource_b1gjl")
+level_min = 5
+level_max = 5
+
+[node name="FNPCSpawner" parent="FNPCSpawnersGroup5" instance=ExtResource("7_82kis")]
+position = Vector2(-1652, -85)
+
 [node name="FNPCSpawnersGroup2" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 faction_id = "red"
