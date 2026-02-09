@@ -35,6 +35,7 @@ var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_a
 var mob_level: int = 1
 var attack_mode: int = AttackMode.MELEE
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
+var abilities: Array[String] = []
 
 var home_position: Vector2 = Vector2.ZERO
 
@@ -226,7 +227,8 @@ func apply_spawn_init(
 	loot_profile_in: LootProfile = null,
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
-	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL
+	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	abilities_in: Array[String] = []
 ) -> void:
 	# Эти поля должны выставляться до расчётов/AI
 
@@ -238,6 +240,7 @@ func apply_spawn_init(
 
 	if loot_profile_in != null:
 		loot_profile = loot_profile_in
+	abilities = abilities_in.duplicate()
 
 	apply_spawn_settings(
 		spawn_pos,

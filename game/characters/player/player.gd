@@ -45,22 +45,6 @@ func is_out_of_combat() -> bool:
 @export var int_per_level: int = 1
 @export var per_per_level: int = 1
 
-# Skills (NOT exported — чтобы не засорять инспектор на Player)
-var skill_1_range: float = 120.0
-var skill_1_cooldown: float = 3.0
-var skill_1_damage_multiplier: float = 2.0
-var skill_1_mana_cost: int = 12
-
-var skill_2_cooldown: float = 6.0
-var skill_2_mana_cost: int = 18
-var skill_2_heal_amount: int = 35
-
-var skill_3_cooldown: float = 20.0
-var skill_3_mana_cost: int = 25
-var skill_3_duration_sec: float = 600.0
-var skill_3_attack_bonus: int = 6
-
-
 var faction_id: String = "blue"
 var class_id: String = "warrior"
 
@@ -183,7 +167,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_stats: PlayerStats = $Components/Stats as PlayerStats
 @onready var c_buffs: PlayerBuffs = $Components/Buffs as PlayerBuffs
 @onready var c_combat: PlayerCombat = $Components/Combat as PlayerCombat
-@onready var c_skills: PlayerSkills = $Components/Skills as PlayerSkills
+@onready var c_ability_caster: PlayerAbilityCaster = $Components/AbilityCaster as PlayerAbilityCaster
 @onready var c_inv: PlayerInventoryComponent = $Components/Inventory as PlayerInventoryComponent
 @onready var c_equip: PlayerEquipmentComponent = $Components/Equipment as PlayerEquipmentComponent
 @onready var c_spellbook: PlayerSpellbook = $Components/Spellbook as PlayerSpellbook
@@ -210,7 +194,8 @@ func _ready() -> void:
 	c_stats.setup(self)
 	c_buffs.setup(self)
 	c_combat.setup(self)
-	c_skills.setup(self)
+	if c_ability_caster != null:
+		c_ability_caster.setup(self)
 
 	# inventory ref (чтобы LootUI/InventoryUI не ломались)
 	c_inv.setup(self)
@@ -218,6 +203,8 @@ func _ready() -> void:
 	c_equip.setup(self)
 	if c_spellbook != null:
 		c_spellbook.setup(self)
+		if not c_spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
+			c_spellbook.spellbook_changed.connect(_on_spellbook_changed)
 
 	# init stats
 	c_stats.recalculate_for_level(true)
@@ -229,6 +216,8 @@ func _ready() -> void:
 			c_resource.sync_from_owner_fields_if_mana()
 		else:
 			c_resource.set_empty()
+
+	_apply_spellbook_passives()
 
 func get_danger_meter() -> DangerMeterComponent:
 	return c_danger
@@ -264,8 +253,8 @@ func _process(delta: float) -> void:
 		c_buffs.tick(delta)
 	if c_stats != null:
 		c_stats.tick(delta)
-	if c_skills != null:
-		c_skills.tick(delta)
+	if c_ability_caster != null:
+		c_ability_caster.tick(delta)
 	if c_combat != null:
 		c_combat.tick(delta)
 
@@ -277,44 +266,26 @@ func get_attack_damage() -> int:
 	return c_combat.get_attack_damage()
 
 
-func try_cast_skill_1() -> void:
-	c_skills.try_cast_skill_1()
-
-func try_cast_skill_2() -> void:
-	c_skills.try_cast_skill_2()
-
-func try_cast_skill_3() -> void:
-	c_skills.try_cast_skill_3()
-
 func set_mobile_move_dir(dir: Vector2) -> void:
 	mobile_move_dir = dir
 
-func try_use_skill_slot(slot_index: int) -> void:
-	if c_skills == null:
+func try_use_ability_slot(slot_index: int) -> void:
+	if c_spellbook == null or c_ability_caster == null:
 		return
-	match slot_index:
-		0:
-			c_skills.try_cast_skill_1()
-		1:
-			c_skills.try_cast_skill_2()
-		2:
-			c_skills.try_cast_skill_3()
-		_:
-			return
+	if slot_index < 0 or slot_index >= c_spellbook.loadout_slots.size():
+		return
+	var ability_id: String = c_spellbook.loadout_slots[slot_index]
+	var target: Node = null
+	var gm := _get_game_manager()
+	if gm != null and gm.has_method("get_target"):
+		target = gm.call("get_target")
+	if target == null:
+		target = self
+	c_ability_caster.try_cast(ability_id, target)
 
 func try_interact() -> void:
 	if c_interaction != null:
 		c_interaction.try_interact(self)
-
-func get_skill_1_cooldown_left() -> float:
-	return c_skills.get_skill_1_cooldown_left()
-
-func get_skill_2_cooldown_left() -> float:
-	return c_skills.get_skill_2_cooldown_left()
-
-func get_skill_3_cooldown_left() -> float:
-	return c_skills.get_skill_3_cooldown_left()
-
 
 # Buffs API (BuffsUI/иконки)
 func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {}) -> void:
@@ -364,6 +335,16 @@ func _request_save(kind: String) -> void:
 	var gm: Node = _get_game_manager()
 	if gm != null and gm.has_method("request_save"):
 		gm.call("request_save", kind)
+
+func _on_spellbook_changed() -> void:
+	_apply_spellbook_passives()
+	_request_save("spellbook_changed")
+
+func _apply_spellbook_passives() -> void:
+	if c_ability_caster == null or c_spellbook == null:
+		return
+	c_ability_caster.apply_active_aura(c_spellbook.aura_active)
+	c_ability_caster.apply_active_stance(c_spellbook.stance_active)
 
 
 func add_gold(amount: int) -> void:
@@ -511,6 +492,17 @@ func apply_character_data(d: Dictionary) -> void:
 	if buffs_v is Array:
 		c_buffs.apply_buffs_snapshot(buffs_v as Array)
 
+	var spellbook_v: Variant = d.get("spellbook", null)
+	if spellbook_v is Dictionary and c_spellbook != null:
+		var sdata := spellbook_v as Dictionary
+		c_spellbook.learned_ranks = sdata.get("learned_ranks", {}) as Dictionary
+		c_spellbook.loadout_slots = _to_string_array(sdata.get("loadout_slots", ["", "", "", "", ""]))
+		c_spellbook.aura_active = String(sdata.get("aura_active", ""))
+		c_spellbook.stance_active = String(sdata.get("stance_active", ""))
+		c_spellbook.buff_slots = _to_string_array(sdata.get("buff_slots", ["", "", ""]))
+		c_spellbook._ensure_slots()
+		_apply_spellbook_passives()
+
 	# Derived stats must be recalculated after primaries + buffs are in place
 	if c_stats != null:
 		c_stats.recalculate_for_level(false)
@@ -560,9 +552,24 @@ func export_character_data() -> Dictionary:
 
 	# buffs
 	base["buffs"] = c_buffs.get_buffs_snapshot()
+	if c_spellbook != null:
+		base["spellbook"] = {
+			"learned_ranks": c_spellbook.learned_ranks,
+			"loadout_slots": c_spellbook.loadout_slots,
+			"aura_active": c_spellbook.aura_active,
+			"stance_active": c_spellbook.stance_active,
+			"buff_slots": c_spellbook.buff_slots
+		}
 
 	return base
 
 
 func get_faction_id() -> String:
 	return faction_id
+
+func _to_string_array(value: Variant) -> Array[String]:
+	var out: Array[String] = []
+	if value is Array:
+		for entry in value:
+			out.append(String(entry))
+	return out

@@ -1,7 +1,6 @@
-[gd_scene load_steps=17 format=3 uid="uid://csbowtuv1xh0o"]
+[gd_scene load_steps=16 format=3 uid="uid://csbowtuv1xh0o"]
 
 [ext_resource type="PackedScene" uid="uid://167bw0aqye6e" path="res://ui/game/hud/XpHUD.tscn" id="1_rs8we"]
-[ext_resource type="PackedScene" uid="uid://dqcx34335ljdy" path="res://ui/game/hud/SkillButtonHUD.tscn" id="2_qdv4i"]
 [ext_resource type="PackedScene" uid="uid://t455gf4vm737" path="res://ui/game/hud/BuffsHUD.tscn" id="3_wemh1"]
 [ext_resource type="PackedScene" uid="uid://dcu1lfgrbfvt5" path="res://ui/game/hud/TargetHUD.tscn" id="4_3pola"]
 [ext_resource type="PackedScene" uid="uid://bopn065cb76jj" path="res://ui/game/hud/PlayerHUD.tscn" id="5_oxeu7"]
@@ -26,11 +25,6 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="XpHUD" parent="Root" instance=ExtResource("1_rs8we")]
-
-[node name="SkillButton" parent="Root" instance=ExtResource("2_qdv4i")]
-offset = Vector2(320, 320)
-scale = Vector2(0.5, 0.5)
-transform = Transform2D(0.5, 0, 0, 0.5, 320, 320)
 
 [node name="BuffsHUD" parent="Root" instance=ExtResource("3_wemh1")]
 

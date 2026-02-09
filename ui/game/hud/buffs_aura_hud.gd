@@ -1,7 +1,7 @@
 extends CanvasLayer
 class_name BuffsAuraHUD
 
-const DEFAULT_FLYOUT_SLOTS := 3
+const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const FLYOUT_MARGIN := 8.0
 const FLYOUT_SPACING := 6.0
 const ARROW_MARGIN := 6.0
@@ -26,15 +26,25 @@ var _primary_slot_abilities: Array[String] = []
 var _flyout_slot_abilities: Array[Array] = []
 var _arrow_up_text: String = "▲"
 var _arrow_down_text: String = "▼"
+var _player: Player = null
+var _spellbook: PlayerSpellbook = null
+var _ability_db: AbilityDatabase = null
 
 func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
 		toggle_button.pressed.connect(_on_toggle_pressed)
 	_setup_slots()
 	_create_flyouts()
+	_player = NODE_CACHE.get_player(get_tree()) as Player
+	if _player != null:
+		_spellbook = _player.c_spellbook
+	if _spellbook != null and not _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
+		_spellbook.spellbook_changed.connect(_on_spellbook_changed)
+	_ability_db = get_node_or_null("/root/AbilityDB") as AbilityDatabase
 	await get_tree().process_frame
 	_cache_layout()
 	_set_expanded(false, true)
+	_refresh_from_spellbook()
 
 func _setup_slots() -> void:
 	_primary_slots.clear()
@@ -83,10 +93,7 @@ func _create_flyouts() -> void:
 			typed.subslot_pressed.connect(_on_flyout_subslot_pressed)
 			typed.apply_reference_size(ref_size, FLYOUT_SPACING)
 		_flyouts.append(flyout)
-		var sub_arr: Array[String] = []
-		for j in range(DEFAULT_FLYOUT_SLOTS):
-			sub_arr.append("")
-		_flyout_slot_abilities.append(sub_arr)
+		_flyout_slot_abilities.append([])
 	print_debug("BuffsAuraHUD: created flyouts", _flyouts.size())
 
 func _cache_layout() -> void:
@@ -122,9 +129,10 @@ func _on_toggle_pressed() -> void:
 	_set_expanded(not _expanded, false)
 
 func _on_primary_slot_pressed(slot_index: int) -> void:
-	if slot_index >= 2:
+	if slot_index < 2:
+		_toggle_flyout(slot_index)
 		return
-	_toggle_flyout(slot_index)
+	_cast_buff_from_slot(slot_index)
 
 func _on_arrow_pressed(slot_index: int) -> void:
 	if slot_index < 2:
@@ -171,7 +179,22 @@ func _close_flyout(slot_index: int) -> void:
 	_reset_arrow(slot_index)
 
 func _on_flyout_subslot_pressed(slot_index: int, sub_index: int) -> void:
-	print_debug("flyout subslot pressed", slot_index, sub_index)
+	if slot_index < 0 or slot_index >= _flyout_slot_abilities.size():
+		return
+	var sub_arr: Array = _flyout_slot_abilities[slot_index]
+	if sub_index < 0 or sub_index >= sub_arr.size():
+		return
+	var ability_id: String = String(sub_arr[sub_index])
+	if ability_id == "" or _spellbook == null:
+		return
+	if slot_index == 0:
+		_spellbook.assign_aura_active(ability_id)
+	elif slot_index == 1:
+		_spellbook.assign_stance_active(ability_id)
+	else:
+		_spellbook.assign_buff_to_slot(ability_id, slot_index - 2)
+	_close_flyout(slot_index)
+	_open_flyout_slot = -1
 
 func set_primary_slot_ability(slot_index: int, ability_id: String) -> void:
 	if slot_index < 0 or slot_index >= _primary_slot_abilities.size():
@@ -186,6 +209,87 @@ func set_flyout_slot_ability(slot_index: int, sub_index: int, ability_id: String
 		return
 	sub_arr[sub_index] = ability_id
 	_flyout_slot_abilities[slot_index] = sub_arr
+
+func _on_spellbook_changed() -> void:
+	_refresh_from_spellbook()
+
+func _refresh_from_spellbook() -> void:
+	if _spellbook == null or _ability_db == null:
+		return
+	_set_primary_slot(0, _spellbook.aura_active)
+	_set_primary_slot(1, _spellbook.stance_active)
+	for i in range(3):
+		var ability_id := ""
+		if i < _spellbook.buff_slots.size():
+			ability_id = _spellbook.buff_slots[i]
+		_set_primary_slot(i + 2, ability_id)
+
+	var aura_candidates := _spellbook.get_learned_by_type("aura")
+	if _spellbook.aura_active != "" and aura_candidates.has(_spellbook.aura_active):
+		aura_candidates.erase(_spellbook.aura_active)
+	var stance_candidates := _spellbook.get_learned_by_type("stance")
+	if _spellbook.stance_active != "" and stance_candidates.has(_spellbook.stance_active):
+		stance_candidates.erase(_spellbook.stance_active)
+	var buff_candidates := _spellbook.get_buff_candidates_for_flyout()
+
+	_set_flyout_entries(0, aura_candidates)
+	_set_flyout_entries(1, stance_candidates)
+	for i in range(3):
+		_set_flyout_entries(i + 2, buff_candidates)
+
+	_set_arrow_visible(0, aura_candidates.size() > 0)
+	_set_arrow_visible(1, stance_candidates.size() > 0)
+	for i in range(3):
+		_set_arrow_visible(i + 2, buff_candidates.size() > 0)
+
+func _set_primary_slot(slot_index: int, ability_id: String) -> void:
+	set_primary_slot_ability(slot_index, ability_id)
+	if slot_index < 0 or slot_index >= _primary_slots.size():
+		return
+	var button := _primary_slots[slot_index]
+	if button == null:
+		return
+	var icon: Texture2D = null
+	if ability_id != "" and _ability_db != null:
+		var def := _ability_db.get_ability(ability_id)
+		if def != null:
+			icon = def.icon
+	button.texture_normal = icon
+	button.texture_pressed = icon
+
+func _set_flyout_entries(slot_index: int, ability_ids: Array[String]) -> void:
+	if slot_index < 0 or slot_index >= _flyouts.size():
+		return
+	var flyout := _flyouts[slot_index]
+	if flyout is BuffAuraFlyout:
+		var typed := flyout as BuffAuraFlyout
+		typed.set_entries(ability_ids, _ability_db)
+	_flyout_slot_abilities[slot_index] = ability_ids.duplicate()
+
+func _set_arrow_visible(slot_index: int, visible_value: bool) -> void:
+	if slot_index < 0 or slot_index >= _arrow_buttons.size():
+		return
+	var arrow_button := _arrow_buttons[slot_index]
+	if arrow_button != null:
+		arrow_button.visible = visible_value
+
+func _cast_buff_from_slot(slot_index: int) -> void:
+	if _player == null or _spellbook == null:
+		return
+	var buff_idx := slot_index - 2
+	if buff_idx < 0 or buff_idx >= _spellbook.buff_slots.size():
+		return
+	var ability_id: String = _spellbook.buff_slots[buff_idx]
+	if ability_id == "":
+		return
+	var target: Node = null
+	var gm := NODE_CACHE.get_game_manager(get_tree())
+	if gm != null and gm.has_method("get_target"):
+		target = gm.call("get_target")
+	if target == null:
+		target = _player
+	if _player.c_ability_caster != null:
+		_player.c_ability_caster.try_cast(ability_id, target)
 
 func _get_reference_slot_size() -> Vector2:
 	for slot_button in _primary_slots:

@@ -3,3 +3,7 @@ class_name RankData
 
 @export var required_level: int = 1
 @export var train_cost_gold: int = 0
+@export var cooldown_sec: float = 0.0
+@export var duration_sec: float = 0.0
+@export var resource_cost: int = 0
+@export var value: int = 0

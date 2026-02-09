@@ -19,7 +19,17 @@ enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 @export var level_min: int = 1
 @export var level_max: int = 1
 @export_enum("Paladin", "Warrior", "Shaman", "Mage", "Priest", "Hunter")
-var class_choice: int = C_SHAMAN
+var class_choice: int:
+	get:
+		return _class_choice_internal
+	set(v):
+		_class_choice_internal = int(v)
+		_abilities_internal = _filter_abilities_for_class(_abilities_internal)
+@export var abilities: Array[String]:
+	get:
+		return _abilities_internal
+	set(value):
+		_abilities_internal = _filter_abilities_for_class(value)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 
 @export_group("Behavior After Spawn")
@@ -35,6 +45,8 @@ const C_SHAMAN := 2
 const C_MAGE := 3
 const C_PRIEST := 4
 const C_HUNTER := 5
+var _class_choice_internal: int = C_SHAMAN
+var _abilities_internal: Array[String] = []
 
 func _get_spawn_scene() -> PackedScene:
 	return NPC_SCENE
@@ -80,6 +92,27 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		class_id,
 		profile_id,
 		merchant_preset,
-		mob_variant
+		mob_variant,
+		_abilities_internal
 	)
 	return true
+
+func _get_current_class_id() -> String:
+	return CLASS_IDS[_class_choice_internal]
+
+func _filter_abilities_for_class(values: Array[String]) -> Array[String]:
+	var out: Array[String] = []
+	var class_id := _get_current_class_id()
+	var db: Node = null
+	if is_inside_tree():
+		db = get_node_or_null("/root/AbilityDB")
+	for ability_id in values:
+		if ability_id == "":
+			continue
+		if db != null and db.has_method("get_ability"):
+			var def: AbilityDefinition = db.call("get_ability", ability_id)
+			if def != null and (class_id == "" or def.class_id == class_id):
+				out.append(ability_id)
+		else:
+			out.append(ability_id)
+	return out

@@ -36,6 +36,19 @@ func get_rank_data(ability_id: String, rank: int) -> RankData:
 		return null
 	return ability.ranks[idx] as RankData
 
+func get_rank_for_level(ability_id: String, level: int) -> int:
+	var ability := get_ability(ability_id)
+	if ability == null:
+		return 0
+	var best_rank := 0
+	for i in range(ability.ranks.size()):
+		var rank_data := ability.ranks[i] as RankData
+		if rank_data == null:
+			continue
+		if rank_data.required_level <= level:
+			best_rank = i + 1
+	return best_rank
+
 func get_max_rank(ability_id: String) -> int:
 	var ability := get_ability(ability_id)
 	return ability.get_max_rank() if ability != null else 0

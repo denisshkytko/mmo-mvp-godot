@@ -32,6 +32,7 @@ var mob_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
 var skin_id: String = ""
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
+var abilities: Array[String] = []
 
 var home_position: Vector2 = Vector2.ZERO
 
@@ -237,13 +238,15 @@ func apply_spawn_init(
 	loot_profile_in: LootProfile = null,
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
-	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL
+	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	abilities_in: Array[String] = []
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
 	skin_id = skin_id_in
 	if loot_profile_in != null:
 		loot_profile = loot_profile_in
+	abilities = abilities_in.duplicate()
 	# Common params (speed/leash/aggro) are configured on the mob itself.
 	mob_level = max(1, level_in)
 	body_size = body_size_in

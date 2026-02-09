@@ -41,6 +41,7 @@ var retaliation_active: bool = false
 var npc_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
+var abilities: Array[String] = []
 
 var home_position: Vector2 = Vector2.ZERO
 var current_target: Node2D = null
@@ -185,7 +186,8 @@ func apply_spawn_init(
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
 	merchant_preset_in: MerchantPreset = null,
-	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL
+	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	abilities_in: Array[String] = []
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -198,6 +200,7 @@ func apply_spawn_init(
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
 	merchant_preset = merchant_preset_in if merchant_preset_in != null else merchant_preset
+	abilities = abilities_in.duplicate()
 
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
