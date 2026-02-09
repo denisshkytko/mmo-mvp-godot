@@ -496,10 +496,10 @@ func apply_character_data(d: Dictionary) -> void:
 	if spellbook_v is Dictionary and c_spellbook != null:
 		var sdata := spellbook_v as Dictionary
 		c_spellbook.learned_ranks = sdata.get("learned_ranks", {}) as Dictionary
-		c_spellbook.loadout_slots = sdata.get("loadout_slots", ["", "", "", "", ""]) as Array[String]
+		c_spellbook.loadout_slots = _to_string_array(sdata.get("loadout_slots", ["", "", "", "", ""]))
 		c_spellbook.aura_active = String(sdata.get("aura_active", ""))
 		c_spellbook.stance_active = String(sdata.get("stance_active", ""))
-		c_spellbook.buff_slots = sdata.get("buff_slots", ["", "", ""]) as Array[String]
+		c_spellbook.buff_slots = _to_string_array(sdata.get("buff_slots", ["", "", ""]))
 		c_spellbook._ensure_slots()
 		_apply_spellbook_passives()
 
@@ -566,3 +566,10 @@ func export_character_data() -> Dictionary:
 
 func get_faction_id() -> String:
 	return faction_id
+
+func _to_string_array(value: Variant) -> Array[String]:
+	var out: Array[String] = []
+	if value is Array:
+		for entry in value:
+			out.append(String(entry))
+	return out
