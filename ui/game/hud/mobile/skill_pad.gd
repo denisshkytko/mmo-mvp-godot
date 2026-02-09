@@ -81,7 +81,7 @@ func set_slot_cooldown(_slot: int, _pct: float) -> void:
 		overlay.offset_top = 0
 		overlay.offset_right = 0
 		overlay.offset_bottom = 0
-	var pct := clamp(_pct, 0.0, 1.0)
+	var pct: float = clamp(_pct, 0.0, 1.0)
 	overlay.visible = pct > 0.0
 	var base_color := overlay.color
 	base_color.a = 0.2 + (0.6 * pct)
