@@ -3,6 +3,7 @@ class_name Player
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
@@ -505,6 +506,9 @@ func apply_character_data(d: Dictionary) -> void:
 		c_spellbook.buff_slots = _to_string_array(sdata.get("buff_slots", ["", "", ""]))
 		c_spellbook._ensure_slots()
 		_apply_spellbook_passives()
+	if c_spellbook != null and ((not (spellbook_v is Dictionary)) or c_spellbook.learned_ranks.is_empty()):
+		_grant_starter_abilities()
+		_request_save("starter_abilities")
 
 	# Derived stats must be recalculated after primaries + buffs are in place
 	if c_stats != null:
@@ -512,6 +516,24 @@ func apply_character_data(d: Dictionary) -> void:
 
 	# защита от “вошёл мёртвым”
 	is_dead = false
+
+
+func _grant_starter_abilities() -> void:
+	if c_spellbook == null:
+		return
+	var class_def: Dictionary = PROG.get_class_data(class_id)
+	var starters: Array = class_def.get("starter_abilities", []) as Array
+	if starters.is_empty():
+		return
+	var db := get_node_or_null("/root/AbilityDB")
+	for entry in starters:
+		var ability_id := String(entry)
+		if ability_id == "":
+			continue
+		var max_rank := 1
+		if db != null and db.has_method("get_max_rank"):
+			max_rank = int(db.call("get_max_rank", ability_id))
+		c_spellbook.learn_next_rank(ability_id, max_rank)
 
 
 func export_character_data() -> Dictionary:

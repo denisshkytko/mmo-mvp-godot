@@ -407,8 +407,10 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 		p.c_resource.on_damage_taken()
 
 	# неуязвимость через баф (если есть)
-	var buffs: PlayerBuffs = p.c_buffs
-	if buffs != null and buffs.is_invulnerable():
+	var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
+	if bool(flags.get("invulnerable", false)):
+		return 0
+	if dmg_type == "physical" and bool(flags.get("immune_physical", false)):
 		return 0
 
 	var pct: float

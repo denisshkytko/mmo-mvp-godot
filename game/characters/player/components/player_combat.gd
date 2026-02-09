@@ -213,8 +213,8 @@ func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, sp
 	if stance_data.is_empty():
 		return
 
-	if stance_data.has("on_hit_magic_bonus"):
-		var bonus: int = int(stance_data.get("on_hit_magic_bonus", 0))
+	if stance_data.has("on_hit_magic_bonus_flat"):
+		var bonus: int = int(stance_data.get("on_hit_magic_bonus_flat", 0))
 		if bonus > 0:
 			var mag_raw: int = bonus + int(round(spell_power * STAT_CONST.SP_DAMAGE_SCALAR))
 			var mag_final: int = STAT_CALC.apply_crit_to_damage(mag_raw, snap)

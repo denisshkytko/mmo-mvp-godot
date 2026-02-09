@@ -32,6 +32,7 @@ const CLASS_TABLE: Dictionary = {
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.60,
 		"attack_role": "melee",
+		"starter_abilities": ["strike_of_light", "healing_light", "aura_of_light_protection"],
 		"allowed_armor_classes": ["cloth", "leather", "mail"],
 		"base_equipment": {
 			"shirt": "armor_common_cloth_shirt_rl01_0545",

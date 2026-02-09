@@ -1,6 +1,8 @@
 extends Node
 class_name PlayerBuffs
 
+const BuffData := preload("res://core/buffs/buff_data.gd")
+
 var p: Player = null
 
 # id -> {"time_left": float, "data": Dictionary}
@@ -105,16 +107,39 @@ func _apply_consumable_hots(delta: float) -> void:
 	# (Healing already applied directly.)
 
 
-func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {}) -> void:
+func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ability_id: String = "", source: String = "") -> void:
 	if id == "":
 		return
-	_buffs[id] = {"time_left": duration_sec, "data": data}
+	var data_dict := _normalize_buff_data(data)
+	var entry_ability_id: String = ability_id if ability_id != "" else String(data_dict.get("ability_id", ""))
+	var entry_source: String = source if source != "" else String(data_dict.get("source", ""))
+	var effective_duration: float = duration_sec
+	if effective_duration <= 0.0:
+		effective_duration = 999999.0
+	_buffs[id] = {
+		"time_left": effective_duration,
+		"data": data_dict,
+		"ability_id": entry_ability_id,
+		"source": entry_source,
+	}
 	_notify_stats_changed()
 
 
 func remove_buff(id: String) -> void:
 	if _buffs.has(id):
 		_buffs.erase(id)
+		_notify_stats_changed()
+
+func remove_buffs_with_prefix(prefix: String) -> void:
+	if prefix == "":
+		return
+	var removed_any := false
+	for k in _buffs.keys():
+		var id: String = String(k)
+		if id.begins_with(prefix):
+			_buffs.erase(id)
+			removed_any = true
+	if removed_any:
 		_notify_stats_changed()
 
 
@@ -157,16 +182,21 @@ func get_buffs_snapshot() -> Array:
 		arr.append({
 			"id": id,
 			"time_left": float(entry.get("time_left", 0.0)),
-			"data": entry.get("data", {}) as Dictionary
+			"data": entry.get("data", {}) as Dictionary,
+			"ability_id": String(entry.get("ability_id", "")),
+			"source": String(entry.get("source", "")),
 		})
 	return arr
 
 func get_active_stance_data() -> Dictionary:
 	for k in _buffs.keys():
 		var id: String = String(k)
-		if id.begins_with("stance:"):
+		if id == "active_stance" or id.begins_with("stance:"):
 			var entry: Dictionary = _buffs[id] as Dictionary
-			return entry.get("data", {}) as Dictionary
+			var data: Dictionary = entry.get("data", {}) as Dictionary
+			if data.has("on_hit"):
+				return data.get("on_hit", {}) as Dictionary
+			return data
 	return {}
 
 
@@ -186,7 +216,8 @@ func is_invulnerable() -> bool:
 		var id: String = String(k)
 		var entry: Dictionary = _buffs[id] as Dictionary
 		var data: Dictionary = entry.get("data", {}) as Dictionary
-		if bool(data.get("invulnerable", false)):
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		if bool(flags.get("invulnerable", false)) or bool(data.get("invulnerable", false)):
 			return true
 	return false
 
@@ -204,8 +235,15 @@ func apply_buffs_snapshot(arr: Array) -> void:
 		var left: float = float(d.get("time_left", 0.0))
 		if left <= 0.0:
 			continue
-		var data: Dictionary = d.get("data", {}) as Dictionary
-		_buffs[id] = {"time_left": left, "data": data}
+		var data: Dictionary = _normalize_buff_data(d.get("data", {}) as Dictionary)
+		var entry_ability_id: String = String(d.get("ability_id", data.get("ability_id", "")))
+		var entry_source: String = String(d.get("source", data.get("source", "")))
+		_buffs[id] = {
+			"time_left": left,
+			"data": data,
+			"ability_id": entry_ability_id,
+			"source": entry_source,
+		}
 
 	_notify_stats_changed()
 
@@ -220,3 +258,10 @@ func _notify_stats_changed() -> void:
 		return
 	if p.c_stats != null:
 		p.c_stats.request_recalculate(false)
+
+func _normalize_buff_data(data: Variant) -> Dictionary:
+	if data is BuffData:
+		return (data as BuffData).to_dict()
+	if data is Dictionary:
+		return data as Dictionary
+	return {}

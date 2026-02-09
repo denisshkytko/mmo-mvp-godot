@@ -1,7 +1,9 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/strike_of_light.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_mixed_damage.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 required_level = 1
@@ -10,9 +12,11 @@ cooldown_sec = 3.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 6
-value = 80
-value2 = 15
-value3 = 0
+value_flat = 15
+value_flat_2 = 0
+value_pct = 80.0
+value_pct_2 = 0.0
+flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=2]
 required_level = 4
@@ -21,9 +25,23 @@ cooldown_sec = 2.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 6
-value = 90
-value2 = 25
-value3 = 0
+value_flat = 25
+value_flat_2 = 0
+value_pct = 90.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=3]
+school = "physical"
+scaling_mode = "phys_base_pct"
+
+[sub_resource type="Resource" script_class="EffectDamage" id=4]
+school = "magic"
+scaling_mode = "spell_power_flat"
+
+[sub_resource type="Resource" script_class="EffectMixedDamage" id=5]
+physical_effect = SubResource("3")
+magic_effect = SubResource("4")
 
 [resource]
 id = "strike_of_light"
@@ -35,4 +53,5 @@ ability_type = "damage"
 target_type = "enemy"
 range_mode = "melee"
 aura_radius = 0.0
+effect = SubResource("5")
 ranks = [SubResource("1"), SubResource("2")]
