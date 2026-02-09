@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/healing_light.png" id=2]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+required_level = 1
+train_cost_gold = 0
+cooldown_sec = 0.0
+cast_time_sec = 5.0
+duration_sec = 0.0
+resource_cost = 12
+value = 80
+value2 = 0
+value3 = 0
+
+[resource]
+id = "healing_light"
+name = "Healing Light"
+icon = ExtResource("2")
+description = "Channel holy light to restore an ally."
+class_id = "paladin"
+ability_type = "heal"
+target_type = "ally"
+range_mode = "ranged"
+aura_radius = 0.0
+ranks = [SubResource("1")]

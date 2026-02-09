@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/prayer_to_the_light.png" id=2]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+required_level = 1
+train_cost_gold = 0
+cooldown_sec = 120.0
+cast_time_sec = 5.0
+duration_sec = 0.0
+resource_cost = 0
+value = 20
+value2 = 0
+value3 = 0
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+required_level = 6
+train_cost_gold = 0
+cooldown_sec = 120.0
+cast_time_sec = 4.0
+duration_sec = 0.0
+resource_cost = 0
+value = 25
+value2 = 0
+value3 = 0
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+required_level = 12
+train_cost_gold = 0
+cooldown_sec = 120.0
+cast_time_sec = 3.0
+duration_sec = 0.0
+resource_cost = 0
+value = 30
+value2 = 0
+value3 = 0
+
+[resource]
+id = "prayer_to_the_light"
+name = "Prayer to the Light"
+icon = ExtResource("2")
+description = "Pray to restore a portion of your mana."
+class_id = "paladin"
+ability_type = "active"
+target_type = "self"
+range_mode = "self"
+aura_radius = 0.0
+ranks = [SubResource("1"), SubResource("2"), SubResource("3")]

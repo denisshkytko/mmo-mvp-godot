@@ -394,17 +394,29 @@ func _pick_target() -> Node2D:
 	return FactionTargeting.pick_hostile_target(self, faction_id, radius)
 
 func take_damage(raw_damage: int) -> void:
-	take_damage_from(raw_damage, null)
+	take_damage_from_typed(raw_damage, null, "physical")
 
 func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
+	take_damage_from_typed(raw_damage, attacker, "physical")
+
+func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String) -> int:
 	loot_owner_player_id = LootRights.capture_first_player_hit(loot_owner_player_id, attacker)
 
 	if c_stats.is_dead:
-		return
+		return 0
 
 	regen_active = false
 
-	var died_now: bool = c_stats.apply_damage(raw_damage)
+	var snap: Dictionary = c_stats.get_stats_snapshot()
+	var pct: float
+	if dmg_type == "magic":
+		pct = float(snap.get("magic_reduction_pct", 0.0))
+	else:
+		pct = float(snap.get("physical_reduction_pct", 0.0))
+	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
+	final = max(1, final)
+	c_stats.current_hp = max(0, c_stats.current_hp - final)
+	var died_now: bool = c_stats.current_hp <= 0
 	_update_hp()
 	if c_resource != null:
 		c_resource.on_damage_taken()
@@ -429,6 +441,7 @@ func take_damage_from(raw_damage: int, attacker: Node2D) -> void:
 
 	if died_now:
 		_die()
+	return final
 
 func is_in_combat() -> bool:
 	if current_target == null or not is_instance_valid(current_target):

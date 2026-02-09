@@ -27,6 +27,7 @@ var p: Player = null
 var _t_r: float = 0.0
 var _t_l: float = 0.0
 var _attack_mode: int = AttackMode.MELEE
+var _flat_physical_bonus: float = 0.0
 
 func setup(player: Player) -> void:
 	p = player
@@ -52,6 +53,8 @@ func tick(delta: float) -> void:
 		snap = p.call("get_stats_snapshot") as Dictionary
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var ap: float = float(derived.get("attack_power", 0.0))
+	var spell_power: float = float(derived.get("spell_power", 0.0))
+	_flat_physical_bonus = float(derived.get("flat_physical_bonus", 0.0))
 	var atk_speed_pct: float = float(snap.get("attack_speed_pct", 0.0))
 	var speed_mult: float = 1.0 + (atk_speed_pct / 100.0)
 	if speed_mult <= 0.01:
@@ -62,7 +65,7 @@ func tick(delta: float) -> void:
 	var eff_interval_r: float = base_interval_r / speed_mult
 	var eff_interval_l: float = base_interval_l / speed_mult if base_interval_l > 0.0 else 0.0
 
-	var hits := _get_hit_values(ap)
+	var hits := _get_hit_values(ap, _flat_physical_bonus)
 
 	_t_r = max(0.0, _t_r - delta)
 	_t_l = max(0.0, _t_l - delta)
@@ -72,7 +75,7 @@ func tick(delta: float) -> void:
 		if _attack_mode == AttackMode.RANGED:
 			_fire_ranged(target, dmg_r)
 		else:
-			_apply_damage_to_target(target, dmg_r)
+			_apply_damage_to_target(target, dmg_r, snap, spell_power)
 		_t_r = eff_interval_r
 
 	if hits.has("left") and _t_l <= 0.0:
@@ -80,7 +83,7 @@ func tick(delta: float) -> void:
 		if _attack_mode == AttackMode.RANGED:
 			_fire_ranged(target, dmg_l)
 		else:
-			_apply_damage_to_target(target, dmg_l)
+			_apply_damage_to_target(target, dmg_l, snap, spell_power)
 		_t_l = eff_interval_l
 
 func get_attack_damage() -> int:
@@ -91,14 +94,15 @@ func get_attack_damage() -> int:
 		snap = p.call("get_stats_snapshot") as Dictionary
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var ap: float = float(derived.get("attack_power", 0.0))
-	var hits := _get_hit_values(ap)
+	var flat_bonus: float = float(derived.get("flat_physical_bonus", 0.0))
+	var hits := _get_hit_values(ap, flat_bonus)
 	if hits.has("right"):
 		return int(hits.get("right", 0))
 	if hits.has("left"):
 		return int(hits.get("left", 0))
 	return 0
 
-func _get_hit_values(ap: float) -> Dictionary:
+func _get_hit_values(ap: float, flat_bonus: float) -> Dictionary:
 	var right_weapon_damage: int = 0
 	var left_weapon_damage: int = 0
 	var has_right_weapon := false
@@ -113,19 +117,19 @@ func _get_hit_values(ap: float) -> Dictionary:
 		has_right_weapon = p.c_equip.get_weapon_attack_interval_right() > 0.0
 
 	if not has_right_weapon:
-		var dmg_unarmed: int = max(1, int(round(ap * 1.5)))
+		var dmg_unarmed: int = max(1, int(round(ap * 1.5 + flat_bonus)))
 		return {"right": dmg_unarmed}
 
 	if is_two_handed:
-		var dmg_2h: int = max(1, int(round(float(right_weapon_damage) + ap * 1.5)))
+		var dmg_2h: int = max(1, int(round(float(right_weapon_damage) + ap * 1.5 + flat_bonus)))
 		return {"right": dmg_2h}
 
 	if has_left_weapon:
-		var dmg_r: int = max(1, int(round(float(right_weapon_damage) + ap)))
-		var dmg_l: int = max(1, int(round((float(left_weapon_damage) + ap) * STAT_CONST.OFFHAND_MULT)))
+		var dmg_r: int = max(1, int(round(float(right_weapon_damage) + ap + flat_bonus)))
+		var dmg_l: int = max(1, int(round((float(left_weapon_damage) + ap + flat_bonus) * STAT_CONST.OFFHAND_MULT)))
 		return {"right": dmg_r, "left": dmg_l}
 
-	var dmg_1h: int = max(1, int(round(float(right_weapon_damage) + ap)))
+	var dmg_1h: int = max(1, int(round(float(right_weapon_damage) + ap + flat_bonus)))
 	return {"right": dmg_1h}
 
 func _get_base_interval_right() -> float:
@@ -149,13 +153,15 @@ func _get_class_base_interval() -> float:
 		return 1.0
 	return float(PROG.get_base_melee_attack_interval_for_class(p.class_id))
 
-func _apply_damage_to_target(target: Node2D, dmg: int) -> void:
+func _apply_damage_to_target(target: Node2D, dmg: int, snap: Dictionary, spell_power: float) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	if not _can_attack_target(target):
 		return
 
-	DAMAGE_HELPER.apply_damage(p, target, dmg)
+	var final_phys := _estimate_final_damage(target, dmg, "physical")
+	DAMAGE_HELPER.apply_damage_typed(p, target, dmg, "physical")
+	_apply_on_hit_effects(target, final_phys, snap, spell_power)
 
 func _fire_ranged(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
@@ -163,24 +169,70 @@ func _fire_ranged(target: Node2D, dmg: int) -> void:
 	if not _can_attack_target(target):
 		return
 	if RANGED_PROJECTILE_SCENE == null:
-		_apply_damage_to_target(target, dmg)
+		DAMAGE_HELPER.apply_damage_typed(p, target, dmg, "physical")
 		return
 
 	var inst: Node = RANGED_PROJECTILE_SCENE.instantiate()
 	var proj: Node2D = inst as Node2D
 	if proj == null:
-		_apply_damage_to_target(target, dmg)
+		DAMAGE_HELPER.apply_damage_typed(p, target, dmg, "physical")
 		return
 
 	var parent: Node = p.get_parent()
 	if parent == null:
-		_apply_damage_to_target(target, dmg)
+		DAMAGE_HELPER.apply_damage_typed(p, target, dmg, "physical")
 		return
 
 	parent.add_child(proj)
 	proj.global_position = p.global_position
 	if proj.has_method("setup"):
 		proj.call("setup", target, dmg, p)
+
+func _estimate_final_damage(target: Node2D, raw_damage: int, dmg_type: String) -> int:
+	if raw_damage <= 0:
+		return 0
+	var reduction_pct: float = 0.0
+	if target != null:
+		var snap: Dictionary = {}
+		if target.has_method("get_stats_snapshot"):
+			snap = target.call("get_stats_snapshot") as Dictionary
+		elif "c_stats" in target and target.c_stats != null and target.c_stats.has_method("get_stats_snapshot"):
+			snap = target.c_stats.call("get_stats_snapshot") as Dictionary
+		if not snap.is_empty():
+			if dmg_type == "magic":
+				reduction_pct = float(snap.get("magic_reduction_pct", 0.0))
+			else:
+				reduction_pct = float(snap.get("physical_reduction_pct", 0.0))
+	var final := int(ceil(float(raw_damage) * (1.0 - reduction_pct / 100.0)))
+	return max(1, final)
+
+func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, spell_power: float) -> void:
+	if p == null or p.c_buffs == null:
+		return
+	var stance_data: Dictionary = p.c_buffs.get_active_stance_data()
+	if stance_data.is_empty():
+		return
+
+	if stance_data.has("on_hit_magic_bonus"):
+		var bonus: int = int(stance_data.get("on_hit_magic_bonus", 0))
+		if bonus > 0:
+			var mag_raw: int = bonus + int(round(spell_power * STAT_CONST.SP_DAMAGE_SCALAR))
+			var mag_final: int = STAT_CALC.apply_crit_to_damage(mag_raw, snap)
+			DAMAGE_HELPER.apply_damage_typed(p, target, mag_final, "magic")
+
+	if stance_data.has("lifesteal_pct"):
+		var lifesteal_pct: float = float(stance_data.get("lifesteal_pct", 0.0))
+		if lifesteal_pct > 0.0 and final_phys > 0:
+			var heal: int = int(round(float(final_phys) * lifesteal_pct / 100.0))
+			if heal > 0:
+				p.current_hp = min(p.max_hp, p.current_hp + heal)
+
+	if stance_data.has("mana_on_hit_pct"):
+		var mana_pct: float = float(stance_data.get("mana_on_hit_pct", 0.0))
+		if mana_pct > 0.0 and final_phys > 0:
+			var mana_gain: int = int(round(float(final_phys) * mana_pct / 100.0))
+			if mana_gain > 0:
+				p.mana = min(p.max_mana, p.mana + mana_gain)
 
 
 func _get_current_target() -> Node2D:

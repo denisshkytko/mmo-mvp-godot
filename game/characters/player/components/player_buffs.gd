@@ -161,6 +161,14 @@ func get_buffs_snapshot() -> Array:
 		})
 	return arr
 
+func get_active_stance_data() -> Dictionary:
+	for k in _buffs.keys():
+		var id: String = String(k)
+		if id.begins_with("stance:"):
+			var entry: Dictionary = _buffs[id] as Dictionary
+			return entry.get("data", {}) as Dictionary
+	return {}
+
 
 # Legacy helper (used by PlayerCombat)
 func get_attack_bonus_total() -> int:

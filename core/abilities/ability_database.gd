@@ -8,6 +8,7 @@ var is_ready: bool = false
 
 func _ready() -> void:
 	if not is_ready:
+		_load_abilities_from_dir("res://data/abilities")
 		is_ready = true
 		emit_signal("initialized")
 
@@ -62,3 +63,23 @@ func get_abilities_for_class(class_id: String) -> Array[AbilityDefinition]:
 		if class_id == "" or def.class_id == class_id:
 			out.append(def)
 	return out
+
+func _load_abilities_from_dir(path: String) -> void:
+	var dir := DirAccess.open(path)
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	var name := dir.get_next()
+	while name != "":
+		if name.begins_with("."):
+			name = dir.get_next()
+			continue
+		var full_path := path.path_join(name)
+		if dir.current_is_dir():
+			_load_abilities_from_dir(full_path)
+		elif name.get_extension() == "tres":
+			var res := load(full_path)
+			if res is AbilityDefinition:
+				register_ability(res)
+		name = dir.get_next()
+	dir.list_dir_end()
