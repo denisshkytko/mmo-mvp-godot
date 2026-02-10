@@ -47,7 +47,7 @@ func _resolve_dict(source: Dictionary, rank_data: RankData, is_percent: bool) ->
 	var out: Dictionary = {}
 	for key in source.keys():
 		var value = source.get(key)
-		var resolved := _resolve_value(value, rank_data, is_percent)
+		var resolved: Variant = _resolve_value(value, rank_data, is_percent)
 		if resolved == null:
 			continue
 		out[key] = resolved

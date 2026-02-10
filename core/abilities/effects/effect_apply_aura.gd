@@ -1,4 +1,4 @@
-extends EffectApplyBuff
+extends "res://core/abilities/effects/effect_apply_buff.gd"
 class_name EffectApplyAura
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
