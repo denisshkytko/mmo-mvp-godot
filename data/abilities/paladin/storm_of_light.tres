@@ -1,7 +1,10 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/storm_of_light.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_mixed_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=5]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 required_level = 1
@@ -10,9 +13,28 @@ cooldown_sec = 10.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 15
-value = 60
-value2 = 20
-value3 = 0
+value_flat = 20
+value_flat_2 = 0
+value_pct = 60.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=2]
+school = "physical"
+scaling_mode = "phys_base_pct"
+
+[sub_resource type="Resource" script_class="EffectDamage" id=3]
+school = "magic"
+scaling_mode = "spell_power_flat"
+
+[sub_resource type="Resource" script_class="EffectMixedDamage" id=4]
+physical_effect = SubResource("2")
+magic_effect = SubResource("3")
+
+[sub_resource type="Resource" script_class="EffectAOE" id=5]
+radius_mode = "melee"
+target_filter = "enemies_only"
+inner_effect = SubResource("4")
 
 [resource]
 id = "storm_of_light"
@@ -24,4 +46,5 @@ ability_type = "aoe_damage"
 target_type = "self"
 range_mode = "self"
 aura_radius = 0.0
+effect = SubResource("5")
 ranks = [SubResource("1")]

@@ -57,7 +57,7 @@ static func build_player_snapshot(
         var bd: Dictionary = b as Dictionary
         var id: String = String(bd.get("id", ""))
         var data: Dictionary = bd.get("data", {}) as Dictionary
-        var bprim: Dictionary = data.get("primary", {}) as Dictionary
+        var bprim: Dictionary = data.get("primary_add", data.get("primary", {})) as Dictionary
         for k in prim.keys():
             var add_v: int = int(bprim.get(k, 0))
             if add_v != 0:
@@ -167,6 +167,8 @@ static func build_player_snapshot(
         "defense": 0.0,
         "magic_resist": 0.0,
     }
+    var flags: Dictionary = {}
+    var on_hit: Dictionary = {}
 
     for b in buffs:
         if not (b is Dictionary):
@@ -179,13 +181,16 @@ static func build_player_snapshot(
         if data.has("attack_bonus"):
             _apply_flat_secondary(derived, breakdown, {"attack_power": int(data.get("attack_bonus", 0))}, id)
 
-        var sec: Dictionary = data.get("secondary", {}) as Dictionary
+        var sec: Dictionary = data.get("secondary_add", data.get("secondary", {})) as Dictionary
         _apply_flat_secondary(derived, breakdown, sec, id)
 
-        var perc: Dictionary = data.get("percent", {}) as Dictionary
+        var perc: Dictionary = data.get("percent_add", data.get("percent", {})) as Dictionary
         for pk in percent_mods.keys():
             if perc.has(pk):
                 percent_mods[pk] += float(perc.get(pk, 0.0))
+
+        _merge_flags(flags, data.get("flags", {}) as Dictionary)
+        _merge_on_hit(on_hit, data.get("on_hit", {}) as Dictionary)
 
     # ------------------
     # 5) Percent buffs (two-phase)
@@ -230,6 +235,9 @@ static func build_player_snapshot(
         "magic_reduction_pct": mag_reduction_pct,
         "defense_mitigation_pct": phys_reduction_pct,
         "magic_mitigation_pct": mag_reduction_pct,
+
+        "flags": flags,
+        "on_hit": on_hit,
     }
 
 
@@ -463,6 +471,19 @@ static func apply_crit_to_heal(base_heal: int, snap: Dictionary) -> int:
     if base_heal > 0:
         return max(1, heal)
     return heal
+
+static func _merge_flags(dest: Dictionary, incoming: Dictionary) -> void:
+    for k in incoming.keys():
+        if bool(incoming.get(k, false)):
+            dest[k] = true
+
+static func _merge_on_hit(dest: Dictionary, incoming: Dictionary) -> void:
+    for k in incoming.keys():
+        var v = incoming.get(k)
+        if typeof(v) == TYPE_INT or typeof(v) == TYPE_FLOAT:
+            dest[k] = float(dest.get(k, 0.0)) + float(v)
+        else:
+            dest[k] = v
 
 
 static func compute_mob_unarmed_hit(ap: float) -> int:

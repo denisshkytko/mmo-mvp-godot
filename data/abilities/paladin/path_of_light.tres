@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/path_of_light.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=3]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 required_level = 1
@@ -10,9 +11,18 @@ cooldown_sec = 0.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
-value = 20
-value2 = 0
-value3 = 0
+value_flat = 20
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyStance" id=2]
+buff_id = "active_stance"
+secondary_add = {}
+percent_add = {}
+flags = {}
+on_hit = {"lifesteal_pct": "value_flat"}
 
 [resource]
 id = "path_of_light"
@@ -24,4 +34,5 @@ ability_type = "stance"
 target_type = "self"
 range_mode = "self"
 aura_radius = 0.0
+effect = SubResource("2")
 ranks = [SubResource("1")]
