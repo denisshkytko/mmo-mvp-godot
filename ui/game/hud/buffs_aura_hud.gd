@@ -37,7 +37,6 @@ func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
 		toggle_button.pressed.connect(_on_toggle_pressed)
 	_setup_slots()
-	_configure_visible_buff_slots()
 	_create_flyouts()
 
 	_flow_router = get_node_or_null("/root/FlowRouter")
@@ -94,15 +93,6 @@ func _setup_slots() -> void:
 			arrow_button.text = _arrow_up_text
 		else:
 			_arrow_home_pos.append(Vector2.ZERO)
-
-func _configure_visible_buff_slots() -> void:
-	if slot_row == null:
-		return
-	var hidden_nodes := ["GapSmall1", "SlotContainer3", "GapSmall2", "SlotContainer4"]
-	for node_name in hidden_nodes:
-		var node := slot_row.get_node_or_null(node_name) as Control
-		if node != null:
-			node.visible = false
 
 func _create_flyouts() -> void:
 	_flyouts.clear()

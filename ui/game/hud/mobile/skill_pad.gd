@@ -4,6 +4,8 @@ class_name SkillPad
 signal skill_pressed(slot_index: int)
 signal interact_pressed()
 
+const COOLDOWN_SHADER_CODE := "shader_type canvas_item;\n\nuniform float fill_pct : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tvec2 d = UV - vec2(0.5);\n\tif (length(d) > 0.5) {\n\t\tdiscard;\n\t}\n\tif (UV.y < (1.0 - fill_pct)) {\n\t\tdiscard;\n\t}\n\tCOLOR = vec4(0.0, 0.0, 0.0, 0.62);\n}\n"
+
 @onready var quick_skill_btn: BaseButton = $QuickSkillBtn
 @onready var skill_btn_1: BaseButton = $SkillBtn1
 @onready var skill_btn_2: BaseButton = $SkillBtn2
@@ -65,24 +67,40 @@ func set_slot_cooldown(_slot: int, _pct: float) -> void:
 	var btn := _skill_buttons[_slot] as TextureButton
 	if btn == null:
 		return
-	var overlay := btn.get_node_or_null("CooldownOverlay") as ColorRect
+	var overlay := _ensure_cooldown_overlay(btn)
 	if overlay == null:
-		overlay = ColorRect.new()
-		overlay.name = "CooldownOverlay"
-		overlay.color = Color(0, 0, 0, 0.5)
-		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		btn.add_child(overlay)
-		overlay.layout_mode = 1
-		overlay.anchors_preset = Control.PRESET_FULL_RECT
-		overlay.offset_left = 0
-		overlay.offset_top = 0
-		overlay.offset_right = 0
-		overlay.offset_bottom = 0
+		return
 	var pct: float = clamp(_pct, 0.0, 1.0)
 	overlay.visible = pct > 0.0
-	var base_color := overlay.color
-	base_color.a = 0.2 + (0.6 * pct)
-	overlay.color = base_color
+	if not overlay.visible:
+		return
+	var mat := overlay.material as ShaderMaterial
+	if mat != null:
+		mat.set_shader_parameter("fill_pct", pct)
+
+
+func _ensure_cooldown_overlay(btn: TextureButton) -> ColorRect:
+	var overlay := btn.get_node_or_null("CooldownOverlay") as ColorRect
+	if overlay != null:
+		return overlay
+	overlay = ColorRect.new()
+	overlay.name = "CooldownOverlay"
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.layout_mode = 1
+	overlay.anchors_preset = Control.PRESET_FULL_RECT
+	overlay.offset_left = 6
+	overlay.offset_top = 6
+	overlay.offset_right = -6
+	overlay.offset_bottom = -6
+	overlay.color = Color.WHITE
+	var shader := Shader.new()
+	shader.code = COOLDOWN_SHADER_CODE
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("fill_pct", 0.0)
+	overlay.material = mat
+	btn.add_child(overlay)
+	return overlay
 
 
 func set_slot_enabled(_slot: int, _enabled: bool) -> void:
