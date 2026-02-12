@@ -18,9 +18,9 @@ func show_value(value: int, color: Color) -> void:
 	_play_anim()
 
 func _play_anim() -> void:
-	var duration := max(0.05, lifetime_sec)
-	var target_pos := position + Vector2(0.0, -float_distance)
-	var tween := create_tween()
+	var duration: float = maxf(0.05, lifetime_sec)
+	var target_pos: Vector2 = position + Vector2(0.0, -float_distance)
+	var tween: Tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "position", target_pos, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", end_scale, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
