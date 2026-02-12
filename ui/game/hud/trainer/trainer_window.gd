@@ -15,11 +15,17 @@ var _trainer_class_id: String = ""
 var _ability_db: AbilityDatabase = null
 var _tooltip: AbilityTooltip = null
 var _is_open: bool = false
+var _db_ready: bool = false
 
 func _ready() -> void:
 	add_to_group("trainer_ui")
 	panel.visible = false
 	_ability_db = get_node_or_null("/root/AbilityDB") as AbilityDatabase
+	if _ability_db != null:
+		if _ability_db.is_ready:
+			_db_ready = true
+		elif not _ability_db.initialized.is_connected(_on_db_ready):
+			_ability_db.initialized.connect(_on_db_ready)
 	_tooltip = get_tree().get_first_node_in_group("ability_tooltip_singleton") as AbilityTooltip
 	if close_button != null and not close_button.pressed.is_connected(close):
 		close_button.pressed.connect(close)
@@ -46,7 +52,7 @@ func open_for_trainer(trainer_node: Node, player: Player, spellbook: PlayerSpell
 	panel.visible = true
 	if title_label != null:
 		title_label.text = "Тренер"
-	_refresh_rows()
+	_try_refresh_rows()
 
 func close() -> void:
 	_is_open = false
@@ -70,6 +76,19 @@ func _process(_delta: float) -> void:
 				return
 
 func _on_filter_changed(_idx: int) -> void:
+	_try_refresh_rows()
+
+func _on_db_ready() -> void:
+	_db_ready = true
+	if _is_open:
+		_refresh_rows()
+
+func _try_refresh_rows() -> void:
+	if _ability_db == null:
+		return
+	if not _ability_db.is_ready:
+		return
+	_db_ready = true
 	_refresh_rows()
 
 func _refresh_rows() -> void:
@@ -79,6 +98,8 @@ func _refresh_rows() -> void:
 		child.queue_free()
 	if _ability_db == null or _player == null or _spellbook == null:
 		return
+	if OS.is_debug_build():
+		print("[TRAINER_UI] refresh. db_ready=", _ability_db.is_ready, " class=", _trainer_class_id)
 	var defs := _ability_db.get_abilities_for_class(_trainer_class_id)
 	defs.sort_custom(func(a: AbilityDefinition, b: AbilityDefinition) -> bool:
 		return a.get_display_name() < b.get_display_name()
