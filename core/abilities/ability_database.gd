@@ -110,15 +110,24 @@ func _load_from_manifest(path: String) -> bool:
 		if OS.is_debug_build():
 			print("[AbilityDB] manifest missing: ", path)
 		return false
-	if not (loaded is AbilitiesManifest):
-		push_warning("[AbilityDB] Manifest has invalid type: " + path)
-		return false
-	var manifest := loaded as AbilitiesManifest
-	if manifest.ability_defs.is_empty():
+	var defs: Array = []
+	if loaded is AbilitiesManifest:
+		var manifest := loaded as AbilitiesManifest
+		defs = manifest.ability_defs
+	else:
+		var raw_defs: Variant = loaded.get("ability_defs")
+		if raw_defs is Array:
+			defs = raw_defs as Array
+			push_warning("[AbilityDB] Manifest loaded as untyped Resource. Attempting to coerce ability_defs: " + path)
+		else:
+			push_warning("[AbilityDB] Manifest has invalid type: " + path)
+			return false
+	if defs.is_empty():
 		push_warning("[AbilityDB] Manifest is empty: " + path)
 		return false
-	for def in manifest.ability_defs:
-		_register_def(def, path)
+	for raw_def in defs:
+		var normalized := _coerce_ability_def(raw_def, path)
+		_register_def(normalized, path)
 	return abilities.size() > 0
 
 func _load_abilities_from_dir(path: String) -> void:
@@ -155,10 +164,43 @@ func _load_abilities_from_dir(path: String) -> void:
 					push_warning("[AbilityDB] load failed: " + full_path)
 				elif not (res is AbilityDefinition):
 					push_warning("[AbilityDB] NOT AbilityDefinition: %s class=%s script=%s" % [full_path, res.get_class(), str(res.get_script())])
+					var coerced := _coerce_ability_def(res, full_path)
+					_register_def(coerced, full_path)
 				else:
 					_register_def(res, full_path)
 		name = dir.get_next()
 	dir.list_dir_end()
+
+
+func _coerce_ability_def(raw_def: Variant, source_path: String) -> AbilityDefinition:
+	if raw_def is AbilityDefinition:
+		return raw_def as AbilityDefinition
+	if not (raw_def is Resource):
+		return null
+	var src := raw_def as Resource
+	var id := String(src.get("id"))
+	var class_id := String(src.get("class_id"))
+	if id == "" or class_id == "":
+		return null
+	var def := AbilityDefinition.new()
+	def.id = id
+	def.name = String(src.get("name"))
+	def.icon = src.get("icon") as Texture2D
+	def.description = String(src.get("description"))
+	def.class_id = class_id
+	def.ability_type = String(src.get("ability_type"))
+	def.target_type = String(src.get("target_type"))
+	def.range_mode = String(src.get("range_mode"))
+	def.aura_radius = float(src.get("aura_radius"))
+	def.effect = src.get("effect") as AbilityEffect
+	var ranks_v: Variant = src.get("ranks")
+	if ranks_v is Array:
+		for entry in (ranks_v as Array):
+			if entry is RankData:
+				def.ranks.append(entry as RankData)
+	if OS.is_debug_build():
+		print("[AbilityDB] coerced untyped Resource -> AbilityDefinition id=", def.id, " class=", def.class_id, " source=", source_path)
+	return def
 
 
 func _print_summary() -> void:
