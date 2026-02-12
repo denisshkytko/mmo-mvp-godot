@@ -17,6 +17,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
+clip_contents = true
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 1

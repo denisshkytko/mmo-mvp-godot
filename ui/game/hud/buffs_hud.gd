@@ -37,7 +37,8 @@ func _process(_delta: float) -> void:
 func _apply_grid_settings() -> void:
 	if grid == null:
 		return
-	grid.columns = max(1, buffs_per_row)
+	var max_cols := _get_max_columns_that_fit()
+	grid.columns = max(1, min(buffs_per_row, max_cols))
 
 func _sync_icons(snap: Array) -> void:
 	var seen: Dictionary = {} # buff_id -> true
@@ -82,6 +83,7 @@ func _sync_icons(snap: Array) -> void:
 		_icons.erase(k)
 
 	visible = (_icons.size() > 0)
+	_apply_grid_settings()
 	_request_panel_realign()
 
 func _capture_panel_corner_from_scene() -> void:
@@ -110,4 +112,33 @@ func _apply_panel_fixed_top_right() -> void:
 	panel.offset_bottom = panel.offset_top + panel.size.y
 
 func _on_panel_resized() -> void:
+	_apply_grid_settings()
 	_request_panel_realign()
+
+func _get_max_columns_that_fit() -> int:
+	if panel == null or grid == null:
+		return max(1, buffs_per_row)
+	var icon_w := _get_icon_width()
+	var sep := float(grid.get_theme_constant("h_separation"))
+	if icon_w <= 0.0:
+		return max(1, buffs_per_row)
+	var fit := int(floor((panel.size.x + sep) / (icon_w + sep)))
+	return max(1, fit)
+
+func _get_icon_width() -> float:
+	for child in grid.get_children():
+		var c := child as Control
+		if c != null:
+			var w := c.custom_minimum_size.x
+			if w <= 0.0:
+				w = c.size.x
+			if w > 0.0:
+				return w
+	if buff_icon_scene != null:
+		var inst := buff_icon_scene.instantiate() as Control
+		if inst != null:
+			var w2 := inst.custom_minimum_size.x
+			inst.queue_free()
+			if w2 > 0.0:
+				return w2
+	return 40.0
