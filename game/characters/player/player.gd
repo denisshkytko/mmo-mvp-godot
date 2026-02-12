@@ -539,7 +539,7 @@ func _grant_starter_abilities() -> void:
 		var ability_id := String(entry)
 		if ability_id == "":
 			continue
-		var max_rank := max(1, db.get_max_rank(ability_id))
+		var max_rank: int = int(max(1, db.get_max_rank(ability_id)))
 		var before_rank := int(c_spellbook.learned_ranks.get(ability_id, 0))
 		var after_rank := c_spellbook.learn_next_rank(ability_id, max_rank)
 		if after_rank > before_rank:
