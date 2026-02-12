@@ -3,24 +3,38 @@ class_name AbilityDatabase
 
 signal initialized
 
+const ABILITIES_ROOT_PATH := "res://data/abilities"
+const ABILITIES_MANIFEST_PATH := "res://data/abilities/abilities_manifest.tres"
+
 var abilities: Dictionary = {}
 var is_ready: bool = false
 
 func _ready() -> void:
-	if not is_ready:
-		_load_abilities_from_dir("res://data/abilities")
-		print("[AbilityDB] loaded abilities=", abilities.size())
-		if abilities.size() == 0:
-			push_warning("[AbilityDB] No abilities loaded from res://data/abilities (DirAccess.open failed or folder empty in build).")
-		is_ready = true
-		emit_signal("initialized")
+	if is_ready:
+		return
+	abilities.clear()
+	print("[AbilityDB] scan root=", ABILITIES_ROOT_PATH)
+	if not _load_from_manifest(ABILITIES_MANIFEST_PATH):
+		_load_abilities_from_dir(ABILITIES_ROOT_PATH)
+	print("[AbilityDB] loaded abilities=", abilities.size())
+	if abilities.size() == 0:
+		push_warning("[AbilityDB] abilities=0. Likely no .tres discovered OR resources not included in export. See logs above.")
+	is_ready = true
+	emit_signal("initialized")
 
 func register_ability(definition: AbilityDefinition) -> void:
 	if definition == null:
+		push_warning("[AbilityDB] register_ability skipped null definition")
 		return
-	var key := definition.id
+	var key := String(definition.id)
 	if key == "":
+		push_warning("[AbilityDB] register_ability skipped: empty id")
 		return
+	if String(definition.class_id) == "":
+		push_warning("[AbilityDB] register_ability skipped '%s': empty class_id" % key)
+		return
+	if OS.is_debug_build():
+		print("[AbilityDB] reg id=", key, " class=", definition.class_id)
 	abilities[key] = definition
 
 func has_ability(ability_id: String) -> bool:
@@ -67,6 +81,25 @@ func get_abilities_for_class(class_id: String) -> Array[AbilityDefinition]:
 			out.append(def)
 	return out
 
+func _load_from_manifest(path: String) -> bool:
+	var loaded: Resource = load(path)
+	if loaded == null:
+		if OS.is_debug_build():
+			print("[AbilityDB] manifest missing: ", path)
+		return false
+	if not (loaded is AbilitiesManifest):
+		push_warning("[AbilityDB] Manifest has invalid type: " + path)
+		return false
+	var manifest := loaded as AbilitiesManifest
+	if manifest.ability_defs.is_empty():
+		push_warning("[AbilityDB] Manifest is empty: " + path)
+		return false
+	for def in manifest.ability_defs:
+		register_ability(def)
+	if OS.is_debug_build():
+		print("[AbilityDB] loaded from manifest entries=", manifest.ability_defs.size())
+	return abilities.size() > 0
+
 func _load_abilities_from_dir(path: String) -> void:
 	var dir := DirAccess.open(path)
 	if dir == null:
@@ -81,9 +114,18 @@ func _load_abilities_from_dir(path: String) -> void:
 		var full_path := path.path_join(name)
 		if dir.current_is_dir():
 			_load_abilities_from_dir(full_path)
-		elif name.get_extension() == "tres":
-			var res := load(full_path)
-			if res is AbilityDefinition:
-				register_ability(res)
+		else:
+			var ext := name.get_extension().to_lower()
+			if ext == "import" or ext == "remap":
+				name = dir.get_next()
+				continue
+			if ext == "tres" or ext == "res":
+				if OS.is_debug_build():
+					print("[AbilityDB] found resource=", full_path)
+				var res: Resource = load(full_path)
+				if res is AbilityDefinition:
+					register_ability(res)
+				elif OS.is_debug_build():
+					print("[AbilityDB] skipped non-AbilityDefinition=", full_path)
 		name = dir.get_next()
 	dir.list_dir_end()
