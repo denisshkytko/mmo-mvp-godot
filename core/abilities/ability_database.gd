@@ -191,7 +191,11 @@ func _coerce_ability_def(raw_def: Variant, source_path: String) -> AbilityDefini
 	def.ability_type = str(src.get("ability_type"))
 	def.target_type = str(src.get("target_type"))
 	def.range_mode = str(src.get("range_mode"))
-	def.aura_radius = float(src.get("aura_radius"))
+	var aura_radius_raw: Variant = src.get("aura_radius")
+	if aura_radius_raw is float or aura_radius_raw is int:
+		def.aura_radius = aura_radius_raw
+	else:
+		def.aura_radius = str(aura_radius_raw).to_float()
 	def.effect = src.get("effect") as AbilityEffect
 	var ranks_v: Variant = src.get("ranks")
 	if ranks_v is Array:
