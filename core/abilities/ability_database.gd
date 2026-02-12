@@ -10,11 +10,31 @@ var abilities: Dictionary = {}
 var class_index: Dictionary = {}
 var is_ready: bool = false
 
+func _debug_check_ability_scripts() -> void:
+	if not OS.is_debug_build():
+		return
+	var script_res: Resource = load("res://core/abilities/ability_definition.gd")
+	var script_class := "null"
+	if script_res != null:
+		script_class = script_res.get_class()
+	print("[AbilityDB] ability_definition.gd loaded: ", script_res, " class=", script_class)
+	var test_res: Resource = load("res://data/abilities/paladin/healing_light.tres")
+	var test_class := "null"
+	var test_script := "null"
+	var script_class_prop := "<n/a>"
+	if test_res != null:
+		test_class = test_res.get_class()
+		test_script = str(test_res.get_script())
+		script_class_prop = str(test_res.get("script_class"))
+	print("[AbilityDB] test heal_light: class=", test_class, " script=", test_script, " script_class=", script_class_prop, " is_ability_def=", test_res is AbilityDefinition)
+
+
 func _ready() -> void:
 	if is_ready:
 		return
 	abilities.clear()
 	class_index.clear()
+	_debug_check_ability_scripts()
 	print("[AbilityDB] scan root=", ABILITIES_ROOT_PATH)
 	if _load_from_manifest(ABILITIES_MANIFEST_PATH):
 		print("[AbilityDB] loaded from manifest abilities=", abilities.size())
@@ -147,14 +167,16 @@ func _load_abilities_from_dir(path: String) -> void:
 				if OS.is_debug_build():
 					var loaded_class := "null"
 					var loaded_script := "null"
+					var loaded_script_class := "<n/a>"
 					if res != null:
 						loaded_class = res.get_class()
 						loaded_script = str(res.get_script())
-					print("[AbilityDB] load ", full_path, " => ", res, " class=", loaded_class, " script=", loaded_script)
+						loaded_script_class = str(res.get("script_class"))
+					print("[AbilityDB] load ", full_path, " => ", res, " class=", loaded_class, " script=", loaded_script, " script_class=", loaded_script_class)
 				if res == null:
 					push_warning("[AbilityDB] load failed: " + full_path)
 				elif not (res is AbilityDefinition):
-					push_warning("[AbilityDB] NOT AbilityDefinition: %s class=%s script=%s" % [full_path, res.get_class(), str(res.get_script())])
+					push_warning("[AbilityDB] NOT AbilityDefinition: %s class=%s script=%s script_class=%s" % [full_path, res.get_class(), str(res.get_script()), str(res.get("script_class"))])
 				else:
 					_register_def(res, full_path)
 		name = dir.get_next()
