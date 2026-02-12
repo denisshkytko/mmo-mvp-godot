@@ -1,7 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://df87po6ikg4ns"]
 
 [ext_resource type="Script" uid="uid://cajyjgkxkgjr" path="res://ui/game/hud/buffs_aura_hud.gd" id="1_5g8he"]
-[ext_resource type="Texture2D" uid="uid://dpk1lcys7sc8o" path="res://icon.svg" id="2_8u40u"]
 
 [node name="BuffsAuraHUD" type="CanvasLayer"]
 script = ExtResource("1_5g8he")
@@ -17,7 +16,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
-custom_minimum_size = Vector2(259, 44)
+custom_minimum_size = Vector2(165, 44)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -26,14 +25,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -22.0
 offset_top = -319.0
-offset_right = 242.0
+offset_right = 148.0
 offset_bottom = -275.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel"]
-custom_minimum_size = Vector2(259, 61)
+custom_minimum_size = Vector2(165, 61)
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -60,17 +59,6 @@ custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
 mouse_filter = 1
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer0/SlotButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("2_8u40u")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="GapLarge1" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(15, 1)
@@ -89,17 +77,6 @@ custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
 mouse_filter = 1
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer1/SlotButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("2_8u40u")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="GapLarge2" type="Control" parent="Root/Panel/SlotRow"]
 custom_minimum_size = Vector2(15, 1)
@@ -132,101 +109,6 @@ custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
 mouse_filter = 1
 
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer2/SlotRow/SlotButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("2_8u40u")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="GapSmall1" type="Control" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(5, 1)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="SlotContainer3" type="VBoxContainer" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(34, 34)
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 5
-alignment = 2
-
-[node name="ArrowButton" type="Button" parent="Root/Panel/SlotRow/SlotContainer3"]
-custom_minimum_size = Vector2(34, 22)
-layout_mode = 2
-mouse_filter = 1
-theme_override_font_sizes/font_size = 10
-text = "▲"
-
-[node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer3"]
-custom_minimum_size = Vector2(34, 34)
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 2
-
-[node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer3/SlotRow"]
-custom_minimum_size = Vector2(34, 34)
-layout_mode = 2
-mouse_filter = 1
-
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer3/SlotRow/SlotButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("2_8u40u")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="GapSmall2" type="Control" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(5, 1)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="SlotContainer4" type="VBoxContainer" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(34, 34)
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 5
-alignment = 2
-
-[node name="ArrowButton" type="Button" parent="Root/Panel/SlotRow/SlotContainer4"]
-custom_minimum_size = Vector2(34, 22)
-layout_mode = 2
-mouse_filter = 1
-theme_override_font_sizes/font_size = 10
-text = "▲"
-
-[node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer4"]
-custom_minimum_size = Vector2(34, 34)
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 2
-
-[node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer4/SlotRow"]
-custom_minimum_size = Vector2(34, 34)
-layout_mode = 2
-mouse_filter = 1
-
-[node name="Icon" type="TextureRect" parent="Root/Panel/SlotRow/SlotContainer4/SlotRow/SlotButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("2_8u40u")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="ToggleButton" type="Button" parent="Root"]
 z_index = 10

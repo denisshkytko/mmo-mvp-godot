@@ -1,9 +1,14 @@
 extends Node
 class_name PlayerAbilityCaster
 
+signal cast_started(ability_id: String, duration_sec: float)
+signal cast_progress(ability_id: String, progress: float)
+signal cast_finished(ability_id: String, success: bool)
+
 var p: Player = null
 var _cooldowns: Dictionary = {} # ability_id -> time_left
 var _cast_time_left: float = 0.0
+var _cast_total_time: float = 0.0
 var _cast_payload: Dictionary = {}
 
 func setup(player: Player) -> void:
@@ -12,9 +17,11 @@ func setup(player: Player) -> void:
 func tick(delta: float) -> void:
 	if _cast_time_left > 0.0:
 		_cast_time_left = max(0.0, _cast_time_left - delta)
+		_emit_cast_progress()
 		if _cast_time_left <= 0.0 and not _cast_payload.is_empty():
 			_finish_cast(_cast_payload)
 			_cast_payload = {}
+			_cast_total_time = 0.0
 
 	if _cooldowns.is_empty():
 		return
@@ -32,7 +39,8 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if p == null or p.c_spellbook == null:
 		return {"ok": false, "reason": "no_spellbook"}
 	if _cast_time_left > 0.0:
-		return {"ok": false, "reason": "casting"}
+		interrupt_cast("ability_input")
+		return {"ok": false, "reason": "casting_interrupted"}
 	var rank := int(p.c_spellbook.learned_ranks.get(ability_id, 0))
 	if rank <= 0:
 		return {"ok": false, "reason": "not_learned"}
@@ -79,29 +87,29 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		snap = p.call("get_stats_snapshot") as Dictionary
 
 	var cost: int = int(ceil(float(p.max_mana) * float(rank_data.resource_cost) / 100.0))
-	if cost > 0:
-		if p.mana < cost:
-			return {"ok": false, "reason": "no_mana"}
-		p.mana -= cost
-
-	var cdr_pct: float = float(snap.get("cooldown_reduction_pct", 0.0))
-	var cd_eff: float = max(0.0, rank_data.cooldown_sec * (1.0 - cdr_pct / 100.0))
-	if cd_eff > 0.0:
-		_cooldowns[ability_id] = cd_eff
+	if cost > 0 and p.mana < cost:
+		return {"ok": false, "reason": "no_mana"}
 
 	var cast_speed_pct: float = float(snap.get("cast_speed_pct", 0.0))
 	var cast_mult: float = 1.0 / (1.0 + cast_speed_pct / 100.0)
 	var cast_time_eff: float = rank_data.cast_time_sec * cast_mult
 	if cast_time_eff > 0.0:
 		_cast_time_left = cast_time_eff
+		_cast_total_time = cast_time_eff
 		_cast_payload = {
 			"ability_id": ability_id,
 			"target": actual_target,
 			"def": def,
-			"rank_data": rank_data
+			"rank_data": rank_data,
+			"cost": cost,
 		}
+		emit_signal("cast_started", ability_id, cast_time_eff)
+		_emit_cast_progress()
 		return {"ok": true, "reason": "casting", "target": actual_target}
 
+	if not _consume_cost(cost):
+		return {"ok": false, "reason": "no_mana"}
+	_apply_cooldown(ability_id, rank_data, snap)
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
 	return {"ok": true, "reason": "", "target": actual_target}
 
@@ -182,20 +190,33 @@ func _finish_cast(payload: Dictionary) -> void:
 	var def: AbilityDefinition = payload.get("def") as AbilityDefinition
 	var rank_data: RankData = payload.get("rank_data") as RankData
 	var actual_target: Node = payload.get("target")
+	var cost: int = int(payload.get("cost", 0))
 
 	if def == null or rank_data == null:
+		emit_signal("cast_finished", ability_id, false)
 		return
 	if def.effect == null:
+		emit_signal("cast_finished", ability_id, false)
 		return
 
 	if actual_target != null and not is_instance_valid(actual_target):
 		actual_target = null
 	var target_result := _normalize_target(def, actual_target)
 	if not bool(target_result.get("ok", false)):
+		emit_signal("cast_finished", ability_id, false)
 		return
 	actual_target = target_result.get("target") as Node
 
+	if not _consume_cost(cost):
+		emit_signal("cast_finished", ability_id, false)
+		return
+
+	var snap: Dictionary = {}
+	if p != null and p.has_method("get_stats_snapshot"):
+		snap = p.call("get_stats_snapshot") as Dictionary
+	_apply_cooldown(ability_id, rank_data, snap)
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
+	emit_signal("cast_finished", ability_id, true)
 
 func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data: RankData, actual_target: Node) -> void:
 	if def == null or def.effect == null:
@@ -250,3 +271,40 @@ func _is_hostile_target(target: Node) -> bool:
 	if target != null and target.has_method("get_faction_id"):
 		target_faction = String(target.call("get_faction_id"))
 	return FactionRules.relation(caster_faction, target_faction) == FactionRules.Relation.HOSTILE
+
+func is_casting() -> bool:
+	return _cast_time_left > 0.0 and not _cast_payload.is_empty()
+
+func get_cast_progress() -> float:
+	if _cast_total_time <= 0.0:
+		return 0.0
+	return clamp(1.0 - (_cast_time_left / _cast_total_time), 0.0, 1.0)
+
+func interrupt_cast(_reason: String = "") -> void:
+	if not is_casting():
+		return
+	var ability_id := String(_cast_payload.get("ability_id", ""))
+	_cast_time_left = 0.0
+	_cast_total_time = 0.0
+	_cast_payload = {}
+	emit_signal("cast_finished", ability_id, false)
+
+func _consume_cost(cost: int) -> bool:
+	if cost <= 0:
+		return true
+	if p == null or p.mana < cost:
+		return false
+	p.mana -= cost
+	return true
+
+func _apply_cooldown(ability_id: String, rank_data: RankData, snap: Dictionary) -> void:
+	var cdr_pct: float = float(snap.get("cooldown_reduction_pct", 0.0))
+	var cd_eff: float = max(0.0, rank_data.cooldown_sec * (1.0 - cdr_pct / 100.0))
+	if cd_eff > 0.0:
+		_cooldowns[ability_id] = cd_eff
+
+func _emit_cast_progress() -> void:
+	if not is_casting():
+		return
+	var ability_id := String(_cast_payload.get("ability_id", ""))
+	emit_signal("cast_progress", ability_id, get_cast_progress())

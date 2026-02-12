@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dw3wxnk0s0qom"]
+[gd_scene load_steps=4 format=3 uid="uid://dw3wxnk0s0qom"]
 
 [ext_resource type="Script" uid="uid://bpvyonlebbht7" path="res://ui/game/hud/character/spells/loadout_pad.gd" id="1_1u5if"]
 [ext_resource type="Texture2D" uid="uid://b7rkqmicjjs08" path="res://ui/game/hud/mobile/textures/Joystick.png" id="2_58wyw"]
+[ext_resource type="Script" uid="uid://bxnhf2egwg0iy" path="res://ui/game/hud/mobile/circular_texture_button.gd" id="3_18k1m"]
 
 [node name="LoadoutPadRoot" type="Control"]
 custom_minimum_size = Vector2(220, 220)
@@ -22,6 +23,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Slot0Btn" type="TextureButton" parent="LoadoutPad"]
+script = ExtResource("3_18k1m")
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 1
 anchors_preset = 3
@@ -48,6 +50,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Slot1Btn" type="TextureButton" parent="LoadoutPad"]
+script = ExtResource("3_18k1m")
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 1
 anchors_preset = 2
@@ -71,6 +74,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Slot2Btn" type="TextureButton" parent="LoadoutPad"]
+script = ExtResource("3_18k1m")
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 1
 anchors_preset = 4
@@ -96,6 +100,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Slot3Btn" type="TextureButton" parent="LoadoutPad"]
+script = ExtResource("3_18k1m")
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 1
 anchors_preset = 5
@@ -121,6 +126,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Slot4Btn" type="TextureButton" parent="LoadoutPad"]
+script = ExtResource("3_18k1m")
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 1
 anchors_preset = 1

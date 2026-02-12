@@ -54,12 +54,11 @@ func set_slot_icon(_slot: int, _texture: Texture2D) -> void:
 	var btn := _skill_buttons[_slot] as TextureButton
 	if btn == null:
 		return
-	if _texture == null:
-		btn.texture_normal = _default_textures[_slot]
-		btn.texture_pressed = _default_textures[_slot]
-		return
-	btn.texture_normal = _texture
-	btn.texture_pressed = _texture
+	btn.texture_normal = _default_textures[_slot]
+	btn.texture_pressed = _default_textures[_slot]
+	var icon := btn.get_node_or_null("Icon") as TextureRect
+	if icon != null:
+		icon.texture = _texture
 
 
 func set_slot_cooldown(_slot: int, _pct: float) -> void:

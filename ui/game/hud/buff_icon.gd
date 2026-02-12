@@ -33,6 +33,9 @@ func _on_gui_input(event: InputEvent) -> void:
 func _refresh_time() -> void:
 	if time_label == null:
 		return
+	if _should_hide_time():
+		time_label.text = ""
+		return
 	time_label.text = _format_time(_time_left)
 
 func _refresh_icon(data: Dictionary) -> void:
@@ -74,3 +77,24 @@ func _format_time(seconds: float) -> String:
 
 	# < 1 minute => show seconds
 	return "%d s" % s
+
+func _should_hide_time() -> bool:
+	if _time_left >= 999000.0:
+		return true
+	if _player == null or not is_instance_valid(_player) or not _player.has_method("get_buffs_snapshot"):
+		return false
+	var snap: Array = _player.call("get_buffs_snapshot")
+	for entry in snap:
+		if not (entry is Dictionary):
+			continue
+		var d := entry as Dictionary
+		if String(d.get("id", "")) != _buff_id:
+			continue
+		var source := String(d.get("source", ""))
+		if source == "aura" or source == "stance":
+			return true
+		var data := d.get("data", {}) as Dictionary
+		if float(data.get("duration_sec", 0.0)) <= 0.0:
+			return true
+		break
+	return false

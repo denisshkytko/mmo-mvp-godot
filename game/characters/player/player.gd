@@ -176,6 +176,8 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
+@onready var cast_bar_root: Control = $CastBar
+@onready var cast_bar_fill: ProgressBar = $CastBar/Fill
 
 
 func _ready() -> void:
@@ -198,6 +200,14 @@ func _ready() -> void:
 	c_combat.setup(self)
 	if c_ability_caster != null:
 		c_ability_caster.setup(self)
+		if not c_ability_caster.cast_started.is_connected(_on_cast_started):
+			c_ability_caster.cast_started.connect(_on_cast_started)
+		if not c_ability_caster.cast_progress.is_connected(_on_cast_progress):
+			c_ability_caster.cast_progress.connect(_on_cast_progress)
+		if not c_ability_caster.cast_finished.is_connected(_on_cast_finished):
+			c_ability_caster.cast_finished.connect(_on_cast_finished)
+	if cast_bar_root != null:
+		cast_bar_root.visible = false
 
 	# inventory ref (чтобы LootUI/InventoryUI не ломались)
 	c_inv.setup(self)
@@ -242,6 +252,13 @@ func _physics_process(_delta: float) -> void:
 
 	if input_dir.length() > 0.0:
 		input_dir = input_dir.normalized()
+
+	if c_ability_caster != null and c_ability_caster.is_casting():
+		if input_dir.length() > 0.0:
+			c_ability_caster.interrupt_cast("movement")
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 	velocity = input_dir * move_speed
 	move_and_slide()
@@ -615,3 +632,19 @@ func _to_string_array(value: Variant) -> Array[String]:
 		for entry in value:
 			out.append(String(entry))
 	return out
+
+func _on_cast_started(_ability_id: String, _duration_sec: float) -> void:
+	if cast_bar_root != null:
+		cast_bar_root.visible = true
+	if cast_bar_fill != null:
+		cast_bar_fill.value = 0.0
+
+func _on_cast_progress(_ability_id: String, progress: float) -> void:
+	if cast_bar_fill != null:
+		cast_bar_fill.value = clamp(progress * 100.0, 0.0, 100.0)
+
+func _on_cast_finished(_ability_id: String, _success: bool) -> void:
+	if cast_bar_root != null:
+		cast_bar_root.visible = false
+	if cast_bar_fill != null:
+		cast_bar_fill.value = 0.0

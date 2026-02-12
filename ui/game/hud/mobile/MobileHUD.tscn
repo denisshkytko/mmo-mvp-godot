@@ -118,6 +118,17 @@ stretch_mode = 0
 script = ExtResource("4_hwcof")
 metadata/slot_index = 0
 
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/QuickSkillBtn"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="SkillBtn1" type="TextureButton" parent="Root/RightPad/SkillPad"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 1
@@ -132,6 +143,17 @@ ignore_texture_size = true
 stretch_mode = 0
 script = ExtResource("4_hwcof")
 metadata/slot_index = 1
+
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="SkillBtn2" type="TextureButton" parent="Root/RightPad/SkillPad"]
 custom_minimum_size = Vector2(60, 60)
@@ -150,6 +172,17 @@ stretch_mode = 0
 script = ExtResource("4_hwcof")
 metadata/slot_index = 2
 
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="SkillBtn3" type="TextureButton" parent="Root/RightPad/SkillPad"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 1
@@ -167,6 +200,17 @@ stretch_mode = 0
 script = ExtResource("4_hwcof")
 metadata/slot_index = 3
 
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="SkillBtn4" type="TextureButton" parent="Root/RightPad/SkillPad"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 1
@@ -181,6 +225,17 @@ ignore_texture_size = true
 stretch_mode = 0
 script = ExtResource("4_hwcof")
 metadata/slot_index = 4
+
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="InteractBtn" type="TextureButton" parent="Root/RightPad"]
 visible = false

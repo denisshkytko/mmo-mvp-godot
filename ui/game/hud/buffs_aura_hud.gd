@@ -6,6 +6,8 @@ const FLYOUT_MARGIN := 8.0
 const FLYOUT_SPACING := 6.0
 const ARROW_MARGIN := 6.0
 const TOGGLE_PANEL_GAP := 1.0
+const TOTAL_SLOTS := 3
+const BUFF_SLOT_START := 2
 
 @export var flyout_scene: PackedScene = preload("res://ui/game/hud/buffs_aura/buff_aura_flyout.tscn")
 
@@ -64,7 +66,7 @@ func _setup_slots() -> void:
 	_primary_slots.clear()
 	_arrow_buttons.clear()
 	_arrow_home_pos.clear()
-	for i in range(5):
+	for i in range(TOTAL_SLOTS):
 		var container := slot_row.get_node_or_null("SlotContainer%d" % i) as Control
 		if container == null:
 			_primary_slots.append(null)
@@ -91,13 +93,15 @@ func _setup_slots() -> void:
 
 func _create_flyouts() -> void:
 	_flyouts.clear()
-	_primary_slot_abilities = ["", "", "", "", ""]
+	_primary_slot_abilities = []
+	for _i in range(TOTAL_SLOTS):
+		_primary_slot_abilities.append("")
 	_flyout_slot_abilities = []
 	if flyout_scene == null:
 		push_error("BuffsAuraHUD: flyout_scene is missing or invalid.")
 		return
 	var ref_size := _get_reference_slot_size()
-	for i in range(5):
+	for i in range(TOTAL_SLOTS):
 		var flyout := flyout_scene.instantiate() as Control
 		flyouts_layer.add_child(flyout)
 		flyout.visible = false
@@ -206,7 +210,7 @@ func _on_flyout_subslot_pressed(slot_index: int, sub_index: int) -> void:
 	elif slot_index == 1:
 		_spellbook.assign_stance_active(ability_id)
 	else:
-		_spellbook.assign_buff_to_slot(ability_id, slot_index - 2)
+		_spellbook.assign_buff_to_slot(ability_id, max(0, slot_index - BUFF_SLOT_START))
 	_close_flyout(slot_index)
 	_open_flyout_slot = -1
 
@@ -257,11 +261,10 @@ func _refresh_from_spellbook() -> void:
 		return
 	_set_primary_slot(0, _spellbook.aura_active)
 	_set_primary_slot(1, _spellbook.stance_active)
-	for i in range(3):
-		var ability_id := ""
-		if i < _spellbook.buff_slots.size():
-			ability_id = _spellbook.buff_slots[i]
-		_set_primary_slot(i + 2, ability_id)
+	var buff_ability_id := ""
+	if _spellbook.buff_slots.size() > 0:
+		buff_ability_id = _spellbook.buff_slots[0]
+	_set_primary_slot(BUFF_SLOT_START, buff_ability_id)
 
 	var aura_candidates := _spellbook.get_learned_by_type("aura")
 	if _spellbook.aura_active != "" and aura_candidates.has(_spellbook.aura_active):
@@ -273,13 +276,11 @@ func _refresh_from_spellbook() -> void:
 
 	_set_flyout_entries(0, aura_candidates)
 	_set_flyout_entries(1, stance_candidates)
-	for i in range(3):
-		_set_flyout_entries(i + 2, buff_candidates)
+	_set_flyout_entries(BUFF_SLOT_START, buff_candidates)
 
 	_set_arrow_visible(0, aura_candidates.size() > 0)
 	_set_arrow_visible(1, stance_candidates.size() > 0)
-	for i in range(3):
-		_set_arrow_visible(i + 2, buff_candidates.size() > 0)
+	_set_arrow_visible(BUFF_SLOT_START, buff_candidates.size() > 0)
 
 func _set_primary_slot(slot_index: int, ability_id: String) -> void:
 	set_primary_slot_ability(slot_index, ability_id)
@@ -315,7 +316,7 @@ func _set_arrow_visible(slot_index: int, visible_value: bool) -> void:
 func _cast_buff_from_slot(slot_index: int) -> void:
 	if _player == null or _spellbook == null:
 		return
-	var buff_idx := slot_index - 2
+	var buff_idx := slot_index - BUFF_SLOT_START
 	if buff_idx < 0 or buff_idx >= _spellbook.buff_slots.size():
 		return
 	var ability_id: String = _spellbook.buff_slots[buff_idx]
