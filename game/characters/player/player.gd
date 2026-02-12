@@ -523,7 +523,7 @@ func apply_character_data(d: Dictionary) -> void:
 		c_spellbook.loadout_slots = _to_string_array(sdata.get("loadout_slots", ["", "", "", "", ""]))
 		c_spellbook.aura_active = String(sdata.get("aura_active", ""))
 		c_spellbook.stance_active = String(sdata.get("stance_active", ""))
-		c_spellbook.buff_slots = _to_string_array(sdata.get("buff_slots", ["", "", ""]))
+		c_spellbook.buff_slots = _to_string_array(sdata.get("buff_slots", [""]))
 		c_spellbook._ensure_slots()
 		_apply_spellbook_passives()
 	if cast_bar != null:

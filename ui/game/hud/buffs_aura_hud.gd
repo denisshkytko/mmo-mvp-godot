@@ -262,11 +262,14 @@ func _refresh_from_spellbook() -> void:
 		return
 	_set_primary_slot(0, _spellbook.aura_active)
 	_set_primary_slot(1, _spellbook.stance_active)
-	for i in range(3):
+	var buff_slot_count := _spellbook.buff_slots.size()
+	for i in range(buff_slot_count):
 		var ability_id := ""
 		if i < _spellbook.buff_slots.size():
 			ability_id = _spellbook.buff_slots[i]
 		_set_primary_slot(i + 2, ability_id)
+	for i in range(buff_slot_count, 3):
+		_set_primary_slot(i + 2, "")
 
 	var aura_candidates := _spellbook.get_learned_by_type("aura")
 	if _spellbook.aura_active != "" and aura_candidates.has(_spellbook.aura_active):
@@ -278,13 +281,17 @@ func _refresh_from_spellbook() -> void:
 
 	_set_flyout_entries(0, aura_candidates)
 	_set_flyout_entries(1, stance_candidates)
-	for i in range(3):
+	for i in range(buff_slot_count):
 		_set_flyout_entries(i + 2, buff_candidates)
+	for i in range(buff_slot_count, 3):
+		_set_flyout_entries(i + 2, [])
 
 	_set_arrow_visible(0, aura_candidates.size() > 0)
 	_set_arrow_visible(1, stance_candidates.size() > 0)
-	for i in range(3):
+	for i in range(buff_slot_count):
 		_set_arrow_visible(i + 2, buff_candidates.size() > 0)
+	for i in range(buff_slot_count, 3):
+		_set_arrow_visible(i + 2, false)
 
 func _set_primary_slot(slot_index: int, ability_id: String) -> void:
 	set_primary_slot_ability(slot_index, ability_id)

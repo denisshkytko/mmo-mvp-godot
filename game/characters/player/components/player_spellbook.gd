@@ -7,7 +7,7 @@ var learned_ranks: Dictionary = {}
 var loadout_slots: Array[String] = ["", "", "", "", ""]
 var aura_active: String = ""
 var stance_active: String = ""
-var buff_slots: Array[String] = ["", "", ""]
+var buff_slots: Array[String] = [""]
 
 func setup(_player: Player) -> void:
 	_ensure_slots()
@@ -21,11 +21,11 @@ func _ensure_slots() -> void:
 			loadout_slots.append("")
 	elif loadout_slots.size() > 5:
 		loadout_slots.resize(5)
-	if buff_slots.size() < 3:
-		while buff_slots.size() < 3:
+	if buff_slots.size() < 1:
+		while buff_slots.size() < 1:
 			buff_slots.append("")
-	elif buff_slots.size() > 3:
-		buff_slots.resize(3)
+	elif buff_slots.size() > 1:
+		buff_slots.resize(1)
 
 func assign_ability_to_slot(ability_id: String, slot_index: int) -> void:
 	if ability_id == "":
