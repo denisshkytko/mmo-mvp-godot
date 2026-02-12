@@ -7,15 +7,21 @@ const ABILITIES_ROOT_PATH := "res://data/abilities"
 const ABILITIES_MANIFEST_PATH := "res://data/abilities/abilities_manifest.tres"
 
 var abilities: Dictionary = {}
+var class_index: Dictionary = {}
 var is_ready: bool = false
 
 func _ready() -> void:
 	if is_ready:
 		return
 	abilities.clear()
+	class_index.clear()
 	print("[AbilityDB] scan root=", ABILITIES_ROOT_PATH)
-	if not _load_from_manifest(ABILITIES_MANIFEST_PATH):
-		_load_abilities_from_dir(ABILITIES_ROOT_PATH)
+	if _load_from_manifest(ABILITIES_MANIFEST_PATH):
+		print("[AbilityDB] loaded from manifest abilities=", abilities.size())
+		is_ready = true
+		emit_signal("initialized")
+		return
+	_load_abilities_from_dir(ABILITIES_ROOT_PATH)
 	print("[AbilityDB] loaded abilities=", abilities.size())
 	if abilities.size() == 0:
 		push_warning("[AbilityDB] abilities=0. Likely no .tres discovered OR resources not included in export. See logs above.")
@@ -23,6 +29,9 @@ func _ready() -> void:
 	emit_signal("initialized")
 
 func register_ability(definition: AbilityDefinition) -> void:
+	_register_def(definition)
+
+func _register_def(definition: AbilityDefinition) -> void:
 	if definition == null:
 		push_warning("[AbilityDB] register_ability skipped null definition")
 		return
@@ -30,12 +39,19 @@ func register_ability(definition: AbilityDefinition) -> void:
 	if key == "":
 		push_warning("[AbilityDB] register_ability skipped: empty id")
 		return
-	if String(definition.class_id) == "":
+	var cls := String(definition.class_id)
+	if cls == "":
 		push_warning("[AbilityDB] register_ability skipped '%s': empty class_id" % key)
 		return
 	if OS.is_debug_build():
-		print("[AbilityDB] reg id=", key, " class=", definition.class_id)
+		print("[AbilityDB] reg id=", key, " class=", cls)
 	abilities[key] = definition
+	if not class_index.has(cls):
+		class_index[cls] = PackedStringArray()
+	var ids: PackedStringArray = class_index[cls] as PackedStringArray
+	if not ids.has(key):
+		ids.append(key)
+	class_index[cls] = ids
 
 func has_ability(ability_id: String) -> bool:
 	return abilities.has(ability_id)
@@ -73,6 +89,13 @@ func get_max_rank(ability_id: String) -> int:
 
 func get_abilities_for_class(class_id: String) -> Array[AbilityDefinition]:
 	var out: Array[AbilityDefinition] = []
+	if class_id != "" and class_index.has(class_id):
+		var ids: PackedStringArray = class_index[class_id] as PackedStringArray
+		for ability_id in ids:
+			var def := get_ability(String(ability_id))
+			if def != null:
+				out.append(def)
+		return out
 	for ability in abilities.values():
 		var def := ability as AbilityDefinition
 		if def == null:
@@ -95,9 +118,7 @@ func _load_from_manifest(path: String) -> bool:
 		push_warning("[AbilityDB] Manifest is empty: " + path)
 		return false
 	for def in manifest.ability_defs:
-		register_ability(def)
-	if OS.is_debug_build():
-		print("[AbilityDB] loaded from manifest entries=", manifest.ability_defs.size())
+		_register_def(def)
 	return abilities.size() > 0
 
 func _load_abilities_from_dir(path: String) -> void:
@@ -124,8 +145,13 @@ func _load_abilities_from_dir(path: String) -> void:
 					print("[AbilityDB] found resource=", full_path)
 				var res: Resource = load(full_path)
 				if res is AbilityDefinition:
-					register_ability(res)
-				elif OS.is_debug_build():
-					print("[AbilityDB] skipped non-AbilityDefinition=", full_path)
+					_register_def(res)
+				else:
+					var script_ref: Variant = null
+					var class_name: String = ""
+					if res != null:
+						script_ref = res.get_script()
+						class_name = res.get_class()
+					push_warning("[AbilityDB] not AbilityDefinition: %s script=%s class=%s" % [full_path, str(script_ref), class_name])
 		name = dir.get_next()
 	dir.list_dir_end()
