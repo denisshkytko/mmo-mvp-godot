@@ -30,7 +30,7 @@ func set_entries(ability_ids: Array[String], ability_db: AbilityDatabase) -> voi
 		btn.custom_minimum_size = _ref_size
 		btn.pressed.connect(_on_subslot_pressed.bind(i))
 		if ability_db != null:
-			var def := ability_db.get_ability(ability_id)
+			var def: AbilityDefinition = ability_db.get_ability(ability_id)
 			if def != null:
 				btn.texture_normal = def.icon
 				btn.texture_pressed = def.icon

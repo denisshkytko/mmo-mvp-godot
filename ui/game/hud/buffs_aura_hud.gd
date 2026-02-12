@@ -29,22 +29,36 @@ var _arrow_down_text: String = "▼"
 var _player: Player = null
 var _spellbook: PlayerSpellbook = null
 var _ability_db: AbilityDatabase = null
+var _flow_router: Node = null
+var _db_ready: bool = false
+var _player_ready: bool = false
 
 func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
 		toggle_button.pressed.connect(_on_toggle_pressed)
 	_setup_slots()
 	_create_flyouts()
-	_player = NODE_CACHE.get_player(get_tree()) as Player
-	if _player != null:
-		_spellbook = _player.c_spellbook
-	if _spellbook != null and not _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
-		_spellbook.spellbook_changed.connect(_on_spellbook_changed)
+
+	_flow_router = get_node_or_null("/root/FlowRouter")
+	if _flow_router != null and _flow_router.has_signal("player_spawned") and not _flow_router.player_spawned.is_connected(_on_player_spawned):
+		_flow_router.player_spawned.connect(_on_player_spawned)
+
 	_ability_db = get_node_or_null("/root/AbilityDB") as AbilityDatabase
+	if _ability_db != null:
+		if _ability_db.is_ready:
+			_db_ready = true
+		else:
+			if not _ability_db.initialized.is_connected(_on_ability_db_ready):
+				_ability_db.initialized.connect(_on_ability_db_ready)
+
+	var existing_player := get_tree().get_first_node_in_group("player") as Player
+	if existing_player != null:
+		_on_player_spawned(existing_player, null)
+
 	await get_tree().process_frame
 	_cache_layout()
 	_set_expanded(false, true)
-	_refresh_from_spellbook()
+	_try_refresh()
 
 func _setup_slots() -> void:
 	_primary_slots.clear()
@@ -210,7 +224,32 @@ func set_flyout_slot_ability(slot_index: int, sub_index: int, ability_id: String
 	sub_arr[sub_index] = ability_id
 	_flyout_slot_abilities[slot_index] = sub_arr
 
+func _on_player_spawned(player: Node, _gm: Node) -> void:
+	if not (player is Player):
+		return
+	if _spellbook != null and _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
+		_spellbook.spellbook_changed.disconnect(_on_spellbook_changed)
+	_player = player as Player
+	_spellbook = _player.c_spellbook
+	_player_ready = _spellbook != null
+	if _spellbook != null and not _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
+		_spellbook.spellbook_changed.connect(_on_spellbook_changed)
+	if OS.is_debug_build() and _spellbook != null:
+		print("[UI] bound to player. class=", _player.class_id, " learned=", _spellbook.learned_ranks.size())
+	_try_refresh()
+
+func _on_ability_db_ready() -> void:
+	_db_ready = true
+	if OS.is_debug_build() and _ability_db != null:
+		print("[UI] AbilityDB ready. abilities=", _ability_db.abilities.size())
+	_try_refresh()
+
 func _on_spellbook_changed() -> void:
+	_try_refresh()
+
+func _try_refresh() -> void:
+	if not _db_ready or not _player_ready:
+		return
 	_refresh_from_spellbook()
 
 func _refresh_from_spellbook() -> void:
@@ -251,7 +290,7 @@ func _set_primary_slot(slot_index: int, ability_id: String) -> void:
 		return
 	var icon: Texture2D = null
 	if ability_id != "" and _ability_db != null:
-		var def := _ability_db.get_ability(ability_id)
+		var def: AbilityDefinition = _ability_db.get_ability(ability_id)
 		if def != null:
 			icon = def.icon
 	button.texture_normal = icon

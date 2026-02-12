@@ -15,6 +15,7 @@ var _has_override_pos: bool = false
 var _save_debounce: Timer
 var _autosave: Timer
 var _save_pending: bool = false
+var _has_loaded_character: bool = false
 
 
 func _ready() -> void:
@@ -39,6 +40,8 @@ func _ready() -> void:
 
 	# --- load character state into world ---
 	_load_character_into_world()
+	if _has_loaded_character:
+		call_deferred("_emit_player_spawned")
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -82,6 +85,7 @@ func _load_character_into_world() -> void:
 	if data.is_empty():
 		# Защиты ты просил отложить — просто ничего не делаем.
 		return
+	_has_loaded_character = true
 
 	# 1) Зона: всегда берём из data["zone"], по умолчанию Zone_01 (у тебя это уже записывается при создании)
 	var zone_path: String = String(data.get("zone", "res://game/world/zones/Zone_01.tscn"))
@@ -112,6 +116,16 @@ func _load_character_into_world() -> void:
 
 	# 5) Сохраним состояние входа (debounce)
 	request_save("enter_world")
+
+
+func _emit_player_spawned() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var flow_router := get_node_or_null("/root/FlowRouter")
+	if flow_router != null and flow_router.has_method("notify_player_spawned"):
+		flow_router.call("notify_player_spawned", player, self)
+		if OS.is_debug_build():
+			print("[FLOW] player_spawned emitted. player=", player, " class=", player.get("class_id"))
 
 
 # ---------------------------

@@ -1,6 +1,5 @@
 extends Control
 
-const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const SPELL_LIST_ITEM_SCENE := preload("res://ui/game/hud/character/spells/spell_list_item.tscn")
 
 @onready var spells_grid: GridContainer = $SpellsVBox/SpellsPanelA/SpellsVBox/SpellsMargin/SpellsScroll/SpellsGrid
@@ -12,25 +11,65 @@ var _spellbook: PlayerSpellbook = null
 var _ability_db: AbilityDatabase = null
 var _tooltip: AbilityTooltip = null
 var _selected_ability_id: String = ""
+var _flow_router: Node = null
+var _db_ready: bool = false
+var _player_ready: bool = false
 
 func _ready() -> void:
-	_player = NODE_CACHE.get_player(get_tree()) as Player
 	if filter_option != null and filter_option.item_count == 0:
 		filter_option.add_item("Все")
 		filter_option.add_item("Активные")
 		filter_option.add_item("Ауры/бафы")
 		filter_option.select(0)
-	if _player != null:
-		_spellbook = _player.c_spellbook
+
+	_flow_router = get_node_or_null("/root/FlowRouter")
+	if _flow_router != null and _flow_router.has_signal("player_spawned") and not _flow_router.player_spawned.is_connected(_on_player_spawned):
+		_flow_router.player_spawned.connect(_on_player_spawned)
+
 	_ability_db = get_node_or_null("/root/AbilityDB") as AbilityDatabase
+	if _ability_db != null:
+		if _ability_db.is_ready:
+			_db_ready = true
+		else:
+			if not _ability_db.initialized.is_connected(_on_ability_db_ready):
+				_ability_db.initialized.connect(_on_ability_db_ready)
+
 	_tooltip = get_tree().get_first_node_in_group("ability_tooltip_singleton") as AbilityTooltip
+	if loadout_pad != null and loadout_pad.has_signal("slot_pressed") and not loadout_pad.slot_pressed.is_connected(_on_slot_pressed):
+		loadout_pad.slot_pressed.connect(_on_slot_pressed)
+
+	var existing_player := get_tree().get_first_node_in_group("player") as Player
+	if existing_player != null:
+		_on_player_spawned(existing_player, null)
+
+	_try_refresh()
+
+func _on_player_spawned(player: Node, _gm: Node) -> void:
+	if not (player is Player):
+		return
+	if _spellbook != null and _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
+		_spellbook.spellbook_changed.disconnect(_on_spellbook_changed)
+	_player = player as Player
+	_spellbook = _player.c_spellbook
+	_player_ready = _spellbook != null
 	if _spellbook != null and not _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
 		_spellbook.spellbook_changed.connect(_on_spellbook_changed)
-	if loadout_pad != null and loadout_pad.has_signal("slot_pressed"):
-		loadout_pad.connect("slot_pressed", _on_slot_pressed)
-	_refresh_all()
+	if OS.is_debug_build() and _spellbook != null:
+		print("[UI] bound to player. class=", _player.class_id, " learned=", _spellbook.learned_ranks.size())
+	_try_refresh()
+
+func _on_ability_db_ready() -> void:
+	_db_ready = true
+	if OS.is_debug_build() and _ability_db != null:
+		print("[UI] AbilityDB ready. abilities=", _ability_db.abilities.size())
+	_try_refresh()
 
 func _on_spellbook_changed() -> void:
+	_try_refresh()
+
+func _try_refresh() -> void:
+	if not _db_ready or not _player_ready:
+		return
 	_refresh_all()
 
 func _refresh_all() -> void:

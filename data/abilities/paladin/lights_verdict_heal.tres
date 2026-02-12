@@ -3,8 +3,10 @@
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/lights_verdict.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_heal.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("4")
 required_level = 1
 train_cost_gold = 0
 cooldown_sec = 6.0
@@ -18,8 +20,10 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectHeal" id=2]
+script = ExtResource("3")
 
 [resource]
+script = ExtResource("1")
 id = "lights_verdict_heal"
 name = "Light's Verdict"
 icon = ExtResource("2")

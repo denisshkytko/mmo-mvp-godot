@@ -48,6 +48,7 @@ func is_out_of_combat() -> bool:
 
 var faction_id: String = "blue"
 var class_id: String = "warrior"
+var _starter_grant_waiting_for_db: bool = false
 
 # Mobile input
 var mobile_move_dir: Vector2 = Vector2.ZERO
@@ -508,7 +509,6 @@ func apply_character_data(d: Dictionary) -> void:
 		_apply_spellbook_passives()
 	if c_spellbook != null and ((not (spellbook_v is Dictionary)) or c_spellbook.learned_ranks.is_empty()):
 		_grant_starter_abilities()
-		_request_save("starter_abilities")
 
 	# Derived stats must be recalculated after primaries + buffs are in place
 	if c_stats != null:
@@ -525,15 +525,32 @@ func _grant_starter_abilities() -> void:
 	var starters: Array = class_def.get("starter_abilities", []) as Array
 	if starters.is_empty():
 		return
-	var db := get_node_or_null("/root/AbilityDB")
+	var db := get_node_or_null("/root/AbilityDB") as AbilityDatabase
+	if db == null:
+		return
+	if not db.is_ready:
+		if not _starter_grant_waiting_for_db and not db.initialized.is_connected(_on_ability_db_initialized_for_starters):
+			_starter_grant_waiting_for_db = true
+			db.initialized.connect(_on_ability_db_initialized_for_starters, CONNECT_ONE_SHOT)
+		return
+	_starter_grant_waiting_for_db = false
+	var granted_any: bool = false
 	for entry in starters:
 		var ability_id := String(entry)
 		if ability_id == "":
 			continue
-		var max_rank := 1
-		if db != null and db.has_method("get_max_rank"):
-			max_rank = int(db.call("get_max_rank", ability_id))
-		c_spellbook.learn_next_rank(ability_id, max_rank)
+		var max_rank: int = int(max(1, db.get_max_rank(ability_id)))
+		var before_rank := int(c_spellbook.learned_ranks.get(ability_id, 0))
+		var after_rank := c_spellbook.learn_next_rank(ability_id, max_rank)
+		if after_rank > before_rank:
+			granted_any = true
+	if granted_any:
+		c_spellbook.emit_signal("spellbook_changed")
+		_request_save("starter_abilities")
+
+func _on_ability_db_initialized_for_starters() -> void:
+	_starter_grant_waiting_for_db = false
+	_grant_starter_abilities()
 
 
 func export_character_data() -> Dictionary:

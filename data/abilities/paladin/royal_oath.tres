@@ -3,8 +3,10 @@
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/royal_oath.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_apply_buff.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("4")
 required_level = 1
 train_cost_gold = 0
 cooldown_sec = 0.0
@@ -18,12 +20,14 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectApplyBuff" id=2]
+script = ExtResource("3")
 secondary_add = {}
 percent_add = {"attack_power": "value_pct", "spell_power": "value_pct", "defense": "value_pct", "magic_resist": "value_pct"}
 flags = {}
 on_hit = {}
 
 [resource]
+script = ExtResource("1")
 id = "royal_oath"
 name = "Royal Oath"
 icon = ExtResource("2")
