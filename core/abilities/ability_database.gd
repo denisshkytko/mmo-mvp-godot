@@ -36,11 +36,11 @@ func _register_def(definition: AbilityDefinition, source_path: String = "") -> v
 	if definition == null:
 		push_warning("[AbilityDB] register_ability skipped null definition")
 		return
-	var key := String(definition.id)
+	var key := str(definition.id)
 	if key == "":
 		push_warning("[AbilityDB] AbilityDefinition has empty id: " + source_path)
 		return
-	var cls := String(definition.class_id)
+	var cls := str(definition.class_id)
 	if cls == "":
 		push_warning("[AbilityDB] AbilityDefinition has empty class_id id=%s path=%s" % [key, source_path])
 		return
@@ -92,7 +92,7 @@ func get_abilities_for_class(class_id: String) -> Array[AbilityDefinition]:
 	if class_id != "" and class_index.has(class_id):
 		var ids: PackedStringArray = class_index[class_id] as PackedStringArray
 		for ability_id in ids:
-			var def := get_ability(String(ability_id))
+			var def := get_ability(str(ability_id))
 			if def != null:
 				out.append(def)
 		return out
@@ -178,19 +178,19 @@ func _coerce_ability_def(raw_def: Variant, source_path: String) -> AbilityDefini
 	if not (raw_def is Resource):
 		return null
 	var src := raw_def as Resource
-	var id := String(src.get("id"))
-	var class_id := String(src.get("class_id"))
+	var id := str(src.get("id"))
+	var class_id := str(src.get("class_id"))
 	if id == "" or class_id == "":
 		return null
 	var def := AbilityDefinition.new()
 	def.id = id
-	def.name = String(src.get("name"))
+	def.name = str(src.get("name"))
 	def.icon = src.get("icon") as Texture2D
-	def.description = String(src.get("description"))
+	def.description = str(src.get("description"))
 	def.class_id = class_id
-	def.ability_type = String(src.get("ability_type"))
-	def.target_type = String(src.get("target_type"))
-	def.range_mode = String(src.get("range_mode"))
+	def.ability_type = str(src.get("ability_type"))
+	def.target_type = str(src.get("target_type"))
+	def.range_mode = str(src.get("range_mode"))
 	def.aura_radius = float(src.get("aura_radius"))
 	def.effect = src.get("effect") as AbilityEffect
 	var ranks_v: Variant = src.get("ranks")
