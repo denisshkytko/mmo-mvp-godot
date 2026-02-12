@@ -227,7 +227,11 @@ func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, sp
 		if lifesteal_pct > 0.0 and final_phys > 0:
 			var heal: int = int(round(float(final_phys) * lifesteal_pct / 100.0))
 			if heal > 0:
+				var hp_before: int = p.current_hp
 				p.current_hp = min(p.max_hp, p.current_hp + heal)
+				var actual_heal: int = max(0, p.current_hp - hp_before)
+				if actual_heal > 0:
+					DAMAGE_HELPER.show_heal(p, actual_heal)
 
 	if stance_data.has("mana_on_hit_pct"):
 		var mana_pct: float = float(stance_data.get("mana_on_hit_pct", 0.0))

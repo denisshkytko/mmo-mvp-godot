@@ -9,7 +9,7 @@ static func apply_damage(attacker: Node, target: Node, dmg: int) -> void:
 		return
 	if dmg <= 0:
 		return
-	var final_dmg := dmg
+	var final_dmg: int = dmg
 	if target.has_method("take_damage_from"):
 		var result = target.call("take_damage_from", dmg, attacker)
 		if typeof(result) == TYPE_INT or typeof(result) == TYPE_FLOAT:
@@ -34,7 +34,7 @@ static func apply_damage_typed(attacker: Node, target: Node, dmg: int, dmg_type:
 	if dmg <= 0:
 		return
 
-	var final_dmg := dmg
+	var final_dmg: int = dmg
 	if target.has_method("take_damage_from_typed"):
 		var result = target.call("take_damage_from_typed", dmg, attacker, dmg_type)
 		if typeof(result) == TYPE_INT or typeof(result) == TYPE_FLOAT:
@@ -55,6 +55,22 @@ static func apply_damage_typed(attacker: Node, target: Node, dmg: int, dmg_type:
 			danger_meter.on_damage_dealt(float(final_dmg), target)
 	if attacker != null and "c_resource" in attacker and attacker.c_resource != null:
 		attacker.c_resource.on_damage_dealt()
+
+static func show_heal(target: Node, heal_amount: int) -> void:
+	if heal_amount <= 0:
+		return
+	if target == null or not is_instance_valid(target):
+		return
+	if not (target is Node2D):
+		return
+	var t2d := target as Node2D
+	var tree := t2d.get_tree()
+	if tree == null:
+		return
+	var manager := _get_or_create_combat_text_manager(tree)
+	if manager == null:
+		return
+	manager.show_heal(t2d, heal_amount)
 
 static func _show_damage_number(target: Node, final_dmg: int, dmg_type: String) -> void:
 	if final_dmg <= 0:

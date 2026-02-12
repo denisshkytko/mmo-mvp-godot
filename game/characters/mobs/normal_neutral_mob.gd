@@ -195,7 +195,11 @@ func _physics_process(delta: float) -> void:
 
 	# реген идёт только когда regen_active=true, и прекращается только когда HP=100%
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
+		var hp_before: int = c_stats.current_hp
 		c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
+		var actual_heal: int = max(0, c_stats.current_hp - hp_before)
+		if actual_heal > 0:
+			DamageHelper.show_heal(self, actual_heal)
 		c_stats.update_hp_bar(hp_fill)
 		if c_stats.current_hp >= c_stats.max_hp:
 			regen_active = false

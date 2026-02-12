@@ -2,6 +2,7 @@ extends Node
 class_name PlayerStats
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const XP_SYSTEM := preload("res://core/progression/xp_system.gd")
@@ -144,7 +145,11 @@ func tick(delta: float) -> void:
 		if _hp_regen_pool >= 1.0:
 			var add_hp: int = int(floor(_hp_regen_pool))
 			_hp_regen_pool -= float(add_hp)
+			var hp_before: int = p.current_hp
 			p.current_hp = min(p.max_hp, p.current_hp + add_hp)
+			var actual_heal: int = max(0, p.current_hp - hp_before)
+			if actual_heal > 0:
+				DAMAGE_HELPER.show_heal(p, actual_heal)
 	else:
 		# reset pool when healing is not allowed (prevents "stored" regen)
 		_hp_regen_pool = 0.0

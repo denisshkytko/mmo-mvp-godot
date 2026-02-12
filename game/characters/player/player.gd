@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name Player
 
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const PROG := preload("res://core/stats/progression.gd")
@@ -135,7 +137,11 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 	if instant or duration_sec <= 0.0:
 		if can_hp:
 			var add_hp: int = min(hp_total, hp_need)
+			var hp_before: int = current_hp
 			current_hp = min(max_hp, current_hp + add_hp)
+			var actual_heal: int = max(0, current_hp - hp_before)
+			if actual_heal > 0:
+				DAMAGE_HELPER.show_heal(self, actual_heal)
 		if can_mp:
 			var add_mp: int = min(mp_total, mp_need)
 			mana = min(max_mana, mana + add_mp)
