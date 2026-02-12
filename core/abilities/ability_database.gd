@@ -24,13 +24,17 @@ func _debug_check_ability_scripts() -> void:
 	var script_class_prop := "<n/a>"
 	var test_id := "<n/a>"
 	var test_class_id := "<n/a>"
+	var test_ranks_size := -1
 	if test_res != null:
 		test_class = test_res.get_class()
 		test_script = str(test_res.get_script())
 		script_class_prop = str(test_res.get("script_class"))
 		test_id = str(test_res.get("id"))
 		test_class_id = str(test_res.get("class_id"))
-	print("[AbilityDB] test heal_light: class=", test_class, " script=", test_script, " script_class=", script_class_prop, " is_ability_def=", test_res is AbilityDefinition, " id=", test_id, " class_id=", test_class_id)
+		var ranks_v: Variant = test_res.get("ranks")
+		if ranks_v is Array:
+			test_ranks_size = (ranks_v as Array).size()
+	print("[AbilityDB] test heal_light: class=", test_class, " script=", test_script, " script_class=", script_class_prop, " is_ability_def=", test_res is AbilityDefinition, " id=", test_id, " class_id=", test_class_id, " ranks_size=", test_ranks_size)
 
 
 func _ready() -> void:
