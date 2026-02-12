@@ -18,33 +18,33 @@ func _ready() -> void:
 	print("[AbilityDB] scan root=", ABILITIES_ROOT_PATH)
 	if _load_from_manifest(ABILITIES_MANIFEST_PATH):
 		print("[AbilityDB] loaded from manifest abilities=", abilities.size())
+		_print_summary()
 		is_ready = true
 		emit_signal("initialized")
 		return
 	_load_abilities_from_dir(ABILITIES_ROOT_PATH)
-	print("[AbilityDB] loaded abilities=", abilities.size())
+	_print_summary()
 	if abilities.size() == 0:
 		push_warning("[AbilityDB] abilities=0. Likely no .tres discovered OR resources not included in export. See logs above.")
 	is_ready = true
 	emit_signal("initialized")
 
 func register_ability(definition: AbilityDefinition) -> void:
-	_register_def(definition)
+	_register_def(definition, "runtime")
 
-func _register_def(definition: AbilityDefinition) -> void:
+func _register_def(definition: AbilityDefinition, source_path: String = "") -> void:
 	if definition == null:
 		push_warning("[AbilityDB] register_ability skipped null definition")
 		return
 	var key := String(definition.id)
 	if key == "":
-		push_warning("[AbilityDB] register_ability skipped: empty id")
+		push_warning("[AbilityDB] AbilityDefinition has empty id: " + source_path)
 		return
 	var cls := String(definition.class_id)
 	if cls == "":
-		push_warning("[AbilityDB] register_ability skipped '%s': empty class_id" % key)
+		push_warning("[AbilityDB] AbilityDefinition has empty class_id id=%s path=%s" % [key, source_path])
 		return
-	if OS.is_debug_build():
-		print("[AbilityDB] reg id=", key, " class=", cls)
+	print("[AbilityDB] register id=", key, " class=", cls)
 	abilities[key] = definition
 	if not class_index.has(cls):
 		class_index[cls] = PackedStringArray()
@@ -118,7 +118,7 @@ func _load_from_manifest(path: String) -> bool:
 		push_warning("[AbilityDB] Manifest is empty: " + path)
 		return false
 	for def in manifest.ability_defs:
-		_register_def(def)
+		_register_def(def, path)
 	return abilities.size() > 0
 
 func _load_abilities_from_dir(path: String) -> void:
@@ -144,14 +144,23 @@ func _load_abilities_from_dir(path: String) -> void:
 				if OS.is_debug_build():
 					print("[AbilityDB] found resource=", full_path)
 				var res: Resource = load(full_path)
-				if res is AbilityDefinition:
-					_register_def(res)
-				else:
-					var script_ref: Variant = null
-					var resource_class: String = ""
+				if OS.is_debug_build():
+					var loaded_class := "null"
+					var loaded_script := "null"
 					if res != null:
-						script_ref = res.get_script()
-						resource_class = res.get_class()
-					push_warning("[AbilityDB] not AbilityDefinition: %s script=%s class=%s" % [full_path, str(script_ref), resource_class])
+						loaded_class = res.get_class()
+						loaded_script = str(res.get_script())
+					print("[AbilityDB] load ", full_path, " => ", res, " class=", loaded_class, " script=", loaded_script)
+				if res == null:
+					push_warning("[AbilityDB] load failed: " + full_path)
+				elif not (res is AbilityDefinition):
+					push_warning("[AbilityDB] NOT AbilityDefinition: %s class=%s script=%s" % [full_path, res.get_class(), str(res.get_script())])
+				else:
+					_register_def(res, full_path)
 		name = dir.get_next()
 	dir.list_dir_end()
+
+
+func _print_summary() -> void:
+	print("[AbilityDB] loaded abilities=", abilities.size())
+	print("[AbilityDB] loaded classes=", class_index.keys())
