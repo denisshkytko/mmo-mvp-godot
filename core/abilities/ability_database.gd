@@ -148,10 +148,10 @@ func _load_abilities_from_dir(path: String) -> void:
 					_register_def(res)
 				else:
 					var script_ref: Variant = null
-					var class_name: String = ""
+					var resource_class: String = ""
 					if res != null:
 						script_ref = res.get_script()
-						class_name = res.get_class()
-					push_warning("[AbilityDB] not AbilityDefinition: %s script=%s class=%s" % [full_path, str(script_ref), class_name])
+						resource_class = res.get_class()
+					push_warning("[AbilityDB] not AbilityDefinition: %s script=%s class=%s" % [full_path, str(script_ref), resource_class])
 		name = dir.get_next()
 	dir.list_dir_end()

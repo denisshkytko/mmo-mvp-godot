@@ -290,7 +290,7 @@ func _set_primary_slot(slot_index: int, ability_id: String) -> void:
 		return
 	var icon: Texture2D = null
 	if ability_id != "" and _ability_db != null:
-		var def := _ability_db.get_ability(ability_id)
+		var def: AbilityDefinition = _ability_db.get_ability(ability_id)
 		if def != null:
 			icon = def.icon
 	button.texture_normal = icon
