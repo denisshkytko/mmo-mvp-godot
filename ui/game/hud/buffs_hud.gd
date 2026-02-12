@@ -13,6 +13,7 @@ var _fixed_offset_right: float = 0.0
 var _fixed_offset_top: float = 0.0
 var _has_fixed_corner: bool = false
 var _realign_requested: bool = false
+var _target_panel_size: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
@@ -37,8 +38,7 @@ func _process(_delta: float) -> void:
 func _apply_grid_settings() -> void:
 	if grid == null:
 		return
-	var max_cols := _get_max_columns_that_fit()
-	grid.columns = max(1, min(buffs_per_row, max_cols))
+	grid.columns = max(1, buffs_per_row)
 
 func _sync_icons(snap: Array) -> void:
 	var seen: Dictionary = {} # buff_id -> true
@@ -84,13 +84,28 @@ func _sync_icons(snap: Array) -> void:
 
 	visible = (_icons.size() > 0)
 	_apply_grid_settings()
+	_update_panel_size_for_icon_count(_icons.size())
 	_request_panel_realign()
+
+func _update_panel_size_for_icon_count(icon_count: int) -> void:
+	if panel == null or grid == null:
+		return
+	var icon_size := _get_icon_size()
+	var used_cols := clampi(icon_count, 1, max(1, buffs_per_row))
+	var rows := maxi(1, int(ceil(float(icon_count) / float(max(1, buffs_per_row)))))
+	var h_sep := float(grid.get_theme_constant("h_separation"))
+	var v_sep := float(grid.get_theme_constant("v_separation"))
+	_target_panel_size = Vector2(
+		float(used_cols) * icon_size.x + float(maxi(0, used_cols - 1)) * h_sep,
+		float(rows) * icon_size.y + float(maxi(0, rows - 1)) * v_sep
+	)
 
 func _capture_panel_corner_from_scene() -> void:
 	if panel == null:
 		return
 	_fixed_offset_right = panel.offset_right
 	_fixed_offset_top = panel.offset_top
+	_target_panel_size = panel.size
 	_has_fixed_corner = true
 	_request_panel_realign()
 
@@ -106,39 +121,37 @@ func _apply_panel_fixed_top_right() -> void:
 	_realign_requested = false
 	if not _has_fixed_corner or panel == null:
 		return
+	var width := _target_panel_size.x
+	var height := _target_panel_size.y
+	if width <= 0.0:
+		width = panel.size.x
+	if height <= 0.0:
+		height = panel.size.y
 	panel.offset_right = _fixed_offset_right
 	panel.offset_top = _fixed_offset_top
-	panel.offset_left = panel.offset_right - panel.size.x
-	panel.offset_bottom = panel.offset_top + panel.size.y
+	panel.offset_left = panel.offset_right - width
+	panel.offset_bottom = panel.offset_top + height
 
 func _on_panel_resized() -> void:
 	_apply_grid_settings()
 	_request_panel_realign()
 
-func _get_max_columns_that_fit() -> int:
-	if panel == null or grid == null:
-		return max(1, buffs_per_row)
-	var icon_w := _get_icon_width()
-	var sep := float(grid.get_theme_constant("h_separation"))
-	if icon_w <= 0.0:
-		return max(1, buffs_per_row)
-	var fit := int(floor((panel.size.x + sep) / (icon_w + sep)))
-	return max(1, fit)
-
-func _get_icon_width() -> float:
+func _get_icon_size() -> Vector2:
 	for child in grid.get_children():
 		var c := child as Control
 		if c != null:
-			var w := c.custom_minimum_size.x
-			if w <= 0.0:
-				w = c.size.x
-			if w > 0.0:
-				return w
+			var s := c.custom_minimum_size
+			if s.x <= 0.0:
+				s.x = c.size.x
+			if s.y <= 0.0:
+				s.y = c.size.y
+			if s.x > 0.0 and s.y > 0.0:
+				return s
 	if buff_icon_scene != null:
 		var inst := buff_icon_scene.instantiate() as Control
 		if inst != null:
-			var w2 := inst.custom_minimum_size.x
+			var s2 := inst.custom_minimum_size
 			inst.queue_free()
-			if w2 > 0.0:
-				return w2
-	return 40.0
+			if s2.x > 0.0 and s2.y > 0.0:
+				return s2
+	return Vector2(40.0, 40.0)
