@@ -1,19 +1,30 @@
 extends RefCounted
 class_name DamageHelper
 
+const COMBAT_TEXT_MANAGER_SCRIPT := preload("res://ui/game/hud/combat_text/combat_text_manager.gd")
+const COMBAT_TEXT_MANAGER_NODE_NAME := "CombatTextManager"
+
 static func apply_damage(attacker: Node, target: Node, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	if dmg <= 0:
 		return
+	var final_dmg := dmg
 	if target.has_method("take_damage_from"):
-		target.call("take_damage_from", dmg, attacker)
+		var result = target.call("take_damage_from", dmg, attacker)
+		if typeof(result) == TYPE_INT or typeof(result) == TYPE_FLOAT:
+			final_dmg = int(result)
 	elif target.has_method("take_damage"):
-		target.call("take_damage", dmg)
+		var result2 = target.call("take_damage", dmg)
+		if typeof(result2) == TYPE_INT or typeof(result2) == TYPE_FLOAT:
+			final_dmg = int(result2)
+
+	_show_damage_number(target, final_dmg, "physical")
+
 	if attacker != null:
 		var danger_meter := _get_danger_meter(attacker)
 		if danger_meter != null:
-			danger_meter.on_damage_dealt(float(dmg), target)
+			danger_meter.on_damage_dealt(float(final_dmg), target)
 	if attacker != null and "c_resource" in attacker and attacker.c_resource != null:
 		attacker.c_resource.on_damage_dealt()
 
@@ -36,12 +47,46 @@ static func apply_damage_typed(attacker: Node, target: Node, dmg: int, dmg_type:
 		apply_damage(attacker, target, dmg)
 		return
 
+	_show_damage_number(target, final_dmg, dmg_type)
+
 	if attacker != null:
 		var danger_meter := _get_danger_meter(attacker)
 		if danger_meter != null:
 			danger_meter.on_damage_dealt(float(final_dmg), target)
 	if attacker != null and "c_resource" in attacker and attacker.c_resource != null:
 		attacker.c_resource.on_damage_dealt()
+
+static func _show_damage_number(target: Node, final_dmg: int, dmg_type: String) -> void:
+	if final_dmg <= 0:
+		return
+	if target == null or not is_instance_valid(target):
+		return
+	if not (target is Node2D):
+		return
+	var t2d := target as Node2D
+	var tree := t2d.get_tree()
+	if tree == null:
+		return
+	var manager := _get_or_create_combat_text_manager(tree)
+	if manager == null:
+		return
+	manager.show_damage(t2d, final_dmg, dmg_type)
+
+static func _get_or_create_combat_text_manager(tree: SceneTree) -> CombatTextManager:
+	if tree == null:
+		return null
+	var root := tree.root
+	if root == null:
+		return null
+	var existing := root.get_node_or_null(COMBAT_TEXT_MANAGER_NODE_NAME) as CombatTextManager
+	if existing != null:
+		return existing
+	var manager := COMBAT_TEXT_MANAGER_SCRIPT.new() as CombatTextManager
+	if manager == null:
+		return null
+	manager.name = COMBAT_TEXT_MANAGER_NODE_NAME
+	root.add_child(manager)
+	return manager
 
 static func _get_danger_meter(attacker: Node) -> DangerMeterComponent:
 	if attacker == null:
