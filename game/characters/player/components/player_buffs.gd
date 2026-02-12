@@ -126,9 +126,14 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ab
 
 
 func remove_buff(id: String) -> void:
-	if _buffs.has(id):
-		_buffs.erase(id)
-		_notify_stats_changed()
+	if not _buffs.has(id):
+		return
+	var entry: Dictionary = _buffs[id] as Dictionary
+	var source: String = String(entry.get("source", ""))
+	if source == "aura" or source == "stance":
+		return
+	_buffs.erase(id)
+	_notify_stats_changed()
 
 func remove_buffs_with_prefix(prefix: String) -> void:
 	if prefix == "":

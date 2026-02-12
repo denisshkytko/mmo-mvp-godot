@@ -35,6 +35,8 @@ func setup(player: Player) -> void:
 func tick(delta: float) -> void:
 	if p == null:
 		return
+	if p.c_ability_caster != null and p.c_ability_caster.is_casting():
+		return
 
 	var target: Node2D = _get_current_target()
 	if target == null:

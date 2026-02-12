@@ -175,6 +175,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_spellbook: PlayerSpellbook = $Components/Spellbook as PlayerSpellbook
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
+@onready var cast_bar: ProgressBar = $CastBar
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
 
 
@@ -220,6 +221,9 @@ func _ready() -> void:
 			c_resource.set_empty()
 
 	_apply_spellbook_passives()
+	if cast_bar != null:
+		cast_bar.visible = false
+		cast_bar.value = 0.0
 
 func get_danger_meter() -> DangerMeterComponent:
 	return c_danger
@@ -230,7 +234,7 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
-		
+
 	var input_dir := Vector2.ZERO
 	if mobile_move_dir != Vector2.ZERO:
 		input_dir = mobile_move_dir
@@ -239,6 +243,13 @@ func _physics_process(_delta: float) -> void:
 			Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
 			Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		)
+
+	if c_ability_caster != null and c_ability_caster.is_casting() and input_dir.length() > 0.0:
+		c_ability_caster.interrupt_cast("movement")
+	if c_ability_caster != null and c_ability_caster.is_casting():
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 	if input_dir.length() > 0.0:
 		input_dir = input_dir.normalized()
@@ -259,6 +270,11 @@ func _process(delta: float) -> void:
 		c_ability_caster.tick(delta)
 	if c_combat != null:
 		c_combat.tick(delta)
+
+	if cast_bar != null and c_ability_caster != null:
+		var casting := c_ability_caster.is_casting()
+		cast_bar.visible = casting
+		cast_bar.value = c_ability_caster.get_cast_progress() * 100.0 if casting else 0.0
 
 
 # -----------------------
@@ -340,6 +356,9 @@ func _request_save(kind: String) -> void:
 
 func _on_spellbook_changed() -> void:
 	_apply_spellbook_passives()
+	if cast_bar != null:
+		cast_bar.visible = false
+		cast_bar.value = 0.0
 	_request_save("spellbook_changed")
 
 func _apply_spellbook_passives() -> void:
@@ -507,6 +526,9 @@ func apply_character_data(d: Dictionary) -> void:
 		c_spellbook.buff_slots = _to_string_array(sdata.get("buff_slots", ["", "", ""]))
 		c_spellbook._ensure_slots()
 		_apply_spellbook_passives()
+	if cast_bar != null:
+		cast_bar.visible = false
+		cast_bar.value = 0.0
 	if c_spellbook != null and ((not (spellbook_v is Dictionary)) or c_spellbook.learned_ranks.is_empty()):
 		_grant_starter_abilities()
 

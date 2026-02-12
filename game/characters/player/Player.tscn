@@ -32,6 +32,18 @@ offset_right = 16.0
 offset_bottom = 16.0
 color = Color(0.14901961, 0.12941177, 1, 1)
 
+
+[node name="CastBar" type="ProgressBar" parent="."]
+visible = false
+offset_left = -22.0
+offset_top = -38.0
+offset_right = 22.0
+offset_bottom = -30.0
+max_value = 100.0
+show_percentage = false
+mouse_filter = 2
+value = 0.0
+
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_5q5h1")
 

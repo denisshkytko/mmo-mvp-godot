@@ -48,6 +48,7 @@ func _sync_icons(snap: Array) -> void:
 			var icon_node: BuffIcon = _icons[id] as BuffIcon
 			if icon_node != null and is_instance_valid(icon_node):
 				icon_node.update_time(left)
+				icon_node.update_data(data)
 		else:
 			if buff_icon_scene == null:
 				continue

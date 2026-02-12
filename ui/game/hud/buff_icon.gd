@@ -7,11 +7,18 @@ class_name BuffIcon
 var _player: Node = null
 var _buff_id: String = ""
 var _time_left: float = 0.0
+var _show_time: bool = true
 
 func setup(player: Node, data: Dictionary) -> void:
 	_player = player
 	_buff_id = String(data.get("id", ""))
 	_time_left = float(data.get("time_left", 0.0))
+	_show_time = _should_show_time(data)
+	_refresh_icon(data)
+	_refresh_time()
+
+func update_data(data: Dictionary) -> void:
+	_show_time = _should_show_time(data)
 	_refresh_icon(data)
 	_refresh_time()
 
@@ -32,6 +39,10 @@ func _on_gui_input(event: InputEvent) -> void:
 
 func _refresh_time() -> void:
 	if time_label == null:
+		return
+	time_label.visible = _show_time
+	if not _show_time:
+		time_label.text = ""
 		return
 	time_label.text = _format_time(_time_left)
 
@@ -55,6 +66,15 @@ func _refresh_icon(data: Dictionary) -> void:
 	var def: AbilityDefinition = db.call("get_ability", ability_id)
 	if def != null:
 		icon_rect.texture = def.icon
+
+func _should_show_time(data: Dictionary) -> bool:
+	var source := String(data.get("source", ""))
+	if source == "aura" or source == "stance":
+		return false
+	var left: float = float(data.get("time_left", 0.0))
+	if left >= 999999.0:
+		return false
+	return true
 
 func _format_time(seconds: float) -> String:
 	var s: int = int(ceil(max(0.0, seconds)))

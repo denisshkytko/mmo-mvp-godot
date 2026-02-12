@@ -12,15 +12,15 @@ signal interact_pressed()
 @onready var interact_btn: BaseButton = $"../InteractBtn"
 
 var _skill_buttons: Array[BaseButton] = []
-var _default_textures: Array[Texture2D] = []
+var _icon_rects: Array[TextureRect] = []
 
 
 func _ready() -> void:
 	_skill_buttons = [quick_skill_btn, skill_btn_1, skill_btn_2, skill_btn_3, skill_btn_4]
-	_default_textures.clear()
+	_icon_rects.clear()
 	for btn in _skill_buttons:
-		var tex_btn := btn as TextureButton
-		_default_textures.append(tex_btn.texture_normal if tex_btn != null else null)
+		var icon_rect := btn.get_node_or_null("Icon") as TextureRect
+		_icon_rects.append(icon_rect)
 	_setup_slot_meta()
 	for btn in _skill_buttons:
 		btn.pressed.connect(_on_skill_button_pressed.bind(int(btn.get_meta("slot_index"))))
@@ -51,15 +51,12 @@ func set_interact_visible(is_visible: bool) -> void:
 func set_slot_icon(_slot: int, _texture: Texture2D) -> void:
 	if _slot < 0 or _slot >= _skill_buttons.size():
 		return
-	var btn := _skill_buttons[_slot] as TextureButton
-	if btn == null:
+	if _slot < 0 or _slot >= _icon_rects.size():
 		return
-	if _texture == null:
-		btn.texture_normal = _default_textures[_slot]
-		btn.texture_pressed = _default_textures[_slot]
+	var icon_rect := _icon_rects[_slot]
+	if icon_rect == null:
 		return
-	btn.texture_normal = _texture
-	btn.texture_pressed = _texture
+	icon_rect.texture = _texture
 
 
 func set_slot_cooldown(_slot: int, _pct: float) -> void:
