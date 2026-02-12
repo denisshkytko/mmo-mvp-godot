@@ -3,13 +3,14 @@ class_name BuffsHUD
 
 @export var buff_icon_scene: PackedScene
 @export var buffs_per_row: int = 7
-@export var newest_on_right: bool = true  # если RTL недоступен, это всё равно даст правильный визуал
+@export var newest_on_right: bool = false  # false => newest on left
 @onready var panel: Panel = $Root/Panel
 @onready var grid: GridContainer = $Root/Panel/Grid
 
 var _player: Node = null
 var _icons: Dictionary = {} # buff_id:String -> BuffIcon (Node)
-var _panel_fixed_top_right: Vector2 = Vector2.ZERO
+var _fixed_offset_right: float = 0.0
+var _fixed_offset_top: float = 0.0
 var _has_fixed_corner: bool = false
 var _realign_requested: bool = false
 
@@ -20,7 +21,7 @@ func _ready() -> void:
 	if panel != null and not panel.resized.is_connected(_on_panel_resized):
 		panel.resized.connect(_on_panel_resized)
 	await get_tree().process_frame
-	_capture_panel_top_right_from_scene()
+	_capture_panel_corner_from_scene()
 
 func _process(_delta: float) -> void:
 	if _player == null or not is_instance_valid(_player):
@@ -41,7 +42,6 @@ func _apply_grid_settings() -> void:
 func _sync_icons(snap: Array) -> void:
 	var seen: Dictionary = {} # buff_id -> true
 
-	# 1) create/update icons
 	for entry in snap:
 		var data: Dictionary = entry as Dictionary
 		var id: String = String(data.get("id", ""))
@@ -61,17 +61,15 @@ func _sync_icons(snap: Array) -> void:
 				continue
 
 			var inst: Node = buff_icon_scene.instantiate()
-			if newest_on_right:
-				grid.add_child(inst)
-			else:
-				grid.add_child(inst, true)
+			grid.add_child(inst)
+			if not newest_on_right:
+				grid.move_child(inst, 0)
 
 			var bicon: BuffIcon = inst as BuffIcon
 			if bicon != null:
 				bicon.setup(_player, data)
 				_icons[id] = bicon
 
-	# 2) remove missing buffs
 	var to_remove: Array[String] = []
 	for k in _icons.keys():
 		if not seen.has(k):
@@ -86,10 +84,11 @@ func _sync_icons(snap: Array) -> void:
 	visible = (_icons.size() > 0)
 	_request_panel_realign()
 
-func _capture_panel_top_right_from_scene() -> void:
+func _capture_panel_corner_from_scene() -> void:
 	if panel == null:
 		return
-	_panel_fixed_top_right = panel.global_position + Vector2(panel.size.x, 0.0)
+	_fixed_offset_right = panel.offset_right
+	_fixed_offset_top = panel.offset_top
 	_has_fixed_corner = true
 	_request_panel_realign()
 
@@ -105,8 +104,10 @@ func _apply_panel_fixed_top_right() -> void:
 	_realign_requested = false
 	if not _has_fixed_corner or panel == null:
 		return
-	var target_pos := _panel_fixed_top_right - Vector2(panel.size.x, 0.0)
-	panel.global_position = target_pos
+	panel.offset_right = _fixed_offset_right
+	panel.offset_top = _fixed_offset_top
+	panel.offset_left = panel.offset_right - panel.size.x
+	panel.offset_bottom = panel.offset_top + panel.size.y
 
 func _on_panel_resized() -> void:
 	_request_panel_realign()
