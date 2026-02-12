@@ -9,6 +9,9 @@ var is_ready: bool = false
 func _ready() -> void:
 	if not is_ready:
 		_load_abilities_from_dir("res://data/abilities")
+		print("[AbilityDB] loaded abilities=", abilities.size())
+		if abilities.size() == 0:
+			push_warning("[AbilityDB] No abilities loaded from res://data/abilities (DirAccess.open failed or folder empty in build).")
 		is_ready = true
 		emit_signal("initialized")
 
@@ -67,6 +70,7 @@ func get_abilities_for_class(class_id: String) -> Array[AbilityDefinition]:
 func _load_abilities_from_dir(path: String) -> void:
 	var dir := DirAccess.open(path)
 	if dir == null:
+		push_warning("[AbilityDB] DirAccess.open failed: " + path)
 		return
 	dir.list_dir_begin()
 	var name := dir.get_next()

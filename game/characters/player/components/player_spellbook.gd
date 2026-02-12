@@ -113,7 +113,6 @@ func auto_place_on_first_learn(ability_id: String) -> void:
 				if buff_slots[i] == "":
 					buff_slots[i] = ability_id
 					break
-	emit_signal("spellbook_changed")
 
 func learn_next_rank(ability_id: String, max_rank: int) -> int:
 	if ability_id == "" or max_rank <= 0:
@@ -125,7 +124,6 @@ func learn_next_rank(ability_id: String, max_rank: int) -> int:
 	learned_ranks[ability_id] = current
 	if current == 1:
 		auto_place_on_first_learn(ability_id)
-		return current
 	emit_signal("spellbook_changed")
 	return current
 

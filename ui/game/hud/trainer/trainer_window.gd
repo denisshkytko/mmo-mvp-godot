@@ -101,6 +101,10 @@ func _refresh_rows() -> void:
 	if OS.is_debug_build():
 		print("[TRAINER_UI] refresh. db_ready=", _ability_db.is_ready, " class=", _trainer_class_id)
 	var defs := _ability_db.get_abilities_for_class(_trainer_class_id)
+	if OS.is_debug_build():
+		print("[TRAINER_UI] defs_count=", defs.size(), " class=", _trainer_class_id)
+	if defs.size() == 0 and _trainer_class_id == "paladin":
+		push_warning("[TRAINER_UI] AbilityDB returned 0 defs for paladin. AbilityDB may not have loaded data/abilities/*.tres.")
 	defs.sort_custom(func(a: AbilityDefinition, b: AbilityDefinition) -> bool:
 		return a.get_display_name() < b.get_display_name()
 	)
