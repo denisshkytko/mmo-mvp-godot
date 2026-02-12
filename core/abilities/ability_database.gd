@@ -22,11 +22,15 @@ func _debug_check_ability_scripts() -> void:
 	var test_class := "null"
 	var test_script := "null"
 	var script_class_prop := "<n/a>"
+	var test_id := "<n/a>"
+	var test_class_id := "<n/a>"
 	if test_res != null:
 		test_class = test_res.get_class()
 		test_script = str(test_res.get_script())
 		script_class_prop = str(test_res.get("script_class"))
-	print("[AbilityDB] test heal_light: class=", test_class, " script=", test_script, " script_class=", script_class_prop, " is_ability_def=", test_res is AbilityDefinition)
+		test_id = str(test_res.get("id"))
+		test_class_id = str(test_res.get("class_id"))
+	print("[AbilityDB] test heal_light: class=", test_class, " script=", test_script, " script_class=", script_class_prop, " is_ability_def=", test_res is AbilityDefinition, " id=", test_id, " class_id=", test_class_id)
 
 
 func _ready() -> void:
