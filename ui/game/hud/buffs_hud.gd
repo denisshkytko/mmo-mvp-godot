@@ -9,11 +9,18 @@ class_name BuffsHUD
 
 var _player: Node = null
 var _icons: Dictionary = {} # buff_id:String -> BuffIcon (Node)
+var _panel_fixed_top_right: Vector2 = Vector2.ZERO
+var _has_fixed_corner: bool = false
+var _realign_requested: bool = false
 
 func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
 	_apply_grid_settings()
 	visible = false
+	if panel != null and not panel.resized.is_connected(_on_panel_resized):
+		panel.resized.connect(_on_panel_resized)
+	await get_tree().process_frame
+	_capture_panel_top_right_from_scene()
 
 func _process(_delta: float) -> void:
 	if _player == null or not is_instance_valid(_player):
@@ -54,13 +61,10 @@ func _sync_icons(snap: Array) -> void:
 				continue
 
 			var inst: Node = buff_icon_scene.instantiate()
-			# Если хотим “новые справа”, то:
-			# - при RTL контейнере можно просто add_child
-			# - если RTL нет, добавляем в начало (index 0), тогда новые будут “с правого края” при правильной настройке UI
 			if newest_on_right:
 				grid.add_child(inst)
 			else:
-				grid.add_child(inst, true) # обычное добавление
+				grid.add_child(inst, true)
 
 			var bicon: BuffIcon = inst as BuffIcon
 			if bicon != null:
@@ -80,3 +84,29 @@ func _sync_icons(snap: Array) -> void:
 		_icons.erase(k)
 
 	visible = (_icons.size() > 0)
+	_request_panel_realign()
+
+func _capture_panel_top_right_from_scene() -> void:
+	if panel == null:
+		return
+	_panel_fixed_top_right = panel.global_position + Vector2(panel.size.x, 0.0)
+	_has_fixed_corner = true
+	_request_panel_realign()
+
+func _request_panel_realign() -> void:
+	if not _has_fixed_corner or panel == null:
+		return
+	if _realign_requested:
+		return
+	_realign_requested = true
+	call_deferred("_apply_panel_fixed_top_right")
+
+func _apply_panel_fixed_top_right() -> void:
+	_realign_requested = false
+	if not _has_fixed_corner or panel == null:
+		return
+	var target_pos := _panel_fixed_top_right - Vector2(panel.size.x, 0.0)
+	panel.global_position = target_pos
+
+func _on_panel_resized() -> void:
+	_request_panel_realign()
