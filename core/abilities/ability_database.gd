@@ -71,15 +71,15 @@ func _register_def(definition: AbilityDefinition, source_path: String = "") -> v
 	var cls := str(definition.class_id)
 	if cls == "" or cls == "<null>":
 		push_warning("[AbilityDB] AbilityDefinition has empty class_id id=%s path=%s" % [key, source_path])
-		return
 	print("[AbilityDB] register id=", key, " class=", cls)
 	abilities[key] = definition
-	if not class_index.has(cls):
-		class_index[cls] = PackedStringArray()
-	var ids: PackedStringArray = class_index[cls] as PackedStringArray
-	if not ids.has(key):
-		ids.append(key)
-	class_index[cls] = ids
+	if cls != "" and cls != "<null>":
+		if not class_index.has(cls):
+			class_index[cls] = PackedStringArray()
+		var ids: PackedStringArray = class_index[cls] as PackedStringArray
+		if not ids.has(key):
+			ids.append(key)
+		class_index[cls] = ids
 
 func has_ability(ability_id: String) -> bool:
 	return abilities.has(ability_id)
@@ -180,7 +180,7 @@ func _load_abilities_from_dir(path: String) -> void:
 						loaded_class = res.get_class()
 						loaded_script = str(res.get_script())
 						loaded_script_class = str(res.get("script_class"))
-					print("[AbilityDB] load ", full_path, " => ", res, " class=", loaded_class, " script=", loaded_script, " script_class=", loaded_script_class)
+					print("[AbilityDB] load ", full_path, " => ", res, " class=", loaded_class, " script=", loaded_script, " script_class=", loaded_script_class, " is_ability_def=", res is AbilityDefinition)
 				if res == null:
 					push_warning("[AbilityDB] load failed: " + full_path)
 				elif not (res is AbilityDefinition):
