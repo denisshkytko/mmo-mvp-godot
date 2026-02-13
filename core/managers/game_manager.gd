@@ -244,7 +244,7 @@ func clear_target() -> void:
 # ---------------------------
 # Input: click/tap to select target
 # ---------------------------
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	var screen_pos: Vector2
 	var pressed: bool = false
 
@@ -265,10 +265,6 @@ func _input(event: InputEvent) -> void:
 	if not pressed:
 		return
 
-	# Не трогаем таргет, если нажатие ушло в UI (кнопки/слоты/джойстики и т.п.).
-	# Иначе клики по HUD могут сбрасывать цель как "клик по пустому миру".
-	if _is_ui_press(screen_pos):
-		return
 
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
@@ -278,55 +274,6 @@ func _input(event: InputEvent) -> void:
 	else:
 		clear_target()
 
-
-func _is_ui_press(screen_pos: Vector2) -> bool:
-	var root: Window = get_tree().root
-	if root == null:
-		return false
-
-	# В Godot 4 у Window нет gui_pick(position), поэтому делаем
-	# явный hit-test по Control-дереву сверху вниз (по children в обратном порядке).
-	var picked: Control = _pick_top_control_at_position(root, screen_pos)
-	if picked == null:
-		return false
-
-	# Если Control найден и он участвует во вводе — считаем это UI-кликом.
-	var node: Control = picked
-	while node != null:
-		if node.visible and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
-			return true
-		node = node.get_parent() as Control
-
-	return false
-
-
-func _pick_top_control_at_position(node: Node, screen_pos: Vector2) -> Control:
-	if node == null:
-		return null
-
-	# Идём с конца массива детей: последний рисуется/лежит выше.
-	var children: Array = node.get_children()
-	for i in range(children.size() - 1, -1, -1):
-		var child: Node = children[i] as Node
-		if child == null:
-			continue
-
-		var found: Control = _pick_top_control_at_position(child, screen_pos)
-		if found != null:
-			return found
-
-	var c: Control = node as Control
-	if c == null:
-		return null
-	if not c.visible:
-		return null
-	if c.mouse_filter == Control.MOUSE_FILTER_IGNORE:
-		return null
-
-	var rect: Rect2 = c.get_global_rect()
-	if rect.has_point(screen_pos):
-		return c
-	return null
 
 
 func _screen_to_world(screen_pos: Vector2) -> Vector2:
