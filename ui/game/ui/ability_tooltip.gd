@@ -7,7 +7,7 @@ const OFFSET := Vector2(12, 10)
 @onready var name_label: Label = $Panel/Margin/VBox/Name
 @onready var rank_label: Label = $Panel/Margin/VBox/Rank
 @onready var description_label: RichTextLabel = $Panel/Margin/VBox/Description
-@onready var close_button: Button = $CloseButton
+@onready var close_button: Button = $Panel/CloseButton
 
 func _ready() -> void:
 	add_to_group("ability_tooltip_singleton")
