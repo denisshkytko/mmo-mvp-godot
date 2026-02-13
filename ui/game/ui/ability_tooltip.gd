@@ -6,6 +6,7 @@ const OFFSET := Vector2(12, 10)
 @onready var name_label: Label = $Margin/VBox/Name
 @onready var rank_label: Label = $Margin/VBox/Rank
 @onready var description_label: RichTextLabel = $Margin/VBox/Description
+@onready var close_button: Button = $CloseButton
 
 func _ready() -> void:
 	add_to_group("ability_tooltip_singleton")
@@ -14,6 +15,8 @@ func _ready() -> void:
 		description_label.bbcode_enabled = true
 		description_label.fit_content = true
 		description_label.scroll_active = false
+	if close_button != null and not close_button.pressed.is_connected(hide_tooltip):
+		close_button.pressed.connect(hide_tooltip)
 
 func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 	var db := get_node_or_null("/root/AbilityDB")
@@ -26,7 +29,7 @@ func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 		description_label.text = ""
 		visible = true
 		move_to_front()
-		call_deferred("_position_tooltip", global_pos + OFFSET)
+		call_deferred("_show_and_position", global_pos + OFFSET)
 		return
 
 	var player: Player = get_tree().get_first_node_in_group("player") as Player
@@ -45,10 +48,18 @@ func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 	description_label.text = _build_tooltip_text(ability, rank_data, shown_rank, player)
 	visible = true
 	move_to_front()
-	call_deferred("_position_tooltip", global_pos + OFFSET)
+	call_deferred("_show_and_position", global_pos + OFFSET)
 
 func hide_tooltip() -> void:
 	visible = false
+
+func _show_and_position(target_pos: Vector2) -> void:
+	# First open can have stale/min-height layout; let UI settle before measuring.
+	custom_minimum_size.y = 0.0
+	size.y = 0.0
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_position_tooltip(target_pos)
 
 func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int, player: Player) -> String:
 	if rank_data == null:
@@ -62,10 +73,21 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 		base_phys = int(player.c_combat.get_attack_damage())
 
 	var lines: Array[String] = []
-	lines.append("Type: %s   Target: %s   Range: %s" % [def.ability_type, def.target_type, def.range_mode])
-	lines.append("Cast: %.1fs   Cooldown: %.1fs   Cost: %d%% Mana" % [rank_data.cast_time_sec, rank_data.cooldown_sec, rank_data.resource_cost])
-	lines.append("")
-	lines.append(_effect_line(def.id, rank_data, spell_power, base_phys))
+	var params: Array[String] = []
+	if rank_data.cast_time_sec > 0.0:
+		params.append("Cast: %.1fs" % rank_data.cast_time_sec)
+	if rank_data.cooldown_sec > 0.0:
+		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
+	if rank_data.resource_cost > 0:
+		params.append("Cost: %d%% Mana" % rank_data.resource_cost)
+	if not params.is_empty():
+		lines.append("   ".join(params))
+
+	var effect := _effect_line(def.id, rank_data, spell_power, base_phys)
+	if effect.strip_edges() != "":
+		if not lines.is_empty():
+			lines.append("")
+		lines.append(effect)
 	return "\n".join(lines)
 
 func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, base_phys: int) -> String:

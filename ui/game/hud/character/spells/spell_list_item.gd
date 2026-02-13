@@ -13,6 +13,11 @@ var ability_type: String = ""
 func _ready() -> void:
 	if name_button != null and not name_button.pressed.is_connected(_on_name_pressed):
 		name_button.pressed.connect(_on_name_pressed)
+	if name_button != null:
+		name_button.clip_text = true
+		name_button.autowrap_mode = TextServer.AUTOWRAP_OFF
+		if name_button.has_method("set_text_overrun_behavior"):
+			name_button.call("set_text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
 	if icon_button != null and not icon_button.pressed.is_connected(_on_icon_pressed):
 		icon_button.pressed.connect(_on_icon_pressed)
 
@@ -29,15 +34,11 @@ func set_data(definition: AbilityDefinition, learned_rank: int) -> void:
 func set_selected(is_selected: bool) -> void:
 	if is_selected:
 		modulate = Color(1.0, 1.0, 1.0, 1.0)
-		if icon_button != null:
-			icon_button.modulate = Color(0.55, 1.0, 0.55, 1.0)
 		if name_button != null:
 			name_button.add_theme_color_override("font_color", Color("8dff8d"))
 			name_button.add_theme_color_override("font_hover_color", Color("aaffaa"))
 	else:
 		modulate = Color(0.82, 0.82, 0.82, 1.0)
-		if icon_button != null:
-			icon_button.modulate = Color(1, 1, 1, 1)
 		if name_button != null:
 			name_button.remove_theme_color_override("font_color")
 			name_button.remove_theme_color_override("font_hover_color")

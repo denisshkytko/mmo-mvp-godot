@@ -112,6 +112,7 @@ func _refresh_list() -> void:
 			continue
 		var item := SPELL_LIST_ITEM_SCENE.instantiate()
 		spells_grid.add_child(item)
+		_apply_item_width(item)
 		item.set_data(def, rank)
 		item.set_selected(String(ability_id) == _selected_ability_id)
 		item.name_clicked.connect(_on_spell_name_clicked)
@@ -126,6 +127,8 @@ func _refresh_list() -> void:
 				break
 		if not selected_visible:
 			_clear_selected_ability()
+
+	call_deferred("_apply_spell_grid_item_widths")
 
 func _refresh_loadout() -> void:
 	if loadout_pad != null and _spellbook != null and _ability_db != null:
@@ -212,3 +215,19 @@ func _passes_filter(def: AbilityDefinition) -> bool:
 func _ensure_tooltip_ref() -> void:
 	if _tooltip == null or not is_instance_valid(_tooltip):
 		_tooltip = get_tree().get_first_node_in_group("ability_tooltip_singleton") as AbilityTooltip
+
+func _apply_spell_grid_item_widths() -> void:
+	if spells_grid == null:
+		return
+	for child in spells_grid.get_children():
+		_apply_item_width(child)
+
+func _apply_item_width(item: Control) -> void:
+	if item == null or spells_grid == null:
+		return
+	var total_w: float = spells_grid.size.x
+	if total_w <= 1.0 and spells_grid.get_parent() is Control:
+		total_w = (spells_grid.get_parent() as Control).size.x
+	var h_sep: int = int(spells_grid.get_theme_constant("h_separation"))
+	var col_w := int(floor((total_w - float(h_sep)) * 0.5)) - 5
+	item.custom_minimum_size.x = max(120, col_w)

@@ -124,10 +124,13 @@ func set_slot_out_of_range(_slot: int, _blocked: bool) -> void:
 	var ring := _ensure_range_ring(btn)
 	if ring == null:
 		return
+	ring.visible = _blocked
+	if not _blocked:
+		return
 	var mat := ring.material as ShaderMaterial
 	if mat == null:
 		return
-	mat.set_shader_parameter("ring_color", RANGE_RING_BLOCKED_COLOR if _blocked else RANGE_RING_OK_COLOR)
+	mat.set_shader_parameter("ring_color", RANGE_RING_BLOCKED_COLOR)
 
 func _ensure_range_ring(btn: TextureButton) -> ColorRect:
 	var ring := btn.get_node_or_null("RangeRing") as ColorRect
