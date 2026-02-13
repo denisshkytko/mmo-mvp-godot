@@ -1,16 +1,21 @@
 extends HBoxContainer
 
-const TOOLTIP_BUILDER := preload("res://ui/game/hud/tooltip_text_builder.gd")
-
 signal name_clicked(ability_id: String)
 signal learn_clicked(ability_id: String)
+
+const COST_GOLD_COLOR := Color("d7b25b")
+const COST_SILVER_COLOR := Color("c0c0c0")
+const COST_BRONZE_COLOR := Color("c26b2b")
 
 var ability_id: String = ""
 
 @onready var icon_rect: TextureRect = $Icon
 @onready var name_button: LinkButton = $NameBtn
 @onready var rank_label: Label = $RankLabel
-@onready var cost_label: RichTextLabel = $CostLabel
+@onready var cost_box: HBoxContainer = $CostBox
+@onready var cost_gold_label: Label = $CostBox/Gold
+@onready var cost_silver_label: Label = $CostBox/Silver
+@onready var cost_bronze_label: Label = $CostBox/Bronze
 @onready var learn_button: Button = $LearnButton
 
 func _ready() -> void:
@@ -30,11 +35,11 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 		name_button.text = definition.get_display_name()
 	if rank_label != null:
 		rank_label.text = "Req.Lvl %d" % required_level
-	if cost_label != null:
-		if current_rank >= max_rank:
-			cost_label.clear()
-		else:
-			cost_label.text = TOOLTIP_BUILDER.format_money_bbcode(cost)
+	if current_rank >= max_rank:
+		_set_cost_visible(false)
+	else:
+		_set_cost_visible(true)
+		_set_cost_value(cost)
 	if learn_button != null:
 		if current_rank >= max_rank:
 			learn_button.text = "Макс"
@@ -42,6 +47,31 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 		else:
 			learn_button.text = "Изучить"
 			learn_button.disabled = not can_learn
+
+
+func _set_cost_visible(visible_value: bool) -> void:
+	if cost_box != null:
+		cost_box.visible = visible_value
+
+
+func _set_cost_value(bronze_total: int) -> void:
+	var total: int = max(0, bronze_total)
+	var gold: int = int(total / 10000)
+	var silver: int = int((total % 10000) / 100)
+	var bronze: int = int(total % 100)
+
+	if cost_gold_label != null:
+		cost_gold_label.visible = gold > 0
+		cost_gold_label.text = "%dg" % gold
+		cost_gold_label.modulate = COST_GOLD_COLOR
+	if cost_silver_label != null:
+		cost_silver_label.visible = silver > 0
+		cost_silver_label.text = "%ds" % silver
+		cost_silver_label.modulate = COST_SILVER_COLOR
+	if cost_bronze_label != null:
+		cost_bronze_label.visible = true
+		cost_bronze_label.text = "%db" % bronze
+		cost_bronze_label.modulate = COST_BRONZE_COLOR
 
 func _on_name_pressed() -> void:
 	emit_signal("name_clicked", ability_id)
