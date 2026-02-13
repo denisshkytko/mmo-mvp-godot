@@ -280,12 +280,13 @@ func _input(event: InputEvent) -> void:
 
 
 func _is_ui_press(screen_pos: Vector2) -> bool:
-	var vp: Viewport = get_viewport()
-	if vp == null:
+	var root: Window = get_tree().root
+	if root == null:
 		return false
 
-	# Godot UI hit-test в экранных координатах.
-	var picked: Control = vp.gui_pick(screen_pos)
+	# В Godot 4 у Window нет gui_pick(position), поэтому делаем
+	# явный hit-test по Control-дереву сверху вниз (по children в обратном порядке).
+	var picked: Control = _pick_top_control_at_position(root, screen_pos)
 	if picked == null:
 		return false
 
@@ -297,6 +298,35 @@ func _is_ui_press(screen_pos: Vector2) -> bool:
 		node = node.get_parent() as Control
 
 	return false
+
+
+func _pick_top_control_at_position(node: Node, screen_pos: Vector2) -> Control:
+	if node == null:
+		return null
+
+	# Идём с конца массива детей: последний рисуется/лежит выше.
+	var children: Array = node.get_children()
+	for i in range(children.size() - 1, -1, -1):
+		var child: Node = children[i] as Node
+		if child == null:
+			continue
+
+		var found: Control = _pick_top_control_at_position(child, screen_pos)
+		if found != null:
+			return found
+
+	var c: Control = node as Control
+	if c == null:
+		return null
+	if not c.visible:
+		return null
+	if c.mouse_filter == Control.MOUSE_FILTER_IGNORE:
+		return null
+
+	var rect: Rect2 = c.get_global_rect()
+	if rect.has_point(screen_pos):
+		return c
+	return null
 
 
 func _screen_to_world(screen_pos: Vector2) -> Vector2:
