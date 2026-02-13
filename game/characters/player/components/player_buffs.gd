@@ -1,6 +1,8 @@
 extends Node
 class_name PlayerBuffs
 
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+
 const BuffData := preload("res://core/buffs/buff_data.gd")
 
 var p: Player = null
@@ -70,8 +72,12 @@ func _apply_consumable_hots(delta: float) -> void:
 				var give: int = min(hp_per, hp_left)
 				give = min(give, need)
 				if give > 0:
+					var hp_before: int = p.current_hp
 					p.current_hp += give
 					hp_left -= give
+					var actual_heal: int = max(0, p.current_hp - hp_before)
+					if actual_heal > 0:
+						DAMAGE_HELPER.show_heal(p, actual_heal)
 					changed_any = true
 			# Mana
 			if mp_left > 0 and mp_per > 0 and p.mana < p.max_mana:
@@ -126,9 +132,14 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ab
 
 
 func remove_buff(id: String) -> void:
-	if _buffs.has(id):
-		_buffs.erase(id)
-		_notify_stats_changed()
+	if not _buffs.has(id):
+		return
+	var entry: Dictionary = _buffs[id] as Dictionary
+	var source: String = String(entry.get("source", ""))
+	if source == "aura" or source == "stance":
+		return
+	_buffs.erase(id)
+	_notify_stats_changed()
 
 func remove_buffs_with_prefix(prefix: String) -> void:
 	if prefix == "":

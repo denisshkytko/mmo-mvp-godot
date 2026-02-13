@@ -4,6 +4,7 @@ class_name PlayerAbilityCaster
 var p: Player = null
 var _cooldowns: Dictionary = {} # ability_id -> time_left
 var _cast_time_left: float = 0.0
+var _cast_total_time: float = 0.0
 var _cast_payload: Dictionary = {}
 
 func setup(player: Player) -> void:
@@ -15,6 +16,7 @@ func tick(delta: float) -> void:
 		if _cast_time_left <= 0.0 and not _cast_payload.is_empty():
 			_finish_cast(_cast_payload)
 			_cast_payload = {}
+			_cast_total_time = 0.0
 
 	if _cooldowns.is_empty():
 		return
@@ -32,6 +34,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if p == null or p.c_spellbook == null:
 		return {"ok": false, "reason": "no_spellbook"}
 	if _cast_time_left > 0.0:
+		interrupt_cast("ability_input")
 		return {"ok": false, "reason": "casting"}
 	var rank := int(p.c_spellbook.learned_ranks.get(ability_id, 0))
 	if rank <= 0:
@@ -58,52 +61,81 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if get_cooldown_left(ability_id) > 0.0:
 		return {"ok": false, "reason": "cooldown"}
 
-	var target_result := _normalize_target(def, target)
+	var target_result := _resolve_cast_target(def, target)
 	if not bool(target_result.get("ok", false)):
 		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
 	var actual_target: Node = target_result.get("target") as Node
-
-	var range_mode := def.range_mode
-	if range_mode != "self" and actual_target is Node2D:
-		var range: float = PlayerCombat.RANGED_ATTACK_RANGE
-		if range_mode == "melee":
-			range = PlayerCombat.MELEE_ATTACK_RANGE
-		var dist: float = p.global_position.distance_to((actual_target as Node2D).global_position)
-		if dist > range:
-			return {"ok": false, "reason": "out_of_range"}
-	elif range_mode != "self" and not (actual_target is Node2D):
-		return {"ok": false, "reason": "no_target"}
 
 	var snap: Dictionary = {}
 	if p.has_method("get_stats_snapshot"):
 		snap = p.call("get_stats_snapshot") as Dictionary
 
 	var cost: int = int(ceil(float(p.max_mana) * float(rank_data.resource_cost) / 100.0))
-	if cost > 0:
-		if p.mana < cost:
-			return {"ok": false, "reason": "no_mana"}
-		p.mana -= cost
+	if cost > 0 and p.mana < cost:
+		return {"ok": false, "reason": "no_mana"}
 
 	var cdr_pct: float = float(snap.get("cooldown_reduction_pct", 0.0))
 	var cd_eff: float = max(0.0, rank_data.cooldown_sec * (1.0 - cdr_pct / 100.0))
-	if cd_eff > 0.0:
-		_cooldowns[ability_id] = cd_eff
 
 	var cast_speed_pct: float = float(snap.get("cast_speed_pct", 0.0))
 	var cast_mult: float = 1.0 / (1.0 + cast_speed_pct / 100.0)
 	var cast_time_eff: float = rank_data.cast_time_sec * cast_mult
 	if cast_time_eff > 0.0:
 		_cast_time_left = cast_time_eff
+		_cast_total_time = cast_time_eff
 		_cast_payload = {
 			"ability_id": ability_id,
 			"target": actual_target,
 			"def": def,
-			"rank_data": rank_data
+			"rank_data": rank_data,
+			"cost": cost,
+			"cooldown": cd_eff,
 		}
 		return {"ok": true, "reason": "casting", "target": actual_target}
 
+	if cost > 0:
+		p.mana -= cost
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
+	_start_cooldown(ability_id, cd_eff)
 	return {"ok": true, "reason": "", "target": actual_target}
+
+func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
+	if ability_id == "":
+		return {"ok": false, "reason": "empty"}
+	if p == null or p.c_spellbook == null:
+		return {"ok": false, "reason": "no_spellbook"}
+	var rank := int(p.c_spellbook.learned_ranks.get(ability_id, 0))
+	if rank <= 0:
+		return {"ok": false, "reason": "not_learned"}
+
+	var db := get_node_or_null("/root/AbilityDB")
+	if db == null or not db.has_method("get_ability"):
+		return {"ok": false, "reason": "no_db"}
+	var def: AbilityDefinition = db.call("get_ability", ability_id)
+	if def == null:
+		return {"ok": false, "reason": "no_def"}
+	if def.ability_type == "aura" or def.ability_type == "stance":
+		return {"ok": false, "reason": "passive"}
+
+	var target_result := _resolve_cast_target(def, target)
+	if not bool(target_result.get("ok", false)):
+		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
+	return {"ok": true, "target": target_result.get("target")}
+
+func interrupt_cast(_reason: String = "interrupted") -> void:
+	if _cast_time_left <= 0.0:
+		return
+	_cast_time_left = 0.0
+	_cast_total_time = 0.0
+	_cast_payload = {}
+
+func is_casting() -> bool:
+	return _cast_time_left > 0.0
+
+func get_cast_progress() -> float:
+	if _cast_total_time <= 0.0:
+		return 0.0
+	return clamp(1.0 - (_cast_time_left / _cast_total_time), 0.0, 1.0)
 
 func get_cooldown_left(ability_id: String) -> float:
 	return float(_cooldowns.get(ability_id, 0.0))
@@ -182,6 +214,8 @@ func _finish_cast(payload: Dictionary) -> void:
 	var def: AbilityDefinition = payload.get("def") as AbilityDefinition
 	var rank_data: RankData = payload.get("rank_data") as RankData
 	var actual_target: Node = payload.get("target")
+	var cost: int = int(payload.get("cost", 0))
+	var cooldown: float = float(payload.get("cooldown", 0.0))
 
 	if def == null or rank_data == null:
 		return
@@ -195,7 +229,18 @@ func _finish_cast(payload: Dictionary) -> void:
 		return
 	actual_target = target_result.get("target") as Node
 
+	if cost > 0:
+		if p == null or p.mana < cost:
+			return
+		p.mana -= cost
+
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
+	_start_cooldown(ability_id, cooldown)
+
+func _start_cooldown(ability_id: String, duration: float) -> void:
+	if ability_id == "" or duration <= 0.0:
+		return
+	_cooldowns[ability_id] = duration
 
 func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data: RankData, actual_target: Node) -> void:
 	if def == null or def.effect == null:
@@ -216,6 +261,25 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 		context[k] = extra[k]
 	return context
 
+func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
+	var target_result := _normalize_target(def, target)
+	if not bool(target_result.get("ok", false)):
+		return target_result
+	var actual_target: Node = target_result.get("target") as Node
+
+	var range_mode := def.range_mode
+	if range_mode != "self" and actual_target is Node2D:
+		var range: float = PlayerCombat.RANGED_ATTACK_RANGE
+		if range_mode == "melee":
+			range = PlayerCombat.MELEE_ATTACK_RANGE
+		var dist: float = p.global_position.distance_to((actual_target as Node2D).global_position)
+		if dist > range:
+			return {"ok": false, "reason": "out_of_range"}
+	elif range_mode != "self" and not (actual_target is Node2D):
+		return {"ok": false, "reason": "no_target"}
+
+	return {"ok": true, "target": actual_target}
+
 func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	if def == null or p == null:
 		return {"ok": false, "reason": "invalid"}
@@ -224,23 +288,48 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 		"self":
 			actual_target = p
 		"ally":
-			if actual_target == null:
-				actual_target = p
-			if actual_target == null:
-				return {"ok": false, "reason": "no_target"}
-			if _is_hostile_target(actual_target):
-				return {"ok": false, "reason": "invalid_target"}
+			if actual_target == null or _is_hostile_target(actual_target):
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "invalid_target"}
 		"enemy":
 			if actual_target == null:
-				return {"ok": false, "reason": "no_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 			if actual_target == p:
-				return {"ok": false, "reason": "no_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 			if not _is_hostile_target(actual_target):
-				return {"ok": false, "reason": "invalid_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "invalid_target"}
+		"any":
+			if actual_target == null:
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 		_:
 			if actual_target == null:
-				return {"ok": false, "reason": "no_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 	return {"ok": true, "target": actual_target}
+
+func _can_fallback_to_self(def: AbilityDefinition) -> bool:
+	if def == null:
+		return false
+	# Ally spells are expected to be self-castable by default.
+	if def.target_type == "ally" or def.target_type == "self":
+		return true
+	return bool(def.self_cast_fallback)
 
 func _is_hostile_target(target: Node) -> bool:
 	var caster_faction := ""

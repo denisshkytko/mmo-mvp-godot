@@ -35,6 +35,8 @@ func setup(player: Player) -> void:
 func tick(delta: float) -> void:
 	if p == null:
 		return
+	if p.c_ability_caster != null and p.c_ability_caster.is_casting():
+		return
 
 	var target: Node2D = _get_current_target()
 	if target == null:
@@ -225,7 +227,11 @@ func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, sp
 		if lifesteal_pct > 0.0 and final_phys > 0:
 			var heal: int = int(round(float(final_phys) * lifesteal_pct / 100.0))
 			if heal > 0:
+				var hp_before: int = p.current_hp
 				p.current_hp = min(p.max_hp, p.current_hp + heal)
+				var actual_heal: int = max(0, p.current_hp - hp_before)
+				if actual_heal > 0:
+					DAMAGE_HELPER.show_heal(p, actual_heal)
 
 	if stance_data.has("mana_on_hit_pct"):
 		var mana_pct: float = float(stance_data.get("mana_on_hit_pct", 0.0))
@@ -246,6 +252,9 @@ func _get_current_target() -> Node2D:
 	return null
 
 func _can_attack_target(target: Node2D) -> bool:
+	if target is Corpse:
+		return false
+
 	var attacker_faction := "blue"
 	if p != null and p.has_method("get_faction_id"):
 		attacker_faction = String(p.call("get_faction_id"))

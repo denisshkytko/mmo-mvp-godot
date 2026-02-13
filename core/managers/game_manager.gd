@@ -6,6 +6,8 @@ var player: Node2D
 var current_target: Node = null
 
 @export var use_cam_screen_center_for_world_math: bool = true
+@export var debug_targeting_clicks: bool = false
+@export var allow_corpse_targeting: bool = true
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -265,13 +267,76 @@ func _input(event: InputEvent) -> void:
 	if not pressed:
 		return
 
+	if debug_targeting_clicks:
+		print("[TargetingDebug] click screen=", screen_pos)
+
+	if _is_ui_press_event():
+		if debug_targeting_clicks:
+			var hovered := get_viewport().gui_get_hovered_control()
+			var hovered_name := "<null>"
+			var hovered_type := "<null>"
+			if hovered != null:
+				hovered_name = String((hovered as Node).name)
+				hovered_type = hovered.get_class()
+			print("[TargetingDebug] blocked by UI hovered=", hovered_name, " type=", hovered_type)
+		return
+
+
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
+	if debug_targeting_clicks:
+		print("[TargetingDebug] world=", world_pos, " mob=", mob)
 
 	if mob != null:
 		set_target(mob)
+		if debug_targeting_clicks:
+			print("[TargetingDebug] set_target -> ", mob)
 	else:
 		clear_target()
+		if debug_targeting_clicks:
+			print("[TargetingDebug] clear_target (no mob under click)")
+
+
+func _is_ui_press_event() -> bool:
+	var vp: Viewport = get_viewport()
+	if vp == null:
+		return false
+
+	# Рабочий способ для Godot 4: проверяем контрол под курсором.
+	# Если нажатие пришло по UI-контролу, не запускаем world-targeting.
+	var hovered := vp.gui_get_hovered_control()
+	if hovered == null:
+		return false
+	if not (hovered is Control):
+		return false
+
+	# Важно: PASS-контейнеры (полноэкранные HUD-руты) не должны блокировать
+	# world-targeting. Блокируем только реально "интерактивный" UI.
+	var node: Control = hovered as Control
+	while node != null:
+		if node.visible and node.mouse_filter == Control.MOUSE_FILTER_STOP and _is_interactive_ui_control(node):
+			return true
+		node = node.get_parent() as Control
+
+	return false
+
+
+func _is_interactive_ui_control(c: Control) -> bool:
+	if c == null:
+		return false
+	# Реально кликабельные/вводные контролы.
+	return (
+		c is BaseButton
+		or c is LineEdit
+		or c is TextEdit
+		or c is ItemList
+		or c is Tree
+		or c is OptionButton
+		or c is SpinBox
+		or c is Slider
+		or c is ScrollBar
+	)
+
 
 
 func _screen_to_world(screen_pos: Vector2) -> Vector2:
@@ -312,6 +377,8 @@ func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
 		var node: Node = collider_obj as Node
 		while node != null:
 			if node.is_in_group("mobs"):
+				return node
+			if allow_corpse_targeting and node is Corpse:
 				return node
 			node = node.get_parent()
 

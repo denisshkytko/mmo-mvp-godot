@@ -21,6 +21,7 @@ func set_entries(ability_ids: Array[String], ability_db: AbilityDatabase) -> voi
 	if slots_vbox == null:
 		return
 	for child in slots_vbox.get_children():
+		slots_vbox.remove_child(child)
 		child.queue_free()
 	for i in range(ability_ids.size()):
 		var ability_id: String = ability_ids[i]
