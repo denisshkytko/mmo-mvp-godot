@@ -711,7 +711,6 @@ func _build_primary_tooltip(key: String, effect_text: String, snap: Dictionary) 
 	var tooltip_lines: Array[String] = []
 	if effect_text != "":
 		tooltip_lines.append(effect_text)
-		tooltip_lines.append("")
 	tooltip_lines.append("Базовые характеристики: %s" % _format_stat_value(base_val))
 	if equip_val != 0:
 		tooltip_lines.append("Снаряжение: %s" % _format_stat_value(equip_val))
@@ -720,6 +719,8 @@ func _build_primary_tooltip(key: String, effect_text: String, snap: Dictionary) 
 	var buff_lines: Array[String] = _extract_buff_lines(entries)
 	if buff_lines.size() > 0:
 		tooltip_lines.append_array(buff_lines)
+	if effect_text != "" and tooltip_lines.size() > 1 and tooltip_lines[1] != "":
+		tooltip_lines.insert(1, "")
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
 
 func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) -> void:
@@ -737,6 +738,8 @@ func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) 
 	var buff_lines: Array[String] = _extract_buff_lines(entries)
 	if buff_lines.size() > 0:
 		tooltip_lines.append_array(buff_lines)
+	if effect_text != "" and tooltip_lines.size() > 1 and tooltip_lines[1] != "":
+		tooltip_lines.insert(1, "")
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
 
 func _extract_buff_lines(entries: Array) -> Array[String]:
