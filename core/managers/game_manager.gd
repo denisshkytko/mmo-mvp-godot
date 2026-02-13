@@ -273,9 +273,11 @@ func _input(event: InputEvent) -> void:
 		if debug_targeting_clicks:
 			var hovered := get_viewport().gui_get_hovered_control()
 			var hovered_name := "<null>"
+			var hovered_type := "<null>"
 			if hovered != null:
 				hovered_name = String((hovered as Node).name)
-			print("[TargetingDebug] blocked by UI hovered=", hovered_name)
+				hovered_type = hovered.get_class()
+			print("[TargetingDebug] blocked by UI hovered=", hovered_name, " type=", hovered_type)
 		return
 
 
@@ -308,14 +310,31 @@ func _is_ui_press_event() -> bool:
 		return false
 
 	# Важно: PASS-контейнеры (полноэкранные HUD-руты) не должны блокировать
-	# world-targeting. Блокируем только реально "кликабельный" UI (STOP).
+	# world-targeting. Блокируем только реально "интерактивный" UI.
 	var node: Control = hovered as Control
 	while node != null:
-		if node.visible and node.mouse_filter == Control.MOUSE_FILTER_STOP:
+		if node.visible and node.mouse_filter == Control.MOUSE_FILTER_STOP and _is_interactive_ui_control(node):
 			return true
 		node = node.get_parent() as Control
 
 	return false
+
+
+func _is_interactive_ui_control(c: Control) -> bool:
+	if c == null:
+		return false
+	# Реально кликабельные/вводные контролы.
+	return (
+		c is BaseButton
+		or c is LineEdit
+		or c is TextEdit
+		or c is ItemList
+		or c is Tree
+		or c is OptionButton
+		or c is SpinBox
+		or c is Slider
+		or c is ScrollBar
+	)
 
 
 
