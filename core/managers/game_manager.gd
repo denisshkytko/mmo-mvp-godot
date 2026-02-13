@@ -244,7 +244,7 @@ func clear_target() -> void:
 # ---------------------------
 # Input: click/tap to select target
 # ---------------------------
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	var screen_pos: Vector2
 	var pressed: bool = false
 
@@ -265,6 +265,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not pressed:
 		return
 
+	if _is_ui_press_event():
+		return
+
 
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
@@ -273,6 +276,28 @@ func _unhandled_input(event: InputEvent) -> void:
 		set_target(mob)
 	else:
 		clear_target()
+
+
+func _is_ui_press_event() -> bool:
+	var vp: Viewport = get_viewport()
+	if vp == null:
+		return false
+
+	# Рабочий способ для Godot 4: проверяем контрол под курсором.
+	# Если нажатие пришло по UI-контролу, не запускаем world-targeting.
+	var hovered := vp.gui_get_hovered_control()
+	if hovered == null:
+		return false
+	if not (hovered is Control):
+		return false
+
+	var node: Control = hovered as Control
+	while node != null:
+		if node.visible and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+			return true
+		node = node.get_parent() as Control
+
+	return false
 
 
 
