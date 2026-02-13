@@ -1,42 +1,43 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/path_of_righteous_fury.png" id=2]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
-script = ExtResource("4")
-required_level = 1
-train_cost_gold = 0
+script = ExtResource("3")
+required_level = 16
+train_cost_gold = 868
 cooldown_sec = 0.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
-value_flat = 1
+value_flat = 0
 value_flat_2 = 0
-value_pct = 0.0
+value_pct = 1.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectApplyStance" id=2]
-script = ExtResource("3")
+[sub_resource type="Resource" script_class="EffectApplyStance" id=20]
+script = ExtResource("4")
 buff_id = "active_stance"
 secondary_add = {}
 percent_add = {}
 flags = {}
-on_hit = {"mana_on_hit_pct": "value_flat"}
+on_hit = {"mana_on_hit_pct": "value_pct"}
 
 [resource]
 script = ExtResource("1")
 id = "path_of_righteous_fury"
 name = "Path of Righteous Fury"
 icon = ExtResource("2")
-description = "A stance that restores mana on impact."
+description = "Increases threat generation and restores Mana equal to 1% of autoattack damage dealt."
+description_ru = "Повышает угрозу и восстанавливает ману от автоатак."
 class_id = "paladin"
 ability_type = "stance"
 target_type = "self"
 range_mode = "self"
 aura_radius = 0.0
-effect = SubResource("2")
+effect = SubResource("20")
 ranks = [SubResource("1")]

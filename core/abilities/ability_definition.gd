@@ -5,6 +5,7 @@ class_name AbilityDefinition
 @export var name: String = ""
 @export var icon: Texture2D
 @export var description: String = ""
+@export var description_ru: String = ""
 @export var class_id: String = ""
 @export var ability_type: String = "active"
 @export var target_type: String = "enemy"

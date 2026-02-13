@@ -2,56 +2,85 @@
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/storm_of_light.png" id=2]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_mixed_damage.gd" id=4]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=5]
-[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=6]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_mixed_damage.gd" id=5]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=6]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
-script = ExtResource("6")
-required_level = 1
-train_cost_gold = 0
+script = ExtResource("3")
+required_level = 40
+train_cost_gold = 3391
 cooldown_sec = 10.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 15
-value_flat = 20
-value_flat_2 = 0
-value_pct = 60.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 50
+value_pct = 100.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectDamage" id=2]
+[sub_resource type="Resource" script_class="RankData" id=2]
 script = ExtResource("3")
+required_level = 50
+train_cost_gold = 4841
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 100
+value_pct = 110.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 150
+value_pct = 120.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=20]
+script = ExtResource("4")
 school = "physical"
 scaling_mode = "phys_base_pct"
 
-[sub_resource type="Resource" script_class="EffectDamage" id=3]
-script = ExtResource("3")
+[sub_resource type="Resource" script_class="EffectDamage" id=21]
+script = ExtResource("4")
 school = "magic"
 scaling_mode = "spell_power_flat"
 
-[sub_resource type="Resource" script_class="EffectMixedDamage" id=4]
-script = ExtResource("4")
-physical_effect = SubResource("2")
-magic_effect = SubResource("3")
-
-[sub_resource type="Resource" script_class="EffectAOE" id=5]
+[sub_resource type="Resource" script_class="EffectMixedDamage" id=22]
 script = ExtResource("5")
+physical_effect = SubResource("20")
+magic_effect = SubResource("21")
+
+[sub_resource type="Resource" script_class="EffectAOE" id=23]
+script = ExtResource("6")
 radius_mode = "melee"
 target_filter = "enemies_only"
-inner_effect = SubResource("4")
+inner_effect = SubResource("22")
 
 [resource]
 script = ExtResource("1")
 id = "storm_of_light"
 name = "Storm of Light"
 icon = ExtResource("2")
-description = "Unleash a burst of holy fury around you."
+description = "Deals {P}% physical damage and {M} magic damage to all nearby enemies."
+description_ru = "Наносит физический и магический урон всем врагам вокруг паладина."
 class_id = "paladin"
 ability_type = "aoe_damage"
 target_type = "self"
 range_mode = "self"
 aura_radius = 0.0
-effect = SubResource("5")
-ranks = [SubResource("1")]
+effect = SubResource("23")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3")]

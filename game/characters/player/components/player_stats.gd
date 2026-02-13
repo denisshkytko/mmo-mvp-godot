@@ -5,6 +5,7 @@ const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const XP_SYSTEM := preload("res://core/progression/xp_system.gd")
+const DEATH_PIPELINE := preload("res://core/world/death_pipeline.gd")
 
 var p: Player = null
 
@@ -408,9 +409,9 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 
 	# неуязвимость через баф (если есть)
 	var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
-	if bool(flags.get("invulnerable", false)):
+	if bool(flags.get("invulnerable", false)) or bool(flags.get("invulnerable_all", false)):
 		return 0
-	if dmg_type == "physical" and bool(flags.get("immune_physical", false)):
+	if dmg_type == "physical" and (bool(flags.get("immune_physical", false)) or bool(flags.get("block_physical", false))):
 		return 0
 
 	var pct: float
@@ -432,6 +433,12 @@ func take_damage(raw_damage: int) -> void:
 func _on_death() -> void:
 	# 1) помечаем игрока мёртвым (останавливаем движение/атаки)
 	p.is_dead = true
+
+	if p.get_parent() != null:
+		var corpse: Corpse = DEATH_PIPELINE.spawn_corpse(p.get_parent(), p.global_position)
+		if corpse != null:
+			corpse.setup_owner_snapshot(p, p.get_instance_id())
+			corpse.owner_is_player = true
 
 	get_tree().call_group("mobs", "on_player_died")
 
