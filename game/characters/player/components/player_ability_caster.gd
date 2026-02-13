@@ -61,21 +61,10 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if get_cooldown_left(ability_id) > 0.0:
 		return {"ok": false, "reason": "cooldown"}
 
-	var target_result := _normalize_target(def, target)
+	var target_result := _resolve_cast_target(def, target)
 	if not bool(target_result.get("ok", false)):
 		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
 	var actual_target: Node = target_result.get("target") as Node
-
-	var range_mode := def.range_mode
-	if range_mode != "self" and actual_target is Node2D:
-		var range: float = PlayerCombat.RANGED_ATTACK_RANGE
-		if range_mode == "melee":
-			range = PlayerCombat.MELEE_ATTACK_RANGE
-		var dist: float = p.global_position.distance_to((actual_target as Node2D).global_position)
-		if dist > range:
-			return {"ok": false, "reason": "out_of_range"}
-	elif range_mode != "self" and not (actual_target is Node2D):
-		return {"ok": false, "reason": "no_target"}
 
 	var snap: Dictionary = {}
 	if p.has_method("get_stats_snapshot"):
@@ -109,6 +98,29 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
 	_start_cooldown(ability_id, cd_eff)
 	return {"ok": true, "reason": "", "target": actual_target}
+
+func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
+	if ability_id == "":
+		return {"ok": false, "reason": "empty"}
+	if p == null or p.c_spellbook == null:
+		return {"ok": false, "reason": "no_spellbook"}
+	var rank := int(p.c_spellbook.learned_ranks.get(ability_id, 0))
+	if rank <= 0:
+		return {"ok": false, "reason": "not_learned"}
+
+	var db := get_node_or_null("/root/AbilityDB")
+	if db == null or not db.has_method("get_ability"):
+		return {"ok": false, "reason": "no_db"}
+	var def: AbilityDefinition = db.call("get_ability", ability_id)
+	if def == null:
+		return {"ok": false, "reason": "no_def"}
+	if def.ability_type == "aura" or def.ability_type == "stance":
+		return {"ok": false, "reason": "passive"}
+
+	var target_result := _resolve_cast_target(def, target)
+	if not bool(target_result.get("ok", false)):
+		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
+	return {"ok": true, "target": target_result.get("target")}
 
 func interrupt_cast(_reason: String = "interrupted") -> void:
 	if _cast_time_left <= 0.0:
@@ -248,6 +260,25 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 	for k in extra.keys():
 		context[k] = extra[k]
 	return context
+
+func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
+	var target_result := _normalize_target(def, target)
+	if not bool(target_result.get("ok", false)):
+		return target_result
+	var actual_target: Node = target_result.get("target") as Node
+
+	var range_mode := def.range_mode
+	if range_mode != "self" and actual_target is Node2D:
+		var range: float = PlayerCombat.RANGED_ATTACK_RANGE
+		if range_mode == "melee":
+			range = PlayerCombat.MELEE_ATTACK_RANGE
+		var dist: float = p.global_position.distance_to((actual_target as Node2D).global_position)
+		if dist > range:
+			return {"ok": false, "reason": "out_of_range"}
+	elif range_mode != "self" and not (actual_target is Node2D):
+		return {"ok": false, "reason": "no_target"}
+
+	return {"ok": true, "target": actual_target}
 
 func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	if def == null or p == null:

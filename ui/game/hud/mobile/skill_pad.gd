@@ -5,6 +5,9 @@ signal skill_pressed(slot_index: int)
 signal interact_pressed()
 
 const COOLDOWN_SHADER_CODE := "shader_type canvas_item;\n\nuniform float fill_pct : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tvec2 d = UV - vec2(0.5);\n\tif (length(d) > 0.5) {\n\t\tdiscard;\n\t}\n\tif (UV.y < (1.0 - fill_pct)) {\n\t\tdiscard;\n\t}\n\tCOLOR = vec4(0.0, 0.0, 0.0, 0.62);\n}\n"
+const RANGE_RING_SHADER_CODE := "shader_type canvas_item;\n\nuniform vec4 ring_color : source_color = vec4(1.0, 1.0, 1.0, 0.75);\nuniform float ring_thickness : hint_range(0.01, 0.25) = 0.08;\n\nvoid fragment() {\n\tvec2 d = UV - vec2(0.5);\n\tfloat r = length(d);\n\tif (r > 0.5 || r < (0.5 - ring_thickness)) {\n\t\tdiscard;\n\t}\n\tCOLOR = ring_color;\n}\n"
+const RANGE_RING_OK_COLOR := Color(1.0, 1.0, 1.0, 0.72)
+const RANGE_RING_BLOCKED_COLOR := Color(0.95, 0.24, 0.24, 0.9)
 
 @onready var quick_skill_btn: BaseButton = $QuickSkillBtn
 @onready var skill_btn_1: BaseButton = $SkillBtn1
@@ -111,3 +114,41 @@ func set_slot_enabled(_slot: int, _enabled: bool) -> void:
 		return
 	btn.disabled = not _enabled
 	btn.modulate = Color(1, 1, 1, 1.0 if _enabled else 0.5)
+
+func set_slot_out_of_range(_slot: int, _blocked: bool) -> void:
+	if _slot < 0 or _slot >= _skill_buttons.size():
+		return
+	var btn := _skill_buttons[_slot] as TextureButton
+	if btn == null:
+		return
+	var ring := _ensure_range_ring(btn)
+	if ring == null:
+		return
+	var mat := ring.material as ShaderMaterial
+	if mat == null:
+		return
+	mat.set_shader_parameter("ring_color", RANGE_RING_BLOCKED_COLOR if _blocked else RANGE_RING_OK_COLOR)
+
+func _ensure_range_ring(btn: TextureButton) -> ColorRect:
+	var ring := btn.get_node_or_null("RangeRing") as ColorRect
+	if ring != null:
+		return ring
+	ring = ColorRect.new()
+	ring.name = "RangeRing"
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ring.layout_mode = 1
+	ring.anchors_preset = Control.PRESET_FULL_RECT
+	ring.offset_left = 0
+	ring.offset_top = 0
+	ring.offset_right = 0
+	ring.offset_bottom = 0
+	ring.color = Color.WHITE
+	var shader := Shader.new()
+	shader.code = RANGE_RING_SHADER_CODE
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("ring_color", RANGE_RING_OK_COLOR)
+	ring.material = mat
+	btn.add_child(ring)
+	btn.move_child(ring, 0)
+	return ring
