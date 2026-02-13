@@ -81,6 +81,5 @@ class_id = "paladin"
 ability_type = "aoe_damage"
 target_type = "self"
 range_mode = "self"
-aura_radius = 0.0
 effect = SubResource("23")
 ranks = [SubResource("1"), SubResource("2"), SubResource("3")]

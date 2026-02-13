@@ -122,6 +122,5 @@ class_id = "paladin"
 ability_type = "stance"
 target_type = "self"
 range_mode = "self"
-aura_radius = 0.0
 effect = SubResource("20")
 ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]

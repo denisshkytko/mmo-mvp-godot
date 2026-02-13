@@ -35,8 +35,6 @@ func _get_radius(def: AbilityDefinition) -> float:
 		"ranged":
 			return PLAYER_COMBAT.RANGED_ATTACK_RANGE
 		"self":
-			if def != null and def.aura_radius > 0.0:
-				return def.aura_radius
 			return PLAYER_COMBAT.MELEE_ATTACK_RANGE
 		_:
 			return PLAYER_COMBAT.MELEE_ATTACK_RANGE
