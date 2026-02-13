@@ -7,6 +7,7 @@ var current_target: Node = null
 
 @export var use_cam_screen_center_for_world_math: bool = true
 @export var debug_targeting_clicks: bool = false
+@export var allow_corpse_targeting: bool = true
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -376,6 +377,8 @@ func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
 		var node: Node = collider_obj as Node
 		while node != null:
 			if node.is_in_group("mobs"):
+				return node
+			if allow_corpse_targeting and node is Corpse:
 				return node
 			node = node.get_parent()
 
