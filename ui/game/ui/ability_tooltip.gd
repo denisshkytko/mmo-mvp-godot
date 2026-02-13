@@ -1,11 +1,12 @@
-extends PanelContainer
+extends Control
 class_name AbilityTooltip
 
 const OFFSET := Vector2(12, 10)
 
-@onready var name_label: Label = $Margin/VBox/Name
-@onready var rank_label: Label = $Margin/VBox/Rank
-@onready var description_label: RichTextLabel = $Margin/VBox/Description
+@onready var panel: PanelContainer = $Panel
+@onready var name_label: Label = $Panel/Margin/VBox/Name
+@onready var rank_label: Label = $Panel/Margin/VBox/Rank
+@onready var description_label: RichTextLabel = $Panel/Margin/VBox/Description
 @onready var close_button: Button = $CloseButton
 
 func _ready() -> void:
@@ -166,4 +167,5 @@ func _style_tooltip_panel() -> void:
 	sb.corner_radius_top_right = 8
 	sb.corner_radius_bottom_left = 8
 	sb.corner_radius_bottom_right = 8
-	add_theme_stylebox_override("panel", sb)
+	if panel != null:
+		panel.add_theme_stylebox_override("panel", sb)
