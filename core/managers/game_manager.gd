@@ -6,6 +6,7 @@ var player: Node2D
 var current_target: Node = null
 
 @export var use_cam_screen_center_for_world_math: bool = true
+@export var debug_targeting_clicks: bool = false
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -265,17 +266,32 @@ func _input(event: InputEvent) -> void:
 	if not pressed:
 		return
 
+	if debug_targeting_clicks:
+		print("[TargetingDebug] click screen=", screen_pos)
+
 	if _is_ui_press_event():
+		if debug_targeting_clicks:
+			var hovered := get_viewport().gui_get_hovered_control()
+			var hovered_name := "<null>"
+			if hovered != null:
+				hovered_name = String((hovered as Node).name)
+			print("[TargetingDebug] blocked by UI hovered=", hovered_name)
 		return
 
 
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
+	if debug_targeting_clicks:
+		print("[TargetingDebug] world=", world_pos, " mob=", mob)
 
 	if mob != null:
 		set_target(mob)
+		if debug_targeting_clicks:
+			print("[TargetingDebug] set_target -> ", mob)
 	else:
 		clear_target()
+		if debug_targeting_clicks:
+			print("[TargetingDebug] clear_target (no mob under click)")
 
 
 func _is_ui_press_event() -> bool:
