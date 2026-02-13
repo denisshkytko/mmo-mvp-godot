@@ -317,6 +317,17 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 					actual_target = p
 				else:
 					return {"ok": false, "reason": "invalid_target"}
+		"ally_or_enemy":
+			if actual_target == null:
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
+			if actual_target != p and not _is_hostile_target(actual_target) and not _is_friendly_target(actual_target):
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "invalid_target"}
 		"corpse_player":
 			if actual_target == null or not (actual_target is Corpse):
 				return {"ok": false, "reason": "invalid_target"}
@@ -371,3 +382,12 @@ func _is_hostile_target(target: Node) -> bool:
 	if target != null and target.has_method("get_faction_id"):
 		target_faction = String(target.call("get_faction_id"))
 	return FactionRules.relation(caster_faction, target_faction) == FactionRules.Relation.HOSTILE
+
+func _is_friendly_target(target: Node) -> bool:
+	var caster_faction := ""
+	if p != null and p.has_method("get_faction_id"):
+		caster_faction = String(p.call("get_faction_id"))
+	var target_faction := ""
+	if target != null and target.has_method("get_faction_id"):
+		target_faction = String(target.call("get_faction_id"))
+	return FactionRules.relation(caster_faction, target_faction) == FactionRules.Relation.FRIENDLY

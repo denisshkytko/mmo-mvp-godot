@@ -108,10 +108,12 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 	var scaled_flat: int = int(rank_data.value_flat) + int(round(spell_power))
 	var scaled_flat2: int = int(rank_data.value_flat_2) + int(round(spell_power))
 	match ability_id:
-		"healing_light", "radiant_touch", "lights_verdict_heal":
+		"healing_light", "radiant_touch":
 			return "Heals for %d health." % scaled_flat
-		"judging_flame", "lights_verdict_damage":
+		"judging_flame":
 			return "Deals %d magic damage." % scaled_flat
+		"lights_verdict":
+			return "Deals %d magic damage to enemies or heals allies for %d health." % [scaled_flat, scaled_flat]
 		"strike_of_light", "storm_of_light":
 			return "Deals %.0f%% physical damage and %d magic damage." % [rank_data.value_pct, scaled_flat2]
 		"path_of_righteousness":

@@ -5,6 +5,10 @@ signal initialized
 
 const ABILITIES_ROOT_PATH := "res://data/abilities"
 const ABILITIES_MANIFEST_PATH := "res://data/abilities/abilities_manifest.tres"
+const LEGACY_ABILITY_ID_ALIASES := {
+	"lights_verdict_damage": "lights_verdict",
+	"lights_verdict_heal": "lights_verdict",
+}
 
 var abilities: Dictionary = {}
 var class_index: Dictionary = {}
@@ -82,11 +86,13 @@ func _register_def(definition: AbilityDefinition, source_path: String = "") -> v
 		class_index[cls] = ids
 
 func has_ability(ability_id: String) -> bool:
-	return abilities.has(ability_id)
+	var resolved_id := _resolve_ability_id(ability_id)
+	return abilities.has(resolved_id)
 
 func get_ability(ability_id: String) -> AbilityDefinition:
-	if abilities.has(ability_id):
-		return abilities[ability_id] as AbilityDefinition
+	var resolved_id := _resolve_ability_id(ability_id)
+	if abilities.has(resolved_id):
+		return abilities[resolved_id] as AbilityDefinition
 	return null
 
 func get_rank_data(ability_id: String, rank: int) -> RankData:
@@ -210,3 +216,10 @@ func _load_abilities_from_dir(path: String) -> void:
 func _print_summary() -> void:
 	print("[AbilityDB] loaded abilities=", abilities.size())
 	print("[AbilityDB] loaded classes=", class_index.keys())
+
+func _resolve_ability_id(ability_id: String) -> String:
+	if ability_id == "":
+		return ""
+	if LEGACY_ABILITY_ID_ALIASES.has(ability_id):
+		return String(LEGACY_ABILITY_ID_ALIASES[ability_id])
+	return ability_id
