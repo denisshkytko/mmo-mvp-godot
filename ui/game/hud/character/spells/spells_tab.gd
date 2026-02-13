@@ -14,6 +14,7 @@ var _selected_ability_id: String = ""
 var _flow_router: Node = null
 var _db_ready: bool = false
 var _player_ready: bool = false
+var _filter_index: int = 0
 
 func _ready() -> void:
 	if filter_option != null and filter_option.item_count == 0:
@@ -21,6 +22,8 @@ func _ready() -> void:
 		filter_option.add_item("Активные")
 		filter_option.add_item("Ауры/бафы")
 		filter_option.select(0)
+	if filter_option != null and not filter_option.item_selected.is_connected(_on_filter_selected):
+		filter_option.item_selected.connect(_on_filter_selected)
 
 	_flow_router = get_node_or_null("/root/FlowRouter")
 	if _flow_router != null and _flow_router.has_signal("player_spawned") and not _flow_router.player_spawned.is_connected(_on_player_spawned):
@@ -92,11 +95,23 @@ func _refresh_list() -> void:
 		var def := _ability_db.get_ability(String(ability_id))
 		if def == null:
 			continue
+		if not _passes_filter(def):
+			continue
 		var item := SPELL_LIST_ITEM_SCENE.instantiate()
 		spells_grid.add_child(item)
 		item.set_data(def, rank)
 		item.set_selected(String(ability_id) == _selected_ability_id)
 		item.clicked.connect(_on_spell_clicked)
+
+	# Keep selection consistent with current filter.
+	if _selected_ability_id != "":
+		var selected_visible: bool = false
+		for child in spells_grid.get_children():
+			if "ability_id" in child and String(child.ability_id) == _selected_ability_id:
+				selected_visible = true
+				break
+		if not selected_visible:
+			_selected_ability_id = ""
 
 func _refresh_loadout() -> void:
 	if loadout_pad != null and _spellbook != null and _ability_db != null:
@@ -125,3 +140,19 @@ func _on_slot_pressed(slot_index: int) -> void:
 		return
 	_spellbook.assign_ability_to_slot(_selected_ability_id, slot_index)
 	_refresh_loadout()
+
+func _on_filter_selected(index: int) -> void:
+	_filter_index = index
+	_refresh_list()
+
+func _passes_filter(def: AbilityDefinition) -> bool:
+	if def == null:
+		return false
+	var t: String = String(def.ability_type)
+	match _filter_index:
+		1: # Активные
+			return t != "aura" and t != "stance"
+		2: # Ауры/бафы
+			return t == "aura" or t == "stance" or t == "buff"
+		_:
+			return true
