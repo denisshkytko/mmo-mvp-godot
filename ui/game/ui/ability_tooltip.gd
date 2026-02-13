@@ -25,7 +25,7 @@ func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 		rank_label.text = ""
 		description_label.text = ""
 		visible = true
-		raise()
+		move_to_front()
 		call_deferred("_position_tooltip", global_pos + OFFSET)
 		return
 
@@ -44,7 +44,7 @@ func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 	rank_label.text = "Rank %d/%d" % [shown_rank, ability.get_max_rank()]
 	description_label.text = _build_tooltip_text(ability, rank_data, shown_rank, player)
 	visible = true
-	raise()
+	move_to_front()
 	call_deferred("_position_tooltip", global_pos + OFFSET)
 
 func hide_tooltip() -> void:
