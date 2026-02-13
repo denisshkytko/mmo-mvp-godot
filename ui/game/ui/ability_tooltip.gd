@@ -98,7 +98,8 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 
 	var effect := _effect_line(def.id, rank_data, spell_power, base_phys)
 	if effect.strip_edges() != "":
-		lines.append("")
+		if not params.is_empty():
+			lines.append("")
 		lines.append(effect)
 	return "\n".join(lines)
 
@@ -119,10 +120,6 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 		"lightbound_might":
 			return "Increases Attack Power by %d for %d seconds." % [rank_data.value_flat, int(rank_data.duration_sec)]
 		"sacred_barrier", "sacred_guard":
-			if _is_russian_locale():
-				if ability_id == "sacred_barrier":
-					return "Блокирует получаемый урон (и физ и маг) цели на 5 секунд."
-				return "Блокирует получаемый физический урон цели на 3 (+1 сек за ранг) секунды."
 			if ability_id == "sacred_barrier":
 				return "Grants immunity to all damage for %d seconds." % int(rank_data.duration_sec)
 			return "Blocks all incoming physical damage for %d seconds." % int(rank_data.duration_sec)
@@ -147,11 +144,6 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 			return "Deals %.0f%% physical damage (%d base) to targets below %.0f%% Health." % [rank_data.value_pct_2, hit, rank_data.value_pct]
 		_:
 			return "%s" % ability_id
-
-func _is_russian_locale() -> bool:
-	var locale := TranslationServer.get_locale().to_lower()
-	return locale.begins_with("ru")
-
 func _position_tooltip(target_pos: Vector2) -> void:
 	if not visible:
 		return
