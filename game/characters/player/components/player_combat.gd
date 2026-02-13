@@ -252,6 +252,9 @@ func _get_current_target() -> Node2D:
 	return null
 
 func _can_attack_target(target: Node2D) -> bool:
+	if target is Corpse:
+		return false
+
 	var attacker_faction := "blue"
 	if p != null and p.has_method("get_faction_id"):
 		attacker_faction = String(p.call("get_faction_id"))
