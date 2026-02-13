@@ -42,6 +42,27 @@ static func build_player_snapshot(
         if from_lvl != 0:
             _add_breakdown_line(prim_break[k], "level", from_lvl, "(%d×%d)" % [per_lvl, level - 1])
 
+    # Apply percent primary mods from buffs to base+level primary only.
+    # This intentionally ignores gear and other buff-derived flat primary bonuses.
+    var primary_percent_mods := {"str": 0.0, "agi": 0.0, "end": 0.0, "int": 0.0, "per": 0.0}
+    for b in buffs:
+        if not (b is Dictionary):
+            continue
+        var bd: Dictionary = b as Dictionary
+        var data: Dictionary = bd.get("data", {}) as Dictionary
+        var primary_perc: Dictionary = data.get("primary_percent_add", {}) as Dictionary
+        for k in primary_percent_mods.keys():
+            if primary_perc.has(k):
+                primary_percent_mods[k] += float(primary_perc.get(k, 0.0))
+    for k in prim.keys():
+        var pct: float = float(primary_percent_mods.get(k, 0.0))
+        if pct == 0.0:
+            continue
+        var bonus: int = int(round(float(prim[k]) * pct))
+        if bonus != 0:
+            prim[k] += bonus
+            _add_breakdown_line(prim_break[k], "buff %", bonus, "(%.1f%%)" % (pct * 100.0))
+
     # Apply flat primary mods from gear
     var gear_primary: Dictionary = gear.get("primary", {}) if gear.has("primary") else {}
     for k in prim.keys():

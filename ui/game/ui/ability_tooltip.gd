@@ -131,7 +131,7 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 		"path_of_righteous_fury":
 			return "Restores %.0f%% of autoattack damage as Mana." % rank_data.value_pct
 		"royal_oath":
-			return "Increases core power by %.0f%% for %d seconds." % [rank_data.value_pct, int(rank_data.duration_sec)]
+			return "Increases base STR/AGI/END/INT/PER by %.0f%% for %d seconds." % [rank_data.value_pct, int(rank_data.duration_sec)]
 		"concentration_aura":
 			return "Increases cast speed by %.0f%%." % rank_data.value_pct
 		"path_of_light":
