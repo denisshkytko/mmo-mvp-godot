@@ -164,8 +164,13 @@ func _on_row_tooltip_clicked(ability_id: String) -> void:
 		_hide_tooltip()
 		return
 	var rank := 1
-	if _spellbook != null:
-		rank = max(1, int(_spellbook.learned_ranks.get(ability_id, 0)))
+	if _spellbook != null and _ability_db != null:
+		var current_rank := max(0, int(_spellbook.learned_ranks.get(ability_id, 0)))
+		var max_rank := max(1, int(_ability_db.get_max_rank(ability_id)))
+		if current_rank < max_rank:
+			rank = current_rank + 1
+		else:
+			rank = max_rank
 	_tooltip.show_for(ability_id, rank, get_viewport().get_mouse_position())
 	_tooltip_ability_id = ability_id
 
