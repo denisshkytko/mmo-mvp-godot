@@ -67,29 +67,38 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 		return def.description
 	var spell_power: float = 0.0
 	var base_phys: int = 0
+	var max_resource: int = 0
+	var resource_label: String = "Resource"
 	if player != null and player.has_method("get_stats_snapshot"):
 		var snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
 		spell_power = float((snap.get("derived", {}) as Dictionary).get("spell_power", 0.0))
+		max_resource = int(snap.get("max_resource", snap.get("max_mana", 0)))
 	if player != null and player.c_combat != null:
 		base_phys = int(player.c_combat.get_attack_damage())
+	if player != null and "c_resource" in player and player.c_resource != null:
+		resource_label = String(player.c_resource.resource_type).capitalize()
+	if max_resource <= 0 and player != null:
+		if "max_mana" in player:
+			max_resource = int(player.max_mana)
 
 	var lines: Array[String] = []
+	lines.append("")
 	var params: Array[String] = []
 	if rank_data.cast_time_sec > 0.0:
 		params.append("Cast: %.1fs" % rank_data.cast_time_sec)
 	if rank_data.cooldown_sec > 0.0:
 		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
 	if rank_data.resource_cost > 0:
-		params.append("Cost: %d%% Mana" % rank_data.resource_cost)
-	if rank_data.duration_sec > 0.0:
-		params.append("Duration: %.1fs" % rank_data.duration_sec)
+		var abs_cost: int = int(round(float(max_resource) * float(rank_data.resource_cost) / 100.0))
+		if abs_cost > 0:
+			params.append("Cost: %d %s" % [abs_cost, resource_label])
 	if not params.is_empty():
-		lines.append("   ".join(params))
+		for p in params:
+			lines.append(p)
 
 	var effect := _effect_line(def.id, rank_data, spell_power, base_phys)
 	if effect.strip_edges() != "":
-		if not lines.is_empty():
-			lines.append("")
+		lines.append("")
 		lines.append(effect)
 	return "\n".join(lines)
 
@@ -110,7 +119,13 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 		"lightbound_might":
 			return "Increases Attack Power by %d for %d seconds." % [rank_data.value_flat, int(rank_data.duration_sec)]
 		"sacred_barrier", "sacred_guard":
-			return ""
+			if _is_russian_locale():
+				if ability_id == "sacred_barrier":
+					return "Блокирует получаемый урон (и физ и маг) цели на 5 секунд."
+				return "Блокирует получаемый физический урон цели на 3 (+1 сек за ранг) секунды."
+			if ability_id == "sacred_barrier":
+				return "Grants immunity to all damage for %d seconds." % int(rank_data.duration_sec)
+			return "Blocks all incoming physical damage for %d seconds." % int(rank_data.duration_sec)
 		"lights_call":
 			return "Revives with %.0f%% Health and %.0f%% Mana." % [rank_data.value_pct, rank_data.value_pct_2]
 		"lights_guidance":
@@ -132,6 +147,10 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 			return "Deals %.0f%% physical damage (%d base) to targets below %.0f%% Health." % [rank_data.value_pct_2, hit, rank_data.value_pct]
 		_:
 			return "%s" % ability_id
+
+func _is_russian_locale() -> bool:
+	var locale := TranslationServer.get_locale().to_lower()
+	return locale.begins_with("ru")
 
 func _position_tooltip(target_pos: Vector2) -> void:
 	if not visible:

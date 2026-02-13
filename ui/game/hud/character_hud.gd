@@ -37,6 +37,7 @@ const DERIVED_PRIMARY_COEFFS := {
 
 @onready var character_button: Button = get_node_or_null("CharacterButton")
 @onready var panel: Panel = %Panel
+@onready var panel_close_button: Button = $Root/Panel/CloseButton
 @onready var title_label: Label = %TitleLabel
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var equipment_panel: Panel = %EquipmentPanel
@@ -68,6 +69,8 @@ func _ready() -> void:
 
 	panel.visible = false
 	emit_signal("hud_visibility_changed", panel.visible)
+	if panel_close_button != null and not panel_close_button.pressed.is_connected(_close_panel):
+		panel_close_button.pressed.connect(_close_panel)
 	stats_text.bbcode_enabled = true
 	stats_text.fit_content = true
 	stats_text.meta_clicked.connect(_on_meta_clicked)
@@ -104,6 +107,13 @@ func _on_button() -> void:
 		_refresh()
 	else:
 		_hide_tooltip()
+
+func _close_panel() -> void:
+	if panel == null:
+		return
+	panel.visible = false
+	emit_signal("hud_visibility_changed", false)
+	_hide_tooltip()
 
 
 func toggle_character() -> void:
