@@ -26,5 +26,4 @@ stretch_mode = 5
 [node name="NameBtn" type="LinkButton" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
-clip_text = true
 text = "Spell"
