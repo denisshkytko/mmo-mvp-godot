@@ -2,7 +2,6 @@ extends AbilityEffect
 class_name EffectDamage
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
-const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 @export var school: String = "magic" # physical | magic
@@ -29,7 +28,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 				base_phys = caster.c_combat.get_attack_damage()
 			base = int(round(float(base_phys) * float(rank_data.value_pct) / 100.0))
 		"spell_power_flat":
-			base = int(rank_data.value_flat) + int(round(spell_power * STAT_CONST.SP_DAMAGE_SCALAR))
+			base = int(rank_data.value_flat) + int(round(spell_power))
 		_:
 			base = int(rank_data.value_flat)
 

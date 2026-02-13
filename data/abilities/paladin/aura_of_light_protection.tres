@@ -1,26 +1,110 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/aura_of_light_protection.png" id=2]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_aura.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_aura.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
-script = ExtResource("4")
+script = ExtResource("3")
 required_level = 1
-train_cost_gold = 0
+train_cost_gold = 40
 cooldown_sec = 0.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
-value_flat = 5
-value_flat_2 = 5
+value_flat = 50
+value_flat_2 = 25
 value_pct = 0.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectApplyAura" id=2]
+[sub_resource type="Resource" script_class="RankData" id=2]
 script = ExtResource("3")
+required_level = 10
+train_cost_gold = 400
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 100
+value_flat_2 = 50
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 20
+train_cost_gold = 1211
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 200
+value_flat_2 = 100
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 30
+train_cost_gold = 2196
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 400
+value_flat_2 = 200
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 40
+train_cost_gold = 3391
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 800
+value_flat_2 = 400
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 50
+train_cost_gold = 4841
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 1600
+value_flat_2 = 800
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 3200
+value_flat_2 = 1600
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyAura" id=20]
+script = ExtResource("4")
 buff_id = "active_aura"
 secondary_add = {"defense": "value_flat", "magic_resist": "value_flat_2"}
 percent_add = {}
@@ -32,11 +116,12 @@ script = ExtResource("1")
 id = "aura_of_light_protection"
 name = "Aura of Light Protection"
 icon = ExtResource("2")
-description = "A protective aura that hardens body and spirit."
+description = "Increases Physical Defense by {P} and Magic Defense by {M} for you and nearby allies."
+description_ru = "Повышает физическую и магическую защиту паладина и союзников поблизости."
 class_id = "paladin"
 ability_type = "aura"
 target_type = "self"
 range_mode = "self"
 aura_radius = 0.0
-effect = SubResource("2")
-ranks = [SubResource("1")]
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]

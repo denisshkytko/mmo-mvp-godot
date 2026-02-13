@@ -1,19 +1,19 @@
 [gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
-[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/lights_verdict.png" id=2]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/sacred_guard.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_buff.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
-required_level = 40
-train_cost_gold = 3391
-cooldown_sec = 10.0
+required_level = 10
+train_cost_gold = 400
+cooldown_sec = 300.0
 cast_time_sec = 0.0
-duration_sec = 0.0
+duration_sec = 3.0
 resource_cost = 10
-value_flat = 200
+value_flat = 0
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -21,13 +21,13 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=2]
 script = ExtResource("3")
-required_level = 50
-train_cost_gold = 4841
-cooldown_sec = 10.0
+required_level = 24
+train_cost_gold = 1583
+cooldown_sec = 240.0
 cast_time_sec = 0.0
-duration_sec = 0.0
+duration_sec = 4.0
 resource_cost = 10
-value_flat = 300
+value_flat = 0
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -35,33 +35,36 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=3]
 script = ExtResource("3")
-required_level = 60
-train_cost_gold = 6602
-cooldown_sec = 10.0
+required_level = 38
+train_cost_gold = 3133
+cooldown_sec = 180.0
 cast_time_sec = 0.0
-duration_sec = 0.0
+duration_sec = 5.0
 resource_cost = 10
-value_flat = 400
+value_flat = 0
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectDamage" id=20]
+[sub_resource type="Resource" script_class="EffectApplyBuff" id=20]
 script = ExtResource("4")
-school = "magic"
-scaling_mode = "spell_power_flat"
+secondary_add = {}
+percent_add = {}
+flags = {"block_physical": true}
+on_hit = {}
 
 [resource]
 script = ExtResource("1")
-id = "lights_verdict_damage"
-name = "Light's Verdict"
+id = "sacred_guard"
+name = "Sacred Guard"
 icon = ExtResource("2")
-description = "Deals {X} magic damage."
-description_ru = "Наносит магический урон врагу."
+description = "Blocks all incoming physical damage for {D} seconds."
+description_ru = "Блокирует получаемый физический урон цели на 3 (+1 сек за ранг) секунды."
 class_id = "paladin"
-ability_type = "damage"
-target_type = "enemy"
+ability_type = "buff"
+target_type = "ally"
+self_cast_fallback = true
 range_mode = "ranged"
 aura_radius = 0.0
 effect = SubResource("20")

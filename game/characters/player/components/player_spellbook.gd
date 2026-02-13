@@ -46,6 +46,10 @@ func get_learned_abilities() -> Array[String]:
 			out.append(String(ability_id))
 	return out
 
+
+func get_rank(ability_id: String) -> int:
+	return int(learned_ranks.get(ability_id, 0))
+
 func get_learned_by_type(type: String) -> Array[String]:
 	var out: Array[String] = []
 	var db := get_node_or_null("/root/AbilityDB")

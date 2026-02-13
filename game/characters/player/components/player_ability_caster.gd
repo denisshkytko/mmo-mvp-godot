@@ -66,6 +66,14 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
 	var actual_target: Node = target_result.get("target") as Node
 
+	if def.target_type == "corpse_player" and p != null and p.has_method("is_in_combat") and bool(p.call("is_in_combat")):
+		return {"ok": false, "reason": "in_combat"}
+
+	if ability_id == "light_execution":
+		var hp_threshold: float = float(rank_data.value_pct)
+		if actual_target == null or not _is_execute_target_valid(actual_target, hp_threshold):
+			return {"ok": false, "reason": "invalid_execute_target"}
+
 	var snap: Dictionary = {}
 	if p.has_method("get_stats_snapshot"):
 		snap = p.call("get_stats_snapshot") as Dictionary
@@ -309,6 +317,14 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 					actual_target = p
 				else:
 					return {"ok": false, "reason": "invalid_target"}
+		"corpse_player":
+			if actual_target == null or not (actual_target is Corpse):
+				return {"ok": false, "reason": "invalid_target"}
+			var corpse := actual_target as Corpse
+			if corpse == null or not corpse.owner_is_player:
+				return {"ok": false, "reason": "invalid_target"}
+			if corpse.owner_entity_id == 0:
+				return {"ok": false, "reason": "invalid_target"}
 		"any":
 			if actual_target == null:
 				if _can_fallback_to_self(def):
@@ -322,6 +338,22 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 				else:
 					return {"ok": false, "reason": "no_target"}
 	return {"ok": true, "target": actual_target}
+
+func _is_execute_target_valid(target: Node, threshold_pct: float) -> bool:
+	if target == null:
+		return false
+	var current_hp: float = 0.0
+	var max_hp: float = 0.0
+	if "current_hp" in target and "max_hp" in target:
+		current_hp = float(target.current_hp)
+		max_hp = float(target.max_hp)
+	elif target.has_method("get_current_hp") and target.has_method("get_max_hp"):
+		current_hp = float(target.call("get_current_hp"))
+		max_hp = float(target.call("get_max_hp"))
+	if max_hp <= 0.0:
+		return false
+	var hp_pct: float = (current_hp / max_hp) * 100.0
+	return hp_pct < threshold_pct
 
 func _can_fallback_to_self(def: AbilityDefinition) -> bool:
 	if def == null:

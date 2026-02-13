@@ -1,26 +1,68 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/aura_of_tempering.png" id=2]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_aura.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_aura.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
-script = ExtResource("4")
-required_level = 1
-train_cost_gold = 0
+script = ExtResource("3")
+required_level = 28
+train_cost_gold = 1984
 cooldown_sec = 0.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
-value_flat = 5
+value_flat = 50
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectApplyAura" id=2]
+[sub_resource type="Resource" script_class="RankData" id=2]
 script = ExtResource("3")
+required_level = 38
+train_cost_gold = 3133
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 65
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 48
+train_cost_gold = 4528
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 80
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 58
+train_cost_gold = 6222
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 95
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyAura" id=20]
+script = ExtResource("4")
 buff_id = "active_aura"
 secondary_add = {"flat_physical_bonus": "value_flat"}
 percent_add = {}
@@ -32,11 +74,12 @@ script = ExtResource("1")
 id = "aura_of_tempering"
 name = "Aura of Tempering"
 icon = ExtResource("2")
-description = "An aura that tempers steel with holy strength."
+description = "Increases Physical Damage by {X} for you and nearby allies."
+description_ru = "Увеличивает физический урон паладина и союзников поблизости."
 class_id = "paladin"
 ability_type = "aura"
 target_type = "self"
 range_mode = "self"
 aura_radius = 0.0
-effect = SubResource("2")
-ranks = [SubResource("1")]
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4")]

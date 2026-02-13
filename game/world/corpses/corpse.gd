@@ -8,6 +8,7 @@ signal despawned
 
 @export var interact_radius: float = 60.0
 @export var despawn_seconds: float = 30.0
+@export var owner_is_player: bool = false
 
 var _life_timer: float = 0.0
 var _player_in_range: Node = null
@@ -32,7 +33,7 @@ var loot_owner_player_id: int = 0
 var loot_gold: int = 0
 var loot_slots: Array = []
 
-func setup_owner_snapshot(owner: Node) -> void:
+func setup_owner_snapshot(owner: Node, owner_player_id: int = 0) -> void:
 	if owner == null or not is_instance_valid(owner):
 		return
 
@@ -42,6 +43,8 @@ func setup_owner_snapshot(owner: Node) -> void:
 	owner_max_hp = max(1, _resolve_owner_max_hp(owner))
 	owner_resource_type = _resolve_owner_resource_type(owner)
 	owner_max_resource = max(1, _resolve_owner_max_resource(owner))
+	if owner_player_id != 0:
+		loot_owner_player_id = owner_player_id
 
 func get_display_name() -> String:
 	if owner_display_name != "":

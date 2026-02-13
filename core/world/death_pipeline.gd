@@ -74,6 +74,7 @@ static func die_and_spawn(
 	var corpse := spawn_corpse(self_node.get_parent(), self_node.global_position)
 	if corpse != null:
 		corpse.setup_owner_snapshot(self_node)
+		corpse.owner_is_player = false
 		# 1) Назначаем owner-игрока (любой узел из группы "player").
 		LOOT_RIGHTS.apply_owner_to_corpse(corpse, loot_owner_player_id)
 		# 2) Если owner НЕ игрок (owner id не соответствует ни одному игроку) —
