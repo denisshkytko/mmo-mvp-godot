@@ -52,7 +52,9 @@ transform = Transform2D(1, 0, 0, 1, 476, 285)
 
 [node name="MobileHUD" parent="Root" instance=ExtResource("13_kywc6")]
 
-[node name="AbilityTooltip" parent="Root" instance=ExtResource("14_8p6r6")]
-z_index = 200
+[node name="AbilityTooltipLayer" type="CanvasLayer" parent="."]
+layer = 200
+
+[node name="AbilityTooltip" parent="AbilityTooltipLayer" instance=ExtResource("14_8p6r6")]
 
 [node name="BuffsAuraHUD" parent="Root" instance=ExtResource("15_8s0mq")]

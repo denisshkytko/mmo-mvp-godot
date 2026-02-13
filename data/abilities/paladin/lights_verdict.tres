@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/lights_verdict.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_heal_or_damage_by_relation.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=5]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_heal.gd" id=6]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
@@ -47,21 +49,29 @@ value_pct = 0.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectDamage" id=20]
-script = ExtResource("4")
+[sub_resource type="Resource" script_class="EffectDamage" id=21]
+script = ExtResource("5")
 school = "magic"
 scaling_mode = "spell_power_flat"
 
+[sub_resource type="Resource" script_class="EffectHeal" id=22]
+script = ExtResource("6")
+
+[sub_resource type="Resource" script_class="EffectHealOrDamageByRelation" id=20]
+script = ExtResource("4")
+damage_effect = SubResource("21")
+heal_effect = SubResource("22")
+
 [resource]
 script = ExtResource("1")
-id = "lights_verdict_damage"
+id = "lights_verdict"
 name = "Light's Verdict"
 icon = ExtResource("2")
-description = "Deals {X} magic damage."
-description_ru = "Наносит магический урон врагу."
+description = "Deals damage to enemies and heals allies for {X}."
+description_ru = "Наносит урон врагам и лечит союзников."
 class_id = "paladin"
-ability_type = "damage"
-target_type = "enemy"
+ability_type = "active"
+target_type = "ally_or_enemy"
 range_mode = "ranged"
 aura_radius = 0.0
 effect = SubResource("20")

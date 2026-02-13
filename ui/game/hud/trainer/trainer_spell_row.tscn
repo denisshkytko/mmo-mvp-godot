@@ -25,6 +25,22 @@ text = "Spell"
 layout_mode = 2
 text = "R0/1"
 
+[node name="CostBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Gold" type="Label" parent="CostBox"]
+layout_mode = 2
+text = "0g"
+
+[node name="Silver" type="Label" parent="CostBox"]
+layout_mode = 2
+text = "0s"
+
+[node name="Bronze" type="Label" parent="CostBox"]
+layout_mode = 2
+text = "0b"
+
 [node name="LearnButton" type="Button" parent="."]
 layout_mode = 2
 text = "Изучить"

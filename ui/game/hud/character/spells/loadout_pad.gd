@@ -9,6 +9,8 @@ signal slot_pressed(slot_index: int)
 @onready var slot4_btn: TextureButton = $LoadoutPad/Slot4Btn
 
 var _buttons: Array[TextureButton] = []
+var _assignment_mode: bool = false
+var _pulse_t: float = 0.0
 
 func _ready() -> void:
 	_buttons = [slot0_btn, slot1_btn, slot2_btn, slot3_btn, slot4_btn]
@@ -18,6 +20,23 @@ func _ready() -> void:
 			continue
 		if not btn.pressed.is_connected(_on_slot_pressed):
 			btn.pressed.connect(_on_slot_pressed.bind(i))
+
+func _process(delta: float) -> void:
+	if not _assignment_mode:
+		return
+	_pulse_t += delta * 5.5
+	var pulse := 0.5 + 0.5 * sin(_pulse_t)
+	var c := Color(1.0, 1.0, 0.25 + 0.55 * pulse, 1.0)
+	for btn in _buttons:
+		if btn != null:
+			btn.modulate = c
+
+func set_assignment_mode(active: bool) -> void:
+	_assignment_mode = active
+	if not _assignment_mode:
+		for btn in _buttons:
+			if btn != null:
+				btn.modulate = Color(1, 1, 1, 1)
 
 func refresh_icons(spellbook: PlayerSpellbook, ability_db: AbilityDatabase) -> void:
 	if spellbook == null:

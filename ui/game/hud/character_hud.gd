@@ -37,6 +37,7 @@ const DERIVED_PRIMARY_COEFFS := {
 
 @onready var character_button: Button = get_node_or_null("CharacterButton")
 @onready var panel: Panel = %Panel
+@onready var panel_close_button: Button = $Root/Panel/CloseButton
 @onready var title_label: Label = %TitleLabel
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var equipment_panel: Panel = %EquipmentPanel
@@ -47,6 +48,7 @@ const DERIVED_PRIMARY_COEFFS := {
 @onready var tooltip_close_button: Button = $Root/TooltipPanel/CloseButton
 
 var _player: Player = null
+var _ability_db: Node = null
 var _breakdown_cache: Dictionary = {}
 var _equipment_slots: Dictionary = {}
 var _icon_cache: Dictionary = {}
@@ -68,6 +70,12 @@ func _ready() -> void:
 
 	panel.visible = false
 	emit_signal("hud_visibility_changed", panel.visible)
+	if panel_close_button != null and not panel_close_button.pressed.is_connected(_close_panel):
+		panel_close_button.pressed.connect(_close_panel)
+		panel_close_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	if panel != null and panel_close_button != null and panel_close_button.get_parent() == panel:
+		panel.move_child(panel_close_button, panel.get_child_count() - 1)
+		panel_close_button.z_index = 100
 	stats_text.bbcode_enabled = true
 	stats_text.fit_content = true
 	stats_text.meta_clicked.connect(_on_meta_clicked)
@@ -86,6 +94,7 @@ func _ready() -> void:
 		tooltip_close_button.pressed.connect(_hide_tooltip)
 
 	_player = NODE_CACHE.get_player(get_tree()) as Player
+	_ability_db = get_node_or_null("/root/AbilityDB")
 	if _player != null and _player.c_stats != null:
 		_player.c_stats.stats_changed.connect(_on_stats_changed)
 	if _player != null and _player.c_equip != null:
@@ -104,6 +113,13 @@ func _on_button() -> void:
 		_refresh()
 	else:
 		_hide_tooltip()
+
+func _close_panel() -> void:
+	if panel == null:
+		return
+	panel.visible = false
+	emit_signal("hud_visibility_changed", false)
+	_hide_tooltip()
 
 
 func toggle_character() -> void:
@@ -607,7 +623,7 @@ func _line_with_breakdown(title: String, key: String, snap: Dictionary, effect_t
 func _line_primary_stat(title: String, key: String, snap: Dictionary, effect_text: String) -> String:
 	var primary: Dictionary = snap.get("primary", {}) as Dictionary
 	var total_val: int = int(primary.get(key, 0))
-	_build_primary_tooltip(key, effect_text)
+	_build_primary_tooltip(key, effect_text, snap)
 	return "[url=%s]%s %d[/url]" % [key, title, total_val]
 
 func _line_damage(title: String, snap: Dictionary) -> String:
@@ -686,19 +702,25 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 
 	return "[url=damage]%s %s[/url]" % [title, display_damage]
 
-func _build_primary_tooltip(key: String, effect_text: String) -> void:
-	var base_val = 0
-	var equip_val = 0
+func _build_primary_tooltip(key: String, effect_text: String, snap: Dictionary) -> void:
+	var base_val: int = 0
+	var equip_val: int = 0
 	if _player != null and _player.c_stats != null:
 		base_val = _player.c_stats.get_base_stat(key)
 		equip_val = _player.c_stats.get_equipment_bonus(key)
 	var tooltip_lines: Array[String] = []
 	if effect_text != "":
 		tooltip_lines.append(effect_text)
-		tooltip_lines.append("")
 	tooltip_lines.append("Базовые характеристики: %s" % _format_stat_value(base_val))
 	if equip_val != 0:
 		tooltip_lines.append("Снаряжение: %s" % _format_stat_value(equip_val))
+	var primary_breakdown: Dictionary = snap.get("primary_breakdown", {}) as Dictionary
+	var entries: Array = primary_breakdown.get(key, []) as Array
+	var buff_lines: Array[String] = _extract_buff_lines(entries)
+	if buff_lines.size() > 0:
+		tooltip_lines.append_array(buff_lines)
+	if effect_text != "" and tooltip_lines.size() > 1 and tooltip_lines[1] != "":
+		tooltip_lines.insert(1, "")
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
 
 func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) -> void:
@@ -707,15 +729,58 @@ func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) 
 		tooltip_lines.append(effect_text)
 	var base_lines := _build_primary_contrib_lines(key, snap)
 	if base_lines.size() > 0:
-		if tooltip_lines.size() > 0:
-			tooltip_lines.append("")
 		tooltip_lines.append_array(base_lines)
 	var equip_val: float = _get_direct_equipment_bonus(key, snap)
 	if equip_val != 0.0:
-		if tooltip_lines.size() > 0:
-			tooltip_lines.append("")
 		tooltip_lines.append("Снаряжение: %s" % _format_stat_value(equip_val))
+	var breakdown: Dictionary = snap.get("derived_breakdown", {}) as Dictionary
+	var entries: Array = breakdown.get(key, []) as Array
+	var buff_lines: Array[String] = _extract_buff_lines(entries)
+	if buff_lines.size() > 0:
+		tooltip_lines.append_array(buff_lines)
+	if effect_text != "" and tooltip_lines.size() > 1 and tooltip_lines[1] != "":
+		tooltip_lines.insert(1, "")
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
+
+func _extract_buff_lines(entries: Array) -> Array[String]:
+	var out: Array[String] = []
+	for entry in entries:
+		if not (entry is Dictionary):
+			continue
+		var d: Dictionary = entry as Dictionary
+		var label: String = String(d.get("label", d.get("source", "")))
+		if label == "" or label == "base" or label == "level" or label == "gear" or label == "percent":
+			continue
+		if PRIMARY_LABELS.has(label.to_lower()):
+			continue
+		if label in ["STR", "AGI", "END", "INT", "PER"]:
+			continue
+		var buff_name: String = _resolve_buff_name(label)
+		var val: float = float(d.get("value", 0.0))
+		var rendered: String = _format_stat_value(val)
+		out.append("%s: %s" % [buff_name, rendered])
+	return out
+
+func _resolve_buff_name(raw_label: String) -> String:
+	var label := raw_label
+	if label == "food/drink":
+		return "Еда/питьё"
+	var ability_id := ""
+	if label.begins_with("buff:"):
+		ability_id = label.trim_prefix("buff:")
+	elif label.begins_with("aura:"):
+		ability_id = label.trim_prefix("aura:")
+	elif label.begins_with("stance:"):
+		ability_id = label.trim_prefix("stance:")
+	if _ability_db != null and _ability_db.has_method("get_ability"):
+		if ability_id != "":
+			var def: AbilityDefinition = _ability_db.get_ability(ability_id)
+			if def != null and String(def.name) != "":
+				return String(def.name)
+		var direct_def: AbilityDefinition = _ability_db.get_ability(label)
+		if direct_def != null and String(direct_def.name) != "":
+			return String(direct_def.name)
+	return label
 
 func _build_primary_contrib_lines(key: String, snap: Dictionary) -> Array[String]:
 	var out: Array[String] = []
