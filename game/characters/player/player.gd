@@ -5,7 +5,6 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
-const PROG := preload("res://core/stats/progression.gd")
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
@@ -549,10 +548,6 @@ func apply_character_data(d: Dictionary) -> void:
 func _grant_starter_abilities() -> void:
 	if c_spellbook == null:
 		return
-	var class_def: Dictionary = PROG.get_class_data(class_id)
-	var starters: Array = class_def.get("starter_abilities", []) as Array
-	if starters.is_empty():
-		return
 	var db := get_node_or_null("/root/AbilityDB") as AbilityDatabase
 	if db == null:
 		return
@@ -562,6 +557,9 @@ func _grant_starter_abilities() -> void:
 			db.initialized.connect(_on_ability_db_initialized_for_starters, CONNECT_ONE_SHOT)
 		return
 	_starter_grant_waiting_for_db = false
+	var starters := db.get_starter_ability_ids_for_class(class_id)
+	if starters.is_empty():
+		return
 	var granted_any: bool = false
 	for entry in starters:
 		var ability_id := String(entry)
@@ -574,7 +572,7 @@ func _grant_starter_abilities() -> void:
 			granted_any = true
 	if granted_any:
 		c_spellbook.emit_signal("spellbook_changed")
-		_request_save("starter_abilities")
+		_request_save("starter_abilities_lvl1")
 
 func _on_ability_db_initialized_for_starters() -> void:
 	_starter_grant_waiting_for_db = false

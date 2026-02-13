@@ -132,6 +132,22 @@ func get_abilities_for_class(class_id: String) -> Array[AbilityDefinition]:
 			out.append(def)
 	return out
 
+func get_starter_ability_ids_for_class(class_id: String) -> Array[String]:
+	var out: Array[String] = []
+	if class_id == "":
+		return out
+	var defs := get_abilities_for_class(class_id)
+	for def in defs:
+		if def == null or def.id == "":
+			continue
+		var rank_one := get_rank_data(def.id, 1)
+		if rank_one == null:
+			continue
+		if rank_one.required_level == 1:
+			out.append(def.id)
+	out.sort()
+	return out
+
 func _load_from_manifest(path: String) -> bool:
 	var loaded: Resource = load(path)
 	if loaded == null:
