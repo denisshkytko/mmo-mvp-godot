@@ -91,17 +91,33 @@ static func _show_damage_number(target: Node, final_dmg: int, dmg_type: String) 
 static func _get_or_create_combat_text_manager(tree: SceneTree) -> CombatTextManager:
 	if tree == null:
 		return null
-	var root := tree.root
+	var root: Window = tree.root
 	if root == null:
 		return null
-	var existing := root.get_node_or_null(COMBAT_TEXT_MANAGER_NODE_NAME) as CombatTextManager
+
+	# Prefer scene-local manager. This avoids stale manager layering after scene swaps
+	# (world -> character select -> world), where a root-level manager can end up
+	# behind the newly loaded scene and make floating combat text invisible.
+	var parent: Node = tree.current_scene
+	if parent == null:
+		parent = root
+
+	var existing := parent.get_node_or_null(COMBAT_TEXT_MANAGER_NODE_NAME) as CombatTextManager
 	if existing != null:
+		parent.move_child(existing, parent.get_child_count() - 1)
 		return existing
+
+	# Cleanup legacy root-level singleton from older versions if it exists.
+	var legacy := root.get_node_or_null(COMBAT_TEXT_MANAGER_NODE_NAME)
+	if legacy != null and legacy != parent:
+		legacy.queue_free()
+
 	var manager := COMBAT_TEXT_MANAGER_SCRIPT.new() as CombatTextManager
 	if manager == null:
 		return null
 	manager.name = COMBAT_TEXT_MANAGER_NODE_NAME
-	root.add_child(manager)
+	parent.add_child(manager)
+	parent.move_child(manager, parent.get_child_count() - 1)
 	return manager
 
 static func _get_danger_meter(attacker: Node) -> DangerMeterComponent:
