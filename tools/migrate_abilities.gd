@@ -178,7 +178,6 @@ func _build_ability_definition(parsed: Dictionary, path: String) -> AbilityDefin
 	def.ability_type = str(res.get("ability_type", "active"))
 	def.target_type = str(res.get("target_type", "enemy"))
 	def.range_mode = str(res.get("range_mode", "ranged"))
-	def.aura_radius = str(res.get("aura_radius", "0")).to_float()
 
 	var icon_ref := res.get("icon")
 	if typeof(icon_ref) == TYPE_DICTIONARY and icon_ref.get("kind") == "ext":

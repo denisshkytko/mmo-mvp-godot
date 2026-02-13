@@ -49,6 +49,5 @@ class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"
 range_mode = "melee"
-aura_radius = 0.0
 effect = SubResource("20")
 ranks = [SubResource("1"), SubResource("2")]
