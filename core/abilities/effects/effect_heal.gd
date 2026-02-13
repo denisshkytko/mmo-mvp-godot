@@ -2,7 +2,6 @@ extends AbilityEffect
 class_name EffectHeal
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
-const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
@@ -14,7 +13,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var spell_power: float = float(derived.get("spell_power", 0.0))
-	var raw: int = int(rank_data.value_flat) + int(round(spell_power * STAT_CONST.SP_DAMAGE_SCALAR))
+	var raw: int = int(rank_data.value_flat) + int(round(spell_power))
 	if raw <= 0:
 		return
 	var final: int = STAT_CALC.apply_crit_to_heal(raw, snap)
