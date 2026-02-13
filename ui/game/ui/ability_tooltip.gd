@@ -29,11 +29,12 @@ func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 		call_deferred("_position_tooltip", global_pos + OFFSET)
 		return
 
-	var player := get_tree().get_first_node_in_group("player") as Player
-	var player_rank := rank
+	var player: Player = get_tree().get_first_node_in_group("player") as Player
+	var player_rank: int = rank
 	if player != null and player.c_spellbook != null:
 		player_rank = max(1, player.c_spellbook.get_rank(ability_id))
-	var shown_rank := clamp(player_rank, 1, max(1, ability.get_max_rank()))
+	var max_rank: int = max(1, ability.get_max_rank())
+	var shown_rank: int = clampi(player_rank, 1, max_rank)
 
 	var rank_data: RankData = null
 	if db.has_method("get_rank_data"):
