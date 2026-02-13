@@ -11,6 +11,7 @@ const OFFSET := Vector2(12, 10)
 func _ready() -> void:
 	add_to_group("ability_tooltip_singleton")
 	visible = false
+	_style_tooltip_panel()
 	if description_label != null:
 		description_label.bbcode_enabled = true
 		description_label.fit_content = true
@@ -80,6 +81,8 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
 	if rank_data.resource_cost > 0:
 		params.append("Cost: %d%% Mana" % rank_data.resource_cost)
+	if rank_data.duration_sec > 0.0:
+		params.append("Duration: %.1fs" % rank_data.duration_sec)
 	if not params.is_empty():
 		lines.append("   ".join(params))
 
@@ -107,7 +110,7 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 		"lightbound_might":
 			return "Increases Attack Power by %d for %d seconds." % [rank_data.value_flat, int(rank_data.duration_sec)]
 		"sacred_barrier", "sacred_guard":
-			return "Duration: %.1f seconds." % rank_data.duration_sec
+			return ""
 		"lights_call":
 			return "Revives with %.0f%% Health and %.0f%% Mana." % [rank_data.value_pct, rank_data.value_pct_2]
 		"lights_guidance":
@@ -139,3 +142,17 @@ func _position_tooltip(target_pos: Vector2) -> void:
 	pos.x = clamp(pos.x, 0.0, max(0.0, vp_size.x - size.x))
 	pos.y = clamp(pos.y, 0.0, max(0.0, vp_size.y - size.y))
 	global_position = pos
+
+func _style_tooltip_panel() -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0, 0, 0, 0.85)
+	sb.border_width_left = 1
+	sb.border_width_top = 1
+	sb.border_width_right = 1
+	sb.border_width_bottom = 1
+	sb.border_color = Color(1, 1, 1, 0.12)
+	sb.corner_radius_top_left = 8
+	sb.corner_radius_top_right = 8
+	sb.corner_radius_bottom_left = 8
+	sb.corner_radius_bottom_right = 8
+	add_theme_stylebox_override("panel", sb)

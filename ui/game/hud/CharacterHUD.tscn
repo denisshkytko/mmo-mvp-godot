@@ -545,7 +545,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 4
-columns = 2
+columns = 1
 
 [node name="SpellsPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
 custom_minimum_size = Vector2(240, 0)

@@ -228,6 +228,4 @@ func _apply_item_width(item: Control) -> void:
 	var total_w: float = spells_grid.size.x
 	if total_w <= 1.0 and spells_grid.get_parent() is Control:
 		total_w = (spells_grid.get_parent() as Control).size.x
-	var h_sep: int = int(spells_grid.get_theme_constant("h_separation"))
-	var col_w := int(floor((total_w - float(h_sep)) * 0.5)) - 5
-	item.custom_minimum_size.x = max(120, col_w)
+	item.custom_minimum_size.x = max(120, int(total_w) - 5)
