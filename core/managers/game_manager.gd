@@ -265,6 +265,11 @@ func _input(event: InputEvent) -> void:
 	if not pressed:
 		return
 
+	# Не трогаем таргет, если нажатие ушло в UI (кнопки/слоты/джойстики и т.п.).
+	# Иначе клики по HUD могут сбрасывать цель как "клик по пустому миру".
+	if _is_ui_press(screen_pos):
+		return
+
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
 	var mob: Node = _pick_mob_at_world_pos(world_pos)
 
@@ -272,6 +277,26 @@ func _input(event: InputEvent) -> void:
 		set_target(mob)
 	else:
 		clear_target()
+
+
+func _is_ui_press(screen_pos: Vector2) -> bool:
+	var vp: Viewport = get_viewport()
+	if vp == null:
+		return false
+
+	# Godot UI hit-test в экранных координатах.
+	var picked: Control = vp.gui_pick(screen_pos)
+	if picked == null:
+		return false
+
+	# Если Control найден и он участвует во вводе — считаем это UI-кликом.
+	var node: Control = picked
+	while node != null:
+		if node.visible and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+			return true
+		node = node.get_parent() as Control
+
+	return false
 
 
 func _screen_to_world(screen_pos: Vector2) -> Vector2:
