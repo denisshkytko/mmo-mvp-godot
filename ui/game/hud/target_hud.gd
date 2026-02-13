@@ -205,6 +205,17 @@ func _update_resource() -> void:
 		mana_row.visible = false
 		return
 
+	if _target.has_method("get_current_resource") and _target.has_method("get_max_resource"):
+		mana_row.visible = true
+		var r_type_m: String = String(_target.call("get_resource_type")) if _target.has_method("get_resource_type") else "mana"
+		_apply_resource_bar_color(r_type_m)
+		var cur_m: int = int(_target.call("get_current_resource"))
+		var mx_m: int = max(1, int(_target.call("get_max_resource")))
+		mana_bar.max_value = mx_m
+		mana_bar.value = clamp(cur_m, 0, mx_m)
+		mana_text.text = "%d/%d" % [clamp(cur_m, 0, mx_m), mx_m]
+		return
+
 	if not _target.has_node("Components/Resource"):
 		mana_row.visible = false
 		return

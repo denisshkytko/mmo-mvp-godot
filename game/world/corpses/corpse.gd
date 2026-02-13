@@ -17,12 +17,118 @@ var _player_cached: Node2D = null
 
 var _blink_t: float = 0.0
 
+# identity/state snapshot of the dead owner entity
+var owner_entity_id: int = 0
+var owner_display_name: String = ""
+var owner_level: int = 0
+var owner_resource_type: String = "mana"
+var owner_max_hp: int = 1
+var owner_max_resource: int = 1
+
 # owner gating
 var loot_owner_player_id: int = 0
 
 # V2 loot
 var loot_gold: int = 0
 var loot_slots: Array = []
+
+func setup_owner_snapshot(owner: Node) -> void:
+	if owner == null or not is_instance_valid(owner):
+		return
+
+	owner_entity_id = owner.get_instance_id()
+	owner_display_name = _resolve_owner_display_name(owner)
+	owner_level = _resolve_owner_level(owner)
+	owner_max_hp = max(1, _resolve_owner_max_hp(owner))
+	owner_resource_type = _resolve_owner_resource_type(owner)
+	owner_max_resource = max(1, _resolve_owner_max_resource(owner))
+
+func get_display_name() -> String:
+	if owner_display_name != "":
+		return owner_display_name
+	return String(name)
+
+func get_level() -> int:
+	return max(0, owner_level)
+
+func get_current_hp() -> int:
+	return 0
+
+func get_max_hp() -> int:
+	return max(1, owner_max_hp)
+
+func get_resource_type() -> String:
+	return owner_resource_type
+
+func get_current_resource() -> int:
+	return 0
+
+func get_max_resource() -> int:
+	return max(1, owner_max_resource)
+
+func _resolve_owner_display_name(owner: Node) -> String:
+	if owner.has_method("get_display_name"):
+		var v: String = String(owner.call("get_display_name"))
+		if v != "":
+			return v
+	if owner.has_method("get_mob_name"):
+		var mob_name: String = String(owner.call("get_mob_name"))
+		if mob_name != "":
+			return mob_name
+	if owner.has_method("get_npc_name"):
+		var npc_name: String = String(owner.call("get_npc_name"))
+		if npc_name != "":
+			return npc_name
+	return String(owner.name)
+
+func _resolve_owner_level(owner: Node) -> int:
+	if owner.has_method("get_level"):
+		return int(owner.call("get_level"))
+	var mob_level: Variant = owner.get("mob_level")
+	if mob_level != null:
+		return int(mob_level)
+	var npc_level: Variant = owner.get("npc_level")
+	if npc_level != null:
+		return int(npc_level)
+	return 0
+
+func _resolve_owner_max_hp(owner: Node) -> int:
+	if owner.has_method("get_max_hp"):
+		return int(owner.call("get_max_hp"))
+	if owner.has_node("Components/Stats"):
+		var stats: Node = owner.get_node("Components/Stats")
+		if stats != null:
+			var max_hp_v: Variant = stats.get("max_hp")
+			if max_hp_v != null:
+				return int(max_hp_v)
+	var owner_max_hp_v: Variant = owner.get("max_hp")
+	if owner_max_hp_v != null:
+		return int(owner_max_hp_v)
+	return 1
+
+func _resolve_owner_resource_type(owner: Node) -> String:
+	if owner.has_method("get_resource_type"):
+		var rt: String = String(owner.call("get_resource_type"))
+		if rt != "":
+			return rt
+	if owner.has_node("Components/Resource"):
+		var r: Node = owner.get_node("Components/Resource")
+		if r != null:
+			var rv: Variant = r.get("resource_type")
+			if rv != null and String(rv) != "":
+				return String(rv)
+	return "mana"
+
+func _resolve_owner_max_resource(owner: Node) -> int:
+	if owner.has_method("get_max_resource"):
+		return int(owner.call("get_max_resource"))
+	if owner.has_node("Components/Resource"):
+		var r: Node = owner.get_node("Components/Resource")
+		if r != null:
+			var mv: Variant = r.get("max_resource")
+			if mv != null:
+				return int(mv)
+	return 1
 
 func _ready() -> void:
 	_life_timer = despawn_seconds
