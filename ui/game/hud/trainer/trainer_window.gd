@@ -106,7 +106,19 @@ func _refresh_rows() -> void:
 	if defs.size() == 0 and _trainer_class_id == "paladin":
 		push_warning("[TRAINER_UI] AbilityDB returned 0 defs for paladin. AbilityDB may not have loaded data/abilities/*.tres.")
 	defs.sort_custom(func(a: AbilityDefinition, b: AbilityDefinition) -> bool:
-		return a.get_display_name() < b.get_display_name()
+		var rank_a: int = int(_spellbook.learned_ranks.get(a.id, 0)) + 1
+		var rank_b: int = int(_spellbook.learned_ranks.get(b.id, 0)) + 1
+		var req_a: int = 9999
+		var req_b: int = 9999
+		var rd_a: RankData = _ability_db.get_rank_data(a.id, rank_a)
+		var rd_b: RankData = _ability_db.get_rank_data(b.id, rank_b)
+		if rd_a != null:
+			req_a = rd_a.required_level
+		if rd_b != null:
+			req_b = rd_b.required_level
+		if req_a == req_b:
+			return a.get_display_name() < b.get_display_name()
+		return req_a < req_b
 	)
 	var show_available_only := filter_option != null and filter_option.selected == 0
 	for def in defs:
@@ -126,7 +138,7 @@ func _refresh_rows() -> void:
 			continue
 		var row := TRAINER_ROW_SCENE.instantiate()
 		list_vbox.add_child(row)
-		row.set_data(def, current_rank, max_rank, cost, can_learn)
+		row.set_data(def, current_rank, max_rank, required_level, cost, can_learn)
 		row.name_clicked.connect(_on_row_name_clicked)
 		row.learn_clicked.connect(_on_row_learn_clicked)
 

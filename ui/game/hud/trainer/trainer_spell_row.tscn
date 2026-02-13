@@ -28,12 +28,3 @@ text = "R0/1"
 [node name="LearnButton" type="Button" parent="."]
 layout_mode = 2
 text = "Изучить"
-
-[node name="CostLabel" type="RichTextLabel" parent="."]
-custom_minimum_size = Vector2(96, 24)
-layout_mode = 2
-size_flags_horizontal = 0
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-text = ""
