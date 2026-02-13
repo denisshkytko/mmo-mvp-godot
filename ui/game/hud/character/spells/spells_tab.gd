@@ -11,6 +11,7 @@ var _spellbook: PlayerSpellbook = null
 var _ability_db: AbilityDatabase = null
 var _tooltip: AbilityTooltip = null
 var _selected_ability_id: String = ""
+var _tooltip_ability_id: String = ""
 var _flow_router: Node = null
 var _db_ready: bool = false
 var _player_ready: bool = false
@@ -37,7 +38,7 @@ func _ready() -> void:
 			if not _ability_db.initialized.is_connected(_on_ability_db_ready):
 				_ability_db.initialized.connect(_on_ability_db_ready)
 
-	_tooltip = get_tree().get_first_node_in_group("ability_tooltip_singleton") as AbilityTooltip
+	_ensure_tooltip_ref()
 	if loadout_pad != null and loadout_pad.has_signal("slot_pressed") and not loadout_pad.slot_pressed.is_connected(_on_slot_pressed):
 		loadout_pad.slot_pressed.connect(_on_slot_pressed)
 
@@ -46,6 +47,17 @@ func _ready() -> void:
 		_on_player_spawned(existing_player, null)
 
 	_try_refresh()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if _tooltip == null or not _tooltip.visible:
+		return
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			if not _tooltip.get_global_rect().has_point(mb.global_position):
+				_hide_tooltip()
 
 func _on_player_spawned(player: Node, _gm: Node) -> void:
 	if not (player is Player):
@@ -78,6 +90,7 @@ func _try_refresh() -> void:
 func _refresh_all() -> void:
 	_refresh_list()
 	_refresh_loadout()
+	_update_assignment_visuals()
 
 func _refresh_list() -> void:
 	if spells_grid == null:
@@ -101,7 +114,8 @@ func _refresh_list() -> void:
 		spells_grid.add_child(item)
 		item.set_data(def, rank)
 		item.set_selected(String(ability_id) == _selected_ability_id)
-		item.clicked.connect(_on_spell_clicked)
+		item.name_clicked.connect(_on_spell_name_clicked)
+		item.icon_clicked.connect(_on_spell_icon_clicked)
 
 	# Keep selection consistent with current filter.
 	if _selected_ability_id != "":
@@ -111,27 +125,53 @@ func _refresh_list() -> void:
 				selected_visible = true
 				break
 		if not selected_visible:
-			_selected_ability_id = ""
+			_clear_selected_ability()
 
 func _refresh_loadout() -> void:
 	if loadout_pad != null and _spellbook != null and _ability_db != null:
 		loadout_pad.refresh_icons(_spellbook, _ability_db)
 
-func _on_spell_clicked(ability_id: String) -> void:
+func _on_spell_name_clicked(ability_id: String) -> void:
 	if ability_id == "":
+		return
+	if _tooltip != null and _tooltip.visible and _tooltip_ability_id == ability_id:
+		_hide_tooltip()
+		return
+	_show_tooltip_for(ability_id)
+
+func _on_spell_icon_clicked(ability_id: String) -> void:
+	if ability_id == "":
+		return
+	if not _can_select_for_install(ability_id):
 		return
 	_selected_ability_id = ability_id
 	for child in spells_grid.get_children():
 		if child.has_method("set_selected"):
 			child.set_selected(child.ability_id == ability_id)
-	_show_tooltip_for(ability_id)
+	_update_assignment_visuals()
+
+func _can_select_for_install(ability_id: String) -> bool:
+	if _ability_db == null:
+		return false
+	var def := _ability_db.get_ability(ability_id)
+	if def == null:
+		return false
+	var t := String(def.ability_type)
+	return t != "aura" and t != "stance" and t != "buff"
 
 func _show_tooltip_for(ability_id: String) -> void:
+	_ensure_tooltip_ref()
 	if _tooltip == null or _spellbook == null:
 		return
 	var rank := int(_spellbook.learned_ranks.get(ability_id, 1))
 	var pos := get_viewport().get_mouse_position()
 	_tooltip.show_for(ability_id, max(1, rank), pos)
+	_tooltip_ability_id = ability_id
+
+func _hide_tooltip() -> void:
+	if _tooltip != null:
+		_tooltip.hide_tooltip()
+	_tooltip_ability_id = ""
 
 func _on_slot_pressed(slot_index: int) -> void:
 	if _spellbook == null:
@@ -139,7 +179,19 @@ func _on_slot_pressed(slot_index: int) -> void:
 	if _selected_ability_id == "":
 		return
 	_spellbook.assign_ability_to_slot(_selected_ability_id, slot_index)
+	_clear_selected_ability()
 	_refresh_loadout()
+
+func _clear_selected_ability() -> void:
+	_selected_ability_id = ""
+	for child in spells_grid.get_children():
+		if child.has_method("set_selected"):
+			child.set_selected(false)
+	_update_assignment_visuals()
+
+func _update_assignment_visuals() -> void:
+	if loadout_pad != null and loadout_pad.has_method("set_assignment_mode"):
+		loadout_pad.call("set_assignment_mode", _selected_ability_id != "")
 
 func _on_filter_selected(index: int) -> void:
 	_filter_index = index
@@ -156,3 +208,7 @@ func _passes_filter(def: AbilityDefinition) -> bool:
 			return t == "aura" or t == "stance" or t == "buff"
 		_:
 			return true
+
+func _ensure_tooltip_ref() -> void:
+	if _tooltip == null or not is_instance_valid(_tooltip):
+		_tooltip = get_tree().get_first_node_in_group("ability_tooltip_singleton") as AbilityTooltip

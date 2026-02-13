@@ -1,6 +1,7 @@
 extends HBoxContainer
 
 signal name_clicked(ability_id: String)
+signal icon_clicked(ability_id: String)
 signal learn_clicked(ability_id: String)
 
 const COST_GOLD_COLOR := Color("d7b25b")
@@ -21,6 +22,8 @@ var ability_id: String = ""
 func _ready() -> void:
 	if name_button != null and not name_button.pressed.is_connected(_on_name_pressed):
 		name_button.pressed.connect(_on_name_pressed)
+	if icon_rect != null and not icon_rect.gui_input.is_connected(_on_icon_gui_input):
+		icon_rect.gui_input.connect(_on_icon_gui_input)
 	if learn_button != null and not learn_button.pressed.is_connected(_on_learn_pressed):
 		learn_button.pressed.connect(_on_learn_pressed)
 
@@ -75,6 +78,12 @@ func _set_cost_value(bronze_total: int) -> void:
 
 func _on_name_pressed() -> void:
 	emit_signal("name_clicked", ability_id)
+
+func _on_icon_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			emit_signal("icon_clicked", ability_id)
 
 func _on_learn_pressed() -> void:
 	emit_signal("learn_clicked", ability_id)

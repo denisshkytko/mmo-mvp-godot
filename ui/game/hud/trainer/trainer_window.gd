@@ -14,6 +14,7 @@ var _trainer: Node = null
 var _trainer_class_id: String = ""
 var _ability_db: AbilityDatabase = null
 var _tooltip: AbilityTooltip = null
+var _tooltip_ability_id: String = ""
 var _is_open: bool = false
 var _db_ready: bool = false
 
@@ -26,7 +27,7 @@ func _ready() -> void:
 			_db_ready = true
 		elif not _ability_db.initialized.is_connected(_on_db_ready):
 			_ability_db.initialized.connect(_on_db_ready)
-	_tooltip = get_tree().get_first_node_in_group("ability_tooltip_singleton") as AbilityTooltip
+	_ensure_tooltip_ref()
 	if close_button != null and not close_button.pressed.is_connected(close):
 		close_button.pressed.connect(close)
 	if filter_option != null:
@@ -36,6 +37,17 @@ func _ready() -> void:
 		filter_option.selected = 0
 	if filter_option != null and not filter_option.item_selected.is_connected(_on_filter_changed):
 		filter_option.item_selected.connect(_on_filter_changed)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _is_open:
+		return
+	if _tooltip == null or not _tooltip.visible:
+		return
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			if not _tooltip.get_global_rect().has_point(mb.global_position):
+				_hide_tooltip()
 
 func open_for_trainer(trainer_node: Node, player: Player, spellbook: PlayerSpellbook, trainer_class_id: String) -> void:
 	_trainer = trainer_node
@@ -57,8 +69,7 @@ func open_for_trainer(trainer_node: Node, player: Player, spellbook: PlayerSpell
 func close() -> void:
 	_is_open = false
 	panel.visible = false
-	if _tooltip != null:
-		_tooltip.hide_tooltip()
+	_hide_tooltip()
 	_trainer = null
 	_player = null
 	_spellbook = null
@@ -139,16 +150,29 @@ func _refresh_rows() -> void:
 		var row := TRAINER_ROW_SCENE.instantiate()
 		list_vbox.add_child(row)
 		row.set_data(def, current_rank, max_rank, required_level, cost, can_learn)
-		row.name_clicked.connect(_on_row_name_clicked)
+		row.name_clicked.connect(_on_row_tooltip_clicked)
+		row.icon_clicked.connect(_on_row_tooltip_clicked)
 		row.learn_clicked.connect(_on_row_learn_clicked)
 
-func _on_row_name_clicked(ability_id: String) -> void:
+func _on_row_tooltip_clicked(ability_id: String) -> void:
+	if ability_id == "":
+		return
+	_ensure_tooltip_ref()
 	if _tooltip == null:
+		return
+	if _tooltip.visible and _tooltip_ability_id == ability_id:
+		_hide_tooltip()
 		return
 	var rank := 1
 	if _spellbook != null:
 		rank = max(1, int(_spellbook.learned_ranks.get(ability_id, 0)))
 	_tooltip.show_for(ability_id, rank, get_viewport().get_mouse_position())
+	_tooltip_ability_id = ability_id
+
+func _hide_tooltip() -> void:
+	if _tooltip != null:
+		_tooltip.hide_tooltip()
+	_tooltip_ability_id = ""
 
 func _on_row_learn_clicked(ability_id: String) -> void:
 	if _ability_db == null or _player == null or _spellbook == null:
@@ -196,3 +220,7 @@ func _notify_class_mismatch() -> void:
 	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
 	if inv_ui != null and inv_ui.has_method("show_center_toast"):
 		inv_ui.call("show_center_toast", "Тренер не для вашего класса")
+
+func _ensure_tooltip_ref() -> void:
+	if _tooltip == null or not is_instance_valid(_tooltip):
+		_tooltip = get_tree().get_first_node_in_group("ability_tooltip_singleton") as AbilityTooltip
