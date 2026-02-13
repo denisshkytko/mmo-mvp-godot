@@ -14,7 +14,6 @@ func _ready() -> void:
 	if name_button != null and not name_button.pressed.is_connected(_on_name_pressed):
 		name_button.pressed.connect(_on_name_pressed)
 	if name_button != null:
-		name_button.autowrap_mode = TextServer.AUTOWRAP_OFF
 		if name_button.has_method("set_text_overrun_behavior"):
 			name_button.call("set_text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
 	if icon_button != null and not icon_button.pressed.is_connected(_on_icon_pressed):
