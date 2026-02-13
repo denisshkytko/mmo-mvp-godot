@@ -257,23 +257,48 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 		"self":
 			actual_target = p
 		"ally":
-			if actual_target == null:
-				actual_target = p
-			if actual_target == null:
-				return {"ok": false, "reason": "no_target"}
-			if _is_hostile_target(actual_target):
-				return {"ok": false, "reason": "invalid_target"}
+			if actual_target == null or _is_hostile_target(actual_target):
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "invalid_target"}
 		"enemy":
 			if actual_target == null:
-				return {"ok": false, "reason": "no_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 			if actual_target == p:
-				return {"ok": false, "reason": "no_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 			if not _is_hostile_target(actual_target):
-				return {"ok": false, "reason": "invalid_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "invalid_target"}
+		"any":
+			if actual_target == null:
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 		_:
 			if actual_target == null:
-				return {"ok": false, "reason": "no_target"}
+				if _can_fallback_to_self(def):
+					actual_target = p
+				else:
+					return {"ok": false, "reason": "no_target"}
 	return {"ok": true, "target": actual_target}
+
+func _can_fallback_to_self(def: AbilityDefinition) -> bool:
+	if def == null:
+		return false
+	# Ally spells are expected to be self-castable by default.
+	if def.target_type == "ally" or def.target_type == "self":
+		return true
+	return bool(def.self_cast_fallback)
 
 func _is_hostile_target(target: Node) -> bool:
 	var caster_faction := ""

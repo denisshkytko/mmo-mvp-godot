@@ -8,6 +8,7 @@ class_name AbilityDefinition
 @export var class_id: String = ""
 @export var ability_type: String = "active"
 @export var target_type: String = "enemy"
+@export var self_cast_fallback: bool = false
 @export var range_mode: String = "ranged"
 @export var aura_radius: float = 0.0
 @export var effect: AbilityEffect
