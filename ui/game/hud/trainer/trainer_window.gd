@@ -165,8 +165,8 @@ func _on_row_tooltip_clicked(ability_id: String) -> void:
 		return
 	var rank := 1
 	if _spellbook != null and _ability_db != null:
-		var current_rank := max(0, int(_spellbook.learned_ranks.get(ability_id, 0)))
-		var max_rank := max(1, int(_ability_db.get_max_rank(ability_id)))
+		var current_rank: int = maxi(0, int(_spellbook.learned_ranks.get(ability_id, 0)))
+		var max_rank: int = maxi(1, int(_ability_db.get_max_rank(ability_id)))
 		if current_rank < max_rank:
 			rank = current_rank + 1
 		else:
