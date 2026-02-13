@@ -52,6 +52,7 @@ static func build_player_snapshot(
         var bd: Dictionary = b as Dictionary
         var id: String = String(bd.get("id", ""))
         var data: Dictionary = bd.get("data", {}) as Dictionary
+        var source_label: String = String(data.get("ability_id", id))
         var primary_perc: Dictionary = data.get("primary_percent_add", {}) as Dictionary
         for k in prim.keys():
             if not primary_perc.has(k):
@@ -62,7 +63,7 @@ static func build_player_snapshot(
             var bonus: int = int(round(float(base_level_primary.get(k, 0)) * pct))
             if bonus != 0:
                 prim[k] += bonus
-                _add_breakdown_line(prim_break[k], id, bonus, "(%.1f%%)" % (pct * 100.0))
+                _add_breakdown_line(prim_break[k], source_label, bonus, "(%.1f%%)" % (pct * 100.0))
 
     # Apply flat primary mods from gear
     var gear_primary: Dictionary = gear.get("primary", {}) if gear.has("primary") else {}
@@ -198,13 +199,14 @@ static func build_player_snapshot(
         var bd: Dictionary = b as Dictionary
         var id: String = String(bd.get("id", ""))
         var data: Dictionary = bd.get("data", {}) as Dictionary
+        var source_label: String = String(data.get("ability_id", id))
 
         # legacy compatibility
         if data.has("attack_bonus"):
-            _apply_flat_secondary(derived, breakdown, {"attack_power": int(data.get("attack_bonus", 0))}, id)
+            _apply_flat_secondary(derived, breakdown, {"attack_power": int(data.get("attack_bonus", 0))}, source_label)
 
         var sec: Dictionary = data.get("secondary_add", data.get("secondary", {})) as Dictionary
-        _apply_flat_secondary(derived, breakdown, sec, id)
+        _apply_flat_secondary(derived, breakdown, sec, source_label)
 
         var perc: Dictionary = data.get("percent_add", data.get("percent", {})) as Dictionary
         for pk in percent_mods.keys():

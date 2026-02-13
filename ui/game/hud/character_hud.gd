@@ -719,8 +719,6 @@ func _build_primary_tooltip(key: String, effect_text: String, snap: Dictionary) 
 	var entries: Array = primary_breakdown.get(key, []) as Array
 	var buff_lines: Array[String] = _extract_buff_lines(entries)
 	if buff_lines.size() > 0:
-		if tooltip_lines.size() > 0:
-			tooltip_lines.append("")
 		tooltip_lines.append_array(buff_lines)
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
 
@@ -730,20 +728,14 @@ func _build_derived_tooltip(key: String, effect_text: String, snap: Dictionary) 
 		tooltip_lines.append(effect_text)
 	var base_lines := _build_primary_contrib_lines(key, snap)
 	if base_lines.size() > 0:
-		if tooltip_lines.size() > 0:
-			tooltip_lines.append("")
 		tooltip_lines.append_array(base_lines)
 	var equip_val: float = _get_direct_equipment_bonus(key, snap)
 	if equip_val != 0.0:
-		if tooltip_lines.size() > 0:
-			tooltip_lines.append("")
 		tooltip_lines.append("Снаряжение: %s" % _format_stat_value(equip_val))
 	var breakdown: Dictionary = snap.get("derived_breakdown", {}) as Dictionary
 	var entries: Array = breakdown.get(key, []) as Array
 	var buff_lines: Array[String] = _extract_buff_lines(entries)
 	if buff_lines.size() > 0:
-		if tooltip_lines.size() > 0:
-			tooltip_lines.append("")
 		tooltip_lines.append_array(buff_lines)
 	_breakdown_cache[key] = "\n".join(tooltip_lines).strip_edges()
 
@@ -754,7 +746,7 @@ func _extract_buff_lines(entries: Array) -> Array[String]:
 			continue
 		var d: Dictionary = entry as Dictionary
 		var label: String = String(d.get("label", d.get("source", "")))
-		if label == "" or label == "base" or label == "level" or label == "gear":
+		if label == "" or label == "base" or label == "level" or label == "gear" or label == "percent":
 			continue
 		if PRIMARY_LABELS.has(label.to_lower()):
 			continue
@@ -762,7 +754,7 @@ func _extract_buff_lines(entries: Array) -> Array[String]:
 			continue
 		var buff_name: String = _resolve_buff_name(label)
 		var val: float = float(d.get("value", 0.0))
-		var rendered: String = _format_signed_value(val)
+		var rendered: String = _format_stat_value(val)
 		out.append("%s: %s" % [buff_name, rendered])
 	return out
 
@@ -777,10 +769,14 @@ func _resolve_buff_name(raw_label: String) -> String:
 		ability_id = label.trim_prefix("aura:")
 	elif label.begins_with("stance:"):
 		ability_id = label.trim_prefix("stance:")
-	if ability_id != "" and _ability_db != null and _ability_db.has_method("get_ability"):
-		var def: AbilityDefinition = _ability_db.get_ability(ability_id)
-		if def != null and String(def.name) != "":
-			return String(def.name)
+	if _ability_db != null and _ability_db.has_method("get_ability"):
+		if ability_id != "":
+			var def: AbilityDefinition = _ability_db.get_ability(ability_id)
+			if def != null and String(def.name) != "":
+				return String(def.name)
+		var direct_def: AbilityDefinition = _ability_db.get_ability(label)
+		if direct_def != null and String(direct_def.name) != "":
+			return String(direct_def.name)
 	return label
 
 func _build_primary_contrib_lines(key: String, snap: Dictionary) -> Array[String]:
