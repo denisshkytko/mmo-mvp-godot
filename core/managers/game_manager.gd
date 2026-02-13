@@ -291,9 +291,11 @@ func _is_ui_press_event() -> bool:
 	if not (hovered is Control):
 		return false
 
+	# Важно: PASS-контейнеры (полноэкранные HUD-руты) не должны блокировать
+	# world-targeting. Блокируем только реально "кликабельный" UI (STOP).
 	var node: Control = hovered as Control
 	while node != null:
-		if node.visible and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+		if node.visible and node.mouse_filter == Control.MOUSE_FILTER_STOP:
 			return true
 		node = node.get_parent() as Control
 
