@@ -157,7 +157,7 @@ func _get_class_base_interval() -> float:
 		return 1.0
 	return float(PROG.get_base_melee_attack_interval_for_class(p.class_id))
 
-func _apply_damage_to_target(target: Node2D, dmg: int, snap: Dictionary, spell_power: float) -> void:
+func _apply_damage_to_target(target: Node2D, dmg: int, snap: Dictionary, spell_power: float, allow_extra_attack_proc: bool = true) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	if not _can_attack_target(target):
@@ -166,6 +166,8 @@ func _apply_damage_to_target(target: Node2D, dmg: int, snap: Dictionary, spell_p
 	var final_phys := _estimate_final_damage(target, dmg, "physical")
 	DAMAGE_HELPER.apply_damage_typed(p, target, dmg, "physical")
 	_apply_on_hit_effects(target, final_phys, snap, spell_power)
+	if allow_extra_attack_proc:
+		_try_extra_attack_proc(target, dmg, snap, spell_power)
 
 func _fire_ranged(target: Node2D, dmg: int) -> void:
 	if target == null or not is_instance_valid(target):
@@ -241,6 +243,24 @@ func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, sp
 			var mana_gain: int = int(round(float(final_phys) * mana_pct / 100.0))
 			if mana_gain > 0:
 				p.mana = min(p.max_mana, p.mana + mana_gain)
+
+func _try_extra_attack_proc(target: Node2D, base_damage: int, snap: Dictionary, spell_power: float) -> void:
+	if p == null or p.c_buffs == null:
+		return
+	var stance_data: Dictionary = p.c_buffs.get_active_stance_data()
+	if stance_data.is_empty() or not stance_data.has("extra_attack_chance_pct"):
+		return
+	var chance_pct: float = float(stance_data.get("extra_attack_chance_pct", 0.0))
+	if chance_pct <= 0.0:
+		return
+	if randf() * 100.0 >= chance_pct:
+		return
+
+	var extra_damage: int = STAT_CALC.apply_crit_to_damage(base_damage, snap)
+	if _attack_mode == AttackMode.RANGED:
+		_fire_ranged(target, extra_damage)
+		return
+	_apply_damage_to_target(target, extra_damage, snap, spell_power, false)
 
 
 func _get_current_target() -> Node2D:
