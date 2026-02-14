@@ -226,19 +226,6 @@ func on_owner_took_damage() -> void:
 	if removed_any:
 		_notify_stats_changed()
 
-func get_visible_buffs_snapshot() -> Array:
-	var arr: Array = []
-	for v in get_buffs_snapshot():
-		if not (v is Dictionary):
-			continue
-		var entry: Dictionary = v as Dictionary
-		var data: Dictionary = entry.get("data", {}) as Dictionary
-		var flags: Dictionary = data.get("flags", {}) as Dictionary
-		if bool(flags.get("hide_in_ui", false)) or bool(data.get("hide_in_ui", false)):
-			continue
-		arr.append(entry)
-	return arr
-
 func get_move_speed_multiplier() -> float:
 	var mult: float = 1.0
 	for k in _buffs.keys():
@@ -256,6 +243,7 @@ func get_move_speed_multiplier() -> float:
 	if mult <= 0.0:
 		return 1.0
 	return mult
+
 func get_attack_speed_multiplier() -> float:
 	var mult: float = 1.0
 	for k in _buffs.keys():

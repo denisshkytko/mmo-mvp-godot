@@ -323,8 +323,6 @@ func remove_buff(id: String) -> void:
 	c_buffs.remove_buff(id)
 
 func get_buffs_snapshot() -> Array:
-	if c_buffs != null and c_buffs.has_method("get_visible_buffs_snapshot"):
-		return c_buffs.get_visible_buffs_snapshot()
 	return c_buffs.get_buffs_snapshot()
 
 
