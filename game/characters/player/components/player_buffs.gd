@@ -28,6 +28,7 @@ func tick(delta: float) -> void:
 	# PlayerStats regen (which is out-of-combat for HP).
 	if p != null and not p.is_dead:
 		_apply_consumable_hots(delta)
+		_apply_periodic_resource_effects(delta)
 
 	var to_remove: Array[String] = []
 	for k in _buffs.keys():
@@ -123,6 +124,37 @@ func _apply_consumable_hots(delta: float) -> void:
 	# Do not call _notify_stats_changed here — these buffs don't affect stats snapshot.
 	# (Healing already applied directly.)
 
+
+func _apply_periodic_resource_effects(delta: float) -> void:
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var mana_pct: float = float(flags.get("mana_pct_of_max_per_tick", data.get("mana_pct_of_max_per_tick", 0.0)))
+		if mana_pct <= 0.0:
+			continue
+		var interval: float = float(flags.get("mana_tick_interval_sec", data.get("mana_tick_interval_sec", 2.0)))
+		if interval <= 0.0:
+			interval = 2.0
+		var acc: float = float(data.get("mana_tick_acc", 0.0)) + delta
+		var changed := false
+		while acc >= interval:
+			acc -= interval
+			if p == null or p.mana >= p.max_mana:
+				continue
+			var add_mana: int = int(round(float(p.max_mana) * mana_pct / 100.0))
+			if add_mana <= 0:
+				add_mana = 1
+			p.mana = min(p.max_mana, p.mana + add_mana)
+			changed = true
+		data["mana_tick_acc"] = acc
+		if changed:
+			entry["data"] = data
+			_buffs[id] = entry
+		else:
+			entry["data"] = data
+			_buffs[id] = entry
 
 func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ability_id: String = "", source: String = "") -> void:
 	if id == "":

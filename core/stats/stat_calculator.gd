@@ -108,6 +108,7 @@ static func build_player_snapshot(
         "crit_chance_rating": 0,
         "crit_damage_rating": 0,
         "magic_crit_chance_bonus_pct": 0.0,
+        "cast_speed_bonus_pct": 0.0,
     }
 
     var breakdown := {
@@ -126,6 +127,7 @@ static func build_player_snapshot(
         "crit_chance_rating": [],
         "crit_damage_rating": [],
         "magic_crit_chance_bonus_pct": [],
+        "cast_speed_bonus_pct": [],
     }
 
     # MaxHP / MaxMana (ONLY from primary + mods)
@@ -230,7 +232,7 @@ static func build_player_snapshot(
     # 6) Conversions to % (for UI)
     # ------------------
     var atk_speed_pct: float = float(derived.attack_speed_rating) / C.AS_RATING_PER_1PCT
-    var cast_speed_pct: float = float(derived.cast_speed_rating) / C.CS_RATING_PER_1PCT
+    var cast_speed_pct: float = float(derived.cast_speed_rating) / C.CS_RATING_PER_1PCT + float(derived.cast_speed_bonus_pct)
     var cooldown_reduction_pct: float = 0.0
     if C.COOLDOWN_RATING_PER_1PCT > 0.0:
         cooldown_reduction_pct = float(derived.speed) / C.COOLDOWN_RATING_PER_1PCT
@@ -447,6 +449,7 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "crit_chance_rating",
         "crit_damage_rating",
         "magic_crit_chance_bonus_pct",
+        "cast_speed_bonus_pct",
         "attack_speed_rating",
         "cast_speed_rating",
         "max_hp",
