@@ -210,6 +210,19 @@ func get_active_stance_data() -> Dictionary:
 			return data
 	return {}
 
+func get_attack_speed_multiplier() -> float:
+	var mult: float = 1.0
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var aspd_mult: float = float(data.get("attack_speed_multiplier", 1.0))
+		if aspd_mult > 0.0 and aspd_mult != 1.0:
+			mult *= aspd_mult
+	if mult <= 0.0:
+		return 1.0
+	return mult
+
 
 # Legacy helper (used by PlayerCombat)
 func get_attack_bonus_total() -> int:

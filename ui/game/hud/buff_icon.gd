@@ -8,18 +8,23 @@ var _player: Node = null
 var _buff_id: String = ""
 var _time_left: float = 0.0
 var _show_time: bool = true
+var _is_debuff: bool = false
 
 func setup(player: Node, data: Dictionary) -> void:
 	_player = player
 	_buff_id = String(data.get("id", ""))
 	_time_left = float(data.get("time_left", 0.0))
 	_show_time = _should_show_time(data)
+	_is_debuff = _detect_debuff(data)
 	_refresh_icon(data)
+	_refresh_frame()
 	_refresh_time()
 
 func update_data(data: Dictionary) -> void:
 	_show_time = _should_show_time(data)
+	_is_debuff = _detect_debuff(data)
 	_refresh_icon(data)
+	_refresh_frame()
 	_refresh_time()
 
 func update_time(left: float) -> void:
@@ -94,3 +99,28 @@ func _format_time(seconds: float) -> String:
 
 	# < 1 minute => show seconds
 	return "%d s" % s
+
+func _refresh_frame() -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.05, 0.05, 0.05, 0.85)
+	sb.border_width_left = 1
+	sb.border_width_top = 1
+	sb.border_width_right = 1
+	sb.border_width_bottom = 1
+	sb.border_color = Color(0.85, 0.2, 0.2, 1.0) if _is_debuff else Color(0.75, 0.75, 0.75, 1.0)
+	add_theme_stylebox_override("panel", sb)
+
+func _detect_debuff(data: Dictionary) -> bool:
+	if bool(data.get("is_debuff", false)):
+		return true
+	if data.has("data") and data.get("data") is Dictionary:
+		var inner: Dictionary = data.get("data", {}) as Dictionary
+		if bool(inner.get("is_debuff", false)):
+			return true
+	var source := String(data.get("source", ""))
+	if source == "debuff":
+		return true
+	if data.has("data") and data.get("data") is Dictionary:
+		var inner2: Dictionary = data.get("data", {}) as Dictionary
+		return String(inner2.get("source", "")) == "debuff"
+	return false

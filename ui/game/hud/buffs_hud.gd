@@ -3,155 +3,154 @@ class_name BuffsHUD
 
 @export var buff_icon_scene: PackedScene
 @export var buffs_per_row: int = 7
-@export var newest_on_right: bool = false  # false => newest on left
 @onready var panel: Panel = $Root/Panel
-@onready var grid: GridContainer = $Root/Panel/Grid
+@onready var buff_grid: GridContainer = $Root/Panel/VBox/BuffGrid
+@onready var debuff_grid: GridContainer = $Root/Panel/VBox/DebuffGrid
 
 var _player: Node = null
-var _icons: Dictionary = {} # buff_id:String -> BuffIcon (Node)
+var _buff_icons: Dictionary = {}
+var _debuff_icons: Dictionary = {}
 var _fixed_offset_right: float = 0.0
 var _fixed_offset_top: float = 0.0
-var _has_fixed_corner: bool = false
-var _realign_requested: bool = false
-var _target_panel_size: Vector2 = Vector2.ZERO
+
+const FALLBACK_ICON_SIZE: Vector2 = Vector2(40.0, 40.0)
 
 func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
-	_apply_grid_settings()
 	visible = false
-	if panel != null and not panel.resized.is_connected(_on_panel_resized):
-		panel.resized.connect(_on_panel_resized)
-	await get_tree().process_frame
-	_capture_panel_corner_from_scene()
+	_apply_columns()
+	_capture_panel_anchor()
 
 func _process(_delta: float) -> void:
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
 		return
-
 	if not _player.has_method("get_buffs_snapshot"):
 		return
+	_sync_icons(_player.call("get_buffs_snapshot") as Array)
 
-	var snap: Array = _player.call("get_buffs_snapshot")
-	_sync_icons(snap)
-
-func _apply_grid_settings() -> void:
-	if grid == null:
-		return
-	grid.columns = max(1, buffs_per_row)
+func _apply_columns() -> void:
+	var cols: int = maxi(1, buffs_per_row)
+	buff_grid.columns = cols
+	debuff_grid.columns = cols
 
 func _sync_icons(snap: Array) -> void:
-	var seen: Dictionary = {} # buff_id -> true
-
+	var seen_buffs: Dictionary = {}
+	var seen_debuffs: Dictionary = {}
 	for entry in snap:
 		var data: Dictionary = entry as Dictionary
 		var id: String = String(data.get("id", ""))
 		if id == "":
 			continue
-
-		seen[id] = true
-		var left: float = float(data.get("time_left", 0.0))
-
-		if _icons.has(id):
-			var icon_node: BuffIcon = _icons[id] as BuffIcon
-			if icon_node != null and is_instance_valid(icon_node):
-				icon_node.update_time(left)
-				icon_node.update_data(data)
+		var is_debuff: bool = _is_debuff_entry(data)
+		if is_debuff:
+			seen_debuffs[id] = true
+			_sync_single(_debuff_icons, debuff_grid, id, data)
 		else:
-			if buff_icon_scene == null:
-				continue
+			seen_buffs[id] = true
+			_sync_single(_buff_icons, buff_grid, id, data)
+	_prune(_buff_icons, seen_buffs)
+	_prune(_debuff_icons, seen_debuffs)
+	buff_grid.visible = _buff_icons.size() > 0
+	debuff_grid.visible = _debuff_icons.size() > 0
+	_relayout_panel()
+	visible = buff_grid.visible or debuff_grid.visible
 
-			var inst: Node = buff_icon_scene.instantiate()
-			grid.add_child(inst)
-			if not newest_on_right:
-				grid.move_child(inst, 0)
-
-			var bicon: BuffIcon = inst as BuffIcon
-			if bicon != null:
-				bicon.setup(_player, data)
-				_icons[id] = bicon
-
-	var to_remove: Array[String] = []
-	for k in _icons.keys():
-		if not seen.has(k):
-			to_remove.append(k)
-
-	for k in to_remove:
-		var icon_node2: BuffIcon = _icons[k] as BuffIcon
-		if icon_node2 != null and is_instance_valid(icon_node2):
-			icon_node2.queue_free()
-		_icons.erase(k)
-
-	visible = (_icons.size() > 0)
-	_apply_grid_settings()
-	_update_panel_size_for_icon_count(_icons.size())
-	_request_panel_realign()
-
-func _update_panel_size_for_icon_count(icon_count: int) -> void:
-	if panel == null or grid == null:
-		return
-	var icon_size := _get_icon_size()
-	var used_cols := clampi(icon_count, 1, max(1, buffs_per_row))
-	var rows := maxi(1, int(ceil(float(icon_count) / float(max(1, buffs_per_row)))))
-	var h_sep := float(grid.get_theme_constant("h_separation"))
-	var v_sep := float(grid.get_theme_constant("v_separation"))
-	_target_panel_size = Vector2(
-		float(used_cols) * icon_size.x + float(maxi(0, used_cols - 1)) * h_sep,
-		float(rows) * icon_size.y + float(maxi(0, rows - 1)) * v_sep
-	)
-
-func _capture_panel_corner_from_scene() -> void:
+func _capture_panel_anchor() -> void:
 	if panel == null:
 		return
 	_fixed_offset_right = panel.offset_right
 	_fixed_offset_top = panel.offset_top
-	_target_panel_size = panel.size
-	_has_fixed_corner = true
-	_request_panel_realign()
 
-func _request_panel_realign() -> void:
-	if not _has_fixed_corner or panel == null:
+func _relayout_panel() -> void:
+	if panel == null:
 		return
-	if _realign_requested:
-		return
-	_realign_requested = true
-	call_deferred("_apply_panel_fixed_top_right")
 
-func _apply_panel_fixed_top_right() -> void:
-	_realign_requested = false
-	if not _has_fixed_corner or panel == null:
-		return
-	var width := _target_panel_size.x
-	var height := _target_panel_size.y
-	if width <= 0.0:
-		width = panel.size.x
+	var cols_limit: int = maxi(1, buffs_per_row)
+	var icon_size: Vector2 = _get_icon_size()
+	var h_sep_buff: int = buff_grid.get_theme_constant("h_separation")
+	var v_sep_buff: int = buff_grid.get_theme_constant("v_separation")
+	var h_sep_debuff: int = debuff_grid.get_theme_constant("h_separation")
+	var v_sep_debuff: int = debuff_grid.get_theme_constant("v_separation")
+	var section_sep: int = 2
+
+	var buff_count: int = _buff_icons.size()
+	var debuff_count: int = _debuff_icons.size()
+
+	var buff_cols_used: int = mini(buff_count, cols_limit) if buff_count > 0 else 0
+	var debuff_cols_used: int = mini(debuff_count, cols_limit) if debuff_count > 0 else 0
+	var max_cols_used: int = maxi(buff_cols_used, debuff_cols_used)
+	if max_cols_used <= 0:
+		max_cols_used = 1
+
+	var width: float = float(max_cols_used) * icon_size.x
+	if buff_cols_used > 1:
+		width = max(width, float(buff_cols_used) * icon_size.x + float(buff_cols_used - 1) * float(h_sep_buff))
+	if debuff_cols_used > 1:
+		width = max(width, float(debuff_cols_used) * icon_size.x + float(debuff_cols_used - 1) * float(h_sep_debuff))
+
+	var buff_rows: int = int(ceil(float(buff_count) / float(cols_limit))) if buff_count > 0 else 0
+	var debuff_rows: int = int(ceil(float(debuff_count) / float(cols_limit))) if debuff_count > 0 else 0
+
+	var height: float = 0.0
+	if buff_rows > 0:
+		height += float(buff_rows) * icon_size.y
+		height += float(maxi(0, buff_rows - 1)) * float(v_sep_buff)
+	if debuff_rows > 0:
+		if height > 0.0:
+			height += float(section_sep)
+		height += float(debuff_rows) * icon_size.y
+		height += float(maxi(0, debuff_rows - 1)) * float(v_sep_debuff)
+
 	if height <= 0.0:
-		height = panel.size.y
+		height = icon_size.y
+
 	panel.offset_right = _fixed_offset_right
 	panel.offset_top = _fixed_offset_top
 	panel.offset_left = panel.offset_right - width
 	panel.offset_bottom = panel.offset_top + height
 
-func _on_panel_resized() -> void:
-	_apply_grid_settings()
-	_request_panel_realign()
-
 func _get_icon_size() -> Vector2:
-	for child in grid.get_children():
-		var c := child as Control
-		if c != null:
-			var s := c.custom_minimum_size
-			if s.x <= 0.0:
-				s.x = c.size.x
-			if s.y <= 0.0:
-				s.y = c.size.y
-			if s.x > 0.0 and s.y > 0.0:
-				return s
 	if buff_icon_scene != null:
-		var inst := buff_icon_scene.instantiate() as Control
+		var inst: Control = buff_icon_scene.instantiate() as Control
 		if inst != null:
-			var s2 := inst.custom_minimum_size
+			var size: Vector2 = inst.custom_minimum_size
 			inst.queue_free()
-			if s2.x > 0.0 and s2.y > 0.0:
-				return s2
-	return Vector2(40.0, 40.0)
+			if size.x > 0.0 and size.y > 0.0:
+				return size
+	return FALLBACK_ICON_SIZE
+
+func _sync_single(store: Dictionary, grid: GridContainer, id: String, data: Dictionary) -> void:
+	if store.has(id):
+		var icon: BuffIcon = store[id] as BuffIcon
+		if icon != null and is_instance_valid(icon):
+			icon.update_data(data)
+			icon.update_time(float(data.get("time_left", 0.0)))
+			return
+	if buff_icon_scene == null:
+		return
+	var inst: BuffIcon = buff_icon_scene.instantiate() as BuffIcon
+	if inst == null:
+		return
+	grid.add_child(inst)
+	inst.setup(_player, data)
+	store[id] = inst
+
+func _prune(store: Dictionary, seen: Dictionary) -> void:
+	for k in store.keys():
+		if seen.has(k):
+			continue
+		var icon: Node = store[k] as Node
+		if icon != null and is_instance_valid(icon):
+			icon.queue_free()
+		store.erase(k)
+
+func _is_debuff_entry(data: Dictionary) -> bool:
+	if bool(data.get("is_debuff", false)):
+		return true
+	if data.has("data") and data.get("data") is Dictionary:
+		var inner: Dictionary = data.get("data", {}) as Dictionary
+		if bool(inner.get("is_debuff", false)):
+			return true
+		return String(inner.get("source", "")) == "debuff"
+	return String(data.get("source", "")) == "debuff"

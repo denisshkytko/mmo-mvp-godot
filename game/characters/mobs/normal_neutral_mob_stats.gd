@@ -162,6 +162,70 @@ func apply_damage(raw_damage: int) -> bool:
 	current_hp = max(0, current_hp - dmg)
 	return current_hp <= 0
 
+
+
+var _status_effects: Dictionary = {}
+
+func tick_status_effects(delta: float) -> void:
+	if _status_effects.is_empty():
+		return
+	var to_remove: Array[String] = []
+	for k in _status_effects.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _status_effects[id] as Dictionary
+		var left: float = float(entry.get("time_left", 0.0))
+		if left >= 999999.0:
+			continue
+		left -= delta
+		if left <= 0.0:
+			to_remove.append(id)
+		else:
+			entry["time_left"] = left
+			_status_effects[id] = entry
+	if to_remove.is_empty():
+		return
+	for id in to_remove:
+		_status_effects.erase(id)
+
+func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {}, ability_id: String = "", source: String = "") -> void:
+	if id == "":
+		return
+	var left := duration_sec
+	if left <= 0.0:
+		left = 999999.0
+	_status_effects[id] = {
+		"time_left": left,
+		"data": data.duplicate(true),
+		"ability_id": ability_id if ability_id != "" else String(data.get("ability_id", "")),
+		"source": source if source != "" else String(data.get("source", "")),
+	}
+
+func get_buffs_snapshot() -> Array:
+	var arr: Array = []
+	for k in _status_effects.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _status_effects[id] as Dictionary
+		arr.append({
+			"id": id,
+			"time_left": float(entry.get("time_left", 0.0)),
+			"data": entry.get("data", {}) as Dictionary,
+			"ability_id": String(entry.get("ability_id", "")),
+			"source": String(entry.get("source", "")),
+		})
+	return arr
+
+func get_attack_speed_multiplier() -> float:
+	var mult: float = 1.0
+	for k in _status_effects.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _status_effects[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var cur: float = float(data.get("attack_speed_multiplier", 1.0))
+		if cur > 0.0 and cur != 1.0:
+			mult *= cur
+	if mult <= 0.0:
+		return 1.0
+	return mult
 func get_stats_snapshot() -> Dictionary:
 	return _snapshot.duplicate(true)
 

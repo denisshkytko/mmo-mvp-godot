@@ -8,6 +8,10 @@ extends CanvasLayer
 @onready var mana_row: HBoxContainer = $Root/Panel/Margin/VBox/ManaRow
 @onready var mana_bar: ProgressBar = $Root/Panel/Margin/VBox/ManaRow/ManaBar
 @onready var mana_text: Label = $Root/Panel/Margin/VBox/ManaRow/ManaBar/ManaText
+@onready var effects_root: VBoxContainer = $Root/Panel/Margin/VBox/Effects
+@onready var buff_grid: GridContainer = $Root/Panel/Margin/VBox/Effects/BuffGrid
+@onready var debuff_grid: GridContainer = $Root/Panel/Margin/VBox/Effects/DebuffGrid
+const BUFF_ICON_SCENE := preload("res://ui/game/hud/BuffIcon.tscn")
 
 var _gm: Node = null
 var _player: Node = null
@@ -79,6 +83,7 @@ func _process(_delta: float) -> void:
 
 	_update_hp()
 	_update_resource()
+	_update_effects()
 
 func _update_identity() -> void:
 	if _target == null:
@@ -287,3 +292,69 @@ func _update_relation_color() -> void:
 	sb.border_width_right = 2
 	sb.border_color = Color(0, 0, 0, 1)
 	panel.add_theme_stylebox_override("panel", sb)
+
+
+func _update_effects() -> void:
+	if _target == null or not is_instance_valid(_target):
+		effects_root.visible = false
+		_clear_grid(buff_grid)
+		_clear_grid(debuff_grid)
+		return
+	var snap: Array = []
+	if _target.has_method("get_buffs_snapshot"):
+		snap = _target.call("get_buffs_snapshot") as Array
+	elif "c_buffs" in _target and _target.c_buffs != null and _target.c_buffs.has_method("get_buffs_snapshot"):
+		snap = _target.c_buffs.call("get_buffs_snapshot") as Array
+	elif "c_stats" in _target and _target.c_stats != null and _target.c_stats.has_method("get_buffs_snapshot"):
+		snap = _target.c_stats.call("get_buffs_snapshot") as Array
+	_clear_grid(buff_grid)
+	_clear_grid(debuff_grid)
+	if snap.is_empty():
+		effects_root.visible = false
+		return
+	var columns: int = maxi(1, int(floor(panel.size.x / 32.0)))
+	buff_grid.columns = columns
+	debuff_grid.columns = columns
+	var max_icons: int = columns * 2
+	var buff_count: int = 0
+	var debuff_count: int = 0
+	for entry in snap:
+		if not (entry is Dictionary):
+			continue
+		var d: Dictionary = entry as Dictionary
+		var is_debuff: bool = _is_debuff_entry(d)
+		if is_debuff and debuff_count >= max_icons:
+			continue
+		if not is_debuff and buff_count >= max_icons:
+			continue
+		var inst: Control = BUFF_ICON_SCENE.instantiate() as Control
+		if inst == null:
+			continue
+		inst.custom_minimum_size = Vector2(30, 30)
+		if is_debuff:
+			debuff_grid.add_child(inst)
+		else:
+			buff_grid.add_child(inst)
+		if inst is BuffIcon:
+			(inst as BuffIcon).setup(_target, d)
+		if is_debuff:
+			debuff_count += 1
+		else:
+			buff_count += 1
+	effects_root.visible = (buff_count + debuff_count) > 0
+	buff_grid.visible = buff_count > 0
+	debuff_grid.visible = debuff_count > 0
+
+func _clear_grid(grid: GridContainer) -> void:
+	for child in grid.get_children():
+		child.queue_free()
+
+func _is_debuff_entry(data: Dictionary) -> bool:
+	if bool(data.get("is_debuff", false)):
+		return true
+	if data.has("data") and data.get("data") is Dictionary:
+		var inner: Dictionary = data.get("data", {}) as Dictionary
+		if bool(inner.get("is_debuff", false)):
+			return true
+		return String(inner.get("source", "")) == "debuff"
+	return String(data.get("source", "")) == "debuff"

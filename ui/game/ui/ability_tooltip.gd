@@ -95,14 +95,17 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 		for p in params:
 			lines.append(p)
 
-	var effect := _effect_line(def.id, rank_data, spell_power, base_phys)
+	var effect := _effect_line(def, rank_data, spell_power, base_phys)
 	if effect.strip_edges() != "":
 		if not params.is_empty():
 			lines.append("")
 		lines.append(effect)
 	return "\n".join(lines)
 
-func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, base_phys: int) -> String:
+func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: float, base_phys: int) -> String:
+	if def == null:
+		return ""
+	var ability_id: String = def.id
 	var scaled_flat: int = int(rank_data.value_flat) + int(round(spell_power))
 	var scaled_flat2: int = int(rank_data.value_flat_2) + int(round(spell_power))
 	match ability_id:
@@ -129,7 +132,7 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 		"lights_guidance":
 			return "Increases Mana Regeneration by %d per second for %d seconds." % [rank_data.value_flat, int(rank_data.duration_sec)]
 		"path_of_righteous_fury":
-			return "Restores %.0f%% of autoattack damage as Mana." % rank_data.value_pct
+			return "Increases threat generation (%.0fx) and restores %.0f%% of autoattack damage as Mana." % [rank_data.value_pct_2, rank_data.value_pct]
 		"royal_oath":
 			return "Increases base STR/AGI/END/INT/PER by %.0f%% for %d seconds." % [rank_data.value_pct, int(rank_data.duration_sec)]
 		"concentration_aura":
@@ -143,8 +146,30 @@ func _effect_line(ability_id: String, rank_data: RankData, spell_power: float, b
 		"light_execution":
 			var hit := int(round(float(base_phys) * rank_data.value_pct_2 / 100.0))
 			return "Deals %.0f%% physical damage (%d base) to targets below %.0f%% Health." % [rank_data.value_pct_2, hit, rank_data.value_pct]
+		"stone_fists":
+			return "Increases Attack Power by %d and threat generation (%.0fx)." % [rank_data.value_flat, rank_data.value_pct]
+		"wind_spirit_devotion":
+			return "Increases Agility and Perception by %d for you and nearby allies." % rank_data.value_flat
+		"lightning":
+			return "Deals %d magical damage to the target." % scaled_flat
 		_:
-			return "%s" % ability_id
+			return _format_effect_from_template(def.description, rank_data, scaled_flat, scaled_flat2)
+
+
+func _format_effect_from_template(template: String, rank_data: RankData, scaled_flat: int, scaled_flat2: int) -> String:
+	if template.strip_edges() == "":
+		return ""
+	var out := template
+	out = out.replace("{X}", str(scaled_flat))
+	out = out.replace("{X2}", str(int(rank_data.value_flat_2)))
+	out = out.replace("{M}", str(scaled_flat2))
+	out = out.replace("{P}", str(int(round(rank_data.value_pct))))
+	out = out.replace("{P2}", str(int(round(rank_data.value_pct_2))))
+	out = out.replace("{T}", str(int(round(rank_data.value_pct))))
+	out = out.replace("{HP}", str(int(round(rank_data.value_pct))))
+	out = out.replace("{MP}", str(int(round(rank_data.value_pct_2))))
+	out = out.replace("{D}", str(int(round(rank_data.duration_sec))))
+	return out
 func _position_tooltip(target_pos: Vector2) -> void:
 	if not visible:
 		return
