@@ -210,6 +210,52 @@ func get_active_stance_data() -> Dictionary:
 			return data
 	return {}
 
+
+func on_owner_took_damage() -> void:
+	if _buffs.is_empty():
+		return
+	var removed_any := false
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		if bool(flags.get("remove_on_damage", false)) or bool(data.get("remove_on_damage", false)):
+			_buffs.erase(id)
+			removed_any = true
+	if removed_any:
+		_notify_stats_changed()
+
+func get_visible_buffs_snapshot() -> Array:
+	var arr: Array = []
+	for v in get_buffs_snapshot():
+		if not (v is Dictionary):
+			continue
+		var entry: Dictionary = v as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		if bool(flags.get("hide_in_ui", false)) or bool(data.get("hide_in_ui", false)):
+			continue
+		arr.append(entry)
+	return arr
+
+func get_move_speed_multiplier() -> float:
+	var mult: float = 1.0
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var pct: float = float(flags.get("move_speed_pct", data.get("move_speed_pct", 0.0)))
+		if pct != 0.0:
+			mult *= (1.0 + pct / 100.0)
+			continue
+		var direct_mult: float = float(flags.get("move_speed_multiplier", data.get("move_speed_multiplier", 1.0)))
+		if direct_mult > 0.0 and direct_mult != 1.0:
+			mult *= direct_mult
+	if mult <= 0.0:
+		return 1.0
+	return mult
 func get_attack_speed_multiplier() -> float:
 	var mult: float = 1.0
 	for k in _buffs.keys():

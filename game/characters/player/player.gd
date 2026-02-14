@@ -259,7 +259,12 @@ func _physics_process(_delta: float) -> void:
 	if input_dir.length() > 0.0:
 		input_dir = input_dir.normalized()
 
-	velocity = input_dir * move_speed
+	var move_mult: float = 1.0
+	if c_buffs != null and c_buffs.has_method("get_move_speed_multiplier"):
+		move_mult = float(c_buffs.call("get_move_speed_multiplier"))
+	if move_mult <= 0.0:
+		move_mult = 1.0
+	velocity = input_dir * move_speed * move_mult
 	move_and_slide()
 
 
@@ -318,6 +323,8 @@ func remove_buff(id: String) -> void:
 	c_buffs.remove_buff(id)
 
 func get_buffs_snapshot() -> Array:
+	if c_buffs != null and c_buffs.has_method("get_visible_buffs_snapshot"):
+		return c_buffs.get_visible_buffs_snapshot()
 	return c_buffs.get_buffs_snapshot()
 
 
