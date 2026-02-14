@@ -765,6 +765,7 @@ func _resolve_buff_name(raw_label: String) -> String:
 	var label := raw_label
 	if label == "food/drink":
 		return "Еда/питьё"
+
 	var ability_id := ""
 	if label.begins_with("buff:"):
 		ability_id = label.trim_prefix("buff:")
@@ -772,6 +773,14 @@ func _resolve_buff_name(raw_label: String) -> String:
 		ability_id = label.trim_prefix("aura:")
 	elif label.begins_with("stance:"):
 		ability_id = label.trim_prefix("stance:")
+
+	# Fallback for generic active slots persisted as active_aura/active_stance.
+	if ability_id == "" and _player != null and _player.c_spellbook != null:
+		if label == "active_aura":
+			ability_id = String(_player.c_spellbook.aura_active)
+		elif label == "active_stance":
+			ability_id = String(_player.c_spellbook.stance_active)
+
 	if _ability_db != null and _ability_db.has_method("get_ability"):
 		if ability_id != "":
 			var def: AbilityDefinition = _ability_db.get_ability(ability_id)

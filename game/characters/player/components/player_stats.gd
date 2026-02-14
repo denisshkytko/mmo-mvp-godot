@@ -281,14 +281,19 @@ func _build_snapshot() -> Dictionary:
 	var snapshot_level := p.level
 	if not _use_legacy_primary:
 		snapshot_level = 1
-	var base_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_base, buffs)
+	# Build dedicated snapshots for clear UI decomposition:
+	# - base_no_buffs_snapshot: pure base+level, no gear, no buffs
+	# - equipment_only_snapshot: base+level+gear, no buffs
+	# - total_snapshot: base+level+gear+buffs (runtime effective)
+	var base_no_buffs_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_base, [])
+	var equipment_only_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_total, [])
 	var total_snapshot: Dictionary = STAT_CALC.build_player_snapshot(snapshot_level, base_primary, per_lvl, gear_total, buffs)
 
 	if OS.is_debug_build() and p != null and p.class_id == "mage" and p.level <= 4:
 		print("Player mage L%d primary=%s" % [p.level, str(total_snapshot.get("primary", {}))])
 
-	_base_stats = _collect_flat_stats(base_snapshot)
-	_equipment_bonus = _diff_stats(total_snapshot, base_snapshot)
+	_base_stats = _collect_flat_stats(base_no_buffs_snapshot)
+	_equipment_bonus = _diff_stats(equipment_only_snapshot, base_no_buffs_snapshot)
 
 	return total_snapshot
 
