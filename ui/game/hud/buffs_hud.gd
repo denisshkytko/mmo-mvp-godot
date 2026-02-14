@@ -25,7 +25,7 @@ func _process(_delta: float) -> void:
 	_sync_icons(_player.call("get_buffs_snapshot") as Array)
 
 func _apply_columns() -> void:
-	var cols := max(1, buffs_per_row)
+	var cols: int = maxi(1, buffs_per_row)
 	buff_grid.columns = cols
 	debuff_grid.columns = cols
 
@@ -33,11 +33,11 @@ func _sync_icons(snap: Array) -> void:
 	var seen_buffs: Dictionary = {}
 	var seen_debuffs: Dictionary = {}
 	for entry in snap:
-		var data := entry as Dictionary
-		var id := String(data.get("id", ""))
+		var data: Dictionary = entry as Dictionary
+		var id: String = String(data.get("id", ""))
 		if id == "":
 			continue
-		var is_debuff := _is_debuff_entry(data)
+		var is_debuff: bool = _is_debuff_entry(data)
 		if is_debuff:
 			seen_debuffs[id] = true
 			_sync_single(_debuff_icons, debuff_grid, id, data)
@@ -52,14 +52,14 @@ func _sync_icons(snap: Array) -> void:
 
 func _sync_single(store: Dictionary, grid: GridContainer, id: String, data: Dictionary) -> void:
 	if store.has(id):
-		var icon := store[id] as BuffIcon
+		var icon: BuffIcon = store[id] as BuffIcon
 		if icon != null and is_instance_valid(icon):
 			icon.update_data(data)
 			icon.update_time(float(data.get("time_left", 0.0)))
 			return
 	if buff_icon_scene == null:
 		return
-	var inst := buff_icon_scene.instantiate() as BuffIcon
+	var inst: BuffIcon = buff_icon_scene.instantiate() as BuffIcon
 	if inst == null:
 		return
 	grid.add_child(inst)
@@ -70,7 +70,7 @@ func _prune(store: Dictionary, seen: Dictionary) -> void:
 	for k in store.keys():
 		if seen.has(k):
 			continue
-		var icon := store[k] as Node
+		var icon: Node = store[k] as Node
 		if icon != null and is_instance_valid(icon):
 			icon.queue_free()
 		store.erase(k)
