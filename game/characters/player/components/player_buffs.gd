@@ -5,13 +5,19 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 const BuffData := preload("res://core/buffs/buff_data.gd")
 
+const SPIRITS_AID_ABILITY_ID: String = "spirits_aid"
+const SPIRITS_AID_READY_BUFF_ID: String = "passive:spirits_aid_ready"
+const SPIRITS_AID_COOLDOWN_SEC: float = 900.0
+
 var p: Player = null
 
 # id -> {"time_left": float, "data": Dictionary}
 var _buffs: Dictionary = {}
+var _spirits_aid_cd_left: float = 0.0
 
 func setup(player: Player) -> void:
 	p = player
+	_sync_spirits_aid_ready_state()
 
 func tick(delta: float) -> void:
 	if _buffs.is_empty():
@@ -34,6 +40,11 @@ func tick(delta: float) -> void:
 		else:
 			entry["time_left"] = left
 			_buffs[key] = entry
+
+	if _spirits_aid_cd_left > 0.0:
+		_spirits_aid_cd_left = max(0.0, _spirits_aid_cd_left - delta)
+		if _spirits_aid_cd_left <= 0.0:
+			_sync_spirits_aid_ready_state()
 
 	if to_remove.is_empty():
 		return
@@ -136,7 +147,7 @@ func remove_buff(id: String) -> void:
 		return
 	var entry: Dictionary = _buffs[id] as Dictionary
 	var source: String = String(entry.get("source", ""))
-	if source == "aura" or source == "stance":
+	if source == "aura" or source == "stance" or source == "passive":
 		return
 	_buffs.erase(id)
 	_notify_stats_changed()
@@ -280,6 +291,47 @@ func is_invulnerable() -> bool:
 	return false
 
 
+func get_spirits_aid_cooldown_left() -> float:
+	return max(0.0, _spirits_aid_cd_left)
+
+func set_spirits_aid_cooldown_left(seconds: float) -> void:
+	_spirits_aid_cd_left = max(0.0, seconds)
+	_sync_spirits_aid_ready_state()
+
+func can_use_spirits_aid() -> bool:
+	if _spirits_aid_cd_left > 0.0:
+		return false
+	if p == null or p.c_spellbook == null:
+		return false
+	return int(p.c_spellbook.learned_ranks.get(SPIRITS_AID_ABILITY_ID, 0)) > 0
+
+func consume_spirits_aid() -> bool:
+	if not can_use_spirits_aid():
+		return false
+	_spirits_aid_cd_left = SPIRITS_AID_COOLDOWN_SEC
+	if _buffs.has(SPIRITS_AID_READY_BUFF_ID):
+		_buffs.erase(SPIRITS_AID_READY_BUFF_ID)
+		_notify_stats_changed()
+	return true
+
+func _sync_spirits_aid_ready_state() -> void:
+	var should_show_ready: bool = can_use_spirits_aid() and p != null and not p.is_dead
+	var had_ready: bool = _buffs.has(SPIRITS_AID_READY_BUFF_ID)
+	if should_show_ready and not had_ready:
+		_buffs[SPIRITS_AID_READY_BUFF_ID] = {
+			"time_left": 999999.0,
+			"data": {
+				"ability_id": SPIRITS_AID_ABILITY_ID,
+				"source": "passive"
+			},
+			"ability_id": SPIRITS_AID_ABILITY_ID,
+			"source": "passive",
+		}
+		_notify_stats_changed()
+	elif not should_show_ready and had_ready:
+		_buffs.erase(SPIRITS_AID_READY_BUFF_ID)
+		_notify_stats_changed()
+
 func apply_buffs_snapshot(arr: Array) -> void:
 	_buffs.clear()
 
@@ -303,6 +355,7 @@ func apply_buffs_snapshot(arr: Array) -> void:
 			"source": entry_source,
 		}
 
+	_sync_spirits_aid_ready_state()
 	_notify_stats_changed()
 
 

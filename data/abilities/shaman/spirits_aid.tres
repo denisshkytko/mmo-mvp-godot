@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/shaman/spirits_aid.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_buff.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 24
+train_cost_gold = 1583
+cooldown_sec = 900.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 60.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyBuff" id=20]
+script = ExtResource("4")
+buff_id = "passive:spirits_aid_ready"
+secondary_add = {}
+primary_add = {}
+percent_add = {}
+primary_percent_add = {}
+flags = {}
+on_hit = {}
+
+[resource]
+script = ExtResource("1")
+id = "spirits_aid"
+icon = ExtResource("2")
+name = "Spirit’s Aid"
+description = "Upon death, resurrects the shaman with {P}% Health and Mana. Internal cooldown: {CD} seconds."
+description_ru = "При смерти воскрешает шамана с 60% здоровья и маны. Внутреннее время восстановления: 15 минут."
+class_id = "shaman"
+ability_type = "hidden_passive"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("20")
+ranks = [SubResource("1")]

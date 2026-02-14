@@ -376,6 +376,8 @@ func _apply_spellbook_passives() -> void:
 		return
 	c_ability_caster.apply_active_aura(c_spellbook.aura_active)
 	c_ability_caster.apply_active_stance(c_spellbook.stance_active)
+	if c_buffs != null and c_buffs.has_method("_sync_spirits_aid_ready_state"):
+		c_buffs.call("_sync_spirits_aid_ready_state")
 
 
 func add_gold(amount: int) -> void:
@@ -480,6 +482,32 @@ func respawn_now() -> void:
 	c_buffs.clear_all()
 
 	is_dead = false
+	if c_buffs != null and c_buffs.has_method("_sync_spirits_aid_ready_state"):
+		c_buffs.call("_sync_spirits_aid_ready_state")
+
+
+func can_use_spirits_aid_on_death() -> bool:
+	if c_buffs == null or not c_buffs.has_method("can_use_spirits_aid"):
+		return false
+	return bool(c_buffs.call("can_use_spirits_aid")) and is_dead
+
+func use_spirits_aid_respawn() -> bool:
+	if c_buffs == null or not c_buffs.has_method("consume_spirits_aid"):
+		return false
+	if not bool(c_buffs.call("consume_spirits_aid")):
+		return false
+	current_hp = max(1, int(round(float(max_hp) * 0.6)))
+	if c_resource != null:
+		if c_resource.resource_type == "mana":
+			c_resource.resource = max(0, int(round(float(c_resource.max_resource) * 0.6)))
+			c_resource.sync_to_owner_fields_if_mana()
+		else:
+			c_resource.set_empty()
+	is_dead = false
+	if c_buffs.has_method("_sync_spirits_aid_ready_state"):
+		c_buffs.call("_sync_spirits_aid_ready_state")
+	_request_save("spirit_aid_used")
+	return true
 
 
 func apply_character_data(d: Dictionary) -> void:
@@ -525,6 +553,8 @@ func apply_character_data(d: Dictionary) -> void:
 	var buffs_v: Variant = d.get("buffs", [])
 	if buffs_v is Array:
 		c_buffs.apply_buffs_snapshot(buffs_v as Array)
+	if c_buffs != null and c_buffs.has_method("set_spirits_aid_cooldown_left"):
+		c_buffs.call("set_spirits_aid_cooldown_left", float(d.get("spirits_aid_cd_left", 0.0)))
 
 	var spellbook_v: Variant = d.get("spellbook", null)
 	if spellbook_v is Dictionary and c_spellbook != null:
@@ -625,6 +655,8 @@ func export_character_data() -> Dictionary:
 
 	# buffs
 	base["buffs"] = c_buffs.get_buffs_snapshot()
+	if c_buffs != null and c_buffs.has_method("get_spirits_aid_cooldown_left"):
+		base["spirits_aid_cd_left"] = float(c_buffs.call("get_spirits_aid_cooldown_left"))
 	if c_spellbook != null:
 		base["spellbook"] = {
 			"learned_ranks": c_spellbook.learned_ranks,
