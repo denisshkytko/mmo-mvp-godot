@@ -312,22 +312,22 @@ func _update_effects() -> void:
 	if snap.is_empty():
 		effects_root.visible = false
 		return
-	var columns := max(1, int(floor(panel.size.x / 32.0)))
+	var columns: int = maxi(1, int(floor(panel.size.x / 32.0)))
 	buff_grid.columns = columns
 	debuff_grid.columns = columns
-	var max_icons := columns * 2
-	var buff_count := 0
-	var debuff_count := 0
+	var max_icons: int = columns * 2
+	var buff_count: int = 0
+	var debuff_count: int = 0
 	for entry in snap:
 		if not (entry is Dictionary):
 			continue
-		var d := entry as Dictionary
-		var is_debuff := _is_debuff_entry(d)
+		var d: Dictionary = entry as Dictionary
+		var is_debuff: bool = _is_debuff_entry(d)
 		if is_debuff and debuff_count >= max_icons:
 			continue
 		if not is_debuff and buff_count >= max_icons:
 			continue
-		var inst := BUFF_ICON_SCENE.instantiate() as Control
+		var inst: Control = BUFF_ICON_SCENE.instantiate() as Control
 		if inst == null:
 			continue
 		inst.custom_minimum_size = Vector2(30, 30)
