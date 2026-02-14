@@ -35,6 +35,8 @@ Use the following placeholders in `description` whenever possible:
 ## 4) Stance/Aura payload conventions
 - For stance-driven threat scaling, use `on_hit.threat_multiplier` in buff data.
 - Example: `on_hit = {"threat_multiplier": "value_pct"}` with rank `value_pct = 5` for x5 threat.
+- For flat primary-stat buffs (STR/AGI/END/INT/PER), use `primary_add` (not `secondary_add`).
+- Example: `primary_add = {"agi": "value_flat", "per": "value_flat"}`.
 
 ## 5) Progression and training cost
 - rank required levels and rank values come from game design for each spell.

@@ -5,6 +5,7 @@ const BuffData := preload("res://core/buffs/buff_data.gd")
 
 @export var buff_id: String = ""
 @export var secondary_add: Dictionary = {}
+@export var primary_add: Dictionary = {}
 @export var percent_add: Dictionary = {}
 @export var primary_percent_add: Dictionary = {}
 @export var flags: Dictionary = {}
@@ -25,6 +26,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	data_res.id = entry_id
 	data_res.duration_sec = float(rank_data.duration_sec)
 	data_res.secondary_add = _resolve_dict(secondary_add, rank_data, false)
+	data_res.primary_add = _resolve_dict(primary_add, rank_data, false)
 	data_res.percent_add = _resolve_dict(percent_add, rank_data, true)
 	data_res.primary_percent_add = _resolve_dict(primary_percent_add, rank_data, true)
 	data_res.flags = _resolve_dict(flags, rank_data, false)
