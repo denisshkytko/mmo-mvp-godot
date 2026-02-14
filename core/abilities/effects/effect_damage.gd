@@ -35,5 +35,5 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	if base <= 0:
 		return
 
-	var final: int = STAT_CALC.apply_crit_to_damage(base, snap)
+	var final: int = STAT_CALC.apply_crit_to_damage_typed(base, snap, school)
 	DAMAGE_HELPER.apply_damage_typed(caster, target, final, school)

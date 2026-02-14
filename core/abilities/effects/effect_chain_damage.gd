@@ -74,7 +74,7 @@ func _apply_single_hit(caster: Node, target: Node2D, base_damage: int, decay_mul
 	var scaled: int = int(round(float(base_damage) * pow(decay_mult, float(hit_index))))
 	if scaled <= 0:
 		return
-	var final_damage: int = STAT_CALC.apply_crit_to_damage(scaled, snap)
+	var final_damage: int = STAT_CALC.apply_crit_to_damage_typed(scaled, snap, school)
 	DAMAGE_HELPER.apply_damage_typed(caster, target, final_damage, school)
 
 func _find_next_target(caster: Node, from_target: Node2D, hit_targets: Array[Node2D], jump_radius: float) -> Node2D:
