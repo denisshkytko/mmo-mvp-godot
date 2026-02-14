@@ -46,7 +46,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	var def: AbilityDefinition = db.call("get_ability", ability_id)
 	if def == null:
 		return {"ok": false, "reason": "no_def"}
-	if def.ability_type == "aura" or def.ability_type == "stance":
+	if def.ability_type == "aura" or def.ability_type == "stance" or def.ability_type == "hidden_passive":
 		return {"ok": false, "reason": "passive"}
 
 	var rank_data: RankData = null
@@ -122,7 +122,7 @@ func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
 	var def: AbilityDefinition = db.call("get_ability", ability_id)
 	if def == null:
 		return {"ok": false, "reason": "no_def"}
-	if def.ability_type == "aura" or def.ability_type == "stance":
+	if def.ability_type == "aura" or def.ability_type == "stance" or def.ability_type == "hidden_passive":
 		return {"ok": false, "reason": "passive"}
 
 	var target_result := _resolve_cast_target(def, target)

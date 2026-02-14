@@ -1,0 +1,109 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/shaman/lesser_heal.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_heal.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 20
+train_cost_gold = 1211
+cooldown_sec = 0.0
+cast_time_sec = 1.5
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 45
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 28
+train_cost_gold = 1984
+cooldown_sec = 0.0
+cast_time_sec = 1.5
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 90
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 36
+train_cost_gold = 2885
+cooldown_sec = 0.0
+cast_time_sec = 1.5
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 135
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 44
+train_cost_gold = 3938
+cooldown_sec = 0.0
+cast_time_sec = 1.5
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 180
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 52
+train_cost_gold = 5167
+cooldown_sec = 0.0
+cast_time_sec = 1.5
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 225
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 0.0
+cast_time_sec = 1.5
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 270
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectHeal" id=20]
+script = ExtResource("4")
+scaling_mode = "spell_power_flat"
+
+[resource]
+script = ExtResource("1")
+id = "lesser_heal"
+icon = ExtResource("2")
+name = "Lesser Heal"
+description = "Restores {X} Health to the target."
+description_ru = "Восстанавливает 45 (база + сила заклинаний) (+45 за ранг) единиц здоровья цели."
+class_id = "shaman"
+ability_type = "heal"
+target_type = "ally"
+self_cast_fallback = true
+range_mode = "ranged"
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6")]

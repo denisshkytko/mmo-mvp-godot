@@ -428,6 +428,9 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 	final = max(1, final)
 	p.current_hp = max(0, p.current_hp - final)
 
+	if final > 0 and p.c_buffs != null and p.c_buffs.has_method("on_owner_took_damage"):
+		p.c_buffs.call("on_owner_took_damage")
+
 	if p.current_hp <= 0:
 		_on_death()
 	return final

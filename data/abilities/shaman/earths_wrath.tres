@@ -1,13 +1,14 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
-[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=2]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_debuff.gd" id=4]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=5]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/shaman/earths_wrath.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_debuff.gd" id=5]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=6]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
-script = ExtResource("2")
+script = ExtResource("3")
 required_level = 4
 train_cost_gold = 160
 cooldown_sec = 7.0
@@ -21,7 +22,7 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=2]
-script = ExtResource("2")
+script = ExtResource("3")
 required_level = 8
 train_cost_gold = 320
 cooldown_sec = 7.0
@@ -35,7 +36,7 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=3]
-script = ExtResource("2")
+script = ExtResource("3")
 required_level = 14
 train_cost_gold = 706
 cooldown_sec = 7.0
@@ -49,7 +50,7 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=4]
-script = ExtResource("2")
+script = ExtResource("3")
 required_level = 24
 train_cost_gold = 1583
 cooldown_sec = 6.0
@@ -63,7 +64,7 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=5]
-script = ExtResource("2")
+script = ExtResource("3")
 required_level = 36
 train_cost_gold = 2885
 cooldown_sec = 6.0
@@ -77,7 +78,7 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=6]
-script = ExtResource("2")
+script = ExtResource("3")
 required_level = 48
 train_cost_gold = 4528
 cooldown_sec = 6.0
@@ -91,7 +92,7 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=7]
-script = ExtResource("2")
+script = ExtResource("3")
 required_level = 60
 train_cost_gold = 6602
 cooldown_sec = 5.0
@@ -105,12 +106,12 @@ value_pct_2 = 0.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectDamage" id=20]
-script = ExtResource("3")
+script = ExtResource("4")
 school = "magic"
 scaling_mode = "spell_power_flat"
 
 [sub_resource type="Resource" script_class="EffectApplyDebuff" id=21]
-script = ExtResource("4")
+script = ExtResource("5")
 buff_id = "debuff:earths_wrath"
 secondary_add = {"attack_speed_multiplier": 0.7}
 primary_add = {}
@@ -120,12 +121,13 @@ flags = {}
 on_hit = {}
 
 [sub_resource type="Resource" script_class="EffectSequence" id=22]
-script = ExtResource("5")
+script = ExtResource("6")
 effects = [SubResource("20"), SubResource("21")]
 
 [resource]
 script = ExtResource("1")
 id = "earths_wrath"
+icon = ExtResource("2")
 name = "Earth’s Wrath"
 description = "Deals {X} magical damage to the target. Reduces attack speed by {P}% for {D} seconds."
 description_ru = "Наносит 20 (база + силу заклинаний) (+20 за ранг) единиц магического урона цели. Снижает скорость атаки цели на 30% на 5 секунд."

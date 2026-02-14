@@ -5,13 +5,19 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 const BuffData := preload("res://core/buffs/buff_data.gd")
 
+const SPIRITS_AID_ABILITY_ID: String = "spirits_aid"
+const SPIRITS_AID_READY_BUFF_ID: String = "passive:spirits_aid_ready"
+const SPIRITS_AID_COOLDOWN_SEC: float = 900.0
+
 var p: Player = null
 
 # id -> {"time_left": float, "data": Dictionary}
 var _buffs: Dictionary = {}
+var _spirits_aid_cd_left: float = 0.0
 
 func setup(player: Player) -> void:
 	p = player
+	_sync_spirits_aid_ready_state()
 
 func tick(delta: float) -> void:
 	if _buffs.is_empty():
@@ -22,6 +28,7 @@ func tick(delta: float) -> void:
 	# PlayerStats regen (which is out-of-combat for HP).
 	if p != null and not p.is_dead:
 		_apply_consumable_hots(delta)
+		_apply_periodic_resource_effects(delta)
 
 	var to_remove: Array[String] = []
 	for k in _buffs.keys():
@@ -34,6 +41,11 @@ func tick(delta: float) -> void:
 		else:
 			entry["time_left"] = left
 			_buffs[key] = entry
+
+	if _spirits_aid_cd_left > 0.0:
+		_spirits_aid_cd_left = max(0.0, _spirits_aid_cd_left - delta)
+		if _spirits_aid_cd_left <= 0.0:
+			_sync_spirits_aid_ready_state()
 
 	if to_remove.is_empty():
 		return
@@ -113,6 +125,37 @@ func _apply_consumable_hots(delta: float) -> void:
 	# (Healing already applied directly.)
 
 
+func _apply_periodic_resource_effects(delta: float) -> void:
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var mana_pct: float = float(flags.get("mana_pct_of_max_per_tick", data.get("mana_pct_of_max_per_tick", 0.0)))
+		if mana_pct <= 0.0:
+			continue
+		var interval: float = float(flags.get("mana_tick_interval_sec", data.get("mana_tick_interval_sec", 2.0)))
+		if interval <= 0.0:
+			interval = 2.0
+		var acc: float = float(data.get("mana_tick_acc", 0.0)) + delta
+		var changed := false
+		while acc >= interval:
+			acc -= interval
+			if p == null or p.mana >= p.max_mana:
+				continue
+			var add_mana: int = int(round(float(p.max_mana) * mana_pct / 100.0))
+			if add_mana <= 0:
+				add_mana = 1
+			p.mana = min(p.max_mana, p.mana + add_mana)
+			changed = true
+		data["mana_tick_acc"] = acc
+		if changed:
+			entry["data"] = data
+			_buffs[id] = entry
+		else:
+			entry["data"] = data
+			_buffs[id] = entry
+
 func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ability_id: String = "", source: String = "") -> void:
 	if id == "":
 		return
@@ -136,7 +179,7 @@ func remove_buff(id: String) -> void:
 		return
 	var entry: Dictionary = _buffs[id] as Dictionary
 	var source: String = String(entry.get("source", ""))
-	if source == "aura" or source == "stance":
+	if source == "aura" or source == "stance" or source == "passive":
 		return
 	_buffs.erase(id)
 	_notify_stats_changed()
@@ -210,6 +253,40 @@ func get_active_stance_data() -> Dictionary:
 			return data
 	return {}
 
+
+func on_owner_took_damage() -> void:
+	if _buffs.is_empty():
+		return
+	var removed_any := false
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		if bool(flags.get("remove_on_damage", false)) or bool(data.get("remove_on_damage", false)):
+			_buffs.erase(id)
+			removed_any = true
+	if removed_any:
+		_notify_stats_changed()
+
+func get_move_speed_multiplier() -> float:
+	var mult: float = 1.0
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var pct: float = float(flags.get("move_speed_pct", data.get("move_speed_pct", 0.0)))
+		if pct != 0.0:
+			mult *= (1.0 + pct / 100.0)
+			continue
+		var direct_mult: float = float(flags.get("move_speed_multiplier", data.get("move_speed_multiplier", 1.0)))
+		if direct_mult > 0.0 and direct_mult != 1.0:
+			mult *= direct_mult
+	if mult <= 0.0:
+		return 1.0
+	return mult
+
 func get_attack_speed_multiplier() -> float:
 	var mult: float = 1.0
 	for k in _buffs.keys():
@@ -246,6 +323,47 @@ func is_invulnerable() -> bool:
 	return false
 
 
+func get_spirits_aid_cooldown_left() -> float:
+	return max(0.0, _spirits_aid_cd_left)
+
+func set_spirits_aid_cooldown_left(seconds: float) -> void:
+	_spirits_aid_cd_left = max(0.0, seconds)
+	_sync_spirits_aid_ready_state()
+
+func can_use_spirits_aid() -> bool:
+	if _spirits_aid_cd_left > 0.0:
+		return false
+	if p == null or p.c_spellbook == null:
+		return false
+	return int(p.c_spellbook.learned_ranks.get(SPIRITS_AID_ABILITY_ID, 0)) > 0
+
+func consume_spirits_aid() -> bool:
+	if not can_use_spirits_aid():
+		return false
+	_spirits_aid_cd_left = SPIRITS_AID_COOLDOWN_SEC
+	if _buffs.has(SPIRITS_AID_READY_BUFF_ID):
+		_buffs.erase(SPIRITS_AID_READY_BUFF_ID)
+		_notify_stats_changed()
+	return true
+
+func _sync_spirits_aid_ready_state() -> void:
+	var should_show_ready: bool = can_use_spirits_aid() and p != null and not p.is_dead
+	var had_ready: bool = _buffs.has(SPIRITS_AID_READY_BUFF_ID)
+	if should_show_ready and not had_ready:
+		_buffs[SPIRITS_AID_READY_BUFF_ID] = {
+			"time_left": 999999.0,
+			"data": {
+				"ability_id": SPIRITS_AID_ABILITY_ID,
+				"source": "passive"
+			},
+			"ability_id": SPIRITS_AID_ABILITY_ID,
+			"source": "passive",
+		}
+		_notify_stats_changed()
+	elif not should_show_ready and had_ready:
+		_buffs.erase(SPIRITS_AID_READY_BUFF_ID)
+		_notify_stats_changed()
+
 func apply_buffs_snapshot(arr: Array) -> void:
 	_buffs.clear()
 
@@ -269,6 +387,7 @@ func apply_buffs_snapshot(arr: Array) -> void:
 			"source": entry_source,
 		}
 
+	_sync_spirits_aid_ready_state()
 	_notify_stats_changed()
 
 

@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/shaman/tailwind.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_buff.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 20
+train_cost_gold = 1163
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 600.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 0
+value_pct = 40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyBuff" id=20]
+script = ExtResource("4")
+buff_id = "buff:tailwind"
+secondary_add = {}
+primary_add = {}
+percent_add = {}
+primary_percent_add = {}
+flags = {"move_speed_pct": "value_pct", "remove_on_damage": true}
+on_hit = {}
+
+[resource]
+script = ExtResource("1")
+id = "tailwind"
+icon = ExtResource("2")
+name = "Tailwind"
+description = "Increases movement speed by {P}% for {D} seconds. Removed when taking damage."
+description_ru = "Увеличивает скорость передвижения шамана на 40% на 10 минут. Снимается при получении урона."
+class_id = "shaman"
+ability_type = "active"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("20")
+ranks = [SubResource("1")]
