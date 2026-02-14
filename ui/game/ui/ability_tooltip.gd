@@ -157,8 +157,11 @@ func _format_effect_from_template(template: String, rank_data: RankData, scaled_
 		return ""
 	var out := template
 	out = out.replace("{X}", str(scaled_flat))
+	out = out.replace("{X2}", str(int(rank_data.value_flat_2)))
 	out = out.replace("{M}", str(scaled_flat2))
 	out = out.replace("{P}", str(int(round(rank_data.value_pct))))
+	out = out.replace("{P2}", str(int(round(rank_data.value_pct_2))))
+	out = out.replace("{T}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{HP}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{MP}", str(int(round(rank_data.value_pct_2))))
 	out = out.replace("{D}", str(int(round(rank_data.duration_sec))))
