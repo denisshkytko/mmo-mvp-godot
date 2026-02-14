@@ -50,3 +50,5 @@ Every new ability must be registered in:
 - icon filename: snake_case based on ability name.
 - icon path: `assets/icons/abilities/<class_id>/<ability_id>.png`
 - bind icon via `icon = ExtResource(...)` when asset is present in repo.
+
+- For negative status effects use `EffectApplyDebuff` (same payload as buff + `is_debuff=true`) and keep debuffs in the same snapshot stream so HUD/TargetHUD can split them visually.

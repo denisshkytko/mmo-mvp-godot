@@ -41,6 +41,8 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 
 	var aspct: float = float(snap.get("attack_speed_pct", 0.0))
 	var speed_mult: float = 1.0 + max(0.0, aspct) / 100.0
+	if "c_stats" in actor and actor.c_stats != null and actor.c_stats.has_method("get_attack_speed_multiplier"):
+		speed_mult *= float(actor.c_stats.call("get_attack_speed_multiplier"))
 	if speed_mult < 0.1:
 		speed_mult = 0.1
 

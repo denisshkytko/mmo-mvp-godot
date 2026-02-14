@@ -35,6 +35,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	var data_dict := data_res.to_dict()
 	data_dict["ability_id"] = ability_id
 	data_dict["source"] = String(context.get("source", ""))
+	data_dict["is_debuff"] = bool(context.get("is_debuff", false))
 
 	_apply_buff_to_target(target, entry_id, data_res.duration_sec, data_dict)
 
@@ -46,6 +47,9 @@ func _apply_buff_to_target(target: Node, entry_id: String, duration_sec: float, 
 		return
 	if "c_buffs" in target and target.c_buffs != null:
 		target.c_buffs.add_or_refresh_buff(entry_id, duration_sec, data)
+		return
+	if "c_stats" in target and target.c_stats != null and target.c_stats.has_method("add_or_refresh_buff"):
+		target.c_stats.call("add_or_refresh_buff", entry_id, duration_sec, data)
 
 func _resolve_dict(source: Dictionary, rank_data: RankData, is_percent: bool) -> Dictionary:
 	var out: Dictionary = {}

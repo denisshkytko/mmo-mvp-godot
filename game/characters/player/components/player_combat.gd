@@ -59,6 +59,8 @@ func tick(delta: float) -> void:
 	_flat_physical_bonus = float(derived.get("flat_physical_bonus", 0.0))
 	var atk_speed_pct: float = float(snap.get("attack_speed_pct", 0.0))
 	var speed_mult: float = 1.0 + (atk_speed_pct / 100.0)
+	if p != null and p.c_buffs != null and p.c_buffs.has_method("get_attack_speed_multiplier"):
+		speed_mult *= float(p.c_buffs.call("get_attack_speed_multiplier"))
 	if speed_mult <= 0.01:
 		speed_mult = 0.01
 

@@ -166,6 +166,9 @@ func _physics_process(delta: float) -> void:
 	if c_stats.is_dead:
 		return
 
+	if c_stats != null and c_stats.has_method("tick_status_effects"):
+		c_stats.call("tick_status_effects", delta)
+
 	_apply_to_components()
 
 	var prev_has_aggr := (aggressor != null and is_instance_valid(aggressor))

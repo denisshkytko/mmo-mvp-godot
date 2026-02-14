@@ -155,6 +155,9 @@ func _physics_process(delta: float) -> void:
 	if c_stats.is_dead:
 		return
 
+	if c_stats != null and c_stats.has_method("tick_status_effects"):
+		c_stats.call("tick_status_effects", delta)
+
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 
 	if current_target == null or not is_instance_valid(current_target):
