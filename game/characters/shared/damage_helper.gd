@@ -24,7 +24,7 @@ static func apply_damage(attacker: Node, target: Node, dmg: int) -> void:
 	if attacker != null:
 		var danger_meter := _get_danger_meter(attacker)
 		if danger_meter != null:
-			danger_meter.on_damage_dealt(float(final_dmg), target)
+			danger_meter.on_damage_dealt(float(final_dmg) * _get_threat_multiplier(attacker), target)
 	if attacker != null and "c_resource" in attacker and attacker.c_resource != null:
 		attacker.c_resource.on_damage_dealt()
 
@@ -52,7 +52,7 @@ static func apply_damage_typed(attacker: Node, target: Node, dmg: int, dmg_type:
 	if attacker != null:
 		var danger_meter := _get_danger_meter(attacker)
 		if danger_meter != null:
-			danger_meter.on_damage_dealt(float(final_dmg), target)
+			danger_meter.on_damage_dealt(float(final_dmg) * _get_threat_multiplier(attacker), target)
 	if attacker != null and "c_resource" in attacker and attacker.c_resource != null:
 		attacker.c_resource.on_damage_dealt()
 
@@ -119,6 +119,21 @@ static func _get_or_create_combat_text_manager(tree: SceneTree) -> CombatTextMan
 	parent.add_child(manager)
 	parent.move_child(manager, parent.get_child_count() - 1)
 	return manager
+
+static func _get_threat_multiplier(attacker: Node) -> float:
+	if attacker == null:
+		return 1.0
+	if not ("c_buffs" in attacker) or attacker.c_buffs == null:
+		return 1.0
+	if not attacker.c_buffs.has_method("get_active_stance_data"):
+		return 1.0
+	var stance_data: Dictionary = attacker.c_buffs.call("get_active_stance_data") as Dictionary
+	if stance_data.is_empty():
+		return 1.0
+	var mult: float = float(stance_data.get("threat_multiplier", 1.0))
+	if mult <= 0.0:
+		return 1.0
+	return mult
 
 static func _get_danger_meter(attacker: Node) -> DangerMeterComponent:
 	if attacker == null:

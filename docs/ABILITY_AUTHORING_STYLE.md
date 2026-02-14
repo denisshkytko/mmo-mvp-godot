@@ -32,15 +32,19 @@ Use the following placeholders in `description` whenever possible:
 - `{MP}` : mana percent (`value_pct_2`)
 - `{D}`  : duration in seconds
 
-## 4) Progression and training cost
+## 4) Stance/Aura payload conventions
+- For stance-driven threat scaling, use `on_hit.threat_multiplier` in buff data.
+- Example: `on_hit = {"threat_multiplier": "value_pct"}` with rank `value_pct = 5` for x5 threat.
+
+## 5) Progression and training cost
 - rank required levels and rank values come from game design for each spell.
 - `train_cost_gold` should follow the established level->cost trainer curve used in existing abilities.
 
-## 5) Manifest wiring
+## 6) Manifest wiring
 Every new ability must be registered in:
 - `data/abilities/abilities_manifest.tres`
 
-## 6) Icons
+## 7) Icons
 - icon filename: snake_case based on ability name.
 - icon path: `assets/icons/abilities/<class_id>/<ability_id>.png`
 - bind icon via `icon = ExtResource(...)` when asset is present in repo.

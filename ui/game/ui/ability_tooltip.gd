@@ -132,7 +132,7 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 		"lights_guidance":
 			return "Increases Mana Regeneration by %d per second for %d seconds." % [rank_data.value_flat, int(rank_data.duration_sec)]
 		"path_of_righteous_fury":
-			return "Restores %.0f%% of autoattack damage as Mana." % rank_data.value_pct
+			return "Increases threat generation (%.0fx) and restores %.0f%% of autoattack damage as Mana." % [rank_data.value_pct_2, rank_data.value_pct]
 		"royal_oath":
 			return "Increases base STR/AGI/END/INT/PER by %.0f%% for %d seconds." % [rank_data.value_pct, int(rank_data.duration_sec)]
 		"concentration_aura":
@@ -146,6 +146,8 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 		"light_execution":
 			var hit := int(round(float(base_phys) * rank_data.value_pct_2 / 100.0))
 			return "Deals %.0f%% physical damage (%d base) to targets below %.0f%% Health." % [rank_data.value_pct_2, hit, rank_data.value_pct]
+		"stone_fists":
+			return "Increases Attack Power by %d and threat generation (%.0fx)." % [rank_data.value_flat, rank_data.value_pct]
 		"lightning":
 			return "Deals %d magical damage to the target." % scaled_flat
 		_:

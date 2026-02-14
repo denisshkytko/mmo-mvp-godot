@@ -1,0 +1,124 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=2]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=3]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("2")
+required_level = 1
+train_cost_gold = 40
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 25
+value_flat_2 = 0
+value_pct = 5.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("2")
+required_level = 6
+train_cost_gold = 240
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 50
+value_flat_2 = 0
+value_pct = 5.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("2")
+required_level = 16
+train_cost_gold = 868
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 75
+value_flat_2 = 0
+value_pct = 5.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("2")
+required_level = 26
+train_cost_gold = 1779
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 100
+value_flat_2 = 0
+value_pct = 5.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("2")
+required_level = 36
+train_cost_gold = 2885
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 125
+value_flat_2 = 0
+value_pct = 5.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("2")
+required_level = 46
+train_cost_gold = 4227
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 150
+value_flat_2 = 0
+value_pct = 5.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("2")
+required_level = 56
+train_cost_gold = 5856
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 175
+value_flat_2 = 0
+value_pct = 5.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyStance" id=20]
+script = ExtResource("3")
+buff_id = "active_stance"
+secondary_add = {"attack_power": "value_flat"}
+percent_add = {}
+flags = {}
+on_hit = {"threat_multiplier": "value_pct"}
+
+[resource]
+script = ExtResource("1")
+id = "stone_fists"
+name = "Stone Fists"
+description = "Increases Attack Power by {X}. Generates increased threat ({P}x)."
+description_ru = "Увеличивает силу атаки на 25 (+25 за ранг). Увеличивает создаваемую угрозу (модификатор угрозы x5)."
+class_id = "shaman"
+ability_type = "stance"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]
