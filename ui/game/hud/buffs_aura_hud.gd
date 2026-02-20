@@ -35,6 +35,7 @@ var _flow_router: Node = null
 var _db_ready: bool = false
 var _player_ready: bool = false
 var _slot_row_side_padding: float = 0.0
+var _slot_row_separation: float = 0.0
 
 func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
@@ -131,6 +132,7 @@ func _cache_layout() -> void:
 	var left_padding := slot_row.position.x
 	var right_padding := panel.size.x - (slot_row.position.x + slot_row.size.x)
 	_slot_row_side_padding = max(0.0, left_padding + right_padding)
+	_slot_row_separation = float(slot_row.get_theme_constant("separation"))
 
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	_expanded = is_expanded
@@ -376,13 +378,45 @@ func _apply_slot_layout_visibility(slot_visible: Array[bool]) -> void:
 		var right_visible := (gap_idx + 1) < slot_visible.size() and slot_visible[gap_idx + 1]
 		gap.visible = left_visible and right_visible
 
-	var row_width := slot_row.get_combined_minimum_size().x
+	var row_width := _calculate_visible_row_width(slot_visible)
 	var panel_width := row_width + _slot_row_side_padding
-	panel.custom_minimum_size.x = panel_width
-	slot_row.custom_minimum_size.x = row_width
+	var panel_min := panel.custom_minimum_size
+	panel_min.x = panel_width
+	panel.custom_minimum_size = panel_min
+	var row_min := slot_row.custom_minimum_size
+	row_min.x = row_width
+	slot_row.custom_minimum_size = row_min
 	panel.size.x = panel_width
 	if _expanded:
 		_set_expanded(true, true)
+
+func _calculate_visible_row_width(slot_visible: Array[bool]) -> float:
+	var width := 0.0
+	var visible_count := 0
+	for i in range(_slot_containers.size()):
+		if i >= slot_visible.size() or not slot_visible[i]:
+			continue
+		var container := _slot_containers[i]
+		if container == null:
+			continue
+		var slot_width := _get_control_size(container).x
+		if slot_width <= 0.0:
+			slot_width = container.custom_minimum_size.x
+		width += slot_width
+		visible_count += 1
+
+	for gap_idx in range(_inter_slot_gaps.size()):
+		var gap := _inter_slot_gaps[gap_idx]
+		if gap == null or not gap.visible:
+			continue
+		width += gap.custom_minimum_size.x
+
+	if visible_count > 1:
+		width += _slot_row_separation * float(visible_count - 1)
+
+	if width <= 0.0:
+		width = _get_reference_slot_size().x
+	return width
 
 func _cast_buff_from_slot(slot_index: int) -> void:
 	if _player == null or _spellbook == null:
