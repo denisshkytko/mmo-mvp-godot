@@ -308,4 +308,10 @@ func _get_attack_mode() -> int:
 	return AttackMode.MELEE
 
 func _get_attack_range() -> float:
-	return RANGED_ATTACK_RANGE if _attack_mode == AttackMode.RANGED else MELEE_ATTACK_RANGE
+	if _attack_mode != AttackMode.RANGED:
+		return MELEE_ATTACK_RANGE
+	var class_id := ""
+	if p != null and "class_id" in p:
+		class_id = String(p.class_id)
+	var mult := PROG.get_ranged_auto_attack_range_multiplier_for_class(class_id)
+	return RANGED_ATTACK_RANGE * mult

@@ -1,6 +1,22 @@
 extends Node
 class_name PlayerAbilityCaster
 
+const ARCANE_SHOT_ALLOWED_WEAPON_SUBTYPES: Array[String] = [
+	"bow",
+	"bow_2h",
+	"crossbow",
+	"crossbow_2h",
+]
+
+const WEAPON_REQUIRED_ABILITY_IDS: Array[String] = [
+	"arcane_shot",
+	"poisoned_arrow",
+	"aimed_shot",
+	"suppressive_shot",
+	"lucky_shot",
+	"panjagan",
+]
+
 var p: Player = null
 var _cooldowns: Dictionary = {} # ability_id -> time_left
 var _cast_time_left: float = 0.0
@@ -56,6 +72,8 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		rank_data = db.call("get_rank_data", ability_id, rank)
 	if rank_data == null:
 		return {"ok": false, "reason": "no_rank"}
+	if not _is_weapon_requirement_satisfied(ability_id):
+		return {"ok": false, "reason": "weapon_required"}
 
 	if def.effect == null:
 		return {"ok": false, "reason": "no_effect"}
@@ -126,6 +144,8 @@ func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
 		return {"ok": false, "reason": "no_def"}
 	if def.ability_type == "aura" or def.ability_type == "stance" or def.ability_type == "hidden_passive":
 		return {"ok": false, "reason": "passive"}
+	if not _is_weapon_requirement_satisfied(ability_id):
+		return {"ok": false, "reason": "weapon_required"}
 
 	var target_result := _resolve_cast_target(def, target)
 	if not bool(target_result.get("ok", false)):
@@ -363,11 +383,9 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 		return target_result
 	var actual_target: Node = target_result.get("target") as Node
 
-	var range_mode := def.range_mode
+	var range_mode := String(def.range_mode)
 	if range_mode != "self" and actual_target is Node2D:
-		var range: float = PlayerCombat.RANGED_ATTACK_RANGE
-		if range_mode == "melee":
-			range = PlayerCombat.MELEE_ATTACK_RANGE
+		var range: float = _resolve_range_by_mode(range_mode)
 		var dist: float = p.global_position.distance_to((actual_target as Node2D).global_position)
 		if dist > range:
 			return {"ok": false, "reason": "out_of_range"}
@@ -375,6 +393,30 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 		return {"ok": false, "reason": "no_target"}
 
 	return {"ok": true, "target": actual_target}
+
+func _is_weapon_requirement_satisfied(ability_id: String) -> bool:
+	if not WEAPON_REQUIRED_ABILITY_IDS.has(ability_id):
+		return true
+	if p == null or p.c_equip == null:
+		return false
+	var subtype := String(p.c_equip.get_right_weapon_subtype()).to_lower()
+	if subtype == "":
+		return false
+	return ARCANE_SHOT_ALLOWED_WEAPON_SUBTYPES.has(subtype)
+
+func _resolve_range_by_mode(range_mode: String) -> float:
+	var rm := range_mode.strip_edges().to_lower()
+	if rm == "melee":
+		return PlayerCombat.MELEE_ATTACK_RANGE
+	if rm == "ranged" or rm == "":
+		return PlayerCombat.RANGED_ATTACK_RANGE
+	if rm.begins_with("ranged"):
+		var cleaned := rm.replace(" ", "")
+		if cleaned.begins_with("ranged+") and cleaned.ends_with("%"):
+			var pct_str := cleaned.substr(7, cleaned.length() - 8)
+			var pct := float(pct_str)
+			return PlayerCombat.RANGED_ATTACK_RANGE * (1.0 + pct / 100.0)
+	return PlayerCombat.RANGED_ATTACK_RANGE
 
 func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	if def == null or p == null:
