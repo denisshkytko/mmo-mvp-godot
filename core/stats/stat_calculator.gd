@@ -102,6 +102,7 @@ static func build_player_snapshot(
         "magic_resist": 0.0,
         "flat_physical_bonus": 0.0,
         "physical_damage_base_pct_bonus": 0.0,
+        "incoming_damage_reduction_pct": 0.0,
 
         "speed": 0,
         "attack_speed_rating": 0,
@@ -123,6 +124,7 @@ static func build_player_snapshot(
         "magic_resist": [],
         "flat_physical_bonus": [],
         "physical_damage_base_pct_bonus": [],
+        "incoming_damage_reduction_pct": [],
         "speed": [],
         "attack_speed_rating": [],
         "cast_speed_rating": [],
@@ -197,6 +199,7 @@ static func build_player_snapshot(
         "magic_resist": 0.0,
     }
     var physical_damage_base_pct_bonus: float = 0.0
+    var incoming_damage_reduction_pct: float = 0.0
     var flags: Dictionary = {}
     var on_hit: Dictionary = {}
 
@@ -224,6 +227,11 @@ static func build_player_snapshot(
             if pct_bonus != 0.0:
                 physical_damage_base_pct_bonus += pct_bonus
                 _add_breakdown_line(breakdown.physical_damage_base_pct_bonus, source_label, pct_bonus * 100.0, "(%.1f%%)" % (pct_bonus * 100.0))
+        if perc.has("incoming_damage_reduction_pct"):
+            var inc_red: float = float(perc.get("incoming_damage_reduction_pct", 0.0))
+            if inc_red != 0.0:
+                incoming_damage_reduction_pct += inc_red
+                _add_breakdown_line(breakdown.incoming_damage_reduction_pct, source_label, inc_red * 100.0, "(%.1f%%)" % (inc_red * 100.0))
 
         _merge_flags(flags, data.get("flags", {}) as Dictionary)
         _merge_on_hit(on_hit, data.get("on_hit", {}) as Dictionary)
@@ -236,6 +244,7 @@ static func build_player_snapshot(
     _apply_percent_bonus(derived, breakdown, "defense", percent_mods.defense)
     _apply_percent_bonus(derived, breakdown, "magic_resist", percent_mods.magic_resist)
     derived.physical_damage_base_pct_bonus = physical_damage_base_pct_bonus
+    derived.incoming_damage_reduction_pct = incoming_damage_reduction_pct
 
     # ------------------
     # 6) Conversions to % (for UI)
@@ -254,6 +263,10 @@ static func build_player_snapshot(
 
     var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
     var mag_reduction_pct: float = _mitigation_pct(float(derived.magic_resist))
+    var incoming_reduction_pct: float = float(derived.incoming_damage_reduction_pct) * 100.0
+    if incoming_reduction_pct != 0.0:
+        phys_reduction_pct = clamp(phys_reduction_pct + incoming_reduction_pct, 0.0, C.MAX_MITIGATION_PCT)
+        mag_reduction_pct = clamp(mag_reduction_pct + incoming_reduction_pct, 0.0, C.MAX_MITIGATION_PCT)
 
     # Build final snapshot
     return {
@@ -456,6 +469,7 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "magic_resist",
         "flat_physical_bonus",
         "physical_damage_base_pct_bonus",
+        "incoming_damage_reduction_pct",
         "crit_chance_rating",
         "crit_damage_rating",
         "magic_crit_chance_bonus_pct",
