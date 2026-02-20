@@ -1,0 +1,126 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/hunter/mantis_aspect.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 6
+train_cost_gold = 240
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 10.0
+value_pct_2 = 1.1
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 14
+train_cost_gold = 706
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 15.0
+value_pct_2 = 1.15
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 22
+train_cost_gold = 1393
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 20.0
+value_pct_2 = 1.2
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 30
+train_cost_gold = 2196
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 25.0
+value_pct_2 = 1.25
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 38
+train_cost_gold = 3133
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 30.0
+value_pct_2 = 1.3
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 46
+train_cost_gold = 4227
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 35.0
+value_pct_2 = 1.35
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 54
+train_cost_gold = 5505
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 40.0
+value_pct_2 = 1.4
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyStance" id=20]
+script = ExtResource("4")
+buff_id = "active_stance"
+secondary_add = {"attack_speed_multiplier": "value_pct_2"}
+percent_add = {}
+flags = {}
+on_hit = {}
+
+[resource]
+script = ExtResource("1")
+id = "mantis_aspect"
+name = "Дух богомола"
+icon = ExtResource("2")
+description = "Увеличивает скорость атаки охотника на 10% (+5% за ранг)."
+description_ru = "Увеличивает скорость атаки охотника на 10% (+5% за ранг)."
+class_id = "hunter"
+ability_type = "stance"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]
