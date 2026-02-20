@@ -103,6 +103,9 @@ static func build_player_snapshot(
         "flat_physical_bonus": 0.0,
         "physical_damage_base_pct_bonus": 0.0,
         "incoming_damage_reduction_pct": 0.0,
+        "crit_chance_pct_bonus": 0.0,
+        "crit_damage_pct_bonus": 0.0,
+        "incoming_damage_taken_pct_bonus": 0.0,
 
         "speed": 0,
         "attack_speed_rating": 0,
@@ -125,6 +128,9 @@ static func build_player_snapshot(
         "flat_physical_bonus": [],
         "physical_damage_base_pct_bonus": [],
         "incoming_damage_reduction_pct": [],
+        "crit_chance_pct_bonus": [],
+        "crit_damage_pct_bonus": [],
+        "incoming_damage_taken_pct_bonus": [],
         "speed": [],
         "attack_speed_rating": [],
         "cast_speed_rating": [],
@@ -255,18 +261,19 @@ static func build_player_snapshot(
     if C.COOLDOWN_RATING_PER_1PCT > 0.0:
         cooldown_reduction_pct = float(derived.speed) / C.COOLDOWN_RATING_PER_1PCT
     var crit_from_rating := float(derived.crit_chance_rating) / C.CRIT_RATING_PER_1PCT
-    var crit_chance_pct: float = C.BASE_CRIT_CHANCE_PCT + crit_from_rating
+    var crit_chance_pct: float = C.BASE_CRIT_CHANCE_PCT + crit_from_rating + float(derived.get("crit_chance_pct_bonus", 0.0))
     crit_chance_pct = clamp(crit_chance_pct, 1.0, 100.0)
     var magic_crit_chance_bonus_pct: float = float(derived.magic_crit_chance_bonus_pct)
     var magic_crit_chance_pct: float = clamp(crit_chance_pct + magic_crit_chance_bonus_pct, 1.0, 100.0)
-    var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01
+    var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01 + (float(derived.get("crit_damage_pct_bonus", 0.0)) / 100.0)
 
     var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
     var mag_reduction_pct: float = _mitigation_pct(float(derived.magic_resist))
     var incoming_reduction_pct: float = float(derived.incoming_damage_reduction_pct) * 100.0
-    if incoming_reduction_pct != 0.0:
-        phys_reduction_pct = clamp(phys_reduction_pct + incoming_reduction_pct, 0.0, C.MAX_MITIGATION_PCT)
-        mag_reduction_pct = clamp(mag_reduction_pct + incoming_reduction_pct, 0.0, C.MAX_MITIGATION_PCT)
+    var incoming_taken_bonus_pct: float = float(derived.get("incoming_damage_taken_pct_bonus", 0.0))
+    if incoming_reduction_pct != 0.0 or incoming_taken_bonus_pct != 0.0:
+        phys_reduction_pct = clamp(phys_reduction_pct + incoming_reduction_pct - incoming_taken_bonus_pct, 0.0, C.MAX_MITIGATION_PCT)
+        mag_reduction_pct = clamp(mag_reduction_pct + incoming_reduction_pct - incoming_taken_bonus_pct, 0.0, C.MAX_MITIGATION_PCT)
 
     # Build final snapshot
     return {
@@ -470,6 +477,9 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "flat_physical_bonus",
         "physical_damage_base_pct_bonus",
         "incoming_damage_reduction_pct",
+        "crit_chance_pct_bonus",
+        "crit_damage_pct_bonus",
+        "incoming_damage_taken_pct_bonus",
         "crit_chance_rating",
         "crit_damage_rating",
         "magic_crit_chance_bonus_pct",
