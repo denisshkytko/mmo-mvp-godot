@@ -6,7 +6,7 @@ const FLYOUT_MARGIN := 8.0
 const FLYOUT_SPACING := 6.0
 const ARROW_MARGIN := 6.0
 const TOGGLE_PANEL_GAP := 1.0
-const REQUIRED_SIDE_PADDING := 5.0
+const REQUIRED_SIDE_PADDING := 10.0
 
 @export var flyout_scene: PackedScene = preload("res://ui/game/hud/buffs_aura/buff_aura_flyout.tscn")
 
