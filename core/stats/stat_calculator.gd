@@ -101,6 +101,7 @@ static func build_player_snapshot(
         "defense": 0.0,
         "magic_resist": 0.0,
         "flat_physical_bonus": 0.0,
+        "physical_damage_base_pct_bonus": 0.0,
 
         "speed": 0,
         "attack_speed_rating": 0,
@@ -121,6 +122,7 @@ static func build_player_snapshot(
         "defense": [],
         "magic_resist": [],
         "flat_physical_bonus": [],
+        "physical_damage_base_pct_bonus": [],
         "speed": [],
         "attack_speed_rating": [],
         "cast_speed_rating": [],
@@ -194,6 +196,7 @@ static func build_player_snapshot(
         "defense": 0.0,
         "magic_resist": 0.0,
     }
+    var physical_damage_base_pct_bonus: float = 0.0
     var flags: Dictionary = {}
     var on_hit: Dictionary = {}
 
@@ -216,6 +219,11 @@ static func build_player_snapshot(
         for pk in percent_mods.keys():
             if perc.has(pk):
                 percent_mods[pk] += float(perc.get(pk, 0.0))
+        if perc.has("physical_damage_base_pct_bonus"):
+            var pct_bonus: float = float(perc.get("physical_damage_base_pct_bonus", 0.0))
+            if pct_bonus != 0.0:
+                physical_damage_base_pct_bonus += pct_bonus
+                _add_breakdown_line(breakdown.physical_damage_base_pct_bonus, source_label, pct_bonus * 100.0, "(%.1f%%)" % (pct_bonus * 100.0))
 
         _merge_flags(flags, data.get("flags", {}) as Dictionary)
         _merge_on_hit(on_hit, data.get("on_hit", {}) as Dictionary)
@@ -227,6 +235,7 @@ static func build_player_snapshot(
     _apply_percent_bonus(derived, breakdown, "spell_power", percent_mods.spell_power)
     _apply_percent_bonus(derived, breakdown, "defense", percent_mods.defense)
     _apply_percent_bonus(derived, breakdown, "magic_resist", percent_mods.magic_resist)
+    derived.physical_damage_base_pct_bonus = physical_damage_base_pct_bonus
 
     # ------------------
     # 6) Conversions to % (for UI)
@@ -446,6 +455,7 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "defense",
         "magic_resist",
         "flat_physical_bonus",
+        "physical_damage_base_pct_bonus",
         "crit_chance_rating",
         "crit_damage_rating",
         "magic_crit_chance_bonus_pct",
