@@ -6,6 +6,7 @@ const FLYOUT_MARGIN := 8.0
 const FLYOUT_SPACING := 6.0
 const ARROW_MARGIN := 6.0
 const TOGGLE_PANEL_GAP := 1.0
+const REQUIRED_SIDE_PADDING := 5.0
 
 @export var flyout_scene: PackedScene = preload("res://ui/game/hud/buffs_aura/buff_aura_flyout.tscn")
 
@@ -132,6 +133,7 @@ func _cache_layout() -> void:
 	var left_padding := slot_row.position.x
 	var right_padding := panel.size.x - (slot_row.position.x + slot_row.size.x)
 	_slot_row_side_padding = max(0.0, left_padding + right_padding)
+	_slot_row_side_padding = max(_slot_row_side_padding, REQUIRED_SIDE_PADDING * 2.0)
 	_slot_row_separation = float(slot_row.get_theme_constant("separation"))
 
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
