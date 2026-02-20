@@ -74,6 +74,10 @@ func _resolve_value(value, rank_data: RankData, is_percent: bool, context: Dicti
 				return float(rank_data.value_pct_2) / 100.0 if is_percent else float(rank_data.value_pct_2)
 			"caster_attack_damage":
 				return float(context.get("caster_attack_damage", 0.0))
+			"caster_spell_power":
+				var snap: Dictionary = context.get("caster_snapshot", {}) as Dictionary
+				var derived: Dictionary = snap.get("derived", {}) as Dictionary
+				return float(derived.get("spell_power", 0.0))
 			_:
 				return null
 	if typeof(value) == TYPE_INT or typeof(value) == TYPE_FLOAT:

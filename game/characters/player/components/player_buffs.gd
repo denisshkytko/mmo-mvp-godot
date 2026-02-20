@@ -173,16 +173,22 @@ func _apply_periodic_damage_effects(delta: float) -> void:
 		var data: Dictionary = entry.get("data", {}) as Dictionary
 		var flags: Dictionary = data.get("flags", {}) as Dictionary
 		var total_pct: float = float(flags.get("dot_total_pct_of_attack_damage", 0.0))
-		if total_pct <= 0.0:
-			continue
 		var source_attack_damage: float = float(flags.get("dot_source_attack_damage", 0.0))
-		if source_attack_damage <= 0.0:
+		var total_damage_flat: float = float(flags.get("dot_total_damage_flat", 0.0))
+		var bonus_damage_flat: float = float(flags.get("dot_bonus_damage_flat", 0.0))
+
+		var total_damage: float = 0.0
+		if total_damage_flat > 0.0 or bonus_damage_flat != 0.0:
+			total_damage = max(0.0, total_damage_flat + bonus_damage_flat)
+		elif total_pct > 0.0 and source_attack_damage > 0.0:
+			total_damage = max(0.0, source_attack_damage * total_pct / 100.0)
+		if total_damage <= 0.0:
 			continue
+
 		var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
 		var interval: float = max(0.1, float(flags.get("dot_tick_interval_sec", 1.0)))
 		var school: String = String(flags.get("dot_damage_school", "physical"))
 		var ignore_mitigation: bool = bool(flags.get("dot_ignore_physical_mitigation", false))
-		var total_damage: float = source_attack_damage * total_pct / 100.0
 		var ticks_total: int = max(1, int(round(duration / interval)))
 		var damage_per_tick: int = max(1, int(round(total_damage / float(ticks_total))))
 

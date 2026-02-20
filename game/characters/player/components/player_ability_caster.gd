@@ -8,6 +8,11 @@ const ARCANE_SHOT_ALLOWED_WEAPON_SUBTYPES: Array[String] = [
 	"crossbow_2h",
 ]
 
+const WEAPON_REQUIRED_ABILITY_IDS: Array[String] = [
+	"arcane_shot",
+	"poisoned_arrow",
+]
+
 var p: Player = null
 var _cooldowns: Dictionary = {} # ability_id -> time_left
 var _cast_time_left: float = 0.0
@@ -386,7 +391,7 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	return {"ok": true, "target": actual_target}
 
 func _is_weapon_requirement_satisfied(ability_id: String) -> bool:
-	if ability_id != "arcane_shot":
+	if not WEAPON_REQUIRED_ABILITY_IDS.has(ability_id):
 		return true
 	if p == null or p.c_equip == null:
 		return false
