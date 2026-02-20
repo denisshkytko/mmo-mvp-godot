@@ -101,6 +101,11 @@ static func build_player_snapshot(
         "defense": 0.0,
         "magic_resist": 0.0,
         "flat_physical_bonus": 0.0,
+        "physical_damage_base_pct_bonus": 0.0,
+        "incoming_damage_reduction_pct": 0.0,
+        "crit_chance_pct_bonus": 0.0,
+        "crit_damage_pct_bonus": 0.0,
+        "incoming_damage_taken_pct_bonus": 0.0,
 
         "speed": 0,
         "attack_speed_rating": 0,
@@ -121,6 +126,11 @@ static func build_player_snapshot(
         "defense": [],
         "magic_resist": [],
         "flat_physical_bonus": [],
+        "physical_damage_base_pct_bonus": [],
+        "incoming_damage_reduction_pct": [],
+        "crit_chance_pct_bonus": [],
+        "crit_damage_pct_bonus": [],
+        "incoming_damage_taken_pct_bonus": [],
         "speed": [],
         "attack_speed_rating": [],
         "cast_speed_rating": [],
@@ -194,6 +204,9 @@ static func build_player_snapshot(
         "defense": 0.0,
         "magic_resist": 0.0,
     }
+    var physical_damage_base_pct_bonus: float = 0.0
+    var incoming_damage_reduction_pct: float = 0.0
+    var max_hp_percent_sources: Array = []
     var flags: Dictionary = {}
     var on_hit: Dictionary = {}
 
@@ -216,6 +229,20 @@ static func build_player_snapshot(
         for pk in percent_mods.keys():
             if perc.has(pk):
                 percent_mods[pk] += float(perc.get(pk, 0.0))
+        if perc.has("max_hp"):
+            var max_hp_pct: float = float(perc.get("max_hp", 0.0))
+            if max_hp_pct != 0.0:
+                max_hp_percent_sources.append({"label": source_label, "pct": max_hp_pct})
+        if perc.has("physical_damage_base_pct_bonus"):
+            var pct_bonus: float = float(perc.get("physical_damage_base_pct_bonus", 0.0))
+            if pct_bonus != 0.0:
+                physical_damage_base_pct_bonus += pct_bonus
+                _add_breakdown_line(breakdown.physical_damage_base_pct_bonus, source_label, pct_bonus * 100.0, "(%.1f%%)" % (pct_bonus * 100.0))
+        if perc.has("incoming_damage_reduction_pct"):
+            var inc_red: float = float(perc.get("incoming_damage_reduction_pct", 0.0))
+            if inc_red != 0.0:
+                incoming_damage_reduction_pct += inc_red
+                _add_breakdown_line(breakdown.incoming_damage_reduction_pct, source_label, inc_red * 100.0, "(%.1f%%)" % (inc_red * 100.0))
 
         _merge_flags(flags, data.get("flags", {}) as Dictionary)
         _merge_on_hit(on_hit, data.get("on_hit", {}) as Dictionary)
@@ -227,6 +254,22 @@ static func build_player_snapshot(
     _apply_percent_bonus(derived, breakdown, "spell_power", percent_mods.spell_power)
     _apply_percent_bonus(derived, breakdown, "defense", percent_mods.defense)
     _apply_percent_bonus(derived, breakdown, "magic_resist", percent_mods.magic_resist)
+    if not max_hp_percent_sources.is_empty():
+        var max_hp_base: float = float(derived.get("max_hp", 0.0))
+        var max_hp_add_total: float = 0.0
+        for src in max_hp_percent_sources:
+            if not (src is Dictionary):
+                continue
+            var src_d: Dictionary = src as Dictionary
+            var src_pct: float = float(src_d.get("pct", 0.0))
+            if src_pct == 0.0:
+                continue
+            var src_add: float = max_hp_base * src_pct
+            max_hp_add_total += src_add
+            _add_breakdown_line(breakdown.max_hp, String(src_d.get("label", "buff")), src_add, "(%.1f%%)" % (src_pct * 100.0))
+        derived.max_hp = float(derived.get("max_hp", 0.0)) + max_hp_add_total
+    derived.physical_damage_base_pct_bonus = physical_damage_base_pct_bonus
+    derived.incoming_damage_reduction_pct = incoming_damage_reduction_pct
 
     # ------------------
     # 6) Conversions to % (for UI)
@@ -237,14 +280,19 @@ static func build_player_snapshot(
     if C.COOLDOWN_RATING_PER_1PCT > 0.0:
         cooldown_reduction_pct = float(derived.speed) / C.COOLDOWN_RATING_PER_1PCT
     var crit_from_rating := float(derived.crit_chance_rating) / C.CRIT_RATING_PER_1PCT
-    var crit_chance_pct: float = C.BASE_CRIT_CHANCE_PCT + crit_from_rating
+    var crit_chance_pct: float = C.BASE_CRIT_CHANCE_PCT + crit_from_rating + float(derived.get("crit_chance_pct_bonus", 0.0))
     crit_chance_pct = clamp(crit_chance_pct, 1.0, 100.0)
     var magic_crit_chance_bonus_pct: float = float(derived.magic_crit_chance_bonus_pct)
     var magic_crit_chance_pct: float = clamp(crit_chance_pct + magic_crit_chance_bonus_pct, 1.0, 100.0)
-    var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01
+    var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01 + (float(derived.get("crit_damage_pct_bonus", 0.0)) / 100.0)
 
     var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
     var mag_reduction_pct: float = _mitigation_pct(float(derived.magic_resist))
+    var incoming_reduction_pct: float = float(derived.incoming_damage_reduction_pct) * 100.0
+    var incoming_taken_bonus_pct: float = float(derived.get("incoming_damage_taken_pct_bonus", 0.0))
+    if incoming_reduction_pct != 0.0 or incoming_taken_bonus_pct != 0.0:
+        phys_reduction_pct = clamp(phys_reduction_pct + incoming_reduction_pct - incoming_taken_bonus_pct, 0.0, C.MAX_MITIGATION_PCT)
+        mag_reduction_pct = clamp(mag_reduction_pct + incoming_reduction_pct - incoming_taken_bonus_pct, 0.0, C.MAX_MITIGATION_PCT)
 
     # Build final snapshot
     return {
@@ -446,6 +494,11 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "defense",
         "magic_resist",
         "flat_physical_bonus",
+        "physical_damage_base_pct_bonus",
+        "incoming_damage_reduction_pct",
+        "crit_chance_pct_bonus",
+        "crit_damage_pct_bonus",
+        "incoming_damage_taken_pct_bonus",
         "crit_chance_rating",
         "crit_damage_rating",
         "magic_crit_chance_bonus_pct",

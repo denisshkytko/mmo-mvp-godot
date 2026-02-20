@@ -57,6 +57,7 @@ func tick(delta: float) -> void:
 	var ap: float = float(derived.get("attack_power", 0.0))
 	var spell_power: float = float(derived.get("spell_power", 0.0))
 	_flat_physical_bonus = float(derived.get("flat_physical_bonus", 0.0))
+	var physical_base_pct_bonus: float = float(derived.get("physical_damage_base_pct_bonus", 0.0))
 	var atk_speed_pct: float = float(snap.get("attack_speed_pct", 0.0))
 	var speed_mult: float = 1.0 + (atk_speed_pct / 100.0)
 	if p != null and p.c_buffs != null and p.c_buffs.has_method("get_attack_speed_multiplier"):
@@ -69,7 +70,7 @@ func tick(delta: float) -> void:
 	var eff_interval_r: float = base_interval_r / speed_mult
 	var eff_interval_l: float = base_interval_l / speed_mult if base_interval_l > 0.0 else 0.0
 
-	var hits := _get_hit_values(ap, _flat_physical_bonus)
+	var hits := _get_hit_values(ap, _flat_physical_bonus, physical_base_pct_bonus)
 
 	_t_r = max(0.0, _t_r - delta)
 	_t_l = max(0.0, _t_l - delta)
@@ -99,14 +100,15 @@ func get_attack_damage() -> int:
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var ap: float = float(derived.get("attack_power", 0.0))
 	var flat_bonus: float = float(derived.get("flat_physical_bonus", 0.0))
-	var hits := _get_hit_values(ap, flat_bonus)
+	var physical_base_pct_bonus: float = float(derived.get("physical_damage_base_pct_bonus", 0.0))
+	var hits := _get_hit_values(ap, flat_bonus, physical_base_pct_bonus)
 	if hits.has("right"):
 		return int(hits.get("right", 0))
 	if hits.has("left"):
 		return int(hits.get("left", 0))
 	return 0
 
-func _get_hit_values(ap: float, flat_bonus: float) -> Dictionary:
+func _get_hit_values(ap: float, flat_bonus: float, physical_base_pct_bonus: float = 0.0) -> Dictionary:
 	var right_weapon_damage: int = 0
 	var left_weapon_damage: int = 0
 	var has_right_weapon := false
@@ -121,20 +123,30 @@ func _get_hit_values(ap: float, flat_bonus: float) -> Dictionary:
 		has_right_weapon = p.c_equip.get_weapon_attack_interval_right() > 0.0
 
 	if not has_right_weapon:
-		var dmg_unarmed: int = max(1, int(round(ap * 1.5 + flat_bonus)))
+		var base_unarmed: float = ap * 1.5
+		var dmg_unarmed: int = max(1, int(round(_apply_physical_base_bonus(base_unarmed, physical_base_pct_bonus) + flat_bonus)))
 		return {"right": dmg_unarmed}
 
 	if is_two_handed:
-		var dmg_2h: int = max(1, int(round(float(right_weapon_damage) + ap * 1.5 + flat_bonus)))
+		var base_2h: float = float(right_weapon_damage) + ap * 1.5
+		var dmg_2h: int = max(1, int(round(_apply_physical_base_bonus(base_2h, physical_base_pct_bonus) + flat_bonus)))
 		return {"right": dmg_2h}
 
 	if has_left_weapon:
-		var dmg_r: int = max(1, int(round(float(right_weapon_damage) + ap + flat_bonus)))
-		var dmg_l: int = max(1, int(round((float(left_weapon_damage) + ap + flat_bonus) * STAT_CONST.OFFHAND_MULT)))
+		var base_r: float = float(right_weapon_damage) + ap
+		var base_l: float = (float(left_weapon_damage) + ap) * STAT_CONST.OFFHAND_MULT
+		var dmg_r: int = max(1, int(round(_apply_physical_base_bonus(base_r, physical_base_pct_bonus) + flat_bonus)))
+		var dmg_l: int = max(1, int(round(_apply_physical_base_bonus(base_l, physical_base_pct_bonus) + flat_bonus)))
 		return {"right": dmg_r, "left": dmg_l}
 
-	var dmg_1h: int = max(1, int(round(float(right_weapon_damage) + ap + flat_bonus)))
+	var base_1h: float = float(right_weapon_damage) + ap
+	var dmg_1h: int = max(1, int(round(_apply_physical_base_bonus(base_1h, physical_base_pct_bonus) + flat_bonus)))
 	return {"right": dmg_1h}
+
+func _apply_physical_base_bonus(base_damage: float, pct_bonus: float) -> float:
+	if pct_bonus == 0.0:
+		return base_damage
+	return base_damage + (base_damage * pct_bonus)
 
 func _get_base_interval_right() -> float:
 	if p == null or p.c_equip == null:

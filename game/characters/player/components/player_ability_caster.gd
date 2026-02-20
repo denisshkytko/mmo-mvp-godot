@@ -33,6 +33,8 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		return {"ok": false, "reason": "empty"}
 	if p == null or p.c_spellbook == null:
 		return {"ok": false, "reason": "no_spellbook"}
+	if p.c_buffs != null and p.c_buffs.has_method("is_stunned") and bool(p.c_buffs.call("is_stunned")):
+		return {"ok": false, "reason": "stunned"}
 	if _cast_time_left > 0.0:
 		interrupt_cast("ability_input")
 		return {"ok": false, "reason": "casting"}
@@ -78,9 +80,9 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if p.has_method("get_stats_snapshot"):
 		snap = p.call("get_stats_snapshot") as Dictionary
 
-	var cost: int = int(ceil(float(p.max_mana) * float(rank_data.resource_cost) / 100.0))
-	if cost > 0 and p.mana < cost:
-		return {"ok": false, "reason": "no_mana"}
+	var cost: int = _get_rank_resource_cost(rank_data)
+	if not _has_enough_resource(cost):
+		return {"ok": false, "reason": "no_resource"}
 
 	var cdr_pct: float = float(snap.get("cooldown_reduction_pct", 0.0))
 	var cd_eff: float = max(0.0, rank_data.cooldown_sec * (1.0 - cdr_pct / 100.0))
@@ -94,6 +96,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		_cast_payload = {
 			"ability_id": ability_id,
 			"target": actual_target,
+			"target_id": actual_target.get_instance_id() if actual_target != null else 0,
 			"def": def,
 			"rank_data": rank_data,
 			"cost": cost,
@@ -101,8 +104,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		}
 		return {"ok": true, "reason": "casting", "target": actual_target}
 
-	if cost > 0:
-		p.mana -= cost
+	_spend_resource(cost)
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
 	_start_cooldown(ability_id, cd_eff)
 	return {"ok": true, "reason": "", "target": actual_target}
@@ -217,11 +219,40 @@ func apply_active_stance(ability_id: String) -> void:
 		return
 	def.effect.apply(p, p, rank_data, _build_context(ability_id, def, {}))
 
+func apply_hidden_passive(ability_id: String) -> void:
+	if p == null or p.c_buffs == null:
+		return
+	if ability_id == "":
+		return
+	var db := get_node_or_null("/root/AbilityDB")
+	if db == null or not db.has_method("get_rank_data"):
+		return
+	var rank := 0
+	if p.c_spellbook != null:
+		rank = int(p.c_spellbook.learned_ranks.get(ability_id, 0))
+	if rank <= 0 and db.has_method("get_rank_for_level"):
+		rank = int(db.call("get_rank_for_level", ability_id, p.level))
+	if rank <= 0:
+		return
+	var rank_data: RankData = db.call("get_rank_data", ability_id, rank)
+	if rank_data == null:
+		return
+	if rank_data.cooldown_sec > 0.0:
+		return
+
+	var def: AbilityDefinition = db.call("get_ability", ability_id)
+	if def == null or def.effect == null:
+		return
+	def.effect.apply(p, p, rank_data, _build_context(ability_id, def, {"source": "passive"}))
+
 func _finish_cast(payload: Dictionary) -> void:
 	var ability_id := String(payload.get("ability_id", ""))
 	var def: AbilityDefinition = payload.get("def") as AbilityDefinition
 	var rank_data: RankData = payload.get("rank_data") as RankData
-	var actual_target: Node = payload.get("target")
+	var target_ref: Variant = payload.get("target", null)
+	var actual_target: Node = null
+	if target_ref != null and is_instance_valid(target_ref) and target_ref is Node:
+		actual_target = target_ref as Node
 	var cost: int = int(payload.get("cost", 0))
 	var cooldown: float = float(payload.get("cooldown", 0.0))
 
@@ -230,20 +261,75 @@ func _finish_cast(payload: Dictionary) -> void:
 	if def.effect == null:
 		return
 
-	if actual_target != null and not is_instance_valid(actual_target):
-		actual_target = null
+	if _cast_target_lost_or_changed(payload, actual_target):
+		return
 	var target_result := _normalize_target(def, actual_target)
 	if not bool(target_result.get("ok", false)):
 		return
 	actual_target = target_result.get("target") as Node
 
-	if cost > 0:
-		if p == null or p.mana < cost:
-			return
-		p.mana -= cost
+	if not _has_enough_resource(cost):
+		return
+	_spend_resource(cost)
 
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
 	_start_cooldown(ability_id, cooldown)
+
+func _cast_target_lost_or_changed(payload: Dictionary, cast_target: Node) -> bool:
+	var def: AbilityDefinition = payload.get("def") as AbilityDefinition
+	if def == null:
+		return true
+	if def.target_type == "self":
+		return false
+	if cast_target == null:
+		return true
+	if not is_instance_valid(cast_target):
+		return true
+	var locked_target_id: int = int(payload.get("target_id", 0))
+	if locked_target_id != 0 and cast_target.get_instance_id() != locked_target_id:
+		return true
+	var gm: Node = null
+	if p != null and p.has_method("_get_game_manager"):
+		gm = p.call("_get_game_manager") as Node
+	if gm != null and gm.has_method("get_target"):
+		var current_target: Variant = gm.call("get_target")
+		if current_target == null:
+			return true
+		if not is_instance_valid(current_target):
+			return true
+		if current_target is Node and (current_target as Node).get_instance_id() != cast_target.get_instance_id():
+			return true
+	return false
+
+
+func _get_rank_resource_cost(rank_data: RankData) -> int:
+	if rank_data == null or p == null:
+		return 0
+	if rank_data.resource_cost <= 0:
+		return 0
+	var max_resource: int = 0
+	if p.c_resource != null:
+		max_resource = int(p.c_resource.max_resource)
+	if max_resource <= 0:
+		max_resource = int(p.max_mana)
+	return int(ceil(float(max_resource) * float(rank_data.resource_cost) / 100.0))
+
+func _has_enough_resource(cost: int) -> bool:
+	if cost <= 0:
+		return true
+	if p == null:
+		return false
+	if p.c_resource != null:
+		return int(p.c_resource.resource) >= cost
+	return int(p.mana) >= cost
+
+func _spend_resource(cost: int) -> void:
+	if cost <= 0 or p == null:
+		return
+	if p.c_resource != null:
+		p.c_resource.add(-cost)
+		return
+	p.mana = max(0, p.mana - cost)
 
 func _start_cooldown(ability_id: String, duration: float) -> void:
 	if ability_id == "" or duration <= 0.0:
@@ -265,6 +351,8 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 	}
 	if p != null and p.has_method("get_stats_snapshot"):
 		context["caster_snapshot"] = p.call("get_stats_snapshot") as Dictionary
+	if p != null and p.c_combat != null:
+		context["caster_attack_damage"] = int(p.c_combat.get_attack_damage())
 	for k in extra.keys():
 		context[k] = extra[k]
 	return context
@@ -312,7 +400,7 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 					actual_target = p
 				else:
 					return {"ok": false, "reason": "no_target"}
-			if not _is_hostile_target(actual_target):
+			if not _is_valid_enemy_target(actual_target):
 				if _can_fallback_to_self(def):
 					actual_target = p
 				else:
@@ -391,3 +479,22 @@ func _is_friendly_target(target: Node) -> bool:
 	if target != null and target.has_method("get_faction_id"):
 		target_faction = String(target.call("get_faction_id"))
 	return FactionRules.relation(caster_faction, target_faction) == FactionRules.Relation.FRIENDLY
+
+func _is_valid_enemy_target(target: Node) -> bool:
+	if target == null:
+		return false
+	if _is_hostile_target(target):
+		return true
+	var caster_faction := ""
+	if p != null and p.has_method("get_faction_id"):
+		caster_faction = String(p.call("get_faction_id"))
+	var target_faction := ""
+	if target.has_method("get_faction_id"):
+		target_faction = String(target.call("get_faction_id"))
+	if FactionRules.relation(caster_faction, target_faction) != FactionRules.Relation.NEUTRAL:
+		return false
+	if "current_target" in target and target.current_target == p:
+		return true
+	if "aggressor" in target and target.aggressor == p:
+		return true
+	return false

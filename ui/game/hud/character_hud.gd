@@ -660,43 +660,84 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 	var display_damage := ""
 	var tooltip_lines: Array[String] = []
 	tooltip_lines.append("Наносимый урон оружием/без оружия")
+	var base_pct_bonus: float = float(derived.get("physical_damage_base_pct_bonus", 0.0))
+	var flat_bonus: float = float(derived.get("flat_physical_bonus", 0.0))
+	var base_bonus_label := ""
+	var base_bonus_value: float = 0.0
+	var flat_bonus_label := ""
+
+	if (base_pct_bonus != 0.0 or flat_bonus != 0.0) and _player != null and _player.c_buffs != null:
+		var buffs: Array = _player.c_buffs.get_buffs_snapshot()
+		for b in buffs:
+			if not (b is Dictionary):
+				continue
+			var bd := b as Dictionary
+			var data: Dictionary = bd.get("data", {}) as Dictionary
+			var perc: Dictionary = data.get("percent_add", data.get("percent", {})) as Dictionary
+			var sec: Dictionary = data.get("secondary_add", data.get("secondary", {})) as Dictionary
+			var resolved_name := _resolve_buff_name(String(data.get("ability_id", bd.get("id", ""))))
+			if base_bonus_label == "" and perc.has("physical_damage_base_pct_bonus"):
+				base_bonus_label = resolved_name
+			if flat_bonus_label == "" and sec.has("flat_physical_bonus"):
+				flat_bonus_label = resolved_name
 
 	if not has_right_weapon:
-		var unarmed_hit: float = attack_power_total * 1.5
+		var ap_part_unarmed: float = attack_power_total * 1.5
+		var unarmed_hit: float = ap_part_unarmed * (1.0 + base_pct_bonus) + flat_bonus
+		base_bonus_value = ap_part_unarmed * base_pct_bonus
 		display_damage = _format_float_clean(unarmed_hit)
 		var dps: float = float(unarmed_hit) / max(0.01, interval_r)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_unarmed))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(0.0))
 	elif is_two_handed:
-		var hit_2h: float = float(right_weapon_damage) + attack_power_total * 1.5
+		var ap_part_2h: float = attack_power_total * 1.5
+		var base_2h: float = float(right_weapon_damage) + ap_part_2h
+		var hit_2h: float = base_2h * (1.0 + base_pct_bonus) + flat_bonus
+		base_bonus_value = base_2h * base_pct_bonus
 		display_damage = _format_float_clean(hit_2h)
 		var dps_2h: float = float(hit_2h) / max(0.01, interval_r)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps_2h)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_2h))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))
 	elif has_left_weapon:
-		var hit_r: float = float(right_weapon_damage) + attack_power_total
-		var hit_l: float = (float(left_weapon_damage) + attack_power_total) * STAT_CONST.OFFHAND_MULT
+		var ap_part_dw: float = attack_power_total
+		var base_r: float = float(right_weapon_damage) + ap_part_dw
+		var base_l: float = (float(left_weapon_damage) + ap_part_dw) * STAT_CONST.OFFHAND_MULT
+		var hit_r: float = base_r * (1.0 + base_pct_bonus) + flat_bonus
+		var hit_l: float = base_l * (1.0 + base_pct_bonus) + flat_bonus
+		base_bonus_value = (base_r + base_l) * base_pct_bonus
 		display_damage = "%s / %s" % [_format_float_clean(hit_r), _format_float_clean(hit_l)]
 		var dps_dw: float = float(hit_r) / max(0.01, interval_r)
 		if interval_l > 0.0:
 			dps_dw += float(hit_l) / max(0.01, interval_l)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps_dw)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_dw))
 		tooltip_lines.append("Урон оружия (правая): %s" % _format_float_clean(float(right_weapon_damage)))
 		tooltip_lines.append("Урон оружия (левая): %s" % _format_float_clean(float(left_weapon_damage)))
 	else:
-		var hit_1h: float = float(right_weapon_damage) + attack_power_total
+		var ap_part_1h: float = attack_power_total
+		var base_1h: float = float(right_weapon_damage) + ap_part_1h
+		var hit_1h: float = base_1h * (1.0 + base_pct_bonus) + flat_bonus
+		base_bonus_value = base_1h * base_pct_bonus
 		display_damage = _format_float_clean(hit_1h)
 		var dps_1h: float = float(hit_1h) / max(0.01, interval_r)
 		tooltip_lines.append("Урон в секунду: %.2f" % dps_1h)
 		tooltip_lines.append("")
-		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(attack_power_total))
+		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_1h))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))
+
+	if flat_bonus != 0.0:
+		if flat_bonus_label == "":
+			flat_bonus_label = "Плоский бонус"
+		tooltip_lines.append("%s: %s" % [flat_bonus_label, _format_float_clean(flat_bonus)])
+	if base_pct_bonus != 0.0:
+		if base_bonus_label == "":
+			base_bonus_label = "Бонус стойки"
+		tooltip_lines.append("%s: %s" % [base_bonus_label, _format_float_clean(base_bonus_value)])
 
 	_breakdown_cache["damage"] = "\n".join(tooltip_lines).strip_edges()
 

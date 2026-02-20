@@ -239,6 +239,10 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
+	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 	var input_dir := Vector2.ZERO
 	if mobile_move_dir != Vector2.ZERO:
@@ -278,7 +282,7 @@ func _process(delta: float) -> void:
 		c_stats.tick(delta)
 	if c_ability_caster != null:
 		c_ability_caster.tick(delta)
-	if c_combat != null:
+	if c_combat != null and not (c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned"))):
 		c_combat.tick(delta)
 
 	if cast_bar != null and c_ability_caster != null:
@@ -376,8 +380,13 @@ func _apply_spellbook_passives() -> void:
 		return
 	c_ability_caster.apply_active_aura(c_spellbook.aura_active)
 	c_ability_caster.apply_active_stance(c_spellbook.stance_active)
+	var hidden_passives: Array[String] = c_spellbook.get_learned_by_type("hidden_passive")
+	for ability_id in hidden_passives:
+		c_ability_caster.apply_hidden_passive(ability_id)
 	if c_buffs != null and c_buffs.has_method("_sync_spirits_aid_ready_state"):
 		c_buffs.call("_sync_spirits_aid_ready_state")
+	if c_buffs != null and c_buffs.has_method("_sync_defensive_reflexes_ready_state"):
+		c_buffs.call("_sync_defensive_reflexes_ready_state")
 
 
 func add_gold(amount: int) -> void:
@@ -480,6 +489,7 @@ func respawn_now() -> void:
 
 	# бафы не переносятся через смерть/респавн
 	c_buffs.clear_all()
+	_apply_spellbook_passives()
 
 	is_dead = false
 	if c_buffs != null and c_buffs.has_method("_sync_spirits_aid_ready_state"):
@@ -504,6 +514,7 @@ func use_spirits_aid_respawn() -> bool:
 		else:
 			c_resource.set_empty()
 	is_dead = false
+	_apply_spellbook_passives()
 	if c_buffs.has_method("_sync_spirits_aid_ready_state"):
 		c_buffs.call("_sync_spirits_aid_ready_state")
 	_request_save("spirit_aid_used")
@@ -555,6 +566,8 @@ func apply_character_data(d: Dictionary) -> void:
 		c_buffs.apply_buffs_snapshot(buffs_v as Array)
 	if c_buffs != null and c_buffs.has_method("set_spirits_aid_cooldown_left"):
 		c_buffs.call("set_spirits_aid_cooldown_left", float(d.get("spirits_aid_cd_left", 0.0)))
+	if c_buffs != null and c_buffs.has_method("set_defensive_reflexes_cooldown_left"):
+		c_buffs.call("set_defensive_reflexes_cooldown_left", float(d.get("defensive_reflexes_cd_left", 0.0)))
 
 	var spellbook_v: Variant = d.get("spellbook", null)
 	if spellbook_v is Dictionary and c_spellbook != null:
@@ -657,6 +670,8 @@ func export_character_data() -> Dictionary:
 	base["buffs"] = c_buffs.get_buffs_snapshot()
 	if c_buffs != null and c_buffs.has_method("get_spirits_aid_cooldown_left"):
 		base["spirits_aid_cd_left"] = float(c_buffs.call("get_spirits_aid_cooldown_left"))
+	if c_buffs != null and c_buffs.has_method("get_defensive_reflexes_cooldown_left"):
+		base["defensive_reflexes_cd_left"] = float(c_buffs.call("get_defensive_reflexes_cooldown_left"))
 	if c_spellbook != null:
 		base["spellbook"] = {
 			"learned_ranks": c_spellbook.learned_ranks,

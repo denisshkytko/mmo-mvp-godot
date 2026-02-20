@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/warrior/battle_readiness.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 1
+train_cost_gold = 40
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 15.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyStance" id=20]
+script = ExtResource("4")
+buff_id = "active_stance"
+secondary_add = {}
+percent_add = {"physical_damage_base_pct_bonus": "value_pct"}
+flags = {}
+on_hit = {}
+
+[resource]
+script = ExtResource("1")
+id = "battle_readiness"
+name = "Боевая готовность"
+icon = ExtResource("2")
+description = "Увеличивает физический урон на 15%."
+description_ru = "Увеличивает физический урон на 15%."
+class_id = "warrior"
+ability_type = "stance"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("20")
+ranks = [SubResource("1")]

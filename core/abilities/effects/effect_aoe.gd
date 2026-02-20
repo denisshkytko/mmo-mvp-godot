@@ -53,4 +53,12 @@ func _is_valid_target(caster: Node, target: Node) -> bool:
 		"allies_only":
 			return rel != FactionRules.Relation.HOSTILE
 		_:
-			return rel == FactionRules.Relation.HOSTILE
+			if rel == FactionRules.Relation.HOSTILE:
+				return true
+			if rel != FactionRules.Relation.NEUTRAL:
+				return false
+			if "current_target" in target and target.current_target == caster:
+				return true
+			if "aggressor" in target and target.aggressor == caster:
+				return true
+			return false

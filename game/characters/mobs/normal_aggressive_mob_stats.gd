@@ -145,6 +145,33 @@ func tick_status_effects(delta: float) -> void:
 	for k in _status_effects.keys():
 		var id: String = String(k)
 		var entry: Dictionary = _status_effects[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var total_pct: float = float(flags.get("dot_total_pct_of_attack_damage", 0.0))
+		if total_pct > 0.0:
+			var source_attack_damage: float = float(flags.get("dot_source_attack_damage", 0.0))
+			if source_attack_damage > 0.0 and not is_dead:
+				var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
+				var interval: float = max(0.1, float(flags.get("dot_tick_interval_sec", 1.0)))
+				var total_damage: float = source_attack_damage * total_pct / 100.0
+				var ticks_total: int = max(1, int(round(duration / interval)))
+				var damage_per_tick: int = max(1, int(round(total_damage / float(ticks_total))))
+				var acc: float = float(data.get("dot_tick_acc", 0.0)) + delta
+				while acc >= interval and not is_dead:
+					acc -= interval
+					var school: String = String(flags.get("dot_damage_school", "physical"))
+					var ignore_mitigation: bool = bool(flags.get("dot_ignore_physical_mitigation", false))
+					var dmg := damage_per_tick
+					if not ignore_mitigation and school == "physical":
+						var reduction_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
+						dmg = int(ceil(float(damage_per_tick) * (1.0 - reduction_pct / 100.0)))
+						dmg = max(1, dmg)
+					current_hp = max(0, current_hp - dmg)
+					if current_hp <= 0:
+						is_dead = true
+				data["dot_tick_acc"] = acc
+				entry["data"] = data
+				_status_effects[id] = entry
 		var left: float = float(entry.get("time_left", 0.0))
 		if left >= 999999.0:
 			continue
@@ -198,6 +225,16 @@ func get_attack_speed_multiplier() -> float:
 	if mult <= 0.0:
 		return 1.0
 	return mult
+
+func is_stunned() -> bool:
+	for k in _status_effects.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _status_effects[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		if bool(flags.get("stunned", false)) or bool(data.get("stunned", false)):
+			return true
+	return false
 func get_stats_snapshot() -> Dictionary:
 	return _snapshot.duplicate(true)
 

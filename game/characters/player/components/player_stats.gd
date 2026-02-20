@@ -409,8 +409,13 @@ func _diff_stats(total_snapshot: Dictionary, base_snapshot: Dictionary) -> Dicti
 func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 	if p == null:
 		return 0
+	if raw_damage <= 0:
+		return 0
 	if "c_resource" in p and p.c_resource != null:
 		p.c_resource.on_damage_taken()
+	if p.c_buffs != null and p.c_buffs.has_method("try_consume_defensive_reflexes_on_hit"):
+		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
+			return 0
 
 	# неуязвимость через баф (если есть)
 	var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
@@ -434,6 +439,22 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 	if p.current_hp <= 0:
 		_on_death()
 	return final
+
+func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation: bool = false) -> int:
+	if p == null or p.is_dead:
+		return 0
+	if raw_damage <= 0:
+		return 0
+	if p.c_buffs != null and p.c_buffs.has_method("try_consume_defensive_reflexes_on_hit"):
+		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
+			return 0
+	if ignore_mitigation:
+		var final_direct: int = max(1, raw_damage)
+		p.current_hp = max(0, p.current_hp - final_direct)
+		if p.current_hp <= 0:
+			_on_death()
+		return final_direct
+	return take_damage_typed(raw_damage, dmg_type)
 
 func take_damage(raw_damage: int) -> void:
 	take_damage_typed(raw_damage, "physical")
