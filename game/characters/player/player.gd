@@ -385,6 +385,8 @@ func _apply_spellbook_passives() -> void:
 		c_ability_caster.apply_hidden_passive(ability_id)
 	if c_buffs != null and c_buffs.has_method("_sync_spirits_aid_ready_state"):
 		c_buffs.call("_sync_spirits_aid_ready_state")
+	if c_buffs != null and c_buffs.has_method("_sync_defensive_reflexes_ready_state"):
+		c_buffs.call("_sync_defensive_reflexes_ready_state")
 
 
 func add_gold(amount: int) -> void:
@@ -564,6 +566,8 @@ func apply_character_data(d: Dictionary) -> void:
 		c_buffs.apply_buffs_snapshot(buffs_v as Array)
 	if c_buffs != null and c_buffs.has_method("set_spirits_aid_cooldown_left"):
 		c_buffs.call("set_spirits_aid_cooldown_left", float(d.get("spirits_aid_cd_left", 0.0)))
+	if c_buffs != null and c_buffs.has_method("set_defensive_reflexes_cooldown_left"):
+		c_buffs.call("set_defensive_reflexes_cooldown_left", float(d.get("defensive_reflexes_cd_left", 0.0)))
 
 	var spellbook_v: Variant = d.get("spellbook", null)
 	if spellbook_v is Dictionary and c_spellbook != null:
@@ -666,6 +670,8 @@ func export_character_data() -> Dictionary:
 	base["buffs"] = c_buffs.get_buffs_snapshot()
 	if c_buffs != null and c_buffs.has_method("get_spirits_aid_cooldown_left"):
 		base["spirits_aid_cd_left"] = float(c_buffs.call("get_spirits_aid_cooldown_left"))
+	if c_buffs != null and c_buffs.has_method("get_defensive_reflexes_cooldown_left"):
+		base["defensive_reflexes_cd_left"] = float(c_buffs.call("get_defensive_reflexes_cooldown_left"))
 	if c_spellbook != null:
 		base["spellbook"] = {
 			"learned_ranks": c_spellbook.learned_ranks,

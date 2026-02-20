@@ -206,7 +206,7 @@ func _passes_filter(def: AbilityDefinition) -> bool:
 	var t: String = String(def.ability_type)
 	match _filter_index:
 		1: # Активные
-			return t != "aura" and t != "stance" and t != "buff"
+			return t != "aura" and t != "stance" and t != "buff" and t != "hidden_passive"
 		2: # Ауры/бафы
 			return t == "aura" or t == "stance" or t == "buff" or t == "hidden_passive"
 		_:

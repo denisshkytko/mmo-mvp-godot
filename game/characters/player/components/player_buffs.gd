@@ -8,18 +8,32 @@ const BuffData := preload("res://core/buffs/buff_data.gd")
 const SPIRITS_AID_ABILITY_ID: String = "spirits_aid"
 const SPIRITS_AID_READY_BUFF_ID: String = "passive:spirits_aid_ready"
 const SPIRITS_AID_COOLDOWN_SEC: float = 900.0
+const DEFENSIVE_REFLEXES_ABILITY_ID: String = "defensive_reflexes"
+const DEFENSIVE_REFLEXES_READY_BUFF_ID: String = "passive:defensive_reflexes_ready"
 
 var p: Player = null
 
 # id -> {"time_left": float, "data": Dictionary}
 var _buffs: Dictionary = {}
 var _spirits_aid_cd_left: float = 0.0
+var _defensive_reflexes_cd_left: float = 0.0
 
 func setup(player: Player) -> void:
 	p = player
 	_sync_spirits_aid_ready_state()
+	_sync_defensive_reflexes_ready_state()
 
 func tick(delta: float) -> void:
+	if _spirits_aid_cd_left > 0.0:
+		_spirits_aid_cd_left = max(0.0, _spirits_aid_cd_left - delta)
+		if _spirits_aid_cd_left <= 0.0:
+			_sync_spirits_aid_ready_state()
+
+	if _defensive_reflexes_cd_left > 0.0:
+		_defensive_reflexes_cd_left = max(0.0, _defensive_reflexes_cd_left - delta)
+		if _defensive_reflexes_cd_left <= 0.0:
+			_sync_defensive_reflexes_ready_state()
+
 	if _buffs.is_empty():
 		return
 
@@ -42,11 +56,6 @@ func tick(delta: float) -> void:
 		else:
 			entry["time_left"] = left
 			_buffs[key] = entry
-
-	if _spirits_aid_cd_left > 0.0:
-		_spirits_aid_cd_left = max(0.0, _spirits_aid_cd_left - delta)
-		if _spirits_aid_cd_left <= 0.0:
-			_sync_spirits_aid_ready_state()
 
 	if to_remove.is_empty():
 		return
@@ -406,6 +415,65 @@ func _sync_spirits_aid_ready_state() -> void:
 		_buffs.erase(SPIRITS_AID_READY_BUFF_ID)
 		_notify_stats_changed()
 
+func get_defensive_reflexes_cooldown_left() -> float:
+	return max(0.0, _defensive_reflexes_cd_left)
+
+func set_defensive_reflexes_cooldown_left(seconds: float) -> void:
+	_defensive_reflexes_cd_left = max(0.0, seconds)
+	_sync_defensive_reflexes_ready_state()
+
+func can_trigger_defensive_reflexes() -> bool:
+	if _defensive_reflexes_cd_left > 0.0:
+		return false
+	if p == null or p.c_spellbook == null:
+		return false
+	return int(p.c_spellbook.learned_ranks.get(DEFENSIVE_REFLEXES_ABILITY_ID, 0)) > 0
+
+func consume_defensive_reflexes() -> bool:
+	if not can_trigger_defensive_reflexes():
+		return false
+	_defensive_reflexes_cd_left = _get_defensive_reflexes_cooldown_sec()
+	if _buffs.has(DEFENSIVE_REFLEXES_READY_BUFF_ID):
+		_buffs.erase(DEFENSIVE_REFLEXES_READY_BUFF_ID)
+		_notify_stats_changed()
+	return true
+
+func try_consume_defensive_reflexes_on_hit() -> bool:
+	if p == null or p.is_dead:
+		return false
+	return consume_defensive_reflexes()
+
+func _get_defensive_reflexes_cooldown_sec() -> float:
+	if p == null or p.c_spellbook == null:
+		return 8.0
+	var rank: int = int(p.c_spellbook.learned_ranks.get(DEFENSIVE_REFLEXES_ABILITY_ID, 0))
+	if rank <= 0:
+		return 8.0
+	var db := get_node_or_null("/root/AbilityDB")
+	if db != null and db.has_method("get_rank_data"):
+		var rank_data: RankData = db.call("get_rank_data", DEFENSIVE_REFLEXES_ABILITY_ID, rank)
+		if rank_data != null and rank_data.cooldown_sec > 0.0:
+			return rank_data.cooldown_sec
+	return 8.0
+
+func _sync_defensive_reflexes_ready_state() -> void:
+	var should_show_ready: bool = can_trigger_defensive_reflexes() and p != null and not p.is_dead
+	var had_ready: bool = _buffs.has(DEFENSIVE_REFLEXES_READY_BUFF_ID)
+	if should_show_ready and not had_ready:
+		_buffs[DEFENSIVE_REFLEXES_READY_BUFF_ID] = {
+			"time_left": 999999.0,
+			"data": {
+				"ability_id": DEFENSIVE_REFLEXES_ABILITY_ID,
+				"source": "passive"
+			},
+			"ability_id": DEFENSIVE_REFLEXES_ABILITY_ID,
+			"source": "passive",
+		}
+		_notify_stats_changed()
+	elif not should_show_ready and had_ready:
+		_buffs.erase(DEFENSIVE_REFLEXES_READY_BUFF_ID)
+		_notify_stats_changed()
+
 func apply_buffs_snapshot(arr: Array) -> void:
 	_buffs.clear()
 
@@ -430,6 +498,7 @@ func apply_buffs_snapshot(arr: Array) -> void:
 		}
 
 	_sync_spirits_aid_ready_state()
+	_sync_defensive_reflexes_ready_state()
 	_notify_stats_changed()
 
 
