@@ -293,6 +293,8 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 	}
 	if p != null and p.has_method("get_stats_snapshot"):
 		context["caster_snapshot"] = p.call("get_stats_snapshot") as Dictionary
+	if p != null and p.c_combat != null:
+		context["caster_attack_damage"] = int(p.c_combat.get_attack_damage())
 	for k in extra.keys():
 		context[k] = extra[k]
 	return context

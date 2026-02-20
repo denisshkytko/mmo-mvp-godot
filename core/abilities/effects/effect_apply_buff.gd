@@ -25,12 +25,12 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	var data_res: BuffData = BuffData.new()
 	data_res.id = entry_id
 	data_res.duration_sec = float(rank_data.duration_sec)
-	data_res.secondary_add = _resolve_dict(secondary_add, rank_data, false)
-	data_res.primary_add = _resolve_dict(primary_add, rank_data, false)
-	data_res.percent_add = _resolve_dict(percent_add, rank_data, true)
-	data_res.primary_percent_add = _resolve_dict(primary_percent_add, rank_data, true)
-	data_res.flags = _resolve_dict(flags, rank_data, false)
-	data_res.on_hit = _resolve_dict(on_hit, rank_data, false)
+	data_res.secondary_add = _resolve_dict(secondary_add, rank_data, false, context)
+	data_res.primary_add = _resolve_dict(primary_add, rank_data, false, context)
+	data_res.percent_add = _resolve_dict(percent_add, rank_data, true, context)
+	data_res.primary_percent_add = _resolve_dict(primary_percent_add, rank_data, true, context)
+	data_res.flags = _resolve_dict(flags, rank_data, false, context)
+	data_res.on_hit = _resolve_dict(on_hit, rank_data, false, context)
 
 	var data_dict := data_res.to_dict()
 	data_dict["ability_id"] = ability_id
@@ -51,17 +51,17 @@ func _apply_buff_to_target(target: Node, entry_id: String, duration_sec: float, 
 	if "c_stats" in target and target.c_stats != null and target.c_stats.has_method("add_or_refresh_buff"):
 		target.c_stats.call("add_or_refresh_buff", entry_id, duration_sec, data)
 
-func _resolve_dict(source: Dictionary, rank_data: RankData, is_percent: bool) -> Dictionary:
+func _resolve_dict(source: Dictionary, rank_data: RankData, is_percent: bool, context: Dictionary) -> Dictionary:
 	var out: Dictionary = {}
 	for key in source.keys():
 		var value = source.get(key)
-		var resolved: Variant = _resolve_value(value, rank_data, is_percent)
+		var resolved: Variant = _resolve_value(value, rank_data, is_percent, context)
 		if resolved == null:
 			continue
 		out[key] = resolved
 	return out
 
-func _resolve_value(value, rank_data: RankData, is_percent: bool):
+func _resolve_value(value, rank_data: RankData, is_percent: bool, context: Dictionary):
 	if value is String:
 		match String(value):
 			"value_flat":
@@ -72,6 +72,8 @@ func _resolve_value(value, rank_data: RankData, is_percent: bool):
 				return float(rank_data.value_pct) / 100.0 if is_percent else float(rank_data.value_pct)
 			"value_pct_2":
 				return float(rank_data.value_pct_2) / 100.0 if is_percent else float(rank_data.value_pct_2)
+			"caster_attack_damage":
+				return float(context.get("caster_attack_damage", 0.0))
 			_:
 				return null
 	if typeof(value) == TYPE_INT or typeof(value) == TYPE_FLOAT:

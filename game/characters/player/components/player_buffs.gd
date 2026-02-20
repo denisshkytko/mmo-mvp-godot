@@ -29,6 +29,7 @@ func tick(delta: float) -> void:
 	if p != null and not p.is_dead:
 		_apply_consumable_hots(delta)
 		_apply_periodic_resource_effects(delta)
+		_apply_periodic_damage_effects(delta)
 
 	var to_remove: Array[String] = []
 	for k in _buffs.keys():
@@ -155,6 +156,37 @@ func _apply_periodic_resource_effects(delta: float) -> void:
 		else:
 			entry["data"] = data
 			_buffs[id] = entry
+
+func _apply_periodic_damage_effects(delta: float) -> void:
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var total_pct: float = float(flags.get("dot_total_pct_of_attack_damage", 0.0))
+		if total_pct <= 0.0:
+			continue
+		var source_attack_damage: float = float(flags.get("dot_source_attack_damage", 0.0))
+		if source_attack_damage <= 0.0:
+			continue
+		var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
+		var interval: float = max(0.1, float(flags.get("dot_tick_interval_sec", 1.0)))
+		var school: String = String(flags.get("dot_damage_school", "physical"))
+		var ignore_mitigation: bool = bool(flags.get("dot_ignore_physical_mitigation", false))
+		var total_damage: float = source_attack_damage * total_pct / 100.0
+		var ticks_total: int = max(1, int(round(duration / interval)))
+		var damage_per_tick: int = max(1, int(round(total_damage / float(ticks_total))))
+
+		var acc: float = float(data.get("dot_tick_acc", 0.0)) + delta
+		while acc >= interval:
+			acc -= interval
+			if p == null or p.is_dead or p.c_stats == null:
+				break
+			if p.c_stats.has_method("apply_periodic_damage"):
+				p.c_stats.call("apply_periodic_damage", damage_per_tick, school, ignore_mitigation)
+		data["dot_tick_acc"] = acc
+		entry["data"] = data
+		_buffs[id] = entry
 
 func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ability_id: String = "", source: String = "") -> void:
 	if id == "":
