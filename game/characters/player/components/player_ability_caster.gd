@@ -11,6 +11,7 @@ const ARCANE_SHOT_ALLOWED_WEAPON_SUBTYPES: Array[String] = [
 const WEAPON_REQUIRED_ABILITY_IDS: Array[String] = [
 	"arcane_shot",
 	"poisoned_arrow",
+	"aimed_shot",
 ]
 
 var p: Player = null
