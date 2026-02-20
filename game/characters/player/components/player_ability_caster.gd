@@ -80,9 +80,9 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if p.has_method("get_stats_snapshot"):
 		snap = p.call("get_stats_snapshot") as Dictionary
 
-	var cost: int = int(ceil(float(p.max_mana) * float(rank_data.resource_cost) / 100.0))
-	if cost > 0 and p.mana < cost:
-		return {"ok": false, "reason": "no_mana"}
+	var cost: int = _get_rank_resource_cost(rank_data)
+	if not _has_enough_resource(cost):
+		return {"ok": false, "reason": "no_resource"}
 
 	var cdr_pct: float = float(snap.get("cooldown_reduction_pct", 0.0))
 	var cd_eff: float = max(0.0, rank_data.cooldown_sec * (1.0 - cdr_pct / 100.0))
@@ -103,8 +103,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		}
 		return {"ok": true, "reason": "casting", "target": actual_target}
 
-	if cost > 0:
-		p.mana -= cost
+	_spend_resource(cost)
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
 	_start_cooldown(ability_id, cd_eff)
 	return {"ok": true, "reason": "", "target": actual_target}
@@ -265,13 +264,42 @@ func _finish_cast(payload: Dictionary) -> void:
 		return
 	actual_target = target_result.get("target") as Node
 
-	if cost > 0:
-		if p == null or p.mana < cost:
-			return
-		p.mana -= cost
+	if not _has_enough_resource(cost):
+		return
+	_spend_resource(cost)
 
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
 	_start_cooldown(ability_id, cooldown)
+
+
+func _get_rank_resource_cost(rank_data: RankData) -> int:
+	if rank_data == null or p == null:
+		return 0
+	if rank_data.resource_cost <= 0:
+		return 0
+	var max_resource: int = 0
+	if p.c_resource != null:
+		max_resource = int(p.c_resource.max_resource)
+	if max_resource <= 0:
+		max_resource = int(p.max_mana)
+	return int(ceil(float(max_resource) * float(rank_data.resource_cost) / 100.0))
+
+func _has_enough_resource(cost: int) -> bool:
+	if cost <= 0:
+		return true
+	if p == null:
+		return false
+	if p.c_resource != null:
+		return int(p.c_resource.resource) >= cost
+	return int(p.mana) >= cost
+
+func _spend_resource(cost: int) -> void:
+	if cost <= 0 or p == null:
+		return
+	if p.c_resource != null:
+		p.c_resource.add(-cost)
+		return
+	p.mana = max(0, p.mana - cost)
 
 func _start_cooldown(ability_id: String, duration: float) -> void:
 	if ability_id == "" or duration <= 0.0:

@@ -75,10 +75,10 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 	if player != null and player.c_combat != null:
 		base_phys = int(player.c_combat.get_attack_damage())
 	if player != null and "c_resource" in player and player.c_resource != null:
-		resource_label = String(player.c_resource.resource_type).capitalize()
-	if max_resource <= 0 and player != null:
-		if "max_mana" in player:
-			max_resource = int(player.max_mana)
+		max_resource = int(player.c_resource.max_resource)
+		resource_label = String(player.c_resource.label_name)
+	if max_resource <= 0 and player != null and "max_mana" in player:
+		max_resource = int(player.max_mana)
 
 	var lines: Array[String] = []
 	lines.append("")
@@ -88,9 +88,9 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 	if rank_data.cooldown_sec > 0.0:
 		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
 	if rank_data.resource_cost > 0:
-		var abs_cost: int = int(round(float(max_resource) * float(rank_data.resource_cost) / 100.0))
+		var abs_cost: int = int(ceil(float(max_resource) * float(rank_data.resource_cost) / 100.0))
 		if abs_cost > 0:
-			params.append("Cost: %d %s" % [abs_cost, resource_label])
+			params.append("Стоимость: %d %s" % [abs_cost, resource_label])
 	if not params.is_empty():
 		for p in params:
 			lines.append(p)
