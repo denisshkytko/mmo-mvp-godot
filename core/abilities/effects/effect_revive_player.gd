@@ -37,6 +37,8 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	if owner.c_buffs != null:
 		owner.c_buffs.clear_all()
+	if owner.has_method("_apply_spellbook_passives"):
+		owner.call("_apply_spellbook_passives")
 
 	owner.global_position = corpse.global_position
 	corpse.queue_free()

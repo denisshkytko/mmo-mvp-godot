@@ -217,6 +217,32 @@ func apply_active_stance(ability_id: String) -> void:
 		return
 	def.effect.apply(p, p, rank_data, _build_context(ability_id, def, {}))
 
+func apply_hidden_passive(ability_id: String) -> void:
+	if p == null or p.c_buffs == null:
+		return
+	if ability_id == "":
+		return
+	var db := get_node_or_null("/root/AbilityDB")
+	if db == null or not db.has_method("get_rank_data"):
+		return
+	var rank := 0
+	if p.c_spellbook != null:
+		rank = int(p.c_spellbook.learned_ranks.get(ability_id, 0))
+	if rank <= 0 and db.has_method("get_rank_for_level"):
+		rank = int(db.call("get_rank_for_level", ability_id, p.level))
+	if rank <= 0:
+		return
+	var rank_data: RankData = db.call("get_rank_data", ability_id, rank)
+	if rank_data == null:
+		return
+	if rank_data.cooldown_sec > 0.0:
+		return
+
+	var def: AbilityDefinition = db.call("get_ability", ability_id)
+	if def == null or def.effect == null:
+		return
+	def.effect.apply(p, p, rank_data, _build_context(ability_id, def, {"source": "passive"}))
+
 func _finish_cast(payload: Dictionary) -> void:
 	var ability_id := String(payload.get("ability_id", ""))
 	var def: AbilityDefinition = payload.get("def") as AbilityDefinition
@@ -312,7 +338,7 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 					actual_target = p
 				else:
 					return {"ok": false, "reason": "no_target"}
-			if not _is_hostile_target(actual_target):
+			if not _is_valid_enemy_target(actual_target):
 				if _can_fallback_to_self(def):
 					actual_target = p
 				else:
@@ -391,3 +417,22 @@ func _is_friendly_target(target: Node) -> bool:
 	if target != null and target.has_method("get_faction_id"):
 		target_faction = String(target.call("get_faction_id"))
 	return FactionRules.relation(caster_faction, target_faction) == FactionRules.Relation.FRIENDLY
+
+func _is_valid_enemy_target(target: Node) -> bool:
+	if target == null:
+		return false
+	if _is_hostile_target(target):
+		return true
+	var caster_faction := ""
+	if p != null and p.has_method("get_faction_id"):
+		caster_faction = String(p.call("get_faction_id"))
+	var target_faction := ""
+	if target.has_method("get_faction_id"):
+		target_faction = String(target.call("get_faction_id"))
+	if FactionRules.relation(caster_faction, target_faction) != FactionRules.Relation.NEUTRAL:
+		return false
+	if "current_target" in target and target.current_target == p:
+		return true
+	if "aggressor" in target and target.aggressor == p:
+		return true
+	return false
