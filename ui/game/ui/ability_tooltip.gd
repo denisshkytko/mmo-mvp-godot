@@ -148,6 +148,8 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 			return "Deals %.0f%% physical damage (%d base) to targets below %.0f%% Health." % [rank_data.value_pct_2, hit, rank_data.value_pct]
 		"stone_fists":
 			return "Increases Attack Power by %d and threat generation (%.0fx)." % [rank_data.value_flat, rank_data.value_pct]
+		"boiling_blood":
+			return "Увеличивает шанс критического удара на %.0f%% и критический урон на %.0f%%, но увеличивает получаемый урон на %d%%." % [rank_data.value_pct, rank_data.value_pct_2, int(rank_data.value_flat)]
 		"wind_spirit_devotion":
 			return "Increases Agility and Perception by %d for you and nearby allies." % rank_data.value_flat
 		"lightning":
