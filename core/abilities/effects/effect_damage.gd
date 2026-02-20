@@ -5,7 +5,7 @@ const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 @export var school: String = "magic" # physical | magic
-@export var scaling_mode: String = "spell_power_flat" # flat | phys_base_pct | spell_power_flat
+@export var scaling_mode: String = "spell_power_flat" # flat | phys_base_pct | spell_power_flat | attack_power_pct
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or target == null or rank_data == null:
@@ -17,6 +17,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var spell_power: float = float(derived.get("spell_power", 0.0))
+	var attack_power: float = float(derived.get("attack_power", 0.0))
 	var base: int = 0
 
 	match scaling_mode:
@@ -29,6 +30,8 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 			base = int(round(float(base_phys) * float(rank_data.value_pct) / 100.0))
 		"spell_power_flat":
 			base = int(rank_data.value_flat) + int(round(spell_power))
+		"attack_power_pct":
+			base = int(round(attack_power * float(rank_data.value_pct) / 100.0))
 		_:
 			base = int(rank_data.value_flat)
 

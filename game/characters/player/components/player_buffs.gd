@@ -300,6 +300,16 @@ func get_attack_speed_multiplier() -> float:
 		return 1.0
 	return mult
 
+func is_stunned() -> bool:
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		if bool(flags.get("stunned", false)) or bool(data.get("stunned", false)):
+			return true
+	return false
+
 
 # Legacy helper (used by PlayerCombat)
 func get_attack_bonus_total() -> int:

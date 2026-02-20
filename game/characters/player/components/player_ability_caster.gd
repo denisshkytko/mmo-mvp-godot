@@ -33,6 +33,8 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		return {"ok": false, "reason": "empty"}
 	if p == null or p.c_spellbook == null:
 		return {"ok": false, "reason": "no_spellbook"}
+	if p.c_buffs != null and p.c_buffs.has_method("is_stunned") and bool(p.c_buffs.call("is_stunned")):
+		return {"ok": false, "reason": "stunned"}
 	if _cast_time_left > 0.0:
 		interrupt_cast("ability_input")
 		return {"ok": false, "reason": "casting"}

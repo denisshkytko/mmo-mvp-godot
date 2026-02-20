@@ -239,6 +239,10 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
+	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 	var input_dir := Vector2.ZERO
 	if mobile_move_dir != Vector2.ZERO:
@@ -278,7 +282,7 @@ func _process(delta: float) -> void:
 		c_stats.tick(delta)
 	if c_ability_caster != null:
 		c_ability_caster.tick(delta)
-	if c_combat != null:
+	if c_combat != null and not (c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned"))):
 		c_combat.tick(delta)
 
 	if cast_bar != null and c_ability_caster != null:

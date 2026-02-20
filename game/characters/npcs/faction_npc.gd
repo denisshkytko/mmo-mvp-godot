@@ -302,6 +302,12 @@ func _physics_process(delta: float) -> void:
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
 		c_stats.call("tick_status_effects", delta)
+	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
+		velocity = Vector2.ZERO
+		move_and_slide()
+		if c_combat != null:
+			c_combat.reset()
+		return
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 
