@@ -96,6 +96,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		_cast_payload = {
 			"ability_id": ability_id,
 			"target": actual_target,
+			"target_id": actual_target.get_instance_id() if actual_target != null else 0,
 			"def": def,
 			"rank_data": rank_data,
 			"cost": cost,
@@ -248,7 +249,10 @@ func _finish_cast(payload: Dictionary) -> void:
 	var ability_id := String(payload.get("ability_id", ""))
 	var def: AbilityDefinition = payload.get("def") as AbilityDefinition
 	var rank_data: RankData = payload.get("rank_data") as RankData
-	var actual_target: Node = payload.get("target")
+	var target_ref: Variant = payload.get("target", null)
+	var actual_target: Node = null
+	if target_ref != null and is_instance_valid(target_ref) and target_ref is Node:
+		actual_target = target_ref as Node
 	var cost: int = int(payload.get("cost", 0))
 	var cooldown: float = float(payload.get("cooldown", 0.0))
 
@@ -257,8 +261,8 @@ func _finish_cast(payload: Dictionary) -> void:
 	if def.effect == null:
 		return
 
-	if actual_target != null and not is_instance_valid(actual_target):
-		actual_target = null
+	if _cast_target_lost_or_changed(payload, actual_target):
+		return
 	var target_result := _normalize_target(def, actual_target)
 	if not bool(target_result.get("ok", false)):
 		return
@@ -270,6 +274,32 @@ func _finish_cast(payload: Dictionary) -> void:
 
 	_apply_ability_effect(ability_id, def, rank_data, actual_target)
 	_start_cooldown(ability_id, cooldown)
+
+func _cast_target_lost_or_changed(payload: Dictionary, cast_target: Node) -> bool:
+	var def: AbilityDefinition = payload.get("def") as AbilityDefinition
+	if def == null:
+		return true
+	if def.target_type == "self":
+		return false
+	if cast_target == null:
+		return true
+	if not is_instance_valid(cast_target):
+		return true
+	var locked_target_id: int = int(payload.get("target_id", 0))
+	if locked_target_id != 0 and cast_target.get_instance_id() != locked_target_id:
+		return true
+	var gm: Node = null
+	if p != null and p.has_method("_get_game_manager"):
+		gm = p.call("_get_game_manager") as Node
+	if gm != null and gm.has_method("get_target"):
+		var current_target: Variant = gm.call("get_target")
+		if current_target == null:
+			return true
+		if not is_instance_valid(current_target):
+			return true
+		if current_target is Node and (current_target as Node).get_instance_id() != cast_target.get_instance_id():
+			return true
+	return false
 
 
 func _get_rank_resource_cost(rank_data: RankData) -> int:
