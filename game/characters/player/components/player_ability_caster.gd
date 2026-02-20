@@ -14,6 +14,7 @@ const WEAPON_REQUIRED_ABILITY_IDS: Array[String] = [
 	"aimed_shot",
 	"suppressive_shot",
 	"lucky_shot",
+	"panjagan",
 ]
 
 var p: Player = null
