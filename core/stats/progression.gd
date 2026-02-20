@@ -122,6 +122,7 @@ const CLASS_TABLE: Dictionary = {
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.80,
 		"npc_base_ranged_attack_interval": 1.70,
+		"ranged_auto_attack_range_multiplier": 1.30,
 		"attack_role": "hybrid",
 		"allowed_armor_classes": ["cloth", "leather"],
 		"base_equipment": {
@@ -290,6 +291,12 @@ static func get_npc_base_ranged_attack_interval_for_class(class_id: String) -> f
 		return 1.80
 	var def := CLASS_TABLE.get(class_id, {}) as Dictionary
 	return float(def.get("npc_base_ranged_attack_interval", 1.80))
+
+static func get_ranged_auto_attack_range_multiplier_for_class(class_id: String) -> float:
+	if not is_valid_class_id(class_id):
+		return 1.0
+	var def := CLASS_TABLE.get(class_id, {}) as Dictionary
+	return max(0.1, float(def.get("ranged_auto_attack_range_multiplier", 1.0)))
 
 static func get_allowed_weapon_types_for_class(class_id: String) -> Array[String]:
 	if not is_valid_class_id(class_id):
