@@ -29,10 +29,13 @@ static func apply_damage(attacker: Node, target: Node, dmg: int) -> void:
 		attacker.c_resource.on_damage_dealt()
 
 static func apply_damage_typed(attacker: Node, target: Node, dmg: int, dmg_type: String) -> void:
+	apply_damage_typed_with_result(attacker, target, dmg, dmg_type)
+
+static func apply_damage_typed_with_result(attacker: Node, target: Node, dmg: int, dmg_type: String) -> int:
 	if target == null or not is_instance_valid(target):
-		return
+		return 0
 	if dmg <= 0:
-		return
+		return 0
 
 	var final_dmg: int = dmg
 	if target.has_method("take_damage_from_typed"):
@@ -45,7 +48,7 @@ static func apply_damage_typed(attacker: Node, target: Node, dmg: int, dmg_type:
 			final_dmg = int(result2)
 	else:
 		apply_damage(attacker, target, dmg)
-		return
+		return dmg
 
 	_show_damage_number(target, final_dmg, dmg_type)
 
@@ -55,6 +58,7 @@ static func apply_damage_typed(attacker: Node, target: Node, dmg: int, dmg_type:
 			danger_meter.on_damage_dealt(float(final_dmg) * _get_threat_multiplier(attacker), target)
 	if attacker != null and "c_resource" in attacker and attacker.c_resource != null:
 		attacker.c_resource.on_damage_dealt()
+	return final_dmg
 
 static func show_heal(target: Node, heal_amount: int) -> void:
 	if heal_amount <= 0:

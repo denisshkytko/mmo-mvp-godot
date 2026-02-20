@@ -13,6 +13,7 @@ const WEAPON_REQUIRED_ABILITY_IDS: Array[String] = [
 	"poisoned_arrow",
 	"aimed_shot",
 	"suppressive_shot",
+	"lucky_shot",
 ]
 
 var p: Player = null
