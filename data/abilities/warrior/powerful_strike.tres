@@ -29,7 +29,7 @@ duration_sec = 0.0
 resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
-value_pct = 120.0
+value_pct = 115.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -43,7 +43,7 @@ duration_sec = 0.0
 resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
-value_pct = 130.0
+value_pct = 120.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -57,7 +57,7 @@ duration_sec = 0.0
 resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
-value_pct = 140.0
+value_pct = 125.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -71,7 +71,7 @@ duration_sec = 0.0
 resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
-value_pct = 150.0
+value_pct = 130.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -85,7 +85,7 @@ duration_sec = 0.0
 resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
-value_pct = 160.0
+value_pct = 135.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -99,7 +99,7 @@ duration_sec = 0.0
 resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
-value_pct = 170.0
+value_pct = 140.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -113,7 +113,7 @@ duration_sec = 0.0
 resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
-value_pct = 180.0
+value_pct = 145.0
 value_pct_2 = 0.0
 flags = {}
 
