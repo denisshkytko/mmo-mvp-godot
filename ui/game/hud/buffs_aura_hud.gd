@@ -20,8 +20,10 @@ var _collapsed_toggle_pos: Vector2 = Vector2.ZERO
 var _flyouts: Array[Control] = []
 var _open_flyout_slot: int = -1
 var _primary_slots: Array[TextureButton] = []
+var _slot_containers: Array[Control] = []
 var _arrow_buttons: Array[Button] = []
 var _arrow_home_pos: Array[Vector2] = []
+var _inter_slot_gaps: Array[Control] = []
 var _primary_slot_abilities: Array[String] = []
 var _flyout_slot_abilities: Array[Array] = []
 var _arrow_up_text: String = "▲"
@@ -32,6 +34,7 @@ var _ability_db: AbilityDatabase = null
 var _flow_router: Node = null
 var _db_ready: bool = false
 var _player_ready: bool = false
+var _slot_row_side_padding: float = 0.0
 
 func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
@@ -62,11 +65,17 @@ func _ready() -> void:
 
 func _setup_slots() -> void:
 	_primary_slots.clear()
+	_slot_containers.clear()
 	_arrow_buttons.clear()
 	_arrow_home_pos.clear()
+	_inter_slot_gaps = [
+		slot_row.get_node_or_null("GapLarge1") as Control,
+		slot_row.get_node_or_null("GapLarge2") as Control
+	]
 	for i in range(5):
 		var container := slot_row.get_node_or_null("SlotContainer%d" % i) as Control
 		if container == null:
+			_slot_containers.append(null)
 			_primary_slots.append(null)
 			_arrow_buttons.append(null)
 			_arrow_home_pos.append(Vector2.ZERO)
@@ -86,6 +95,7 @@ func _setup_slots() -> void:
 			slot_button.pressed.connect(_on_primary_slot_pressed.bind(i))
 		if arrow_button != null:
 			arrow_button.pressed.connect(_on_arrow_pressed.bind(i))
+		_slot_containers.append(container)
 		_primary_slots.append(slot_button)
 		_arrow_buttons.append(arrow_button)
 		if arrow_button != null:
@@ -118,6 +128,9 @@ func _create_flyouts() -> void:
 func _cache_layout() -> void:
 	_collapsed_panel_pos = panel.position
 	_collapsed_toggle_pos = toggle_button.position
+	var left_padding := slot_row.position.x
+	var right_padding := panel.size.x - (slot_row.position.x + slot_row.size.x)
+	_slot_row_side_padding = max(0.0, left_padding + right_padding)
 
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	_expanded = is_expanded
@@ -293,6 +306,26 @@ func _refresh_from_spellbook() -> void:
 	for i in range(buff_slot_count, 3):
 		_set_arrow_visible(i + 2, false)
 
+	var slot_visible: Array[bool] = []
+	for i in range(_slot_containers.size()):
+		slot_visible.append(false)
+
+	if slot_visible.size() > 0:
+		slot_visible[0] = _spellbook.aura_active != "" or aura_candidates.size() > 0
+	if slot_visible.size() > 1:
+		slot_visible[1] = _spellbook.stance_active != "" or stance_candidates.size() > 0
+	for i in range(2, slot_visible.size()):
+		var buff_idx := i - 2
+		if buff_idx >= buff_slot_count:
+			slot_visible[i] = false
+			continue
+		var assigned_ability := ""
+		if buff_idx < _spellbook.buff_slots.size():
+			assigned_ability = _spellbook.buff_slots[buff_idx]
+		slot_visible[i] = assigned_ability != "" or buff_candidates.size() > 0
+
+	_apply_slot_layout_visibility(slot_visible)
+
 func _set_primary_slot(slot_index: int, ability_id: String) -> void:
 	set_primary_slot_ability(slot_index, ability_id)
 	if slot_index < 0 or slot_index >= _primary_slots.size():
@@ -323,6 +356,33 @@ func _set_arrow_visible(slot_index: int, visible_value: bool) -> void:
 	var arrow_button := _arrow_buttons[slot_index]
 	if arrow_button != null:
 		arrow_button.visible = visible_value
+
+func _apply_slot_layout_visibility(slot_visible: Array[bool]) -> void:
+	for i in range(_slot_containers.size()):
+		var container := _slot_containers[i]
+		if container == null:
+			continue
+		var visible_value := i < slot_visible.size() and slot_visible[i]
+		container.visible = visible_value
+		if not visible_value and _open_flyout_slot == i:
+			_close_flyout(i)
+			_open_flyout_slot = -1
+
+	for gap_idx in range(_inter_slot_gaps.size()):
+		var gap := _inter_slot_gaps[gap_idx]
+		if gap == null:
+			continue
+		var left_visible := gap_idx < slot_visible.size() and slot_visible[gap_idx]
+		var right_visible := (gap_idx + 1) < slot_visible.size() and slot_visible[gap_idx + 1]
+		gap.visible = left_visible and right_visible
+
+	var row_width := slot_row.get_combined_minimum_size().x
+	var panel_width := row_width + _slot_row_side_padding
+	panel.custom_minimum_size.x = panel_width
+	slot_row.custom_minimum_size.x = row_width
+	panel.size.x = panel_width
+	if _expanded:
+		_set_expanded(true, true)
 
 func _cast_buff_from_slot(slot_index: int) -> void:
 	if _player == null or _spellbook == null:
