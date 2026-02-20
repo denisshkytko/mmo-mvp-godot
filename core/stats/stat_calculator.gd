@@ -206,6 +206,7 @@ static func build_player_snapshot(
     }
     var physical_damage_base_pct_bonus: float = 0.0
     var incoming_damage_reduction_pct: float = 0.0
+    var max_hp_percent_sources: Array = []
     var flags: Dictionary = {}
     var on_hit: Dictionary = {}
 
@@ -228,6 +229,10 @@ static func build_player_snapshot(
         for pk in percent_mods.keys():
             if perc.has(pk):
                 percent_mods[pk] += float(perc.get(pk, 0.0))
+        if perc.has("max_hp"):
+            var max_hp_pct: float = float(perc.get("max_hp", 0.0))
+            if max_hp_pct != 0.0:
+                max_hp_percent_sources.append({"label": source_label, "pct": max_hp_pct})
         if perc.has("physical_damage_base_pct_bonus"):
             var pct_bonus: float = float(perc.get("physical_damage_base_pct_bonus", 0.0))
             if pct_bonus != 0.0:
@@ -249,6 +254,20 @@ static func build_player_snapshot(
     _apply_percent_bonus(derived, breakdown, "spell_power", percent_mods.spell_power)
     _apply_percent_bonus(derived, breakdown, "defense", percent_mods.defense)
     _apply_percent_bonus(derived, breakdown, "magic_resist", percent_mods.magic_resist)
+    if not max_hp_percent_sources.is_empty():
+        var max_hp_base: float = float(derived.get("max_hp", 0.0))
+        var max_hp_add_total: float = 0.0
+        for src in max_hp_percent_sources:
+            if not (src is Dictionary):
+                continue
+            var src_d: Dictionary = src as Dictionary
+            var src_pct: float = float(src_d.get("pct", 0.0))
+            if src_pct == 0.0:
+                continue
+            var src_add: float = max_hp_base * src_pct
+            max_hp_add_total += src_add
+            _add_breakdown_line(breakdown.max_hp, String(src_d.get("label", "buff")), src_add, "(%.1f%%)" % (src_pct * 100.0))
+        derived.max_hp = float(derived.get("max_hp", 0.0)) + max_hp_add_total
     derived.physical_damage_base_pct_bonus = physical_damage_base_pct_bonus
     derived.incoming_damage_reduction_pct = incoming_damage_reduction_pct
 
