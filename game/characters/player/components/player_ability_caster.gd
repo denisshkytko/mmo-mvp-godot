@@ -412,6 +412,8 @@ func _resolve_range_by_mode(range_mode: String) -> float:
 		return PlayerCombat.RANGED_ATTACK_RANGE
 	if rm.begins_with("ranged"):
 		var cleaned := rm.replace(" ", "")
+		if cleaned == "ranged/2":
+			return PlayerCombat.RANGED_ATTACK_RANGE * 0.5
 		if cleaned.begins_with("ranged+") and cleaned.ends_with("%"):
 			var pct_str := cleaned.substr(7, cleaned.length() - 8)
 			var pct := float(pct_str)
