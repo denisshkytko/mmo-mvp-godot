@@ -357,6 +357,38 @@ func on_owner_took_damage() -> void:
 	if removed_any:
 		_notify_stats_changed()
 
+
+func absorb_incoming_damage(raw_damage: int) -> int:
+	if raw_damage <= 0 or _buffs.is_empty():
+		return raw_damage
+	var remaining: int = raw_damage
+	var removed_any := false
+	for k in _buffs.keys():
+		if remaining <= 0:
+			break
+		var id: String = String(k)
+		if not _buffs.has(id):
+			continue
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var absorb_left: int = int(data.get("absorb_damage_left", flags.get("absorb_damage_flat", data.get("absorb_damage_flat", 0))))
+		if absorb_left <= 0:
+			continue
+		var absorbed: int = min(remaining, absorb_left)
+		remaining -= absorbed
+		absorb_left -= absorbed
+		if absorb_left > 0:
+			data["absorb_damage_left"] = absorb_left
+			entry["data"] = data
+			_buffs[id] = entry
+		else:
+			_buffs.erase(id)
+			removed_any = true
+	if removed_any:
+		_notify_stats_changed()
+	return remaining
+
 func get_move_speed_multiplier() -> float:
 	var mult: float = 1.0
 	for k in _buffs.keys():
