@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
-[ext_resource type="Texture2D" path="res://assets/icons/abilities/priest/torment.png" id=2]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/priest/throe.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
 
@@ -124,7 +124,7 @@ scaling_mode = "spell_power_flat"
 
 [resource]
 script = ExtResource("1")
-id = "torment"
+id = "throe"
 name = "Мука"
 icon = ExtResource("2")
 description = "Наносит 15 (база + сила заклинаний) (+15 за ранг) единиц магического урона цели."

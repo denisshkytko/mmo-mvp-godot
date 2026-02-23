@@ -56,7 +56,7 @@
 [ext_resource type="Resource" path="res://data/abilities/hunter/suppressive_shot.tres" id=55]
 [ext_resource type="Resource" path="res://data/abilities/hunter/lucky_shot.tres" id=56]
 [ext_resource type="Resource" path="res://data/abilities/hunter/panjagan.tres" id=57]
-[ext_resource type="Resource" path="res://data/abilities/priest/torment.tres" id=58]
+[ext_resource type="Resource" path="res://data/abilities/priest/throe.tres" id=58]
 
 
 [resource]
