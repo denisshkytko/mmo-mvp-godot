@@ -42,6 +42,7 @@ func tick(delta: float) -> void:
 	# PlayerStats regen (which is out-of-combat for HP).
 	if p != null and not p.is_dead:
 		_apply_consumable_hots(delta)
+		_apply_periodic_heal_effects(delta)
 		_apply_periodic_resource_effects(delta)
 		_apply_periodic_damage_effects(delta)
 
@@ -165,6 +166,30 @@ func _apply_periodic_resource_effects(delta: float) -> void:
 		else:
 			entry["data"] = data
 			_buffs[id] = entry
+
+func _apply_periodic_heal_effects(delta: float) -> void:
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var heal_flat: int = int(flags.get("hp_regen_tick_flat", data.get("hp_regen_tick_flat", 0)))
+		if heal_flat <= 0:
+			continue
+		var interval: float = float(flags.get("hp_regen_tick_interval_sec", data.get("hp_regen_tick_interval_sec", 1.0)))
+		if interval <= 0.0:
+			interval = 1.0
+
+		var acc: float = float(data.get("hp_regen_tick_acc", 0.0)) + delta
+		while acc >= interval:
+			acc -= interval
+			if p == null or p.is_dead or p.current_hp >= p.max_hp:
+				continue
+			p.current_hp = min(p.max_hp, p.current_hp + heal_flat)
+
+		data["hp_regen_tick_acc"] = acc
+		entry["data"] = data
+		_buffs[id] = entry
 
 func _apply_periodic_damage_effects(delta: float) -> void:
 	for k in _buffs.keys():
