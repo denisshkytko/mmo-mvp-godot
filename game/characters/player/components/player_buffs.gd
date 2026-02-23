@@ -185,7 +185,11 @@ func _apply_periodic_heal_effects(delta: float) -> void:
 			acc -= interval
 			if p == null or p.is_dead or p.current_hp >= p.max_hp:
 				continue
+			var hp_before: int = p.current_hp
 			p.current_hp = min(p.max_hp, p.current_hp + heal_flat)
+			var healed: int = max(0, p.current_hp - hp_before)
+			if healed > 0:
+				DAMAGE_HELPER.show_heal(p, healed)
 
 		data["hp_regen_tick_acc"] = acc
 		entry["data"] = data
