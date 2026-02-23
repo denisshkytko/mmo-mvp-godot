@@ -376,6 +376,43 @@ func get_active_stance_data() -> Dictionary:
 	return {}
 
 
+func try_apply_attacker_slow_from_stance(attacker: Node, dmg_type: String = "physical") -> void:
+	if p == null or attacker == null or not is_instance_valid(attacker):
+		return
+	if dmg_type != "physical":
+		return
+	var stance_data: Dictionary = get_active_stance_data()
+	if stance_data.is_empty():
+		return
+	var slow_pct: float = float(stance_data.get("retaliate_attack_speed_pct", 0.0))
+	var debuff_duration: float = float(stance_data.get("retaliate_duration_sec", 0.0))
+	if slow_pct >= 0.0 or debuff_duration <= 0.0:
+		return
+	var caster_faction := ""
+	if p.has_method("get_faction_id"):
+		caster_faction = String(p.call("get_faction_id"))
+	var attacker_faction := ""
+	if attacker.has_method("get_faction_id"):
+		attacker_faction = String(attacker.call("get_faction_id"))
+	if FactionRules.relation(caster_faction, attacker_faction) != FactionRules.Relation.HOSTILE:
+		return
+	var mult: float = max(0.1, 1.0 + slow_pct / 100.0)
+	var data := {
+		"ability_id": "ice_fortification",
+		"source": "debuff",
+		"is_debuff": true,
+		"attack_speed_multiplier": mult,
+	}
+	if attacker.has_method("add_or_refresh_buff"):
+		attacker.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_buffs" in attacker and attacker.c_buffs != null:
+		attacker.c_buffs.add_or_refresh_buff("debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_stats" in attacker and attacker.c_stats != null and attacker.c_stats.has_method("add_or_refresh_buff"):
+		attacker.c_stats.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
+
+
 func on_owner_took_damage() -> void:
 	if _buffs.is_empty():
 		return

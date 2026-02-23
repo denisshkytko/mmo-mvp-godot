@@ -1,0 +1,126 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/mage/ice_fortification.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 6
+train_cost_gold = 240
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 70
+value_flat_2 = 5
+value_pct = -30.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 12
+train_cost_gold = 550
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 140
+value_flat_2 = 5
+value_pct = -30.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 20
+train_cost_gold = 1211
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 210
+value_flat_2 = 5
+value_pct = -30.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 30
+train_cost_gold = 2196
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 280
+value_flat_2 = 5
+value_pct = -30.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 40
+train_cost_gold = 3391
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 350
+value_flat_2 = 5
+value_pct = -30.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 50
+train_cost_gold = 4841
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 420
+value_flat_2 = 5
+value_pct = -30.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 490
+value_flat_2 = 5
+value_pct = -30.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyStance" id=20]
+script = ExtResource("4")
+buff_id = "active_stance"
+secondary_add = {"defense": "value_flat"}
+percent_add = {}
+flags = {}
+on_hit = {"retaliate_attack_speed_pct": "value_pct", "retaliate_duration_sec": "value_flat_2"}
+
+[resource]
+script = ExtResource("1")
+id = "ice_fortification"
+name = "Укрепление льдом"
+icon = ExtResource("2")
+description = "Увеличивает физическую защиту мага на {X} и уменьшает скорость атаки атакующих врагов на 30% на 5 секунд."
+description_ru = "Увеличивает физическую защиту мага на {X} и уменьшает скорость атаки атакующих врагов на 30% на 5 секунд."
+class_id = "mage"
+ability_type = "stance"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]

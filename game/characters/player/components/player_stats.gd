@@ -406,7 +406,10 @@ func _diff_stats(total_snapshot: Dictionary, base_snapshot: Dictionary) -> Dicti
 		out[key] = float(total_stats.get(key, 0)) - float(base_stats.get(key, 0))
 	return out
 
-func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
+func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String = "physical") -> int:
+	return take_damage_typed(raw_damage, dmg_type, attacker)
+
+func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = null) -> int:
 	if p == null:
 		return 0
 	if raw_damage <= 0:
@@ -436,6 +439,9 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 		if final <= 0:
 			return 0
 	p.current_hp = max(0, p.current_hp - final)
+
+	if final > 0 and attacker != null and p.c_buffs != null and p.c_buffs.has_method("try_apply_attacker_slow_from_stance"):
+		p.c_buffs.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
 
 	if final > 0 and p.c_buffs != null and p.c_buffs.has_method("on_owner_took_damage"):
 		p.c_buffs.call("on_owner_took_damage")

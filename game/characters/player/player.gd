@@ -473,6 +473,12 @@ func take_damage(raw_damage: int) -> void:
 func take_damage_typed(raw_damage: int, dmg_type: String = "physical") -> void:
 	c_stats.take_damage_typed(raw_damage, dmg_type)
 
+func take_damage_from(raw_damage: int, attacker: Node2D) -> int:
+	return c_stats.take_damage_from_typed(raw_damage, attacker, "physical")
+
+func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String = "physical") -> int:
+	return c_stats.take_damage_from_typed(raw_damage, attacker, dmg_type)
+
 func respawn_now() -> void:
 	# телепорт на ближайший graveyard
 	var gm: Node = _get_game_manager()
