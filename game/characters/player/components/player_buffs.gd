@@ -239,7 +239,13 @@ func _apply_periodic_damage_effects(delta: float) -> void:
 			if p == null or p.is_dead or p.c_stats == null:
 				break
 			if p.c_stats.has_method("apply_periodic_damage"):
-				p.c_stats.call("apply_periodic_damage", damage_per_tick, school, ignore_mitigation)
+				var dealt: int = int(p.c_stats.call("apply_periodic_damage", damage_per_tick, school, ignore_mitigation))
+				if dealt > 0 and school == "magic":
+					var caster_ref: Variant = data.get("caster_ref", null)
+					if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
+						var caster_node := caster_ref as Node
+						if "c_buffs" in caster_node and caster_node.c_buffs != null and caster_node.c_buffs.has_method("restore_mana_from_spell_damage"):
+							caster_node.c_buffs.call("restore_mana_from_spell_damage", dealt)
 		data["dot_tick_acc"] = acc
 		entry["data"] = data
 		_buffs[id] = entry
@@ -314,6 +320,34 @@ func get_consumable_hot_totals() -> Dictionary:
 			mp_per_sec += float(mp_per)
 
 	return {"hp_per_sec": hp_per_sec, "mp_per_sec": mp_per_sec}
+
+
+
+func restore_mana_from_spell_damage(final_damage: int) -> void:
+	_restore_mana_by_stance_percent(final_damage, "mana_on_spell_damage_pct")
+
+
+func restore_mana_from_heal_to_ally(actual_heal: int) -> void:
+	_restore_mana_by_stance_percent(actual_heal, "mana_on_heal_allies_pct")
+
+
+func _restore_mana_by_stance_percent(base_value: int, key: String) -> void:
+	if p == null or base_value <= 0 or key == "":
+		return
+	if p.c_resource == null:
+		return
+	if String(p.c_resource.resource_type) != "mana":
+		return
+	var stance_data: Dictionary = get_active_stance_data()
+	if stance_data.is_empty():
+		return
+	var pct: float = float(stance_data.get(key, 0.0))
+	if pct <= 0.0:
+		return
+	var gain: int = int(round(float(base_value) * pct / 100.0))
+	if gain <= 0:
+		return
+	p.c_resource.add(gain)
 
 
 func get_buffs_snapshot() -> Array:

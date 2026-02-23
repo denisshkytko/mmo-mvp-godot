@@ -39,4 +39,6 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 		return
 
 	var final: int = STAT_CALC.apply_crit_to_damage_typed(base, snap, school)
-	DAMAGE_HELPER.apply_damage_typed(caster, target, final, school)
+	var dealt: int = DAMAGE_HELPER.apply_damage_typed_with_result(caster, target, final, school)
+	if school == "magic" and dealt > 0 and "c_buffs" in caster and caster.c_buffs != null and caster.c_buffs.has_method("restore_mana_from_spell_damage"):
+		caster.c_buffs.call("restore_mana_from_spell_damage", dealt)
