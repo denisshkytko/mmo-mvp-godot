@@ -174,11 +174,23 @@ func _apply_periodic_heal_effects(delta: float) -> void:
 		var data: Dictionary = entry.get("data", {}) as Dictionary
 		var flags: Dictionary = data.get("flags", {}) as Dictionary
 		var heal_flat: int = int(flags.get("hp_regen_tick_flat", data.get("hp_regen_tick_flat", 0)))
-		if heal_flat <= 0:
-			continue
 		var interval: float = float(flags.get("hp_regen_tick_interval_sec", data.get("hp_regen_tick_interval_sec", 1.0)))
 		if interval <= 0.0:
 			interval = 1.0
+
+		if heal_flat <= 0:
+			var hot_total_flat: float = float(flags.get("hp_hot_total_flat", data.get("hp_hot_total_flat", 0.0)))
+			var hot_bonus_flat: float = float(flags.get("hp_hot_bonus_flat", data.get("hp_hot_bonus_flat", 0.0)))
+			if hot_total_flat > 0.0 or hot_bonus_flat != 0.0:
+				interval = float(flags.get("hp_hot_tick_interval_sec", data.get("hp_hot_tick_interval_sec", interval)))
+				if interval <= 0.0:
+					interval = 1.0
+				var total_heal: float = max(0.0, hot_total_flat + hot_bonus_flat)
+				var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
+				var ticks_total: int = max(1, int(round(duration / interval)))
+				heal_flat = max(1, int(round(total_heal / float(ticks_total))))
+			else:
+				continue
 
 		var acc: float = float(data.get("hp_regen_tick_acc", 0.0)) + delta
 		while acc >= interval:
