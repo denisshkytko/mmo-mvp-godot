@@ -217,15 +217,19 @@ text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Effects" type="VBoxContainer" parent="Root/Panel/Margin/VBox"]
+[node name="Effects" type="VBoxContainer" parent="Root"]
 visible = false
-layout_mode = 2
+layout_mode = 1
+offset_left = 190.0
+offset_top = 96.0
+offset_right = 360.0
+offset_bottom = 160.0
 theme_override_constants/separation = 1
 
-[node name="BuffGrid" type="GridContainer" parent="Root/Panel/Margin/VBox/Effects"]
+[node name="BuffGrid" type="GridContainer" parent="Root/Effects"]
 layout_mode = 2
 columns = 4
 
-[node name="DebuffGrid" type="GridContainer" parent="Root/Panel/Margin/VBox/Effects"]
+[node name="DebuffGrid" type="GridContainer" parent="Root/Effects"]
 layout_mode = 2
 columns = 4

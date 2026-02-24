@@ -8,9 +8,9 @@ extends CanvasLayer
 @onready var mana_row: HBoxContainer = $Root/Panel/Margin/VBox/ManaRow
 @onready var mana_bar: ProgressBar = $Root/Panel/Margin/VBox/ManaRow/ManaBar
 @onready var mana_text: Label = $Root/Panel/Margin/VBox/ManaRow/ManaBar/ManaText
-@onready var effects_root: VBoxContainer = $Root/Panel/Margin/VBox/Effects
-@onready var buff_grid: GridContainer = $Root/Panel/Margin/VBox/Effects/BuffGrid
-@onready var debuff_grid: GridContainer = $Root/Panel/Margin/VBox/Effects/DebuffGrid
+@onready var effects_root: VBoxContainer = $Root/Effects
+@onready var buff_grid: GridContainer = $Root/Effects/BuffGrid
+@onready var debuff_grid: GridContainer = $Root/Effects/DebuffGrid
 const BUFF_ICON_SCENE := preload("res://ui/game/hud/BuffIcon.tscn")
 
 var _gm: Node = null
