@@ -15,7 +15,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
-custom_minimum_size = Vector2(600, 912)
+custom_minimum_size = Vector2(680, 912)
 layout_mode = 1
 offset_left = 64.0
 offset_top = 152.0
@@ -64,7 +64,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 22
 
 [node name="Scroll" type="ScrollContainer" parent="Root/Panel"]
-custom_minimum_size = Vector2(584, 802)
+custom_minimum_size = Vector2(664, 802)
 layout_mode = 1
 offset_left = 8.0
 offset_top = 98.0
