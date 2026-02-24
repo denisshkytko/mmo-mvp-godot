@@ -6,6 +6,7 @@ signal move_dir_changed(dir: Vector2)
 const DEADZONE_PX := 12.0
 
 var _active_touch_id: int = -1
+var _mouse_active: bool = false
 var _center: Vector2 = Vector2.ZERO
 var _last_dir: Vector2 = Vector2.ZERO
 
@@ -31,6 +32,12 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if event is InputEventScreenDrag:
 		_handle_drag(event)
+		return
+	if event is InputEventMouseButton:
+		_handle_mouse_button(event)
+		return
+	if event is InputEventMouseMotion:
+		_handle_mouse_motion(event)
 
 
 func _handle_touch(event: InputEventScreenTouch) -> void:
@@ -56,6 +63,35 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 
 func _handle_drag(event: InputEventScreenDrag) -> void:
 	if event.index != _active_touch_id:
+		return
+	_update_from_global_pos(event.position)
+	accept_event()
+
+
+func _handle_mouse_button(event: InputEventMouseButton) -> void:
+	if event.button_index != MOUSE_BUTTON_LEFT:
+		return
+	if event.pressed:
+		if _active_touch_id != -1:
+			return
+		if not _is_within_bounds(event.position):
+			return
+		_mouse_active = true
+		_set_knob_visible(true)
+		_update_from_global_pos(event.position)
+		accept_event()
+		return
+	if not _mouse_active:
+		return
+	_mouse_active = false
+	_set_dir(Vector2.ZERO)
+	_update_knob(Vector2.ZERO)
+	_set_knob_visible(false)
+	accept_event()
+
+
+func _handle_mouse_motion(event: InputEventMouseMotion) -> void:
+	if not _mouse_active:
 		return
 	_update_from_global_pos(event.position)
 	accept_event()
