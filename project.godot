@@ -24,6 +24,13 @@ DataDB="*res://core/data/data_db.gd"
 LootSystem="*res://core/data/loot_system.gd"
 AbilityDB="*res://core/abilities/ability_database.gd"
 
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
 [input]
 
 ui_left={

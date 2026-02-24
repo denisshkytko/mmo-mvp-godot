@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://saa6nce1hcw6" path="res://ui/game/ui/ability_tooltip.gd" id="1_7g6di"]
 
 [node name="AbilityTooltip" type="Control"]
-visible = false
-custom_minimum_size = Vector2(260, 0)
+custom_minimum_size = Vector2(260, 90)
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_7g6di")
 
 [node name="Panel" type="PanelContainer" parent="."]
@@ -42,13 +43,13 @@ scroll_active = false
 
 [node name="CloseButton" type="Button" parent="."]
 z_index = 1
-custom_minimum_size = Vector2(18, 18)
-layout_mode = 0
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 1
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -22.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = 22.0
-flat = true
+offset_left = -18.0
+offset_bottom = 31.0
+grow_horizontal = 0
 text = "×"
+flat = true

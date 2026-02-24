@@ -21,6 +21,11 @@ cache/0/12/0/descent = 0.0
 cache/0/12/0/underline_position = 0.0
 cache/0/12/0/underline_thickness = 0.0
 cache/0/12/0/scale = 1.0
+cache/0/22/0/ascent = 0.0
+cache/0/22/0/descent = 0.0
+cache/0/22/0/underline_position = 0.0
+cache/0/22/0/underline_thickness = 0.0
+cache/0/22/0/scale = 1.0
 
 [sub_resource type="FontFile" id="FontFile_0kcyj"]
 subpixel_positioning = 0
@@ -41,6 +46,11 @@ cache/0/12/0/descent = 0.0
 cache/0/12/0/underline_position = 0.0
 cache/0/12/0/underline_thickness = 0.0
 cache/0/12/0/scale = 1.0
+cache/0/22/0/ascent = 0.0
+cache/0/22/0/descent = 0.0
+cache/0/22/0/underline_position = 0.0
+cache/0/22/0/underline_thickness = 0.0
+cache/0/22/0/scale = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0kcyj"]
 bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
@@ -72,6 +82,11 @@ cache/0/16/0/descent = 0.0
 cache/0/16/0/underline_position = 0.0
 cache/0/16/0/underline_thickness = 0.0
 cache/0/16/0/scale = 1.0
+cache/0/22/0/ascent = 0.0
+cache/0/22/0/descent = 0.0
+cache/0/22/0/underline_position = 0.0
+cache/0/22/0/underline_thickness = 0.0
+cache/0/22/0/scale = 1.0
 
 [node name="PlayerHUD" type="CanvasLayer"]
 script = ExtResource("1_0kcyj")
@@ -86,51 +101,49 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
-custom_minimum_size = Vector2(170, 80)
+custom_minimum_size = Vector2(352, 120)
 layout_mode = 1
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 180.0
-offset_bottom = 90.0
+offset_left = 64.0
+offset_top = 16.0
+offset_right = 416.0
+offset_bottom = 136.0
 
 [node name="Margin" type="MarginContainer" parent="Root/Panel"]
-custom_minimum_size = Vector2(160, 80)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 10
+theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 10
+theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
 [node name="VBox" type="VBoxContainer" parent="Root/Panel/Margin"]
-custom_minimum_size = Vector2(160, 70)
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="Header" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
-custom_minimum_size = Vector2(150, 20)
 layout_mode = 2
-theme_override_constants/separation = 50
-alignment = 1
+size_flags_vertical = 3
+theme_override_constants/separation = 16
 
 [node name="NameLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
 layout_mode = 2
+theme_override_constants/shadow_offset_x = 5
 theme_override_fonts/font = SubResource("FontFile_p0abl")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = "Player"
 vertical_alignment = 1
 
 [node name="LevelLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 8
-size_flags_vertical = 1
+theme_override_constants/shadow_offset_x = 5
 theme_override_fonts/font = SubResource("FontFile_0kcyj")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = "lvl 1"
 horizontal_alignment = 2
 vertical_alignment = 1
@@ -138,7 +151,7 @@ vertical_alignment = 1
 [node name="HpRow" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(160, 20)
 layout_mode = 2
-size_flags_vertical = 6
+size_flags_vertical = 3
 theme_override_constants/separation = 8
 alignment = 1
 
@@ -159,16 +172,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
 theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ManaRow" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
-custom_minimum_size = Vector2(160, 20)
 layout_mode = 2
-size_flags_vertical = 10
+size_flags_vertical = 3
 
 [node name="ManaBar" type="ProgressBar" parent="Root/Panel/Margin/VBox/ManaRow"]
 layout_mode = 2
@@ -184,12 +197,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = SubResource("FontFile_fjqji")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1

@@ -168,7 +168,7 @@ interaction_type = 3
 loot_profile = SubResource("Resource_b1gjl")
 level_min = 5
 level_max = 5
-class_choice = 2
+class_choice = 3
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup5" instance=ExtResource("7_82kis")]
 position = Vector2(-1652, -85)
@@ -177,8 +177,8 @@ position = Vector2(-1652, -85)
 script = ExtResource("7_nldw7")
 faction_id = "red"
 loot_profile = SubResource("Resource_ecawj")
-level_min = 5
-level_max = 5
+level_min = 60
+level_max = 60
 class_choice = 2
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup2" instance=ExtResource("7_82kis")]

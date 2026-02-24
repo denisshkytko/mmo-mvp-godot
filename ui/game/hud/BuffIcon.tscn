@@ -4,9 +4,9 @@
 
 [node name="BuffIcon" type="Panel"]
 clip_contents = true
-custom_minimum_size = Vector2(40, 40)
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(80, 80)
+offset_right = 80.0
+offset_bottom = 80.0
 script = ExtResource("1_lgokg")
 
 [node name="Icon" type="TextureRect" parent="."]
@@ -21,19 +21,21 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="TimeText" type="Label" parent="."]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -30.0
-offset_top = -30.0
+offset_left = -68.0
+offset_top = -64.0
+offset_right = -4.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_font_sizes/font_size = 12
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
 text = "10 m"
 horizontal_alignment = 2
 vertical_alignment = 2

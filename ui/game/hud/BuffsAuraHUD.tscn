@@ -17,17 +17,18 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
-custom_minimum_size = Vector2(259, 44)
+visible = false
+custom_minimum_size = Vector2(312, 96)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -22.0
-offset_top = -319.0
-offset_right = 242.0
-offset_bottom = -275.0
+offset_left = -69.0
+offset_top = -700.0
+offset_right = 243.0
+offset_bottom = -604.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -39,14 +40,11 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = -65.0
-offset_right = -5.0
-offset_bottom = -5.0
+offset_top = -128.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-theme_override_constants/separation = 5
 alignment = 1
 
 [node name="SlotContainer0" type="VBoxContainer" parent="Root/Panel/SlotRow"]
@@ -56,7 +54,7 @@ mouse_filter = 2
 alignment = 2
 
 [node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer0"]
-custom_minimum_size = Vector2(34, 34)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 mouse_filter = 1
 
@@ -73,7 +71,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="GapLarge1" type="Control" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(15, 1)
+custom_minimum_size = Vector2(16, 1)
 layout_mode = 2
 mouse_filter = 2
 
@@ -85,7 +83,7 @@ theme_override_constants/separation = 5
 alignment = 2
 
 [node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer1"]
-custom_minimum_size = Vector2(34, 34)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 mouse_filter = 1
 
@@ -102,7 +100,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="GapLarge2" type="Control" parent="Root/Panel/SlotRow"]
-custom_minimum_size = Vector2(15, 1)
+custom_minimum_size = Vector2(16, 1)
 layout_mode = 2
 mouse_filter = 2
 
@@ -111,14 +109,14 @@ custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
 size_flags_stretch_ratio = 0.0
 mouse_filter = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 8
 alignment = 2
 
 [node name="ArrowButton" type="Button" parent="Root/Panel/SlotRow/SlotContainer2"]
-custom_minimum_size = Vector2(34, 22)
+custom_minimum_size = Vector2(80, 31)
 layout_mode = 2
 mouse_filter = 1
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 16
 text = "▲"
 
 [node name="SlotRow" type="HBoxContainer" parent="Root/Panel/SlotRow/SlotContainer2"]
@@ -128,7 +126,7 @@ mouse_filter = 2
 theme_override_constants/separation = 2
 
 [node name="SlotButton" type="TextureButton" parent="Root/Panel/SlotRow/SlotContainer2/SlotRow"]
-custom_minimum_size = Vector2(34, 34)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 mouse_filter = 1
 
@@ -146,21 +144,21 @@ stretch_mode = 5
 
 [node name="ToggleButton" type="Button" parent="Root"]
 z_index = 10
-custom_minimum_size = Vector2(17, 44)
+custom_minimum_size = Vector2(32, 80)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -22.0
-offset_top = -319.0
-offset_right = -5.0
-offset_bottom = -275.0
+offset_left = -48.0
+offset_top = -692.0
+offset_right = -16.0
+offset_bottom = -612.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 1
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 22
 text = "◀"
 
 [node name="FlyoutsLayer" type="Control" parent="Root"]

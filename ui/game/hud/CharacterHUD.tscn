@@ -19,31 +19,21 @@ mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(700, 380)
+custom_minimum_size = Vector2(810, 620)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
+offset_left = -397.0
+offset_top = -302.0
+offset_right = 397.0
+offset_bottom = 302.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[node name="CloseButton" type="Button" parent="Root/Panel"]
-z_index = 1
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -22.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = 22.0
-grow_horizontal = 0
-flat = true
-text = "×"
 
 [node name="MarginContainer" type="MarginContainer" parent="Root/Panel"]
 layout_mode = 1
@@ -52,19 +42,20 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Root/Panel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 8
 
 [node name="TitleLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(290, 30)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Character"
 vertical_alignment = 1
 
@@ -72,9 +63,11 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-current_tab = 0
+theme_override_font_sizes/font_size = 22
+current_tab = 1
 
 [node name="Персонаж" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -88,11 +81,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 16
 
 [node name="EquipmentPanel" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 300)
+custom_minimum_size = Vector2(428, 520)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -104,14 +97,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="EquipmentVBox" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="ClothingRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
@@ -122,20 +115,21 @@ alignment = 1
 [node name="ClothingLeftColumn" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow"]
 custom_minimum_size = Vector2(120, 236)
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
 alignment = 2
 
 [node name="HeadRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 alignment = 2
 
 [node name="HeadLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/HeadRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Head"
 
 [node name="SlotHead" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/HeadRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/HeadRow/SlotHead"]
@@ -150,15 +144,16 @@ stretch_mode = 5
 
 [node name="NeckRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 alignment = 2
 
 [node name="NeckLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/NeckRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Neck"
 
 [node name="SlotNeck" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/NeckRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/NeckRow/SlotNeck"]
@@ -173,15 +168,16 @@ stretch_mode = 5
 
 [node name="ShouldersLeftRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 alignment = 2
 
 [node name="ShouldersLeftLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Shoulders"
 
 [node name="SlotShoulders" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow/SlotShoulders"]
@@ -196,15 +192,16 @@ stretch_mode = 5
 
 [node name="CloakLeftRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 alignment = 2
 
 [node name="CloakLeftLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Cloak"
 
 [node name="SlotCloak" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow/SlotCloak"]
@@ -219,15 +216,16 @@ stretch_mode = 5
 
 [node name="ChestRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 alignment = 2
 
 [node name="ChestLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Chest"
 
 [node name="SlotChest" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow/SlotChest"]
@@ -242,15 +240,16 @@ stretch_mode = 5
 
 [node name="ShirtLeftRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 alignment = 2
 
 [node name="ShirtLeftLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Shirt"
 
 [node name="SlotShirt" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow/SlotShirt"]
@@ -271,14 +270,14 @@ size_flags_vertical = 3
 [node name="ClothingRightColumn" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow"]
 custom_minimum_size = Vector2(120, 236)
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
 
 [node name="BracersRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="SlotBracers" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BracersRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BracersRow/SlotBracers"]
@@ -293,14 +292,15 @@ stretch_mode = 5
 
 [node name="BracersLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BracersRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Bracers"
 
 [node name="GlovesRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="SlotGloves" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/GlovesRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/GlovesRow/SlotGloves"]
@@ -315,14 +315,15 @@ stretch_mode = 5
 
 [node name="GlovesLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/GlovesRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Gloves"
 
 [node name="Ring1RightRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="SlotRing1" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring1RightRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring1RightRow/SlotRing1"]
@@ -337,14 +338,15 @@ stretch_mode = 5
 
 [node name="Ring1RightLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring1RightRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Ring 1"
 
 [node name="Ring2Row" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="SlotRing2" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring2Row"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring2Row/SlotRing2"]
@@ -359,14 +361,15 @@ stretch_mode = 5
 
 [node name="Ring2Label" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring2Row"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Ring 2"
 
 [node name="LegsRightRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="SlotLegs" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/LegsRightRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/LegsRightRow/SlotLegs"]
@@ -381,14 +384,15 @@ stretch_mode = 5
 
 [node name="LegsRightLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/LegsRightRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Legs"
 
 [node name="BootsRightRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="SlotBoots" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BootsRightRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BootsRightRow/SlotBoots"]
@@ -403,6 +407,7 @@ stretch_mode = 5
 
 [node name="BootsRightLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BootsRightRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Boots"
 
 [node name="WeaponsRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
@@ -416,14 +421,15 @@ layout_mode = 2
 [node name="RightHandRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow"]
 custom_minimum_size = Vector2(130, 36)
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="RightHandLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/RightHandRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Right Hand"
 
 [node name="SlotWeaponR" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/RightHandRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/RightHandRow/SlotWeaponR"]
@@ -439,10 +445,10 @@ stretch_mode = 5
 [node name="LeftHandRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow"]
 custom_minimum_size = Vector2(130, 36)
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 16
 
 [node name="SlotWeaponL" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/LeftHandRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/LeftHandRow/SlotWeaponL"]
@@ -457,6 +463,7 @@ stretch_mode = 5
 
 [node name="LeftHandLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/LeftHandRow"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Left Hand"
 
 [node name="WeaponsRightSpacer" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow"]
@@ -496,7 +503,6 @@ size_flags_vertical = 3
 fit_content = true
 
 [node name="Заклинания" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -543,10 +549,10 @@ size_flags_vertical = 0
 [node name="SpellsMargin" type="MarginContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA/SpellsVBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="SpellsScroll" type="ScrollContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA/SpellsVBox/SpellsMargin"]
 layout_mode = 2
@@ -557,9 +563,9 @@ horizontal_scroll_mode = 0
 [node name="SpellsGrid" type="GridContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA/SpellsVBox/SpellsMargin/SpellsScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 6
-theme_override_constants/v_separation = 4
-columns = 1
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 
 [node name="SpellsPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
 custom_minimum_size = Vector2(240, 0)
@@ -696,6 +702,22 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="CloseButton" type="Button" parent="Root/Panel"]
+z_index = 1
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -72.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 72.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 24
+text = "×"
+icon_alignment = 1
 
 [node name="TooltipPanel" parent="Root" instance=ExtResource("2_0n5q6")]
 z_index = 500

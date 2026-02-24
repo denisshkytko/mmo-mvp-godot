@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://b7rkqmicjjs08" path="res://ui/game/hud/mobile/textures/Joystick.png" id="4_xlyuy"]
 [ext_resource type="Texture2D" uid="uid://nvwxea44qb35" path="res://ui/game/hud/mobile/textures/LargeHandleFilled.png" id="5_suufg"]
 
-
 [sub_resource type="Shader" id="Shader_circle_icon"]
 code = "shader_type canvas_item;
 
@@ -37,18 +36,19 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="LeftPad" type="Control" parent="Root"]
-custom_minimum_size = Vector2(200, 200)
-anchors_preset = 0
+custom_minimum_size = Vector2(320, 320)
+layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -218.0
-offset_right = 220.0
-offset_bottom = -18.0
+offset_left = 192.0
+offset_top = -448.0
+offset_right = 512.0
+offset_bottom = -128.0
+grow_vertical = 0
 mouse_filter = 2
 
 [node name="MoveStick" type="Control" parent="Root/LeftPad"]
-mouse_filter = 0
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,7 +58,6 @@ grow_vertical = 2
 script = ExtResource("2_65rcb")
 
 [node name="Base" type="TextureRect" parent="Root/LeftPad/MoveStick"]
-mouse_filter = 2
 modulate = Color(1, 1, 1, 0.2)
 layout_mode = 1
 anchors_preset = 15
@@ -66,45 +65,61 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("4_xlyuy")
 expand_mode = 1
 
 [node name="Knob" type="TextureRect" parent="Root/LeftPad/MoveStick"]
-mouse_filter = 2
 modulate = Color(1, 1, 1, 0.45)
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(96, 96)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -30.0
-offset_top = -30.0
-offset_right = 30.0
-offset_bottom = 30.0
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 46.0
+offset_bottom = 46.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("5_suufg")
 expand_mode = 1
 
 [node name="RightPad" type="Control" parent="Root"]
-custom_minimum_size = Vector2(260, 260)
+custom_minimum_size = Vector2(512, 512)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -280.0
-offset_top = -326.0
-offset_right = -20.0
-offset_bottom = -66.0
+offset_left = -704.0
+offset_top = -656.0
+offset_right = -192.0
+offset_bottom = -144.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 
 [node name="SkillPad" type="Control" parent="Root/RightPad"]
+custom_minimum_size = Vector2(360, 360)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -400.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_g1q8d")
+
+[node name="QuickSkillBtn" type="TextureButton" parent="Root/RightPad/SkillPad"]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 1
 anchors_preset = 3
@@ -112,23 +127,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -200.0
-grow_horizontal = 0
-grow_vertical = 0
-mouse_filter = 2
-script = ExtResource("3_g1q8d")
-
-[node name="QuickSkillBtn" type="TextureButton" parent="Root/RightPad/SkillPad"]
-custom_minimum_size = Vector2(120, 120)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -120.0
+offset_left = -232.0
+offset_top = -232.0
+offset_right = -32.0
+offset_bottom = -32.0
 grow_horizontal = 0
 grow_vertical = 0
 texture_normal = ExtResource("4_xlyuy")
@@ -154,13 +156,13 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="SkillBtn1" type="TextureButton" parent="Root/RightPad/SkillPad"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -60.0
-offset_right = 60.0
+offset_top = -96.0
+offset_right = 96.0
 grow_vertical = 0
 texture_normal = ExtResource("4_xlyuy")
 ignore_texture_size = true
@@ -185,15 +187,15 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="SkillBtn2" type="TextureButton" parent="Root/RightPad/SkillPad"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 10.0
-offset_top = -35.0
-offset_right = 70.0
-offset_bottom = 25.0
+offset_left = 16.0
+offset_top = -76.0
+offset_right = 144.0
+offset_bottom = 52.0
 grow_vertical = 2
 texture_normal = ExtResource("4_xlyuy")
 ignore_texture_size = true
@@ -218,15 +220,15 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="SkillBtn3" type="TextureButton" parent="Root/RightPad/SkillPad"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -35.0
-offset_top = 10.0
-offset_right = 25.0
-offset_bottom = 70.0
+offset_left = -76.0
+offset_top = 16.0
+offset_right = 52.0
+offset_bottom = 144.0
 grow_horizontal = 2
 texture_normal = ExtResource("4_xlyuy")
 ignore_texture_size = true
@@ -251,13 +253,13 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="SkillBtn4" type="TextureButton" parent="Root/RightPad/SkillPad"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(128, 128)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -60.0
-offset_bottom = 60.0
+offset_left = -96.0
+offset_bottom = 96.0
 grow_horizontal = 0
 texture_normal = ExtResource("4_xlyuy")
 ignore_texture_size = true
@@ -282,14 +284,14 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="InteractBtn" type="TextureButton" parent="Root/RightPad"]
-visible = false
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(96, 96)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -50.0
-offset_bottom = 50.0
+offset_left = -112.0
+offset_right = -16.0
+offset_bottom = 96.0
 grow_horizontal = 0
 texture_normal = ExtResource("4_xlyuy")
 ignore_texture_size = true

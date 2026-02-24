@@ -146,7 +146,7 @@ func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	var final_panel_pos := _collapsed_panel_pos + Vector2(-shift_x, 0.0) if _expanded else _collapsed_panel_pos
 	var final_toggle_pos := _collapsed_toggle_pos
 	if _expanded:
-		final_toggle_pos = Vector2(final_panel_pos.x - toggle_button.size.x - TOGGLE_PANEL_GAP, _collapsed_toggle_pos.y)
+		final_toggle_pos = Vector2(final_panel_pos.x - toggle_button.size.x - 8.0 - TOGGLE_PANEL_GAP, _collapsed_toggle_pos.y)
 	if _expanded:
 		panel.visible = true
 	if immediate:

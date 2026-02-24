@@ -34,6 +34,11 @@ cache/0/12/0/descent = 0.0
 cache/0/12/0/underline_position = 0.0
 cache/0/12/0/underline_thickness = 0.0
 cache/0/12/0/scale = 1.0
+cache/0/22/0/ascent = 0.0
+cache/0/22/0/descent = 0.0
+cache/0/22/0/underline_position = 0.0
+cache/0/22/0/underline_thickness = 0.0
+cache/0/22/0/scale = 1.0
 
 [sub_resource type="FontFile" id="FontFile_b4a0j"]
 subpixel_positioning = 0
@@ -54,6 +59,11 @@ cache/0/12/0/descent = 0.0
 cache/0/12/0/underline_position = 0.0
 cache/0/12/0/underline_thickness = 0.0
 cache/0/12/0/scale = 1.0
+cache/0/22/0/ascent = 0.0
+cache/0/22/0/descent = 0.0
+cache/0/22/0/underline_position = 0.0
+cache/0/22/0/underline_thickness = 0.0
+cache/0/22/0/scale = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u4g43"]
 bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
@@ -85,6 +95,11 @@ cache/0/16/0/descent = 0.0
 cache/0/16/0/underline_position = 0.0
 cache/0/16/0/underline_thickness = 0.0
 cache/0/16/0/scale = 1.0
+cache/0/22/0/ascent = 0.0
+cache/0/22/0/descent = 0.0
+cache/0/22/0/underline_position = 0.0
+cache/0/22/0/underline_thickness = 0.0
+cache/0/22/0/scale = 1.0
 
 [node name="TargetHUD" type="CanvasLayer"]
 script = ExtResource("1_vx1m2")
@@ -100,12 +115,12 @@ mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 clip_contents = true
-custom_minimum_size = Vector2(170, 80)
+custom_minimum_size = Vector2(352, 120)
 layout_mode = 1
-offset_left = 190.0
-offset_top = 10.0
-offset_right = 360.0
-offset_bottom = 90.0
+offset_left = 448.0
+offset_top = 16.0
+offset_right = 800.0
+offset_bottom = 136.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel_outline")
 
@@ -117,51 +132,46 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 10
+theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 10
+theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
 [node name="VBox" type="VBoxContainer" parent="Root/Panel/Margin"]
 custom_minimum_size = Vector2(160, 70)
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="Header" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
-custom_minimum_size = Vector2(150, 20)
 layout_mode = 2
-theme_override_constants/separation = 50
-alignment = 1
+size_flags_vertical = 3
+theme_override_constants/separation = 16
 
 [node name="NameLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
+theme_override_constants/outline_size = 5
 theme_override_fonts/font = SubResource("FontFile_5lq8m")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = "Target"
 vertical_alignment = 1
-clip_text = true
-text_overrun_behavior = 3
 
 [node name="LevelLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 1
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
+theme_override_constants/outline_size = 5
 theme_override_fonts/font = SubResource("FontFile_b4a0j")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = "lv 1"
 horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="HpRow" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
-custom_minimum_size = Vector2(160, 20)
 layout_mode = 2
-size_flags_vertical = 6
+size_flags_vertical = 3
 theme_override_constants/separation = 8
 alignment = 1
 
@@ -182,16 +192,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 12
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
 text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ManaRow" type="HBoxContainer" parent="Root/Panel/Margin/VBox"]
-custom_minimum_size = Vector2(160, 20)
 layout_mode = 2
-size_flags_vertical = 10
+size_flags_vertical = 3
 
 [node name="ManaBar" type="ProgressBar" parent="Root/Panel/Margin/VBox/ManaRow"]
 layout_mode = 2
@@ -210,20 +219,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
+theme_override_constants/outline_size = 5
 theme_override_fonts/font = SubResource("FontFile_0k7i0")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Effects" type="VBoxContainer" parent="Root"]
-visible = false
+custom_minimum_size = Vector2(352, 0)
 layout_mode = 1
-offset_left = 190.0
-offset_top = 96.0
-offset_right = 360.0
-offset_bottom = 160.0
+offset_left = 448.0
+offset_top = 144.0
+offset_right = 800.0
+offset_bottom = 208.0
 theme_override_constants/separation = 1
 
 [node name="BuffGrid" type="GridContainer" parent="Root/Effects"]

@@ -9,11 +9,11 @@ class_name QuickMenuHUD
 @onready var toggle_button: Button = $Root/ToggleButton
 
 var _expanded: bool = false
-@export var spacing: float = 5.0
 var _menu_hud: Node = null
 var _inventory_hud: Node = null
 var _character_hud: Node = null
-var _collapsed_pos: Vector2 = Vector2.ZERO
+var _collapsed_toggle_pos: Vector2 = Vector2.ZERO
+var _collapsed_panel_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	menu_button.pressed.connect(_on_menu_pressed)
@@ -31,17 +31,18 @@ func _resolve_targets() -> void:
 	_character_hud = get_tree().get_first_node_in_group("character_hud")
 
 func _cache_layout() -> void:
-	panel.size = button_stack.size
-	_collapsed_pos = toggle_button.position
+	panel.size = panel.size
+	_collapsed_toggle_pos = toggle_button.position
+	_collapsed_panel_pos = panel.position
 
 
 func _set_expanded(is_expanded: bool, immediate: bool) -> void:
 	_expanded = is_expanded
 	toggle_button.text = "▲" if _expanded else "▼"
-	var target_panel_pos := _collapsed_pos + Vector2(0.0, 0.0)
-	var target_toggle_pos := _collapsed_pos + Vector2(0.0, panel.size.y - toggle_button.size.y)
-	var final_panel_pos := target_panel_pos if _expanded else _collapsed_pos
-	var final_toggle_pos := target_toggle_pos if _expanded else _collapsed_pos
+	var target_panel_pos := _collapsed_panel_pos
+	var target_toggle_pos := _collapsed_toggle_pos + Vector2(0.0, panel.size.y + 8.0)
+	var final_panel_pos := target_panel_pos if _expanded else _collapsed_panel_pos
+	var final_toggle_pos := target_toggle_pos if _expanded else _collapsed_toggle_pos
 	if _expanded:
 		panel.visible = true
 	if immediate:

@@ -16,111 +16,138 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TooltipPanel" parent="Root" instance=ExtResource("2_2u4xq")]
+visible = true
 z_index = 50
-layout_mode = 0
+layout_mode = 1
 
 [node name="QtyDialog" type="Panel" parent="Root"]
 visible = false
-custom_minimum_size = Vector2(260, 140)
-layout_mode = 0
-offset_left = 40.0
-offset_top = 40.0
-offset_right = 300.0
-offset_bottom = 180.0
+custom_minimum_size = Vector2(320, 200)
+layout_mode = 1
+offset_left = 576.0
+offset_top = 152.0
+offset_right = 836.0
+offset_bottom = 292.0
 
 [node name="QtyTitle" type="Label" parent="Root/QtyDialog"]
-layout_mode = 0
-offset_left = 10.0
+custom_minimum_size = Vector2(304, 32)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
 offset_top = 8.0
-offset_right = 240.0
-offset_bottom = 30.0
+offset_right = -8.0
+offset_bottom = 39.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 22
 text = "Купить"
 
 [node name="QtySlider" type="HSlider" parent="Root/QtyDialog"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 36.0
-offset_right = 240.0
-offset_bottom = 60.0
+custom_minimum_size = Vector2(304, 48)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 48.0
+offset_right = -8.0
+offset_bottom = 96.0
+grow_horizontal = 2
 
 [node name="QtyPrice" type="Label" parent="Root/QtyDialog"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 64.0
-offset_right = 240.0
-offset_bottom = 86.0
+custom_minimum_size = Vector2(304, 32)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 104.0
+offset_right = -8.0
+offset_bottom = 136.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 22
 text = "Цена: 0"
 
 [node name="QtyOk" type="Button" parent="Root/QtyDialog"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 94.0
-offset_right = 90.0
-offset_bottom = 120.0
+custom_minimum_size = Vector2(80, 48)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -47.0
+offset_right = 88.0
+offset_bottom = -8.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
 text = "Ок"
 
 [node name="QtyCancel" type="Button" parent="Root/QtyDialog"]
-layout_mode = 0
-offset_left = 100.0
-offset_top = 94.0
-offset_right = 190.0
-offset_bottom = 120.0
+custom_minimum_size = Vector2(96, 48)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -102.0
+offset_top = -47.0
+offset_right = -6.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
 text = "Отмена"
 
 [node name="Panel" type="Panel" parent="Root"]
-visible = false
-custom_minimum_size = Vector2(385, 585)
+custom_minimum_size = Vector2(504, 912)
 layout_mode = 1
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 395.0
-offset_bottom = 595.0
+offset_left = 64.0
+offset_top = 152.0
+offset_right = 568.0
+offset_bottom = 1064.0
 
 [node name="Title" type="Label" parent="Root/Panel"]
-layout_mode = 0
-offset_left = 12.0
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 1
+offset_left = 8.0
 offset_top = 8.0
-offset_right = 260.0
-offset_bottom = 30.0
+offset_right = 256.0
+offset_bottom = 39.0
+theme_override_font_sizes/font_size = 22
 text = "Торговля"
-
-[node name="CloseButton" type="Button" parent="Root/Panel"]
-custom_minimum_size = Vector2(30, 30)
-layout_mode = 0
-offset_left = 350.0
-offset_top = 5.0
-offset_right = 380.0
-offset_bottom = 36.0
-text = "×"
+vertical_alignment = 1
 
 [node name="ItemCellTemplate" type="Panel" parent="Root/Panel"]
 visible = false
-custom_minimum_size = Vector2(350, 75)
-layout_mode = 0
-offset_left = 12.0
-offset_top = 80.0
-offset_right = 252.0
-offset_bottom = 132.0
+custom_minimum_size = Vector2(472, 96)
+layout_mode = 1
+offset_left = 16.0
+offset_top = 112.0
+offset_right = 360.0
+offset_bottom = 208.0
 
 [node name="Padding" type="MarginContainer" parent="Root/Panel/ItemCellTemplate"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="Content" type="HBoxContainer" parent="Root/Panel/ItemCellTemplate/Padding"]
-custom_minimum_size = Vector2(340, 65)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 5
+theme_override_constants/separation = 8
+alignment = 1
 
 [node name="IconPanel" type="Panel" parent="Root/Panel/ItemCellTemplate/Padding/Content"]
-custom_minimum_size = Vector2(65, 65)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Icon" type="TextureRect" parent="Root/Panel/ItemCellTemplate/Padding/Content/IconPanel"]
@@ -131,17 +158,16 @@ expand_mode = 2
 stretch_mode = 5
 
 [node name="Name" type="Label" parent="Root/Panel/ItemCellTemplate/Padding/Content"]
-custom_minimum_size = Vector2(170, 65)
+custom_minimum_size = Vector2(270, 80)
 layout_mode = 2
 size_flags_horizontal = 3
+vertical_alignment = 1
 autowrap_mode = 2
 clip_text = true
 
 [node name="ActionButton" type="Button" parent="Root/Panel/ItemCellTemplate/Padding/Content"]
-custom_minimum_size = Vector2(95, 65)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
 
 [node name="ActionText" type="RichTextLabel" parent="Root/Panel/ItemCellTemplate/Padding/Content/ActionButton"]
 layout_mode = 1
@@ -156,18 +182,19 @@ text = "Купить"
 scroll_active = false
 autowrap_mode = 0
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Tabs" type="TabContainer" parent="Root/Panel"]
-custom_minimum_size = Vector2(360, 535)
+custom_minimum_size = Vector2(488, 840)
 layout_mode = 0
-offset_left = 12.0
-offset_top = 38.0
-offset_right = 372.0
-offset_bottom = 569.0
+offset_left = 8.0
+offset_top = 64.0
+offset_right = 368.0
+offset_bottom = 604.0
+theme_override_font_sizes/font_size = 22
 current_tab = 0
 
 [node name="Покупка" type="Control" parent="Root/Panel/Tabs"]
-custom_minimum_size = Vector2(360, 500)
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -182,8 +209,8 @@ grow_vertical = 2
 
 [node name="Margin" type="MarginContainer" parent="Root/Panel/Tabs/Покупка/Scroll"]
 layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
 
 [node name="Grid" type="GridContainer" parent="Root/Panel/Tabs/Покупка/Scroll/Margin"]
 layout_mode = 2
@@ -194,7 +221,6 @@ theme_override_constants/v_separation = 5
 
 [node name="Продажа" type="Control" parent="Root/Panel/Tabs"]
 visible = false
-custom_minimum_size = Vector2(360, 500)
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -210,8 +236,8 @@ grow_vertical = 2
 
 [node name="Margin" type="MarginContainer" parent="Root/Panel/Tabs/Продажа/Scroll"]
 layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
 
 [node name="Grid" type="GridContainer" parent="Root/Panel/Tabs/Продажа/Scroll/Margin"]
 layout_mode = 2
@@ -219,3 +245,17 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
+
+[node name="CloseButton" type="Button" parent="Root/Panel"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -72.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 72.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 30
+text = "×"

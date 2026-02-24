@@ -17,16 +17,17 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
-clip_contents = true
 self_modulate = Color(1, 1, 1, 0)
+clip_contents = true
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -115.0
-offset_top = 5.0
-offset_right = -55.0
-offset_bottom = 65.0
+offset_left = -240.0
+offset_top = 16.0
+offset_right = -160.0
+offset_bottom = 96.0
 grow_horizontal = 0
 
 [node name="VBox" type="VBoxContainer" parent="Root/Panel"]
