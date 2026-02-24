@@ -33,6 +33,7 @@ func _ready() -> void:
 	mana_bar.max_value = 1
 	mana_bar.value = 1
 	mana_row.visible = false
+	_hide_effects_panel()
 
 func _cache_panel_stylebox() -> void:
 	var sb := panel.get_theme_stylebox("panel")
@@ -66,12 +67,14 @@ func _process(_delta: float) -> void:
 		_gm = get_tree().get_first_node_in_group("game_manager")
 		if _gm == null:
 			panel.visible = false
+			_hide_effects_panel()
 			return
 
 	var t: Node = _gm.call("get_target") if _gm.has_method("get_target") else null
 	if t == null or not is_instance_valid(t):
 		_target = null
 		panel.visible = false
+		_hide_effects_panel()
 		return
 
 	# target changed
@@ -84,6 +87,12 @@ func _process(_delta: float) -> void:
 	_update_hp()
 	_update_resource()
 	_update_effects()
+
+
+func _hide_effects_panel() -> void:
+	effects_root.visible = false
+	_clear_grid(buff_grid)
+	_clear_grid(debuff_grid)
 
 func _update_identity() -> void:
 	if _target == null:
