@@ -9,9 +9,12 @@ const OFFSET := Vector2(12, 10)
 @onready var description_label: RichTextLabel = $Panel/Margin/VBox/Description
 @onready var close_button: Button = $CloseButton
 
+var _scene_min_size: Vector2 = Vector2.ZERO
+
 func _ready() -> void:
 	add_to_group("ability_tooltip_singleton")
 	visible = false
+	_scene_min_size = custom_minimum_size
 	_style_tooltip_panel()
 	if description_label != null:
 		description_label.bbcode_enabled = true
@@ -193,7 +196,15 @@ func _position_tooltip(target_pos: Vector2) -> void:
 	if not visible:
 		return
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
-	size = get_combined_minimum_size()
+	var base_size := _scene_min_size
+	if base_size == Vector2.ZERO:
+		base_size = custom_minimum_size
+	if base_size == Vector2.ZERO:
+		base_size = Vector2(260.0, 90.0)
+	var content_size := get_combined_minimum_size()
+	var target_size := Vector2(max(base_size.x, content_size.x), max(base_size.y, content_size.y))
+	custom_minimum_size = target_size
+	size = target_size
 	var pos := target_pos
 	pos.x = clamp(pos.x, 0.0, max(0.0, vp_size.x - size.x))
 	pos.y = clamp(pos.y, 0.0, max(0.0, vp_size.y - size.y))

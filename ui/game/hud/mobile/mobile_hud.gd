@@ -12,10 +12,12 @@ var _inventory_ui: Node = null
 var _character_ui: Node = null
 var _merchant_ui: Node = null
 var _menu_ui: Node = null
+var _trainer_ui: Node = null
 var _inventory_open: bool = false
 var _character_open: bool = false
 var _merchant_open: bool = false
 var _menu_open: bool = false
+var _trainer_open: bool = false
 var _bindings_ready: bool = false
 
 
@@ -56,11 +58,16 @@ func _init_window_tracking() -> void:
 		_menu_ui.hud_visibility_changed.connect(_on_menu_visibility_changed)
 		if _menu_ui.has_method("is_open"):
 			_menu_open = bool(_menu_ui.call("is_open"))
+	_trainer_ui = get_tree().get_first_node_in_group("trainer_ui")
+	if _trainer_ui != null and _trainer_ui.has_signal("hud_visibility_changed"):
+		_trainer_ui.hud_visibility_changed.connect(_on_trainer_visibility_changed)
+		if _trainer_ui.has_method("is_open"):
+			_trainer_open = bool(_trainer_ui.call("is_open"))
 	_update_visibility()
 
 
 func _update_visibility() -> void:
-	visible = _base_visible and not (_inventory_open or _character_open or _merchant_open or _menu_open)
+	visible = _base_visible and not (_inventory_open or _character_open or _merchant_open or _menu_open or _trainer_open)
 
 
 func _on_inventory_visibility_changed(is_open: bool) -> void:
@@ -80,6 +87,11 @@ func _on_merchant_visibility_changed(is_open: bool) -> void:
 
 func _on_menu_visibility_changed(is_open: bool) -> void:
 	_menu_open = is_open
+	_update_visibility()
+
+
+func _on_trainer_visibility_changed(is_open: bool) -> void:
+	_trainer_open = is_open
 	_update_visibility()
 
 

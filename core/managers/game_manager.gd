@@ -270,15 +270,15 @@ func _input(event: InputEvent) -> void:
 	if debug_targeting_clicks:
 		print("[TargetingDebug] click screen=", screen_pos)
 
-	if _is_ui_press_event():
+	if _is_ui_press_event(screen_pos):
 		if debug_targeting_clicks:
-			var hovered := get_viewport().gui_get_hovered_control()
-			var hovered_name := "<null>"
-			var hovered_type := "<null>"
-			if hovered != null:
-				hovered_name = String((hovered as Node).name)
-				hovered_type = hovered.get_class()
-			print("[TargetingDebug] blocked by UI hovered=", hovered_name, " type=", hovered_type)
+			var hit := _get_ui_control_at_screen_pos(screen_pos)
+			var hit_name := "<null>"
+			var hit_type := "<null>"
+			if hit != null:
+				hit_name = String((hit as Node).name)
+				hit_type = hit.get_class()
+			print("[TargetingDebug] blocked by UI control=", hit_name, " type=", hit_type)
 		return
 
 
@@ -297,28 +297,28 @@ func _input(event: InputEvent) -> void:
 			print("[TargetingDebug] clear_target (no mob under click)")
 
 
-func _is_ui_press_event() -> bool:
-	var vp: Viewport = get_viewport()
-	if vp == null:
+func _is_ui_press_event(screen_pos: Vector2) -> bool:
+	var hit := _get_ui_control_at_screen_pos(screen_pos)
+	if hit == null:
 		return false
 
-	# Рабочий способ для Godot 4: проверяем контрол под курсором.
-	# Если нажатие пришло по UI-контролу, не запускаем world-targeting.
-	var hovered := vp.gui_get_hovered_control()
-	if hovered == null:
-		return false
-	if not (hovered is Control):
-		return false
-
-	# Важно: PASS-контейнеры (полноэкранные HUD-руты) не должны блокировать
-	# world-targeting. Блокируем только реально "интерактивный" UI.
-	var node: Control = hovered as Control
+	var node: Control = hit
 	while node != null:
 		if node.visible and node.mouse_filter == Control.MOUSE_FILTER_STOP and _is_interactive_ui_control(node):
 			return true
 		node = node.get_parent() as Control
-
 	return false
+
+
+func _get_ui_control_at_screen_pos(screen_pos: Vector2) -> Control:
+	var vp: Viewport = get_viewport()
+	if vp == null:
+		return null
+	var hit: Control = vp.gui_pick(screen_pos)
+	if hit != null:
+		return hit
+	# Fallback for desktop hover semantics.
+	return vp.gui_get_hovered_control()
 
 
 func _is_interactive_ui_control(c: Control) -> bool:
