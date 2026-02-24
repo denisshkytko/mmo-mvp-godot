@@ -422,9 +422,7 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 
 	# неуязвимость через баф (если есть)
 	var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
-	if bool(flags.get("invulnerable", false)) or bool(flags.get("invulnerable_all", false)):
-		return 0
-	if dmg_type == "physical" and (bool(flags.get("immune_physical", false)) or bool(flags.get("block_physical", false))):
+	if _is_damage_type_blocked(dmg_type, flags):
 		return 0
 
 	var pct: float
@@ -450,6 +448,16 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 		_on_death()
 	return final
 
+
+func _is_damage_type_blocked(dmg_type: String, flags: Dictionary) -> bool:
+	if bool(flags.get("invulnerable", false)) or bool(flags.get("invulnerable_all", false)):
+		return true
+	if dmg_type == "physical":
+		return bool(flags.get("immune_physical", false)) or bool(flags.get("block_physical", false))
+	if dmg_type == "magic":
+		return bool(flags.get("immune_magic", false)) or bool(flags.get("block_magic", false))
+	return false
+
 func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation: bool = false) -> int:
 	if p == null or p.is_dead:
 		return 0
@@ -459,6 +467,9 @@ func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation:
 		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
 			return 0
 	if ignore_mitigation:
+		var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
+		if _is_damage_type_blocked(dmg_type, flags):
+			return 0
 		var final_direct: int = max(1, raw_damage)
 		if p.c_buffs != null and p.c_buffs.has_method("absorb_incoming_damage"):
 			final_direct = int(p.c_buffs.call("absorb_incoming_damage", final_direct))
