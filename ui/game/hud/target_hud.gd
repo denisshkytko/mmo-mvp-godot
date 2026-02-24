@@ -321,7 +321,7 @@ func _update_effects() -> void:
 	if snap.is_empty():
 		effects_root.visible = false
 		return
-	var columns: int = maxi(1, int(floor(panel.size.x / 40.0)))
+	var columns: int = maxi(1, int(floor(panel.size.x / 32.0)))
 	buff_grid.columns = columns
 	debuff_grid.columns = columns
 	var max_icons: int = columns * 2
@@ -339,12 +339,16 @@ func _update_effects() -> void:
 		var inst: Control = BUFF_ICON_SCENE.instantiate() as Control
 		if inst == null:
 			continue
+		inst.custom_minimum_size = Vector2(30, 30)
 		if is_debuff:
 			debuff_grid.add_child(inst)
 		else:
 			buff_grid.add_child(inst)
 		if inst is BuffIcon:
 			(inst as BuffIcon).setup(_target, d)
+			var time_lbl: Label = inst.get_node_or_null("TimeText") as Label
+			if time_lbl != null:
+				time_lbl.add_theme_font_size_override("font_size", 10)
 		if is_debuff:
 			debuff_count += 1
 		else:
