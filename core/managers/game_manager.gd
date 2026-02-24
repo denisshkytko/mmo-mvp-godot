@@ -304,11 +304,24 @@ func _is_ui_press_event(screen_pos: Vector2) -> bool:
 
 	var node: Control = hit
 	while node != null:
-		# Any STOP-handled UI under the press should block world targeting,
-		# otherwise taps on joystick/pads/custom controls can clear target.
-		if node.visible and node.mouse_filter == Control.MOUSE_FILTER_STOP:
+		if node.visible and node.mouse_filter == Control.MOUSE_FILTER_STOP and _should_block_world_targeting(node):
 			return true
 		node = node.get_parent() as Control
+	return false
+
+
+func _should_block_world_targeting(c: Control) -> bool:
+	if c == null:
+		return false
+	# Built-in interactive widgets.
+	if _is_interactive_ui_control(c):
+		return true
+	# Custom scripted controls (e.g. mobile joystick/pads).
+	if c.get_script() != null:
+		return true
+	# Labels/panels with explicitly connected gui_input handlers.
+	if c.gui_input.get_connections().size() > 0:
+		return true
 	return false
 
 
