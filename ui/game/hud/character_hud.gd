@@ -234,6 +234,7 @@ func _setup_equipment_slots() -> void:
 		if slot_node == null:
 			continue
 		_equipment_slots[slot_id] = slot_node
+		slot_node.mouse_filter = Control.MOUSE_FILTER_STOP
 		if not slot_node.gui_input.is_connected(_on_equipment_slot_gui_input.bind(slot_id)):
 			slot_node.gui_input.connect(_on_equipment_slot_gui_input.bind(slot_id))
 		_style_slot_panel(slot_node)

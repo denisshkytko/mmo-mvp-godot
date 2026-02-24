@@ -91,10 +91,6 @@ func _on_icon_gui_input(event: InputEvent) -> void:
 		var mb := event as InputEventMouseButton
 		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			emit_signal("icon_clicked", ability_id)
-	elif event is InputEventScreenTouch:
-		var st := event as InputEventScreenTouch
-		if st.pressed:
-			emit_signal("icon_clicked", ability_id)
 
 func _on_learn_pressed() -> void:
 	emit_signal("learn_clicked", ability_id)
