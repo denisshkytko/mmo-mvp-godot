@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/mage/meteor.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_fireball.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 50
+train_cost_gold = 4841
+cooldown_sec = 15.0
+cast_time_sec = 5.0
+duration_sec = 15.0
+resource_cost = 15
+value_flat = 200
+value_flat_2 = 0
+value_pct = 80.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 15.0
+cast_time_sec = 5.0
+duration_sec = 15.0
+resource_cost = 15
+value_flat = 350
+value_flat_2 = 0
+value_pct = 80.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectFireball" id=20]
+script = ExtResource("4")
+school = "magic"
+scaling_mode = "spell_power_flat"
+burn_tick_interval_sec = 1.0
+burn_debuff_suffix = "burn"
+
+[resource]
+script = ExtResource("1")
+id = "meteor"
+name = "Метеорит"
+icon = ExtResource("2")
+description = "Наносит цели {X} (база + сила заклинаний) ед. магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
+description_ru = "Наносит цели {X} (база + сила заклинаний) ед. магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
+class_id = "mage"
+ability_type = "damage"
+target_type = "enemy"
+range_mode = "ranged"
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2")]
