@@ -321,7 +321,7 @@ func _update_effects() -> void:
 	if snap.is_empty():
 		effects_root.visible = false
 		return
-	var columns: int = maxi(1, int(floor(panel.size.x / 32.0)))
+	var columns: int = maxi(1, int(floor(panel.size.x / 40.0)))
 	buff_grid.columns = columns
 	debuff_grid.columns = columns
 	var max_icons: int = columns * 2
@@ -339,7 +339,6 @@ func _update_effects() -> void:
 		var inst: Control = BUFF_ICON_SCENE.instantiate() as Control
 		if inst == null:
 			continue
-		inst.custom_minimum_size = Vector2(30, 30)
 		if is_debuff:
 			debuff_grid.add_child(inst)
 		else:
