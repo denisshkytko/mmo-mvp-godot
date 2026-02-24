@@ -3,7 +3,7 @@ class_name EffectAOE
 
 const PLAYER_COMBAT := preload("res://game/characters/player/components/player_combat.gd")
 
-@export var radius_mode: String = "melee" # melee | ranged | self
+@export var radius_mode: String = "melee" # melee | ranged | ranged_half | self
 @export var target_filter: String = "enemies_only" # enemies_only | allies_only
 @export var inner_effect: AbilityEffect
 
@@ -34,6 +34,8 @@ func _get_radius(def: AbilityDefinition) -> float:
 	match radius_mode:
 		"ranged":
 			return PLAYER_COMBAT.RANGED_ATTACK_RANGE
+		"ranged_half":
+			return PLAYER_COMBAT.RANGED_ATTACK_RANGE * 0.5
 		"self":
 			return PLAYER_COMBAT.MELEE_ATTACK_RANGE
 		_:

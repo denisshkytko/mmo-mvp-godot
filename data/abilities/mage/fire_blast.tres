@@ -1,19 +1,19 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
-[ext_resource type="Texture2D" path="res://assets/icons/abilities/hunter/arcane_shot.png" id=2]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/mage/fire_blast.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
-required_level = 4
-train_cost_gold = 160
-cooldown_sec = 3.0
+required_level = 16
+train_cost_gold = 868
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 10
+resource_cost = 10
+value_flat = 20
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -21,13 +21,13 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=2]
 script = ExtResource("3")
-required_level = 10
-train_cost_gold = 400
-cooldown_sec = 3.0
+required_level = 22
+train_cost_gold = 1405
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 20
+resource_cost = 10
+value_flat = 30
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -35,13 +35,13 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=3]
 script = ExtResource("3")
-required_level = 18
-train_cost_gold = 1045
-cooldown_sec = 3.0
+required_level = 28
+train_cost_gold = 1984
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 30
+resource_cost = 10
+value_flat = 40
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -49,13 +49,13 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=4]
 script = ExtResource("3")
-required_level = 26
-train_cost_gold = 1779
-cooldown_sec = 3.0
+required_level = 34
+train_cost_gold = 2641
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 40
+resource_cost = 10
+value_flat = 50
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -63,13 +63,13 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=5]
 script = ExtResource("3")
-required_level = 34
-train_cost_gold = 2646
-cooldown_sec = 3.0
+required_level = 40
+train_cost_gold = 3391
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 50
+resource_cost = 10
+value_flat = 60
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -77,13 +77,13 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=6]
 script = ExtResource("3")
-required_level = 42
-train_cost_gold = 3659
-cooldown_sec = 3.0
+required_level = 46
+train_cost_gold = 4242
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 60
+resource_cost = 10
+value_flat = 70
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -91,13 +91,13 @@ flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=7]
 script = ExtResource("3")
-required_level = 50
-train_cost_gold = 4841
-cooldown_sec = 3.0
+required_level = 52
+train_cost_gold = 5505
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 70
+resource_cost = 10
+value_flat = 80
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -106,12 +106,12 @@ flags = {}
 [sub_resource type="Resource" script_class="RankData" id=8]
 script = ExtResource("3")
 required_level = 58
-train_cost_gold = 6222
-cooldown_sec = 3.0
+train_cost_gold = 6253
+cooldown_sec = 8.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 5
-value_flat = 80
+resource_cost = 10
+value_flat = 90
 value_flat_2 = 0
 value_pct = 0.0
 value_pct_2 = 0.0
@@ -124,14 +124,14 @@ scaling_mode = "spell_power_flat"
 
 [resource]
 script = ExtResource("1")
-id = "arcane_shot"
-name = "Магический выстрел"
+id = "fire_blast"
+name = "Огненный взрыв"
 icon = ExtResource("2")
-description = "Наносит цели {X} ед. магического урона."
-description_ru = "Наносит цели {X} ед. магического урона."
-class_id = "hunter"
+description = "Наносит цели {X} магического урона."
+description_ru = "Наносит цели {X} магического урона."
+class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"
-range_mode = "ranged + 30%"
+range_mode = "ranged"
 effect = SubResource("20")
 ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7"), SubResource("8")]

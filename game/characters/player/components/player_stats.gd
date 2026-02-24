@@ -406,7 +406,10 @@ func _diff_stats(total_snapshot: Dictionary, base_snapshot: Dictionary) -> Dicti
 		out[key] = float(total_stats.get(key, 0)) - float(base_stats.get(key, 0))
 	return out
 
-func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
+func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String = "physical") -> int:
+	return take_damage_typed(raw_damage, dmg_type, attacker)
+
+func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = null) -> int:
 	if p == null:
 		return 0
 	if raw_damage <= 0:
@@ -419,9 +422,7 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 
 	# неуязвимость через баф (если есть)
 	var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
-	if bool(flags.get("invulnerable", false)) or bool(flags.get("invulnerable_all", false)):
-		return 0
-	if dmg_type == "physical" and (bool(flags.get("immune_physical", false)) or bool(flags.get("block_physical", false))):
+	if _is_damage_type_blocked(dmg_type, flags):
 		return 0
 
 	var pct: float
@@ -431,7 +432,14 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 		pct = float(_snapshot.get("physical_reduction_pct", 0.0))
 	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
+	if p.c_buffs != null and p.c_buffs.has_method("absorb_incoming_damage"):
+		final = int(p.c_buffs.call("absorb_incoming_damage", final))
+		if final <= 0:
+			return 0
 	p.current_hp = max(0, p.current_hp - final)
+
+	if final > 0 and attacker != null and p.c_buffs != null and p.c_buffs.has_method("try_apply_attacker_slow_from_stance"):
+		p.c_buffs.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
 
 	if final > 0 and p.c_buffs != null and p.c_buffs.has_method("on_owner_took_damage"):
 		p.c_buffs.call("on_owner_took_damage")
@@ -439,6 +447,16 @@ func take_damage_typed(raw_damage: int, dmg_type: String) -> int:
 	if p.current_hp <= 0:
 		_on_death()
 	return final
+
+
+func _is_damage_type_blocked(dmg_type: String, flags: Dictionary) -> bool:
+	if bool(flags.get("invulnerable", false)) or bool(flags.get("invulnerable_all", false)):
+		return true
+	if dmg_type == "physical":
+		return bool(flags.get("immune_physical", false)) or bool(flags.get("block_physical", false))
+	if dmg_type == "magic":
+		return bool(flags.get("immune_magic", false)) or bool(flags.get("block_magic", false))
+	return false
 
 func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation: bool = false) -> int:
 	if p == null or p.is_dead:
@@ -449,7 +467,14 @@ func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation:
 		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
 			return 0
 	if ignore_mitigation:
+		var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
+		if _is_damage_type_blocked(dmg_type, flags):
+			return 0
 		var final_direct: int = max(1, raw_damage)
+		if p.c_buffs != null and p.c_buffs.has_method("absorb_incoming_damage"):
+			final_direct = int(p.c_buffs.call("absorb_incoming_damage", final_direct))
+			if final_direct <= 0:
+				return 0
 		p.current_hp = max(0, p.current_hp - final_direct)
 		if p.current_hp <= 0:
 			_on_death()

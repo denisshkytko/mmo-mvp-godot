@@ -105,6 +105,7 @@ static func build_player_snapshot(
         "incoming_damage_reduction_pct": 0.0,
         "crit_chance_pct_bonus": 0.0,
         "crit_damage_pct_bonus": 0.0,
+        "magic_crit_damage_pct_bonus": 0.0,
         "incoming_damage_taken_pct_bonus": 0.0,
 
         "speed": 0,
@@ -130,6 +131,7 @@ static func build_player_snapshot(
         "incoming_damage_reduction_pct": [],
         "crit_chance_pct_bonus": [],
         "crit_damage_pct_bonus": [],
+        "magic_crit_damage_pct_bonus": [],
         "incoming_damage_taken_pct_bonus": [],
         "speed": [],
         "attack_speed_rating": [],
@@ -285,6 +287,7 @@ static func build_player_snapshot(
     var magic_crit_chance_bonus_pct: float = float(derived.magic_crit_chance_bonus_pct)
     var magic_crit_chance_pct: float = clamp(crit_chance_pct + magic_crit_chance_bonus_pct, 1.0, 100.0)
     var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01 + (float(derived.get("crit_damage_pct_bonus", 0.0)) / 100.0)
+    var magic_crit_mult: float = crit_mult + (float(derived.get("magic_crit_damage_pct_bonus", 0.0)) / 100.0)
 
     var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
     var mag_reduction_pct: float = _mitigation_pct(float(derived.magic_resist))
@@ -308,6 +311,7 @@ static func build_player_snapshot(
         "crit_chance_pct": crit_chance_pct,
         "magic_crit_chance_pct": magic_crit_chance_pct,
         "crit_multiplier": crit_mult,
+        "magic_crit_multiplier": magic_crit_mult,
 
         # both keys for compatibility
         "physical_reduction_pct": phys_reduction_pct,
@@ -498,6 +502,7 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "incoming_damage_reduction_pct",
         "crit_chance_pct_bonus",
         "crit_damage_pct_bonus",
+        "magic_crit_damage_pct_bonus",
         "incoming_damage_taken_pct_bonus",
         "crit_chance_rating",
         "crit_damage_rating",
@@ -549,6 +554,8 @@ static func apply_crit_to_damage_typed(base_damage: int, snap: Dictionary, schoo
     if school == "magic":
         crit_chance = float(snap.get("magic_crit_chance_pct", crit_chance))
     var crit_mult := float(snap.get("crit_multiplier", 2.0))
+    if school == "magic":
+        crit_mult = float(snap.get("magic_crit_multiplier", crit_mult))
     if randf() * 100.0 < crit_chance:
         dmg = int(round(float(dmg) * crit_mult))
     return max(1, dmg)
@@ -557,7 +564,7 @@ static func apply_crit_to_damage_typed(base_damage: int, snap: Dictionary, schoo
 static func apply_crit_to_heal(base_heal: int, snap: Dictionary) -> int:
     var heal := base_heal
     var crit_chance := float(snap.get("crit_chance_pct", 0.0))
-    var crit_mult := float(snap.get("crit_multiplier", 2.0))
+    var crit_mult := float(snap.get("magic_crit_multiplier", snap.get("crit_multiplier", 2.0)))
     if randf() * 100.0 < crit_chance:
         heal = int(round(float(heal) * crit_mult))
     if base_heal > 0:

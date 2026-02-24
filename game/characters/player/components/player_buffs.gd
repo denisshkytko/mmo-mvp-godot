@@ -42,6 +42,7 @@ func tick(delta: float) -> void:
 	# PlayerStats regen (which is out-of-combat for HP).
 	if p != null and not p.is_dead:
 		_apply_consumable_hots(delta)
+		_apply_periodic_heal_effects(delta)
 		_apply_periodic_resource_effects(delta)
 		_apply_periodic_damage_effects(delta)
 
@@ -166,6 +167,46 @@ func _apply_periodic_resource_effects(delta: float) -> void:
 			entry["data"] = data
 			_buffs[id] = entry
 
+func _apply_periodic_heal_effects(delta: float) -> void:
+	for k in _buffs.keys():
+		var id: String = String(k)
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var heal_flat: int = int(flags.get("hp_regen_tick_flat", data.get("hp_regen_tick_flat", 0)))
+		var interval: float = float(flags.get("hp_regen_tick_interval_sec", data.get("hp_regen_tick_interval_sec", 1.0)))
+		if interval <= 0.0:
+			interval = 1.0
+
+		if heal_flat <= 0:
+			var hot_total_flat: float = float(flags.get("hp_hot_total_flat", data.get("hp_hot_total_flat", 0.0)))
+			var hot_bonus_flat: float = float(flags.get("hp_hot_bonus_flat", data.get("hp_hot_bonus_flat", 0.0)))
+			if hot_total_flat > 0.0 or hot_bonus_flat != 0.0:
+				interval = float(flags.get("hp_hot_tick_interval_sec", data.get("hp_hot_tick_interval_sec", interval)))
+				if interval <= 0.0:
+					interval = 1.0
+				var total_heal: float = max(0.0, hot_total_flat + hot_bonus_flat)
+				var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
+				var ticks_total: int = max(1, int(round(duration / interval)))
+				heal_flat = max(1, int(round(total_heal / float(ticks_total))))
+			else:
+				continue
+
+		var acc: float = float(data.get("hp_regen_tick_acc", 0.0)) + delta
+		while acc >= interval:
+			acc -= interval
+			if p == null or p.is_dead or p.current_hp >= p.max_hp:
+				continue
+			var hp_before: int = p.current_hp
+			p.current_hp = min(p.max_hp, p.current_hp + heal_flat)
+			var healed: int = max(0, p.current_hp - hp_before)
+			if healed > 0:
+				DAMAGE_HELPER.show_heal(p, healed)
+
+		data["hp_regen_tick_acc"] = acc
+		entry["data"] = data
+		_buffs[id] = entry
+
 func _apply_periodic_damage_effects(delta: float) -> void:
 	for k in _buffs.keys():
 		var id: String = String(k)
@@ -198,7 +239,13 @@ func _apply_periodic_damage_effects(delta: float) -> void:
 			if p == null or p.is_dead or p.c_stats == null:
 				break
 			if p.c_stats.has_method("apply_periodic_damage"):
-				p.c_stats.call("apply_periodic_damage", damage_per_tick, school, ignore_mitigation)
+				var dealt: int = int(p.c_stats.call("apply_periodic_damage", damage_per_tick, school, ignore_mitigation))
+				if dealt > 0 and school == "magic":
+					var caster_ref: Variant = data.get("caster_ref", null)
+					if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
+						var caster_node := caster_ref as Node
+						if "c_buffs" in caster_node and caster_node.c_buffs != null and caster_node.c_buffs.has_method("restore_mana_from_spell_damage"):
+							caster_node.c_buffs.call("restore_mana_from_spell_damage", dealt)
 		data["dot_tick_acc"] = acc
 		entry["data"] = data
 		_buffs[id] = entry
@@ -275,6 +322,34 @@ func get_consumable_hot_totals() -> Dictionary:
 	return {"hp_per_sec": hp_per_sec, "mp_per_sec": mp_per_sec}
 
 
+
+func restore_mana_from_spell_damage(final_damage: int) -> void:
+	_restore_mana_by_stance_percent(final_damage, "mana_on_spell_damage_pct")
+
+
+func restore_mana_from_heal_to_ally(actual_heal: int) -> void:
+	_restore_mana_by_stance_percent(actual_heal, "mana_on_heal_allies_pct")
+
+
+func _restore_mana_by_stance_percent(base_value: int, key: String) -> void:
+	if p == null or base_value <= 0 or key == "":
+		return
+	if p.c_resource == null:
+		return
+	if String(p.c_resource.resource_type) != "mana":
+		return
+	var stance_data: Dictionary = get_active_stance_data()
+	if stance_data.is_empty():
+		return
+	var pct: float = float(stance_data.get(key, 0.0))
+	if pct <= 0.0:
+		return
+	var gain: int = int(round(float(base_value) * pct / 100.0))
+	if gain <= 0:
+		return
+	p.c_resource.add(gain)
+
+
 func get_buffs_snapshot() -> Array:
 	var arr: Array = []
 	for k in _buffs.keys():
@@ -301,6 +376,43 @@ func get_active_stance_data() -> Dictionary:
 	return {}
 
 
+func try_apply_attacker_slow_from_stance(attacker: Node, dmg_type: String = "physical") -> void:
+	if p == null or attacker == null or not is_instance_valid(attacker):
+		return
+	if dmg_type != "physical":
+		return
+	var stance_data: Dictionary = get_active_stance_data()
+	if stance_data.is_empty():
+		return
+	var slow_pct: float = float(stance_data.get("retaliate_attack_speed_pct", 0.0))
+	var debuff_duration: float = float(stance_data.get("retaliate_duration_sec", 0.0))
+	if slow_pct >= 0.0 or debuff_duration <= 0.0:
+		return
+	var caster_faction := ""
+	if p.has_method("get_faction_id"):
+		caster_faction = String(p.call("get_faction_id"))
+	var attacker_faction := ""
+	if attacker.has_method("get_faction_id"):
+		attacker_faction = String(attacker.call("get_faction_id"))
+	if FactionRules.relation(caster_faction, attacker_faction) != FactionRules.Relation.HOSTILE:
+		return
+	var mult: float = max(0.1, 1.0 + slow_pct / 100.0)
+	var data := {
+		"ability_id": "ice_fortification",
+		"source": "debuff",
+		"is_debuff": true,
+		"attack_speed_multiplier": mult,
+	}
+	if attacker.has_method("add_or_refresh_buff"):
+		attacker.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_buffs" in attacker and attacker.c_buffs != null:
+		attacker.c_buffs.add_or_refresh_buff("debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_stats" in attacker and attacker.c_stats != null and attacker.c_stats.has_method("add_or_refresh_buff"):
+		attacker.c_stats.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
+
+
 func on_owner_took_damage() -> void:
 	if _buffs.is_empty():
 		return
@@ -315,6 +427,38 @@ func on_owner_took_damage() -> void:
 			removed_any = true
 	if removed_any:
 		_notify_stats_changed()
+
+
+func absorb_incoming_damage(raw_damage: int) -> int:
+	if raw_damage <= 0 or _buffs.is_empty():
+		return raw_damage
+	var remaining: int = raw_damage
+	var removed_any := false
+	for k in _buffs.keys():
+		if remaining <= 0:
+			break
+		var id: String = String(k)
+		if not _buffs.has(id):
+			continue
+		var entry: Dictionary = _buffs[id] as Dictionary
+		var data: Dictionary = entry.get("data", {}) as Dictionary
+		var flags: Dictionary = data.get("flags", {}) as Dictionary
+		var absorb_left: int = int(data.get("absorb_damage_left", flags.get("absorb_damage_flat", data.get("absorb_damage_flat", 0))))
+		if absorb_left <= 0:
+			continue
+		var absorbed: int = min(remaining, absorb_left)
+		remaining -= absorbed
+		absorb_left -= absorbed
+		if absorb_left > 0:
+			data["absorb_damage_left"] = absorb_left
+			entry["data"] = data
+			_buffs[id] = entry
+		else:
+			_buffs.erase(id)
+			removed_any = true
+	if removed_any:
+		_notify_stats_changed()
+	return remaining
 
 func get_move_speed_multiplier() -> float:
 	var mult: float = 1.0

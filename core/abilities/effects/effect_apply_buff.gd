@@ -36,6 +36,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	data_dict["ability_id"] = ability_id
 	data_dict["source"] = String(context.get("source", ""))
 	data_dict["is_debuff"] = bool(context.get("is_debuff", false))
+	data_dict["caster_ref"] = caster
 
 	_apply_buff_to_target(target, entry_id, data_res.duration_sec, data_dict)
 

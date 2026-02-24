@@ -1,0 +1,157 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/priest/healing_stream.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_buff.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 10
+train_cost_gold = 400
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 25
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 16
+train_cost_gold = 868
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 50
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 22
+train_cost_gold = 1393
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 75
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 28
+train_cost_gold = 1984
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 100
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 34
+train_cost_gold = 2646
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 125
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 40
+train_cost_gold = 3391
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 150
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 46
+train_cost_gold = 4227
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 175
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=8]
+script = ExtResource("3")
+required_level = 52
+train_cost_gold = 5167
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 200
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=9]
+script = ExtResource("3")
+required_level = 58
+train_cost_gold = 6222
+cooldown_sec = 0.0
+cast_time_sec = 1.0
+duration_sec = 10.0
+resource_cost = 5
+value_flat = 225
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyBuff" id=20]
+script = ExtResource("4")
+buff_id = "buff:healing_stream"
+secondary_add = {}
+primary_add = {}
+percent_add = {}
+primary_percent_add = {}
+flags = {"hp_hot_bonus_flat": "caster_spell_power", "hp_hot_tick_interval_sec": 1.0, "hp_hot_total_flat": "value_flat"}
+on_hit = {}
+
+[resource]
+script = ExtResource("1")
+id = "healing_stream"
+name = "Исцеляющий поток"
+icon = ExtResource("2")
+description = "Восстанавливает цели {X} здоровья в течение {D} сек."
+description_ru = "Восстанавливает цели {X} здоровья в течение {D} сек."
+class_id = "priest"
+ability_type = "heal"
+target_type = "ally"
+range_mode = "ranged"
+self_cast_fallback = true
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7"), SubResource("8"), SubResource("9")]

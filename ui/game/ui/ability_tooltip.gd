@@ -106,8 +106,12 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 	if def == null:
 		return ""
 	var ability_id: String = def.id
-	var scaled_flat: int = int(rank_data.value_flat) + int(round(spell_power))
-	var scaled_flat2: int = int(rank_data.value_flat_2) + int(round(spell_power))
+	var scales_with_spell_power: bool = _ability_scales_with_spell_power(def, ability_id)
+	var scaled_flat: int = int(rank_data.value_flat)
+	var scaled_flat2: int = int(rank_data.value_flat_2)
+	if scales_with_spell_power:
+		scaled_flat += int(round(spell_power))
+		scaled_flat2 += int(round(spell_power))
 	match ability_id:
 		"healing_light", "radiant_touch":
 			return "Heals for %d health." % scaled_flat
@@ -156,6 +160,19 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 			return "Deals %d magical damage to the target." % scaled_flat
 		_:
 			return _format_effect_from_template(def.description, rank_data, scaled_flat, scaled_flat2)
+
+
+func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String) -> bool:
+	if def == null:
+		return false
+	if def.ability_type != "damage" and def.ability_type != "heal":
+		return false
+	match ability_id:
+		# Explicitly non-spell-power formulas.
+		"lucky_shot", "aimed_shot", "suppressive_shot", "panjagan", "dirty_strike", "armor_break", "light_execution":
+			return false
+		_:
+			return true
 
 
 func _format_effect_from_template(template: String, rank_data: RankData, scaled_flat: int, scaled_flat2: int) -> String:

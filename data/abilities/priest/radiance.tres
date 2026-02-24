@@ -1,0 +1,78 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/priest/radiance.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=5]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=6]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_heal.gd" id=7]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 32
+train_cost_gold = 2417
+cooldown_sec = 15.0
+cast_time_sec = 1.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 100
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 52
+train_cost_gold = 5505
+cooldown_sec = 15.0
+cast_time_sec = 1.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 200
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=20]
+script = ExtResource("6")
+school = "magic"
+scaling_mode = "spell_power_flat"
+
+[sub_resource type="Resource" script_class="EffectAOE" id=21]
+script = ExtResource("5")
+radius_mode = "ranged"
+target_filter = "enemies_only"
+inner_effect = SubResource("20")
+
+[sub_resource type="Resource" script_class="EffectHeal" id=22]
+script = ExtResource("7")
+
+[sub_resource type="Resource" script_class="EffectAOE" id=23]
+script = ExtResource("5")
+radius_mode = "ranged"
+target_filter = "allies_only"
+inner_effect = SubResource("22")
+
+[sub_resource type="Resource" script_class="EffectHeal" id=24]
+script = ExtResource("7")
+
+[sub_resource type="Resource" script_class="EffectSequence" id=25]
+script = ExtResource("4")
+effects = [SubResource("21"), SubResource("23"), SubResource("24")]
+
+[resource]
+script = ExtResource("1")
+id = "radiance"
+name = "Сияние света"
+icon = ExtResource("2")
+description = "Наносит {X} магического урона врагам и исцеляет жреца и ближайших союзников на {X}."
+description_ru = "Наносит {X} магического урона врагам и исцеляет жреца и ближайших союзников на {X}."
+class_id = "priest"
+ability_type = "active"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("25")
+ranks = [SubResource("1"), SubResource("2")]

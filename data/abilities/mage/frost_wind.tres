@@ -1,0 +1,152 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/mage/frost_wind.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=5]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_debuff.gd" id=6]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=7]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 12
+train_cost_gold = 550
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 15
+value_flat_2 = 0
+value_pct = -40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 20
+train_cost_gold = 1211
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 30
+value_flat_2 = 0
+value_pct = -40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 28
+train_cost_gold = 1984
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 45
+value_flat_2 = 0
+value_pct = -40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 36
+train_cost_gold = 2885
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 60
+value_flat_2 = 0
+value_pct = -40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 44
+train_cost_gold = 3938
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 75
+value_flat_2 = 0
+value_pct = -40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 52
+train_cost_gold = 5505
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 90
+value_flat_2 = 0
+value_pct = -40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 105
+value_flat_2 = 0
+value_pct = -40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=20]
+script = ExtResource("5")
+school = "magic"
+scaling_mode = "spell_power_flat"
+
+[sub_resource type="Resource" script_class="EffectAOE" id=21]
+script = ExtResource("4")
+radius_mode = "ranged_half"
+target_filter = "enemies_only"
+inner_effect = SubResource("20")
+
+[sub_resource type="Resource" script_class="EffectApplyDebuff" id=22]
+script = ExtResource("6")
+buff_id = ""
+secondary_add = {}
+primary_add = {}
+percent_add = {}
+primary_percent_add = {}
+flags = {"move_speed_pct": "value_pct"}
+on_hit = {}
+
+[sub_resource type="Resource" script_class="EffectAOE" id=23]
+script = ExtResource("4")
+radius_mode = "ranged_half"
+target_filter = "enemies_only"
+inner_effect = SubResource("22")
+
+[sub_resource type="Resource" script_class="EffectSequence" id=24]
+script = ExtResource("7")
+effects = [SubResource("21"), SubResource("23")]
+
+[resource]
+script = ExtResource("1")
+id = "frost_wind"
+name = "Ледяной ветер"
+icon = ExtResource("2")
+description = "Наносит всем врагам вокруг мага {X} магического урона и снижает скорость передвижения на 40% на 10 секунд."
+description_ru = "Наносит всем врагам вокруг мага {X} магического урона и снижает скорость передвижения на 40% на 10 секунд."
+class_id = "mage"
+ability_type = "damage"
+target_type = "self"
+range_mode = "ranged/2"
+effect = SubResource("24")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]
