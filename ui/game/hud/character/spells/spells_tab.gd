@@ -160,7 +160,7 @@ func _can_select_for_install(ability_id: String) -> bool:
 	if def == null:
 		return false
 	var t := String(def.ability_type)
-	return t != "aura" and t != "stance" and t != "buff" and t != "hidden_passive" and t != "passive"
+	return t != "aura" and t != "stance" and t != "buff" and t != "passive"
 
 func _show_tooltip_for(ability_id: String) -> void:
 	_ensure_tooltip_ref()
@@ -206,9 +206,9 @@ func _passes_filter(def: AbilityDefinition) -> bool:
 	var t: String = String(def.ability_type)
 	match _filter_index:
 		1: # Активные
-			return t != "aura" and t != "stance" and t != "buff" and t != "hidden_passive" and t != "passive"
+			return t != "aura" and t != "stance" and t != "buff" and t != "passive"
 		2: # Ауры/бафы
-			return t == "aura" or t == "stance" or t == "buff" or t == "hidden_passive" or t == "passive"
+			return t == "aura" or t == "stance" or t == "buff" or t == "passive"
 		_:
 			return true
 
