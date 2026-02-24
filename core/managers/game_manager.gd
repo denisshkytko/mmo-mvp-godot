@@ -314,11 +314,42 @@ func _get_ui_control_at_screen_pos(screen_pos: Vector2) -> Control:
 	var vp: Viewport = get_viewport()
 	if vp == null:
 		return null
-	var hit: Control = vp.gui_pick(screen_pos)
-	if hit != null:
-		return hit
-	# Fallback for desktop hover semantics.
-	return vp.gui_get_hovered_control()
+	# Prefer hover on desktop (cheap and reliable for mouse).
+	var hovered: Control = vp.gui_get_hovered_control()
+	if hovered != null and hovered.get_global_rect().has_point(screen_pos):
+		return hovered
+
+	# Godot version in this project doesn't expose `gui_pick` on Window/Viewport,
+	# so we resolve topmost control manually for touch/click position.
+	var root: Node = get_tree().root
+	if root == null:
+		return null
+	return _find_top_control_at_pos(root, screen_pos)
+
+
+func _find_top_control_at_pos(node: Node, screen_pos: Vector2) -> Control:
+	if node == null:
+		return null
+
+	if node is Control:
+		var ctrl := node as Control
+		if not ctrl.visible:
+			return null
+		if ctrl.clip_contents and not ctrl.get_global_rect().has_point(screen_pos):
+			return null
+
+	# Traverse children in reverse order to match draw/input priority.
+	for i in range(node.get_child_count() - 1, -1, -1):
+		var child: Node = node.get_child(i)
+		var hit := _find_top_control_at_pos(child, screen_pos)
+		if hit != null:
+			return hit
+
+	if node is Control:
+		var ctrl2 := node as Control
+		if ctrl2.mouse_filter != Control.MOUSE_FILTER_IGNORE and ctrl2.get_global_rect().has_point(screen_pos):
+			return ctrl2
+	return null
 
 
 func _is_interactive_ui_control(c: Control) -> bool:
