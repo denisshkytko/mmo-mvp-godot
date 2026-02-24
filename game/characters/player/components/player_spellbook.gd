@@ -37,7 +37,7 @@ func assign_ability_to_slot(ability_id: String, slot_index: int) -> void:
 		var def: AbilityDefinition = db.call("get_ability", ability_id)
 		if def != null:
 			var t := String(def.ability_type)
-			if t == "aura" or t == "stance" or t == "buff" or t == "hidden_passive":
+			if t == "aura" or t == "stance" or t == "buff" or t == "passive":
 				return
 	for i in range(loadout_slots.size()):
 		if loadout_slots[i] == ability_id:

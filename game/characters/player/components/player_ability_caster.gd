@@ -64,7 +64,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	var def: AbilityDefinition = db.call("get_ability", ability_id)
 	if def == null:
 		return {"ok": false, "reason": "no_def"}
-	if def.ability_type == "aura" or def.ability_type == "stance" or def.ability_type == "hidden_passive":
+	if def.ability_type == "aura" or def.ability_type == "stance" or def.ability_type == "passive":
 		return {"ok": false, "reason": "passive"}
 
 	var rank_data: RankData = null
@@ -142,7 +142,7 @@ func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
 	var def: AbilityDefinition = db.call("get_ability", ability_id)
 	if def == null:
 		return {"ok": false, "reason": "no_def"}
-	if def.ability_type == "aura" or def.ability_type == "stance" or def.ability_type == "hidden_passive":
+	if def.ability_type == "aura" or def.ability_type == "stance" or def.ability_type == "passive":
 		return {"ok": false, "reason": "passive"}
 	if not _is_weapon_requirement_satisfied(ability_id):
 		return {"ok": false, "reason": "weapon_required"}
@@ -239,7 +239,7 @@ func apply_active_stance(ability_id: String) -> void:
 		return
 	def.effect.apply(p, p, rank_data, _build_context(ability_id, def, {}))
 
-func apply_hidden_passive(ability_id: String) -> void:
+func apply_passive(ability_id: String) -> void:
 	if p == null or p.c_buffs == null:
 		return
 	if ability_id == "":

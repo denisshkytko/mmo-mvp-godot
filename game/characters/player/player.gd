@@ -380,9 +380,9 @@ func _apply_spellbook_passives() -> void:
 		return
 	c_ability_caster.apply_active_aura(c_spellbook.aura_active)
 	c_ability_caster.apply_active_stance(c_spellbook.stance_active)
-	var hidden_passives: Array[String] = c_spellbook.get_learned_by_type("hidden_passive")
-	for ability_id in hidden_passives:
-		c_ability_caster.apply_hidden_passive(ability_id)
+	var passive_ids: Array[String] = c_spellbook.get_learned_by_type("passive")
+	for ability_id in passive_ids:
+		c_ability_caster.apply_passive(ability_id)
 	if c_buffs != null and c_buffs.has_method("_sync_spirits_aid_ready_state"):
 		c_buffs.call("_sync_spirits_aid_ready_state")
 	if c_buffs != null and c_buffs.has_method("_sync_defensive_reflexes_ready_state"):

@@ -74,7 +74,7 @@ func _refresh_icon(data: Dictionary) -> void:
 
 func _should_show_time(data: Dictionary) -> bool:
 	var source := String(data.get("source", ""))
-	if source == "aura" or source == "stance":
+	if source == "aura" or source == "stance" or source == "passive":
 		return false
 	var left: float = float(data.get("time_left", 0.0))
 	if left >= 999999.0:

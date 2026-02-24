@@ -16,6 +16,7 @@ var _inventory_open: bool = false
 var _character_open: bool = false
 var _merchant_open: bool = false
 var _menu_open: bool = false
+var _bindings_ready: bool = false
 
 
 func _ready() -> void:
@@ -24,24 +25,14 @@ func _ready() -> void:
 	if not _base_visible:
 		return
 	_player = NodeCache.get_player(get_tree())
-	if _player == null or not is_instance_valid(_player):
-		return
 	_ability_db = get_node_or_null("/root/AbilityDB") as AbilityDatabase
-	if _player.has_method("get") and _player.get("c_spellbook") != null:
-		_spellbook = _player.get("c_spellbook") as PlayerSpellbook
-		if _spellbook != null and not _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
-			_spellbook.spellbook_changed.connect(_on_spellbook_changed)
 	if move_stick != null:
 		move_stick.move_dir_changed.connect(_on_move_dir_changed)
 	if skill_pad != null:
 		skill_pad.skill_pressed.connect(_on_skill_pressed)
 		skill_pad.interact_pressed.connect(_on_interact_pressed)
-		var detector := _player.get_node_or_null("InteractionDetector")
-		if detector != null and detector.has_signal("interactable_changed"):
-			detector.interactable_changed.connect(_on_interactable_changed)
-			_on_interactable_changed(bool(detector.get("interact_available")), detector.get("current_interactable"))
 	_init_window_tracking()
-	_refresh_skill_pad_icons()
+	_try_bind_player_dependencies()
 
 
 func _init_window_tracking() -> void:
@@ -104,10 +95,15 @@ func _is_mobile_enabled() -> bool:
 
 
 func _on_move_dir_changed(dir: Vector2) -> void:
+	if _player == null or not is_instance_valid(_player):
+		_player = NodeCache.get_player(get_tree())
 	if _player != null and _player.has_method("set_mobile_move_dir"):
 		_player.call("set_mobile_move_dir", dir)
 
 func _process(_delta: float) -> void:
+	if not _bindings_ready:
+		_try_bind_player_dependencies()
+
 	if _player == null or skill_pad == null or _spellbook == null:
 		return
 	for i in range(_spellbook.loadout_slots.size()):
@@ -157,3 +153,22 @@ func _refresh_skill_pad_icons() -> void:
 				icon = def.icon
 		skill_pad.set_slot_icon(i, icon)
 		skill_pad.set_slot_enabled(i, ability_id != "")
+
+
+func _try_bind_player_dependencies() -> void:
+	if _bindings_ready:
+		return
+	_player = NodeCache.get_player(get_tree())
+	if _player == null or not is_instance_valid(_player):
+		return
+	if _player.has_method("get") and _player.get("c_spellbook") != null:
+		_spellbook = _player.get("c_spellbook") as PlayerSpellbook
+	if _spellbook != null and not _spellbook.spellbook_changed.is_connected(_on_spellbook_changed):
+		_spellbook.spellbook_changed.connect(_on_spellbook_changed)
+	if skill_pad != null:
+		var detector := _player.get_node_or_null("InteractionDetector")
+		if detector != null and detector.has_signal("interactable_changed") and not detector.interactable_changed.is_connected(_on_interactable_changed):
+			detector.interactable_changed.connect(_on_interactable_changed)
+			_on_interactable_changed(bool(detector.get("interact_available")), detector.get("current_interactable"))
+	_refresh_skill_pad_icons()
+	_bindings_ready = true

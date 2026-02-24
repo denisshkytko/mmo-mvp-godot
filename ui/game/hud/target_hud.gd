@@ -8,9 +8,9 @@ extends CanvasLayer
 @onready var mana_row: HBoxContainer = $Root/Panel/Margin/VBox/ManaRow
 @onready var mana_bar: ProgressBar = $Root/Panel/Margin/VBox/ManaRow/ManaBar
 @onready var mana_text: Label = $Root/Panel/Margin/VBox/ManaRow/ManaBar/ManaText
-@onready var effects_root: VBoxContainer = $Root/Panel/Margin/VBox/Effects
-@onready var buff_grid: GridContainer = $Root/Panel/Margin/VBox/Effects/BuffGrid
-@onready var debuff_grid: GridContainer = $Root/Panel/Margin/VBox/Effects/DebuffGrid
+@onready var effects_root: VBoxContainer = $Root/Effects
+@onready var buff_grid: GridContainer = $Root/Effects/BuffGrid
+@onready var debuff_grid: GridContainer = $Root/Effects/DebuffGrid
 const BUFF_ICON_SCENE := preload("res://ui/game/hud/BuffIcon.tscn")
 
 var _gm: Node = null
@@ -33,6 +33,7 @@ func _ready() -> void:
 	mana_bar.max_value = 1
 	mana_bar.value = 1
 	mana_row.visible = false
+	_hide_effects_panel()
 
 func _cache_panel_stylebox() -> void:
 	var sb := panel.get_theme_stylebox("panel")
@@ -66,12 +67,14 @@ func _process(_delta: float) -> void:
 		_gm = get_tree().get_first_node_in_group("game_manager")
 		if _gm == null:
 			panel.visible = false
+			_hide_effects_panel()
 			return
 
 	var t: Node = _gm.call("get_target") if _gm.has_method("get_target") else null
 	if t == null or not is_instance_valid(t):
 		_target = null
 		panel.visible = false
+		_hide_effects_panel()
 		return
 
 	# target changed
@@ -84,6 +87,12 @@ func _process(_delta: float) -> void:
 	_update_hp()
 	_update_resource()
 	_update_effects()
+
+
+func _hide_effects_panel() -> void:
+	effects_root.visible = false
+	_clear_grid(buff_grid)
+	_clear_grid(debuff_grid)
 
 func _update_identity() -> void:
 	if _target == null:
@@ -337,6 +346,9 @@ func _update_effects() -> void:
 			buff_grid.add_child(inst)
 		if inst is BuffIcon:
 			(inst as BuffIcon).setup(_target, d)
+			var time_lbl: Label = inst.get_node_or_null("TimeText") as Label
+			if time_lbl != null:
+				time_lbl.add_theme_font_size_override("font_size", 10)
 		if is_debuff:
 			debuff_count += 1
 		else:
