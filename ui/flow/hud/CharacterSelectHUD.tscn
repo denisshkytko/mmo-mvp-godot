@@ -69,3 +69,8 @@ text = "Enter world"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Logout"
+
+[node name="CreateAllTestButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Create 6 test chars"
