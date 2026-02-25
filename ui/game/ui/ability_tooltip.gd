@@ -121,10 +121,10 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 		"judging_flame":
 			return "Наносит цели %d единиц магического урона." % scaled_flat
 		"lights_verdict":
-			return "Наносит цели %d единиц магического урона, если цель - враг, или восстанавливает цели %d единиц здоровья, если цель - союзник." % [scaled_flat, scaled_flat]
+			return "Наносит цели %d единиц магического урона (с учетом силы заклинаний), если цель - враг, или восстанавливает цели %d единиц здоровья (с учетом силы заклинаний), если цель - союзник." % [scaled_flat, scaled_flat]
 		"strike_of_light", "storm_of_light":
 			if ability_id == "storm_of_light":
-				return "Наносит всем врагам вокруг %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
+				return "Наносит всем врагам вокруг %.0f%% физического урона и дополнительно %d единиц магического урона (с учетом силы заклинаний)." % [rank_data.value_pct, scaled_flat2]
 			return "Наносит цели %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
 		"path_of_righteousness":
 			return "Атаки дополнительно наносят %d единиц магического урона." % scaled_flat
@@ -169,6 +169,9 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String) -> bool:
 	if def == null:
 		return false
+	# Some abilities are typed as active/aoe but still use spell_power_flat effects.
+	if ability_id == "lights_verdict" or ability_id == "storm_of_light":
+		return true
 	if def.ability_type != "damage" and def.ability_type != "heal":
 		return false
 	match ability_id:
