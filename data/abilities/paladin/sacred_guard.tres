@@ -57,9 +57,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "sacred_guard"
-name = "Sacred Guard"
+name = "Священная защита"
 icon = ExtResource("2")
-description = "Blocks all incoming physical damage for {D} seconds."
+description = "Блокирует получаемый физический урон цели на 3 (+1 сек за ранг) секунды."
 description_ru = "Блокирует получаемый физический урон цели на 3 (+1 сек за ранг) секунды."
 class_id = "paladin"
 ability_type = "buff"

@@ -30,9 +30,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "concentration_aura"
-name = "Concentration Aura"
+name = "Аура концентрации"
 icon = ExtResource("2")
-description = "Increases cast speed by {P}% for you and nearby allies."
+description = "Увеличивает скорость произнесения заклинаний паладина и союзников поблизости на 10%."
 description_ru = "Увеличивает скорость произнесения заклинаний паладина и союзников поблизости на 10%."
 class_id = "paladin"
 ability_type = "aura"

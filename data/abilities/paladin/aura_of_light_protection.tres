@@ -114,9 +114,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "aura_of_light_protection"
-name = "Aura of Light Protection"
+name = "Аура светлой защиты"
 icon = ExtResource("2")
-description = "Increases Physical Defense by {P} and Magic Defense by {M} for you and nearby allies."
+description = "Повышает физическую и магическую защиту паладина и союзников поблизости."
 description_ru = "Повышает физическую и магическую защиту паладина и союзников поблизости."
 class_id = "paladin"
 ability_type = "aura"

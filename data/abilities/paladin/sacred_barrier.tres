@@ -29,9 +29,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "sacred_barrier"
-name = "Sacred Barrier"
+name = "Священный барьер"
 icon = ExtResource("2")
-description = "Grants immunity to all damage for {D} seconds."
+description = "Блокирует получаемый урон цели на 5 секунд."
 description_ru = "Блокирует получаемый урон цели на 5 секунд."
 class_id = "paladin"
 ability_type = "active"

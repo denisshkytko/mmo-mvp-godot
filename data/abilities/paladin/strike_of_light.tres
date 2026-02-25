@@ -122,9 +122,9 @@ magic_effect = SubResource("21")
 [resource]
 script = ExtResource("1")
 id = "strike_of_light"
-name = "Strike of Light"
+name = "Удар Света"
 icon = ExtResource("2")
-description = "Deals {P}% physical damage and {M} magic damage."
+description = "Наносит физический и магический урон."
 description_ru = "Наносит физический и магический урон."
 class_id = "paladin"
 ability_type = "damage"

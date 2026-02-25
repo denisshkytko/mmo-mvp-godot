@@ -81,9 +81,9 @@ script = ExtResource("4")
 [resource]
 script = ExtResource("1")
 id = "lights_call"
-name = "Light's Call"
+name = "Зов Света"
 icon = ExtResource("2")
-description = "Revives a fallen ally player out of combat with {HP}% Health and {MP}% Mana."
+description = "Воскрешает павшего союзника вне боя с процентом здоровья и маны."
 description_ru = "Воскрешает павшего союзника вне боя с процентом здоровья и маны."
 class_id = "paladin"
 ability_type = "active"

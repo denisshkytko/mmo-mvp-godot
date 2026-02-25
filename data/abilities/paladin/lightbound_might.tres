@@ -113,9 +113,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "lightbound_might"
-name = "Lightbound Might"
+name = "Светоносная мощь"
 icon = ExtResource("2")
-description = "Increases Attack Power by {X} for {D} seconds."
+description = "Увеличивает силу атаки цели на 10 (+10 за ранг) единиц."
 description_ru = "Увеличивает силу атаки цели на 10 (+10 за ранг) единиц."
 class_id = "paladin"
 ability_type = "buff"

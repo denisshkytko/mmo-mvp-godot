@@ -30,9 +30,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "royal_oath"
-name = "Royal Oath"
+name = "Королевская клятва"
 icon = ExtResource("2")
-description = "Increases base Strength, Agility, Endurance, Intellect and Perception by {P}% for {D} seconds."
+description = "Повышает базовые Силу, Ловкость, Выносливость, Интеллект и Восприятие цели на 20% на 30 минут."
 description_ru = "Повышает базовые Силу, Ловкость, Выносливость, Интеллект и Восприятие цели на 20% на 30 минут."
 class_id = "paladin"
 ability_type = "buff"

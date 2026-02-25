@@ -54,9 +54,9 @@ resource_type = "mana"
 [resource]
 script = ExtResource("1")
 id = "prayer_to_the_light"
-name = "Prayer to the Light"
+name = "Молитва Свету"
 icon = ExtResource("2")
-description = "Restores {P}% of your maximum Mana."
+description = "Восстанавливает паладину процент от максимальной маны."
 description_ru = "Восстанавливает паладину процент от максимальной маны."
 class_id = "paladin"
 ability_type = "active"

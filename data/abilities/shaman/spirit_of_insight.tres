@@ -59,9 +59,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "spirit_of_insight"
-name = "Spirit of Insight"
+name = "Дух прозрения"
 icon = ExtResource("2")
-description = "Increases critical strike chance of magic-damage spells for the shaman and nearby allies by {P}%."
+description = "Повышает шанс критического удара заклинаний, наносящих магический урон, шамана и союзников на 10% (+5% за ранг)."
 description_ru = "Повышает шанс критического удара заклинаний, наносящих магический урон, шамана и союзников на 10% (+5% за ранг)."
 class_id = "shaman"
 ability_type = "aura"

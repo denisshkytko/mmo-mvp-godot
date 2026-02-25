@@ -99,9 +99,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "lights_guidance"
-name = "Light's Guidance"
+name = "Наставление Света"
 icon = ExtResource("2")
-description = "Increases Mana Regeneration by {X} per second for {D} seconds."
+description = "Повышает восстановление маны у союзника."
 description_ru = "Повышает восстановление маны у союзника."
 class_id = "paladin"
 ability_type = "buff"
