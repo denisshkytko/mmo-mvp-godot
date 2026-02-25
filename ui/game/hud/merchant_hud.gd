@@ -288,8 +288,10 @@ func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: 
 		action_button.text = _format_action_text(action_text, item_id, count, is_buy)
 
 	if icon_panel != null:
+		icon_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 		icon_panel.gui_input.connect(_on_item_tooltip_input.bind(item_id, count))
 	if name_label != null:
+		name_label.mouse_filter = Control.MOUSE_FILTER_STOP
 		name_label.gui_input.connect(_on_item_tooltip_input.bind(item_id, count))
 
 	if action_button != null:

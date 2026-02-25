@@ -301,6 +301,10 @@ func _cast_target_lost_or_changed(payload: Dictionary, cast_target: Node) -> boo
 		return true
 	if def.target_type == "self":
 		return false
+	# If the cast target was resolved to the caster (self-fallback),
+	# do not cancel cast completion when the external target changes/disappears.
+	if cast_target == p:
+		return false
 	if cast_target == null:
 		return true
 	if not is_instance_valid(cast_target):
@@ -428,7 +432,7 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 		"self":
 			actual_target = p
 		"ally":
-			if actual_target == null or _is_hostile_target(actual_target):
+			if actual_target == null or _is_hostile_target(actual_target) or _is_invalid_living_target(actual_target):
 				if _can_fallback_to_self(def):
 					actual_target = p
 				else:
@@ -444,7 +448,7 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 					actual_target = p
 				else:
 					return {"ok": false, "reason": "no_target"}
-			if not _is_valid_enemy_target(actual_target):
+			if _is_invalid_living_target(actual_target) or not _is_valid_enemy_target(actual_target):
 				if _can_fallback_to_self(def):
 					actual_target = p
 				else:
@@ -455,7 +459,7 @@ func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 					actual_target = p
 				else:
 					return {"ok": false, "reason": "no_target"}
-			if actual_target != p and not _is_hostile_target(actual_target) and not _is_friendly_target(actual_target):
+			if actual_target != p and (_is_invalid_living_target(actual_target) or (not _is_hostile_target(actual_target) and not _is_friendly_target(actual_target))):
 				if _can_fallback_to_self(def):
 					actual_target = p
 				else:
@@ -527,6 +531,8 @@ func _is_friendly_target(target: Node) -> bool:
 func _is_valid_enemy_target(target: Node) -> bool:
 	if target == null:
 		return false
+	if _is_invalid_living_target(target):
+		return false
 	if _is_hostile_target(target):
 		return true
 	var caster_faction := ""
@@ -540,5 +546,14 @@ func _is_valid_enemy_target(target: Node) -> bool:
 	if "current_target" in target and target.current_target == p:
 		return true
 	if "aggressor" in target and target.aggressor == p:
+		return true
+	return false
+
+func _is_invalid_living_target(target: Node) -> bool:
+	if target == null:
+		return true
+	if target is Corpse:
+		return true
+	if "is_dead" in target and bool(target.get("is_dead")):
 		return true
 	return false

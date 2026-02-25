@@ -3,8 +3,8 @@ class_name BuffsAuraHUD
 
 const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const FLYOUT_MARGIN := 8.0
-const FLYOUT_SPACING := 6.0
-const ARROW_MARGIN := 6.0
+const FLYOUT_SPACING := 8.0
+const ARROW_MARGIN := 8.0
 const TOGGLE_PANEL_GAP := 1.0
 const REQUIRED_SIDE_PADDING := 8.0
 
@@ -41,6 +41,8 @@ var _slot_row_separation: float = 0.0
 func _ready() -> void:
 	if toggle_button != null and not toggle_button.pressed.is_connected(_on_toggle_pressed):
 		toggle_button.pressed.connect(_on_toggle_pressed)
+	if toggle_button != null:
+		toggle_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	_setup_slots()
 	_create_flyouts()
 
@@ -91,11 +93,13 @@ func _setup_slots() -> void:
 		if slot_button != null:
 			slot_button.ignore_texture_size = true
 			slot_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+			slot_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			var placeholder := slot_button.get_node_or_null("Icon") as Control
 			if placeholder != null:
 				placeholder.visible = false
 			slot_button.pressed.connect(_on_primary_slot_pressed.bind(i))
 		if arrow_button != null:
+			arrow_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			arrow_button.pressed.connect(_on_arrow_pressed.bind(i))
 		_slot_containers.append(container)
 		_primary_slots.append(slot_button)
@@ -196,9 +200,9 @@ func _open_flyout(slot_index: int) -> void:
 	flyout.visible = true
 	await get_tree().process_frame
 	var btn_pos := slot_button.global_position
-	var btn_size := _get_control_size(slot_button)
+	var icon_size := _get_reference_slot_size()
 	var fly_size := flyout.size
-	var x := btn_pos.x + (btn_size.x - fly_size.x) * 0.5
+	var x := btn_pos.x + icon_size.x + FLYOUT_MARGIN
 	var y := btn_pos.y - fly_size.y - FLYOUT_MARGIN
 	var vp: Vector2 = get_viewport().get_visible_rect().size
 	x = clamp(x, FLYOUT_MARGIN, vp.x - fly_size.x - FLYOUT_MARGIN)
@@ -456,7 +460,7 @@ func _get_control_size(control: Control) -> Vector2:
 		size = control.custom_minimum_size
 	return size
 
-func _move_arrow_to_flyout(slot_index: int, flyout: Control, slot_button: Control) -> void:
+func _move_arrow_to_flyout(slot_index: int, flyout: Control, _slot_button: Control) -> void:
 	if slot_index < 2:
 		return
 	if slot_index >= _arrow_buttons.size():
@@ -466,9 +470,8 @@ func _move_arrow_to_flyout(slot_index: int, flyout: Control, slot_button: Contro
 		return
 	arrow_button.top_level = true
 	var arrow_size := _get_control_size(arrow_button)
-	var btn_pos := slot_button.global_position
-	var btn_size := _get_control_size(slot_button)
-	var x := btn_pos.x + (btn_size.x - arrow_size.x) * 0.5
+	var fly_size := _get_control_size(flyout)
+	var x := flyout.global_position.x + (fly_size.x - arrow_size.x) * 0.5
 	var y := flyout.global_position.y - arrow_size.y - ARROW_MARGIN
 	arrow_button.global_position = Vector2(x, y)
 	arrow_button.text = _arrow_down_text

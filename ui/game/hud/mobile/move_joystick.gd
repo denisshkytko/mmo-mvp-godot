@@ -9,6 +9,7 @@ const DEBUG_JOYSTICK := true
 var _active_touch_id: int = -1
 var _mouse_active: bool = false
 var _center: Vector2 = Vector2.ZERO
+var _input_origin: Vector2 = Vector2.ZERO
 var _last_dir: Vector2 = Vector2.ZERO
 
 @onready var base: TextureRect = $Base
@@ -51,6 +52,7 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 				print("[MoveJoystick] touch press outside bounds local=", local_pos, " center=", _center, " radius=", _get_radius())
 			return
 		_active_touch_id = event.index
+		_input_origin = local_pos
 		_set_knob_visible(true)
 		_update_from_local_pos(local_pos)
 		accept_event()
@@ -59,6 +61,7 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 	if event.index != _active_touch_id:
 		return
 	_active_touch_id = -1
+	_input_origin = _center
 	_set_dir(Vector2.ZERO)
 	_update_knob(Vector2.ZERO)
 	_set_knob_visible(false)
@@ -84,6 +87,7 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 				print("[MoveJoystick] mouse press outside bounds local=", local_pos, " center=", _center, " radius=", _get_radius())
 			return
 		_mouse_active = true
+		_input_origin = local_pos
 		_set_knob_visible(true)
 		_update_from_local_pos(local_pos)
 		accept_event()
@@ -91,6 +95,7 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 	if not _mouse_active:
 		return
 	_mouse_active = false
+	_input_origin = _center
 	_set_dir(Vector2.ZERO)
 	_update_knob(Vector2.ZERO)
 	_set_knob_visible(false)
@@ -105,7 +110,7 @@ func _handle_mouse_motion(event: InputEventMouseMotion) -> void:
 
 
 func _update_from_local_pos(local_pos: Vector2) -> void:
-	var delta: Vector2 = local_pos - _center
+	var delta: Vector2 = local_pos - _input_origin
 	var distance: float = delta.length()
 	var dir: Vector2 = Vector2.ZERO
 	if distance > DEADZONE_PX:
@@ -143,11 +148,13 @@ func _update_knob(delta: Vector2) -> void:
 	var offset := Vector2.ZERO
 	if delta.length() > 0.0:
 		offset = delta.normalized() * min(delta.length(), _get_radius())
-	knob.position = _center + offset - knob.size * 0.5
+	knob.position = _input_origin + offset - knob.size * 0.5
 
 
 func _update_center() -> void:
 	_center = size * 0.5
+	if _active_touch_id == -1 and not _mouse_active:
+		_input_origin = _center
 	if base != null:
 		base.position = Vector2.ZERO
 		base.size = size

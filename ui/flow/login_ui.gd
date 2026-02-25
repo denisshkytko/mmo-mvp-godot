@@ -7,12 +7,13 @@ extends Control
 
 func _ready() -> void:
 	error_label.text = ""
+	username_edit.focus_mode = Control.FOCUS_NONE
+	password_edit.focus_mode = Control.FOCUS_NONE
+	login_button.focus_mode = Control.FOCUS_NONE
 	login_button.pressed.connect(_on_login_pressed)
 	username_edit.text_submitted.connect(func(_t: String) -> void: _try_login())
 	password_edit.text_submitted.connect(func(_t: String) -> void: _try_login())
 
-	# удобство при запуске
-	username_edit.grab_focus()
 	_connect_app_state()
 
 func _connect_app_state() -> void:
@@ -29,7 +30,6 @@ func _on_state_changed(_old_state: int, new_state: int) -> void:
 		login_button.disabled = false
 		username_edit.editable = true
 		password_edit.editable = true
-		username_edit.grab_focus()
 	else:
 		login_button.disabled = true
 		username_edit.editable = false

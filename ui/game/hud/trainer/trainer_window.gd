@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+signal hud_visibility_changed(is_open: bool)
+
 const TRAINER_ROW_SCENE := preload("res://ui/game/hud/trainer/trainer_spell_row.tscn")
 
 @onready var panel: Panel = $Root/Panel
@@ -62,17 +64,25 @@ func open_for_trainer(trainer_node: Node, player: Player, spellbook: PlayerSpell
 		return
 	_is_open = true
 	panel.visible = true
+	emit_signal("hud_visibility_changed", true)
 	if title_label != null:
 		title_label.text = "Тренер"
 	_try_refresh_rows()
 
 func close() -> void:
+	if not _is_open and not panel.visible:
+		return
 	_is_open = false
 	panel.visible = false
+	emit_signal("hud_visibility_changed", false)
 	_hide_tooltip()
 	_trainer = null
 	_player = null
 	_spellbook = null
+
+
+func is_open() -> bool:
+	return _is_open and panel != null and panel.visible
 
 func _process(_delta: float) -> void:
 	if not _is_open:

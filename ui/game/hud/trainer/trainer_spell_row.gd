@@ -26,6 +26,12 @@ func _ready() -> void:
 		icon_rect.gui_input.connect(_on_icon_gui_input)
 	if learn_button != null and not learn_button.pressed.is_connected(_on_learn_pressed):
 		learn_button.pressed.connect(_on_learn_pressed)
+	call_deferred("_fit_name_button_width")
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_fit_name_button_width()
 
 
 func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, required_level: int, cost: int, can_learn: bool) -> void:
@@ -50,6 +56,7 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 		else:
 			learn_button.text = "Изучить"
 			learn_button.disabled = not can_learn
+	call_deferred("_fit_name_button_width")
 
 
 func _set_cost_visible(visible_value: bool) -> void:
@@ -87,3 +94,36 @@ func _on_icon_gui_input(event: InputEvent) -> void:
 
 func _on_learn_pressed() -> void:
 	emit_signal("learn_clicked", ability_id)
+
+
+func _fit_name_button_width() -> void:
+	if name_button == null:
+		return
+	var parent_panel := _find_parent_panel()
+	if parent_panel == null:
+		return
+	var spacing: float = float(get_theme_constant("separation"))
+	var available_row_w: float = max(0.0, parent_panel.size.x - 8.0)
+	var occupied_other: float = 0.0
+	if icon_rect != null:
+		occupied_other += icon_rect.size.x
+	if rank_label != null and rank_label.visible:
+		occupied_other += rank_label.get_combined_minimum_size().x
+	if cost_box != null and cost_box.visible:
+		occupied_other += cost_box.get_combined_minimum_size().x
+	if learn_button != null and learn_button.visible:
+		occupied_other += learn_button.get_combined_minimum_size().x
+	# Four gaps between five columns in row.
+	occupied_other += spacing * 4.0
+	var name_w: float = max(40.0, available_row_w - occupied_other)
+	name_button.custom_minimum_size.x = name_w
+	name_button.clip_text = true
+
+
+func _find_parent_panel() -> Panel:
+	var n: Node = get_parent()
+	while n != null:
+		if n is Panel:
+			return n as Panel
+		n = n.get_parent()
+	return null

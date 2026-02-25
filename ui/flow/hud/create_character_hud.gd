@@ -10,6 +10,10 @@ signal character_created(char_id: String)
 
 func _ready() -> void:
 	error_label.text = ""
+	name_edit.focus_mode = Control.FOCUS_NONE
+	class_option.focus_mode = Control.FOCUS_NONE
+	create_button.focus_mode = Control.FOCUS_NONE
+	cancel_button.focus_mode = Control.FOCUS_NONE
 
 	class_option.clear()
 	var classes := [
@@ -30,7 +34,6 @@ func _ready() -> void:
 	create_button.pressed.connect(_on_create_pressed)
 	cancel_button.pressed.connect(_on_cancel_pressed)
 
-	name_edit.grab_focus()
 
 func _on_cancel_pressed() -> void:
 	# Мы находимся внутри CharacterSelectUI, поэтому просто очищаем поля.
@@ -38,7 +41,6 @@ func _on_cancel_pressed() -> void:
 	error_label.text = ""
 	name_edit.text = ""
 	class_option.select(0)
-	name_edit.grab_focus()
 
 func _on_create_pressed() -> void:
 	error_label.text = ""
@@ -71,4 +73,3 @@ func _on_create_pressed() -> void:
 	name_edit.text = ""
 	error_label.text = ""
 	class_option.select(0)
-	name_edit.grab_focus()
