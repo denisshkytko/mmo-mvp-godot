@@ -8,6 +8,7 @@ const TRAINER_ROW_SCENE := preload("res://ui/game/hud/trainer/trainer_spell_row.
 @onready var title_label: Label = $Root/Panel/Title
 @onready var close_button: Button = $Root/Panel/CloseButton
 @onready var filter_option: OptionButton = $Root/Panel/FilterRow/FilterOption
+@onready var scroll: ScrollContainer = $Root/Panel/Scroll
 @onready var list_vbox: VBoxContainer = $Root/Panel/Scroll/Margin/List
 
 var _player: Player = null
@@ -19,6 +20,7 @@ var _tooltip: AbilityTooltip = null
 var _tooltip_ability_id: String = ""
 var _is_open: bool = false
 var _db_ready: bool = false
+var _scroll_scene_width: float = 0.0
 
 func _ready() -> void:
 	add_to_group("trainer_ui")
@@ -39,6 +41,23 @@ func _ready() -> void:
 		filter_option.selected = 0
 	if filter_option != null and not filter_option.item_selected.is_connected(_on_filter_changed):
 		filter_option.item_selected.connect(_on_filter_changed)
+	if scroll != null and not scroll.resized.is_connected(_on_scroll_resized):
+		scroll.resized.connect(_on_scroll_resized)
+	call_deferred("_lock_scroll_width_to_scene")
+
+func _on_scroll_resized() -> void:
+	call_deferred("_lock_scroll_width_to_scene")
+
+func _lock_scroll_width_to_scene() -> void:
+	if scroll == null:
+		return
+	if _scroll_scene_width <= 0.0:
+		_scroll_scene_width = maxf(0.0, scroll.size.x)
+	if _scroll_scene_width <= 0.0:
+		return
+	scroll.custom_minimum_size.x = _scroll_scene_width
+	if scroll.offset_right != scroll.offset_left + _scroll_scene_width:
+		scroll.offset_right = scroll.offset_left + _scroll_scene_width
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _is_open:

@@ -103,7 +103,11 @@ func _fit_name_button_width() -> void:
 	if parent_scroll == null:
 		return
 	var spacing: float = float(get_theme_constant("separation"))
-	var max_row_w: float = max(0.0, parent_scroll.size.x - 16.0)
+	var scrollbar_w: float = 0.0
+	var v_scroll: VScrollBar = parent_scroll.get_v_scroll_bar()
+	if v_scroll != null and v_scroll.visible:
+		scrollbar_w = v_scroll.size.x
+	var max_row_w: float = max(0.0, parent_scroll.size.x - scrollbar_w - 16.0)
 	var occupied_other: float = 0.0
 	if icon_rect != null:
 		occupied_other += icon_rect.size.x
