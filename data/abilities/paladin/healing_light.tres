@@ -137,10 +137,10 @@ script = ExtResource("4")
 [resource]
 script = ExtResource("1")
 id = "healing_light"
-name = "Healing Light"
+name = "Исцеляющий свет"
 icon = ExtResource("2")
-description = "Heals an ally for {X} health."
-description_ru = "Восстанавливает цели 50 (+50 за ранг) единиц здоровья."
+description = "Восстанавливает цели {X} единиц здоровья."
+description_ru = "Восстанавливает цели {X} единиц здоровья."
 class_id = "paladin"
 ability_type = "heal"
 target_type = "ally"

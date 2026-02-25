@@ -72,10 +72,10 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "aura_of_tempering"
-name = "Aura of Tempering"
+name = "Аура закалки"
 icon = ExtResource("2")
-description = "Increases Physical Damage by {X} for you and nearby allies."
-description_ru = "Увеличивает физический урон паладина и союзников поблизости."
+description = "Повышает физический урон на {X} единиц."
+description_ru = "Повышает физический урон на {X} единиц."
 class_id = "paladin"
 ability_type = "aura"
 target_type = "self"

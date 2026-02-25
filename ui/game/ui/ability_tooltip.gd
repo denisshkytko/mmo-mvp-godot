@@ -87,7 +87,12 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 	lines.append("")
 	var params: Array[String] = []
 	if rank_data.cast_time_sec > 0.0:
-		params.append("Cast: %.1fs" % rank_data.cast_time_sec)
+		var cast_time_eff: float = rank_data.cast_time_sec
+		if player != null and player.has_method("get_stats_snapshot"):
+			var cast_snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
+			var cast_speed_pct: float = float(cast_snap.get("cast_speed_pct", 0.0))
+			cast_time_eff = rank_data.cast_time_sec * (1.0 / (1.0 + cast_speed_pct / 100.0))
+		params.append("Cast: %.1fs" % cast_time_eff)
 	if rank_data.cooldown_sec > 0.0:
 		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
 	if rank_data.resource_cost > 0:
@@ -117,50 +122,51 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 		scaled_flat2 += int(round(spell_power))
 	match ability_id:
 		"healing_light", "radiant_touch":
-			return "Heals for %d health." % scaled_flat
+			return "Восстанавливает цели %d единиц здоровья." % scaled_flat
 		"judging_flame":
-			return "Deals %d magic damage." % scaled_flat
+			return "Наносит цели %d единиц магического урона." % scaled_flat
 		"lights_verdict":
-			return "Deals %d magic damage to enemies or heals allies for %d health." % [scaled_flat, scaled_flat]
+			return "Наносит цели %d единиц магического урона, если цель - враг, или восстанавливает цели %d единиц здоровья, если цель - союзник." % [scaled_flat, scaled_flat]
 		"strike_of_light", "storm_of_light":
-			return "Deals %.0f%% physical damage and %d magic damage." % [rank_data.value_pct, scaled_flat2]
+			if ability_id == "storm_of_light":
+				return "Наносит всем врагам вокруг %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
+			return "Наносит цели %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
 		"path_of_righteousness":
-			return "Autoattacks deal +%d bonus magic damage while active." % scaled_flat
+			return "Атаки дополнительно наносят %d единиц магического урона." % scaled_flat
 		"aura_of_light_protection":
-			return "Increases Physical Defense by %d and Magic Defense by %d." % [rank_data.value_flat, rank_data.value_flat_2]
+			return "Повышает физическую защиту на %d единиц и магическое сопротивление на %d единиц." % [rank_data.value_flat, rank_data.value_flat_2]
 		"lightbound_might":
-			return "Increases Attack Power by %d for %d seconds." % [rank_data.value_flat, int(rank_data.duration_sec)]
+			return "Повышает силу атаки цели на %d единиц на %d минут." % [rank_data.value_flat, int(round(rank_data.duration_sec / 60.0))]
 		"sacred_barrier", "sacred_guard":
 			if ability_id == "sacred_barrier":
-				return "Grants immunity to all damage for %d seconds." % int(rank_data.duration_sec)
-			return "Blocks all incoming physical damage for %d seconds." % int(rank_data.duration_sec)
+				return "Дарует цели иммунитет к физическому урону на %d секунд." % int(rank_data.duration_sec)
+			return "Дарует цели иммунитет к урону на %d секунды." % int(rank_data.duration_sec)
 		"lights_call":
-			return "Revives with %.0f%% Health and %.0f%% Mana." % [rank_data.value_pct, rank_data.value_pct_2]
+			return "Воскрешает цель с %.0f%% запасом здоровья и %.0f%% запасом маны." % [rank_data.value_pct, rank_data.value_pct_2]
 		"lights_guidance":
-			return "Increases Mana Regeneration by %d per second for %d seconds." % [rank_data.value_flat, int(rank_data.duration_sec)]
+			return "Повышает восстановление маны цели на %d единиц в секунду на %d минут." % [rank_data.value_flat, int(round(rank_data.duration_sec / 60.0))]
 		"path_of_righteous_fury":
-			return "Increases threat generation (%.0fx) and restores %.0f%% of autoattack damage as Mana." % [rank_data.value_pct_2, rank_data.value_pct]
+			return "Повышает уровень создаваемой угрозы и восстанавливает ману в размере %.0f%% от нанесенного урона атаками." % rank_data.value_pct
 		"royal_oath":
-			return "Increases base STR/AGI/END/INT/PER by %.0f%% for %d seconds." % [rank_data.value_pct, int(rank_data.duration_sec)]
+			return "Повышает основные характеристики цели на %.0f%% на %d минут." % [rank_data.value_pct, int(round(rank_data.duration_sec / 60.0))]
 		"concentration_aura":
-			return "Increases cast speed by %.0f%%." % rank_data.value_pct
+			return "Повышает скорость произнесения заклинаний на %.0f%%." % rank_data.value_pct
 		"path_of_light":
-			return "Autoattacks heal you for %.0f%% of damage dealt." % rank_data.value_pct
+			return "Атаки восстанавливают здоровье в размере %.0f%% от нанесенного урона." % rank_data.value_pct
 		"aura_of_tempering":
-			return "Increases Physical Damage by %d." % rank_data.value_flat
+			return "Повышает физический урон на %d единиц." % rank_data.value_flat
 		"prayer_to_the_light":
-			return "Restores %.0f%% of your maximum Mana." % rank_data.value_pct
+			return "Восстанавливает %.0f%% от максимального запаса маны." % rank_data.value_pct
 		"light_execution":
-			var hit := int(round(float(base_phys) * rank_data.value_pct_2 / 100.0))
-			return "Deals %.0f%% physical damage (%d base) to targets below %.0f%% Health." % [rank_data.value_pct_2, hit, rank_data.value_pct]
+			return "Наносит цели %.0f%% физического урона, если цель имеет %.0f%% здоровья или меньше." % [rank_data.value_pct_2, rank_data.value_pct]
 		"stone_fists":
-			return "Increases Attack Power by %d and threat generation (%.0fx)." % [rank_data.value_flat, rank_data.value_pct]
+			return "Повышает силу атаки на %d единиц. Повышает уровень создаваемой угрозы." % rank_data.value_flat
 		"boiling_blood":
 			return "Увеличивает шанс критического удара на %.0f%% и критический урон на %.0f%%, но увеличивает получаемый урон на %d%%." % [rank_data.value_pct, rank_data.value_pct_2, int(rank_data.value_flat)]
 		"wind_spirit_devotion":
-			return "Increases Agility and Perception by %d for you and nearby allies." % rank_data.value_flat
+			return "Повышает ловкость и восприятие на %d единиц." % rank_data.value_flat
 		"lightning":
-			return "Deals %d magical damage to the target." % scaled_flat
+			return "Наносит цели %d единиц магического урона." % scaled_flat
 		_:
 			return _format_effect_from_template(def.description, rank_data, scaled_flat, scaled_flat2)
 
@@ -168,6 +174,9 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String) -> bool:
 	if def == null:
 		return false
+	# Some abilities are typed as active/aoe but still use spell_power_flat effects.
+	if ability_id == "lights_verdict" or ability_id == "storm_of_light" or ability_id == "earths_wrath" or ability_id == "lightning":
+		return true
 	if def.ability_type != "damage" and def.ability_type != "heal":
 		return false
 	match ability_id:
