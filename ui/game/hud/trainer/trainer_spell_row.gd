@@ -10,6 +10,7 @@ const COST_BRONZE_COLOR := Color("c26b2b")
 
 var ability_id: String = ""
 var _target_row_width: float = 0.0
+var _full_name_text: String = ""
 
 @onready var icon_rect: TextureRect = $Icon
 @onready var name_button: LinkButton = $NameBtn
@@ -43,8 +44,9 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 	ability_id = definition.id
 	if icon_rect != null:
 		icon_rect.texture = definition.icon
+	_full_name_text = definition.get_display_name()
 	if name_button != null:
-		name_button.text = definition.get_display_name()
+		name_button.text = _full_name_text
 	if rank_label != null:
 		rank_label.text = "Req.Lvl %d" % required_level
 	if current_rank >= max_rank:
@@ -62,11 +64,11 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 	call_deferred("_fit_name_button_width")
 
 
-func fit_to_scroll_width(parent_scroll: ScrollContainer, row_width: float = -1.0) -> void:
+func fit_to_scroll_width(row_width: float = -1.0) -> void:
 	if row_width > 0.0:
 		_target_row_width = row_width
 		custom_minimum_size.x = row_width
-	_fit_name_button_width(parent_scroll)
+	_fit_name_button_width()
 
 
 func _configure_name_button_clipping() -> void:
@@ -123,18 +125,14 @@ func _on_learn_pressed() -> void:
 	emit_signal("learn_clicked", ability_id)
 
 
-func _fit_name_button_width(parent_scroll_override: ScrollContainer = null) -> void:
+func _fit_name_button_width() -> void:
 	if name_button == null:
 		return
-	var parent_scroll := parent_scroll_override if parent_scroll_override != null else _find_parent_scroll()
+	var parent_scroll := _find_parent_scroll()
 	if parent_scroll == null:
 		return
 	var spacing: float = float(get_theme_constant("separation"))
-	var scrollbar_w: float = 0.0
-	var v_scroll: VScrollBar = parent_scroll.get_v_scroll_bar()
-	if v_scroll != null and v_scroll.visible:
-		scrollbar_w = v_scroll.size.x
-	var max_row_w: float = max(0.0, _target_row_width if _target_row_width > 0.0 else parent_scroll.size.x - scrollbar_w - 16.0)
+	var max_row_w: float = max(0.0, _target_row_width if _target_row_width > 0.0 else parent_scroll.size.x - 16.0)
 	var occupied_other: float = 0.0
 	if icon_rect != null:
 		occupied_other += icon_rect.size.x
@@ -152,6 +150,37 @@ func _fit_name_button_width(parent_scroll_override: ScrollContainer = null) -> v
 	occupied_other += spacing * 4.0
 	var name_w: float = max(1.0, max_row_w - occupied_other)
 	name_button.custom_minimum_size.x = name_w
+	_apply_name_truncation(name_w)
+
+
+func _apply_name_truncation(target_width: float) -> void:
+	if name_button == null:
+		return
+	if _full_name_text == "":
+		name_button.text = ""
+		return
+	var font: Font = name_button.get_theme_font("font")
+	var font_size: int = name_button.get_theme_font_size("font_size")
+	if font == null:
+		name_button.text = _full_name_text
+		return
+	if font.get_string_size(_full_name_text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x <= target_width:
+		name_button.text = _full_name_text
+		return
+	var ellipsis := "..."
+	var low := 0
+	var high := _full_name_text.length()
+	var best := ellipsis
+	while low <= high:
+		var mid := int((low + high) / 2)
+		var candidate := _full_name_text.substr(0, mid) + ellipsis
+		var candidate_w := font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+		if candidate_w <= target_width:
+			best = candidate
+			low = mid + 1
+		else:
+			high = mid - 1
+	name_button.text = best
 
 
 func _find_parent_scroll() -> ScrollContainer:

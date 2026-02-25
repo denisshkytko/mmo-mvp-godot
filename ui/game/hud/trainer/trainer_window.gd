@@ -4,6 +4,8 @@ signal hud_visibility_changed(is_open: bool)
 
 const TRAINER_ROW_SCENE := preload("res://ui/game/hud/trainer/trainer_spell_row.tscn")
 const TRAINER_SCROLL_TARGET_WIDTH := 664.0
+const TRAINER_ROW_HORIZONTAL_PADDING := 16.0
+const TRAINER_ROW_SCROLLBAR_RESERVE := 20.0
 
 @onready var panel: Panel = $Root/Panel
 @onready var title_label: Label = $Root/Panel/Title
@@ -57,14 +59,14 @@ func _sync_scroll_and_rows_width() -> void:
 func _sync_rows_width() -> void:
 	if list_vbox == null or scroll == null:
 		return
-	var row_width: float = maxf(1.0, scroll.size.x - 16.0)
+	var row_width: float = maxf(1.0, TRAINER_SCROLL_TARGET_WIDTH - TRAINER_ROW_HORIZONTAL_PADDING - TRAINER_ROW_SCROLLBAR_RESERVE)
 	for child in list_vbox.get_children():
 		if child is Control:
 			var row := child as Control
 			row.custom_minimum_size.x = row_width
 			row.size_flags_horizontal = Control.SIZE_FILL
 		if child.has_method("fit_to_scroll_width"):
-			child.call_deferred("fit_to_scroll_width", scroll, row_width)
+			child.call_deferred("fit_to_scroll_width", row_width)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _is_open:
