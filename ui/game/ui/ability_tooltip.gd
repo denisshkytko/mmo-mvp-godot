@@ -160,13 +160,13 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 		"light_execution":
 			return "Наносит цели %.0f%% физического урона, если цель имеет %.0f%% здоровья или меньше." % [rank_data.value_pct_2, rank_data.value_pct]
 		"stone_fists":
-			return "Increases Attack Power by %d and threat generation (%.0fx)." % [rank_data.value_flat, rank_data.value_pct]
+			return "Повышает силу атаки на %d единиц. Повышает уровень создаваемой угрозы." % rank_data.value_flat
 		"boiling_blood":
 			return "Увеличивает шанс критического удара на %.0f%% и критический урон на %.0f%%, но увеличивает получаемый урон на %d%%." % [rank_data.value_pct, rank_data.value_pct_2, int(rank_data.value_flat)]
 		"wind_spirit_devotion":
-			return "Increases Agility and Perception by %d for you and nearby allies." % rank_data.value_flat
+			return "Повышает ловкость и восприятие на %d единиц." % rank_data.value_flat
 		"lightning":
-			return "Deals %d magical damage to the target." % scaled_flat
+			return "Наносит цели %d единиц магического урона." % scaled_flat
 		_:
 			return _format_effect_from_template(def.description, rank_data, scaled_flat, scaled_flat2)
 
@@ -175,7 +175,7 @@ func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String
 	if def == null:
 		return false
 	# Some abilities are typed as active/aoe but still use spell_power_flat effects.
-	if ability_id == "lights_verdict" or ability_id == "storm_of_light":
+	if ability_id == "lights_verdict" or ability_id == "storm_of_light" or ability_id == "earths_wrath" or ability_id == "lightning":
 		return true
 	if def.ability_type != "damage" and def.ability_type != "heal":
 		return false
