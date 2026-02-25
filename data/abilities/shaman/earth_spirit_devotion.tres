@@ -101,10 +101,10 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "earth_spirit_devotion"
-name = "Преданность духу земли"
+name = "Преданность духам земли"
 icon = ExtResource("2")
-description = "Повышает силу и выносливость шамана и союзников на 8 (+8 за ранг)."
-description_ru = "Повышает силу и выносливость шамана и союзников на 8 (+8 за ранг)."
+description = "Повышает силу и выносливость на 8 единиц."
+description_ru = "Повышает силу и выносливость на 8 единиц."
 class_id = "shaman"
 ability_type = "aura"
 target_type = "self"
