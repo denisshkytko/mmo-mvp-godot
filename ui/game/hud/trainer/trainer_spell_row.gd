@@ -117,7 +117,6 @@ func _fit_name_button_width() -> void:
 	occupied_other += spacing * 4.0
 	var name_w: float = max(40.0, available_row_w - occupied_other)
 	name_button.custom_minimum_size.x = name_w
-	name_button.clip_text = true
 
 
 func _find_parent_panel() -> Panel:

@@ -10,8 +10,8 @@ signal character_created(char_id: String)
 
 func _ready() -> void:
 	error_label.text = ""
-	name_edit.focus_mode = Control.FOCUS_NONE
-	class_option.focus_mode = Control.FOCUS_NONE
+	name_edit.focus_mode = Control.FOCUS_CLICK
+	class_option.focus_mode = Control.FOCUS_CLICK
 	create_button.focus_mode = Control.FOCUS_NONE
 	cancel_button.focus_mode = Control.FOCUS_NONE
 

@@ -9,8 +9,8 @@ func _ready() -> void:
 	error_label.text = ""
 	username_edit.text = "admin"
 	password_edit.text = "admin"
-	username_edit.focus_mode = Control.FOCUS_NONE
-	password_edit.focus_mode = Control.FOCUS_NONE
+	username_edit.focus_mode = Control.FOCUS_CLICK
+	password_edit.focus_mode = Control.FOCUS_CLICK
 	login_button.focus_mode = Control.FOCUS_NONE
 
 	login_button.pressed.connect(_on_login_pressed)
