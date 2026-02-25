@@ -3,6 +3,7 @@ extends CanvasLayer
 signal hud_visibility_changed(is_open: bool)
 
 const TRAINER_ROW_SCENE := preload("res://ui/game/hud/trainer/trainer_spell_row.tscn")
+const TRAINER_SCROLL_TARGET_WIDTH := 664.0
 
 @onready var panel: Panel = $Root/Panel
 @onready var title_label: Label = $Root/Panel/Title
@@ -20,7 +21,6 @@ var _tooltip: AbilityTooltip = null
 var _tooltip_ability_id: String = ""
 var _is_open: bool = false
 var _db_ready: bool = false
-var _scroll_scene_width: float = 0.0
 
 func _ready() -> void:
 	add_to_group("trainer_ui")
@@ -43,21 +43,28 @@ func _ready() -> void:
 		filter_option.item_selected.connect(_on_filter_changed)
 	if scroll != null and not scroll.resized.is_connected(_on_scroll_resized):
 		scroll.resized.connect(_on_scroll_resized)
-	call_deferred("_lock_scroll_width_to_scene")
+	call_deferred("_sync_scroll_and_rows_width")
 
 func _on_scroll_resized() -> void:
-	call_deferred("_lock_scroll_width_to_scene")
+	call_deferred("_sync_scroll_and_rows_width")
 
-func _lock_scroll_width_to_scene() -> void:
-	if scroll == null:
+func _sync_scroll_and_rows_width() -> void:
+	if scroll != null:
+		if scroll.offset_right != scroll.offset_left + TRAINER_SCROLL_TARGET_WIDTH:
+			scroll.offset_right = scroll.offset_left + TRAINER_SCROLL_TARGET_WIDTH
+	_sync_rows_width()
+
+func _sync_rows_width() -> void:
+	if list_vbox == null or scroll == null:
 		return
-	if _scroll_scene_width <= 0.0:
-		_scroll_scene_width = maxf(0.0, scroll.size.x)
-	if _scroll_scene_width <= 0.0:
-		return
-	scroll.custom_minimum_size.x = _scroll_scene_width
-	if scroll.offset_right != scroll.offset_left + _scroll_scene_width:
-		scroll.offset_right = scroll.offset_left + _scroll_scene_width
+	var row_width: float = maxf(1.0, scroll.size.x - 16.0)
+	for child in list_vbox.get_children():
+		if child is Control:
+			var row := child as Control
+			row.custom_minimum_size.x = row_width
+			row.size_flags_horizontal = Control.SIZE_FILL
+		if child.has_method("fit_to_scroll_width"):
+			child.call_deferred("fit_to_scroll_width", scroll, row_width)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _is_open:
@@ -182,6 +189,7 @@ func _refresh_rows() -> void:
 		row.name_clicked.connect(_on_row_tooltip_clicked)
 		row.icon_clicked.connect(_on_row_tooltip_clicked)
 		row.learn_clicked.connect(_on_row_learn_clicked)
+	call_deferred("_sync_rows_width")
 
 func _on_row_tooltip_clicked(ability_id: String) -> void:
 	if ability_id == "":

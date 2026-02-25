@@ -9,6 +9,7 @@ const COST_SILVER_COLOR := Color("c0c0c0")
 const COST_BRONZE_COLOR := Color("c26b2b")
 
 var ability_id: String = ""
+var _target_row_width: float = 0.0
 
 @onready var icon_rect: TextureRect = $Icon
 @onready var name_button: LinkButton = $NameBtn
@@ -26,6 +27,8 @@ func _ready() -> void:
 		icon_rect.gui_input.connect(_on_icon_gui_input)
 	if learn_button != null and not learn_button.pressed.is_connected(_on_learn_pressed):
 		learn_button.pressed.connect(_on_learn_pressed)
+	clip_contents = true
+	_configure_name_button_clipping()
 	call_deferred("_fit_name_button_width")
 
 
@@ -57,6 +60,30 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 			learn_button.text = "Изучить"
 			learn_button.disabled = not can_learn
 	call_deferred("_fit_name_button_width")
+
+
+func fit_to_scroll_width(parent_scroll: ScrollContainer, row_width: float = -1.0) -> void:
+	if row_width > 0.0:
+		_target_row_width = row_width
+		custom_minimum_size.x = row_width
+	_fit_name_button_width(parent_scroll)
+
+
+func _configure_name_button_clipping() -> void:
+	if name_button == null:
+		return
+	name_button.custom_minimum_size.x = 0.0
+	_set_property_if_exists(name_button, "clip_text", true)
+	_set_property_if_exists(name_button, "text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
+
+
+func _set_property_if_exists(obj: Object, prop: StringName, value: Variant) -> void:
+	if obj == null:
+		return
+	for prop_data in obj.get_property_list():
+		if StringName(prop_data.get("name", "")) == prop:
+			obj.set(prop, value)
+			return
 
 
 func _set_cost_visible(visible_value: bool) -> void:
@@ -96,10 +123,10 @@ func _on_learn_pressed() -> void:
 	emit_signal("learn_clicked", ability_id)
 
 
-func _fit_name_button_width() -> void:
+func _fit_name_button_width(parent_scroll_override: ScrollContainer = null) -> void:
 	if name_button == null:
 		return
-	var parent_scroll := _find_parent_scroll()
+	var parent_scroll := parent_scroll_override if parent_scroll_override != null else _find_parent_scroll()
 	if parent_scroll == null:
 		return
 	var spacing: float = float(get_theme_constant("separation"))
@@ -107,7 +134,7 @@ func _fit_name_button_width() -> void:
 	var v_scroll: VScrollBar = parent_scroll.get_v_scroll_bar()
 	if v_scroll != null and v_scroll.visible:
 		scrollbar_w = v_scroll.size.x
-	var max_row_w: float = max(0.0, parent_scroll.size.x - scrollbar_w - 16.0)
+	var max_row_w: float = max(0.0, _target_row_width if _target_row_width > 0.0 else parent_scroll.size.x - scrollbar_w - 16.0)
 	var occupied_other: float = 0.0
 	if icon_rect != null:
 		occupied_other += icon_rect.size.x

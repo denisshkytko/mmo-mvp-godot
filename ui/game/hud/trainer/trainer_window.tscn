@@ -64,11 +64,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 22
 
 [node name="Scroll" type="ScrollContainer" parent="Root/Panel"]
-custom_minimum_size = Vector2(584, 802)
+custom_minimum_size = Vector2(664, 802)
 layout_mode = 1
 offset_left = 8.0
 offset_top = 98.0
-offset_right = 592.0
+offset_right = 672.0
 offset_bottom = 362.0
 horizontal_scroll_mode = 0
 
