@@ -245,6 +245,16 @@ static func build_player_snapshot(
             if inc_red != 0.0:
                 incoming_damage_reduction_pct += inc_red
                 _add_breakdown_line(breakdown.incoming_damage_reduction_pct, source_label, inc_red * 100.0, "(%.1f%%)" % (inc_red * 100.0))
+        if perc.has("cast_speed_pct"):
+            var cast_speed_bonus: float = float(perc.get("cast_speed_pct", 0.0))
+            if cast_speed_bonus != 0.0:
+                derived.cast_speed_bonus_pct += cast_speed_bonus
+                _add_breakdown_line(breakdown.cast_speed_bonus_pct, source_label, cast_speed_bonus, "(%.1f%%)" % cast_speed_bonus)
+        if perc.has("cast_speed_bonus_pct"):
+            var cast_speed_bonus_alt: float = float(perc.get("cast_speed_bonus_pct", 0.0))
+            if cast_speed_bonus_alt != 0.0:
+                derived.cast_speed_bonus_pct += cast_speed_bonus_alt
+                _add_breakdown_line(breakdown.cast_speed_bonus_pct, source_label, cast_speed_bonus_alt, "(%.1f%%)" % cast_speed_bonus_alt)
 
         _merge_flags(flags, data.get("flags", {}) as Dictionary)
         _merge_on_hit(on_hit, data.get("on_hit", {}) as Dictionary)

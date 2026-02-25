@@ -497,10 +497,19 @@ func _is_execute_target_valid(target: Node, threshold_pct: float) -> bool:
 	elif target.has_method("get_current_hp") and target.has_method("get_max_hp"):
 		current_hp = float(target.call("get_current_hp"))
 		max_hp = float(target.call("get_max_hp"))
+	elif "c_stats" in target and target.c_stats != null:
+		if "current_hp" in target.c_stats and "max_hp" in target.c_stats:
+			current_hp = float(target.c_stats.current_hp)
+			max_hp = float(target.c_stats.max_hp)
+	if max_hp <= 0.0 and target.has_method("get_stats_snapshot"):
+		var snap: Dictionary = target.call("get_stats_snapshot") as Dictionary
+		if not snap.is_empty():
+			current_hp = float(snap.get("current_hp", current_hp))
+			max_hp = float(snap.get("max_hp", max_hp))
 	if max_hp <= 0.0:
 		return false
 	var hp_pct: float = (current_hp / max_hp) * 100.0
-	return hp_pct < threshold_pct
+	return hp_pct <= threshold_pct
 
 func _can_fallback_to_self(def: AbilityDefinition) -> bool:
 	if def == null:
