@@ -122,10 +122,10 @@ magic_effect = SubResource("21")
 [resource]
 script = ExtResource("1")
 id = "strike_of_light"
-name = "Удар Света"
+name = "Удар света"
 icon = ExtResource("2")
-description = "Наносит физический и магический урон."
-description_ru = "Наносит физический и магический урон."
+description = "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
+description_ru = "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
 class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"

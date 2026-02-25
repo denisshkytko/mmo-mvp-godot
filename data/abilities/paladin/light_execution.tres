@@ -41,10 +41,10 @@ scaling_mode = "phys_base_pct"
 [resource]
 script = ExtResource("1")
 id = "light_execution"
-name = "Казнь Света"
+name = "Казнь света"
 icon = ExtResource("2")
-description = "Наносит 250% физического урона цели, если у неё меньше порога здоровья."
-description_ru = "Наносит 250% физического урона цели, если у неё меньше порога здоровья."
+description = "Наносит цели {P2}% физического урона, если цель имеет {T}% здоровья или меньше."
+description_ru = "Наносит цели {P2}% физического урона, если цель имеет {T}% здоровья или меньше."
 class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"
