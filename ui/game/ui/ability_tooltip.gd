@@ -87,7 +87,12 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 	lines.append("")
 	var params: Array[String] = []
 	if rank_data.cast_time_sec > 0.0:
-		params.append("Cast: %.1fs" % rank_data.cast_time_sec)
+		var cast_time_eff: float = rank_data.cast_time_sec
+		if player != null and player.has_method("get_stats_snapshot"):
+			var cast_snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
+			var cast_speed_pct: float = float(cast_snap.get("cast_speed_pct", 0.0))
+			cast_time_eff = rank_data.cast_time_sec * (1.0 / (1.0 + cast_speed_pct / 100.0))
+		params.append("Cast: %.1fs" % cast_time_eff)
 	if rank_data.cooldown_sec > 0.0:
 		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
 	if rank_data.resource_cost > 0:
@@ -121,10 +126,10 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 		"judging_flame":
 			return "Наносит цели %d единиц магического урона." % scaled_flat
 		"lights_verdict":
-			return "Наносит цели %d единиц магического урона (с учетом силы заклинаний), если цель - враг, или восстанавливает цели %d единиц здоровья (с учетом силы заклинаний), если цель - союзник." % [scaled_flat, scaled_flat]
+			return "Наносит цели %d единиц магического урона, если цель - враг, или восстанавливает цели %d единиц здоровья, если цель - союзник." % [scaled_flat, scaled_flat]
 		"strike_of_light", "storm_of_light":
 			if ability_id == "storm_of_light":
-				return "Наносит всем врагам вокруг %.0f%% физического урона и дополнительно %d единиц магического урона (с учетом силы заклинаний)." % [rank_data.value_pct, scaled_flat2]
+				return "Наносит всем врагам вокруг %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
 			return "Наносит цели %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
 		"path_of_righteousness":
 			return "Атаки дополнительно наносят %d единиц магического урона." % scaled_flat

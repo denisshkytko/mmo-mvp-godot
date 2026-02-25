@@ -27,7 +27,11 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 			var base_phys: int = 0
 			if "c_combat" in caster and caster.c_combat != null:
 				base_phys = caster.c_combat.get_attack_damage()
-			base = int(round(float(base_phys) * float(rank_data.value_pct) / 100.0))
+			var phys_pct: float = float(rank_data.value_pct)
+			var ability_id: String = String(context.get("ability_id", ""))
+			if ability_id == "light_execution":
+				phys_pct = float(rank_data.value_pct_2)
+			base = int(round(float(base_phys) * phys_pct / 100.0))
 		"spell_power_flat":
 			base = int(rank_data.value_flat) + int(round(spell_power))
 		"attack_power_pct":

@@ -248,8 +248,9 @@ static func build_player_snapshot(
         if perc.has("cast_speed_pct"):
             var cast_speed_bonus: float = float(perc.get("cast_speed_pct", 0.0))
             if cast_speed_bonus != 0.0:
-                derived.cast_speed_bonus_pct += cast_speed_bonus
-                _add_breakdown_line(breakdown.cast_speed_bonus_pct, source_label, cast_speed_bonus, "(%.1f%%)" % cast_speed_bonus)
+                var cast_speed_bonus_pct_points: float = cast_speed_bonus * 100.0
+                derived.cast_speed_bonus_pct += cast_speed_bonus_pct_points
+                _add_breakdown_line(breakdown.cast_speed_bonus_pct, source_label, cast_speed_bonus_pct_points, "(%.1f%%)" % cast_speed_bonus_pct_points)
         if perc.has("cast_speed_bonus_pct"):
             var cast_speed_bonus_alt: float = float(perc.get("cast_speed_bonus_pct", 0.0))
             if cast_speed_bonus_alt != 0.0:
