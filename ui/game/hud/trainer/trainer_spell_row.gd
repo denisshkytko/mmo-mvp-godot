@@ -99,15 +99,19 @@ func _on_learn_pressed() -> void:
 func _fit_name_button_width() -> void:
 	if name_button == null:
 		return
-	var parent_panel := _find_parent_panel()
-	if parent_panel == null:
+	var parent_scroll := _find_parent_scroll()
+	if parent_scroll == null:
 		return
 	var spacing: float = float(get_theme_constant("separation"))
-	var available_row_w: float = max(0.0, parent_panel.size.x - 8.0)
+	var max_row_w: float = max(0.0, parent_scroll.size.x - 16.0)
 	var occupied_other: float = 0.0
 	if icon_rect != null:
 		occupied_other += icon_rect.size.x
 	if rank_label != null and rank_label.visible:
+		if rank_label.text.strip_edges() == "":
+			rank_label.custom_minimum_size.x = 1.0
+		else:
+			rank_label.custom_minimum_size.x = 0.0
 		occupied_other += rank_label.get_combined_minimum_size().x
 	if cost_box != null and cost_box.visible:
 		occupied_other += cost_box.get_combined_minimum_size().x
@@ -115,14 +119,15 @@ func _fit_name_button_width() -> void:
 		occupied_other += learn_button.get_combined_minimum_size().x
 	# Four gaps between five columns in row.
 	occupied_other += spacing * 4.0
-	var name_w: float = max(40.0, available_row_w - occupied_other)
+	var name_w: float = max(1.0, max_row_w - occupied_other)
 	name_button.custom_minimum_size.x = name_w
 
 
-func _find_parent_panel() -> Panel:
+func _find_parent_scroll() -> ScrollContainer:
 	var n: Node = get_parent()
 	while n != null:
-		if n is Panel:
-			return n as Panel
+		if n is ScrollContainer:
+			return n as ScrollContainer
 		n = n.get_parent()
 	return null
+
