@@ -33,7 +33,6 @@ id = "battle_readiness"
 name = "Боевая готовность"
 icon = ExtResource("2")
 description = "Увеличивает физический урон на 15%."
-description_ru = "Увеличивает физический урон на 15%."
 class_id = "warrior"
 ability_type = "stance"
 target_type = "self"

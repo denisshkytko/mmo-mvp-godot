@@ -43,7 +43,6 @@ id = "prayer_of_light"
 name = "Молитва света"
 icon = ExtResource("2")
 description = "Восстанавливает {X} здоровья жрецу и всем союзникам поблизости."
-description_ru = "Восстанавливает {X} здоровья жрецу и всем союзникам поблизости."
 class_id = "priest"
 ability_type = "heal"
 target_type = "ally"

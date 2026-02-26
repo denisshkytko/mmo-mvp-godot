@@ -75,7 +75,6 @@ id = "aura_of_tempering"
 name = "Аура закалки"
 icon = ExtResource("2")
 description = "Повышает физический урон на {X} единиц."
-description_ru = "Повышает физический урон на {X} единиц."
 class_id = "paladin"
 ability_type = "aura"
 target_type = "self"

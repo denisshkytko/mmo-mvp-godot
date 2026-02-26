@@ -128,7 +128,6 @@ id = "fire_blast"
 name = "Огненный взрыв"
 icon = ExtResource("2")
 description = "Наносит цели {X} магического урона."
-description_ru = "Наносит цели {X} магического урона."
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

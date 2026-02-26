@@ -51,7 +51,6 @@ id = "sweeping_strikes"
 name = "Размашистые удары"
 icon = ExtResource("2")
 description = "Наносит {P}% физического урона всем ближайшим врагам."
-description_ru = "Наносит {P}% физического урона всем ближайшим врагам."
 class_id = "warrior"
 ability_type = "aoe_damage"
 target_type = "self"

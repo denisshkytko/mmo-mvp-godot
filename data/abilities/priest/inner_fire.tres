@@ -75,7 +75,6 @@ id = "inner_fire"
 name = "Внутренний огонь"
 icon = ExtResource("2")
 description = "Увеличивает критический эффект заклинаний на {P}% и снижает получаемый урон на {P2}%."
-description_ru = "Увеличивает критический эффект заклинаний на {P}% и снижает получаемый урон на {P2}%."
 class_id = "priest"
 ability_type = "stance"
 target_type = "self"

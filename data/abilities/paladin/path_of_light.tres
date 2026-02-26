@@ -33,7 +33,6 @@ id = "path_of_light"
 name = "Путь света"
 icon = ExtResource("2")
 description = "Атаки восстанавливают здоровье в размере {P}% от нанесенного урона."
-description_ru = "Атаки восстанавливают здоровье в размере {P}% от нанесенного урона."
 class_id = "paladin"
 ability_type = "stance"
 target_type = "self"

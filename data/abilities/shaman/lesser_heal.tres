@@ -99,7 +99,6 @@ id = "lesser_heal"
 icon = ExtResource("2")
 name = "Малое исцеление"
 description = "Восстанавливает цели {X} единиц здоровья."
-description_ru = "Восстанавливает цели {X} единиц здоровья."
 class_id = "shaman"
 ability_type = "heal"
 target_type = "ally"

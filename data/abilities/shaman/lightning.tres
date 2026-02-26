@@ -156,7 +156,6 @@ id = "lightning"
 icon = ExtResource("2")
 name = "Молния"
 description = "Наносит цели {X} единиц магического урона."
-description_ru = "Наносит цели {X} единиц магического урона."
 class_id = "shaman"
 ability_type = "active"
 target_type = "enemy"

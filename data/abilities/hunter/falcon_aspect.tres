@@ -33,7 +33,6 @@ id = "falcon_aspect"
 name = "Дух сапсан"
 icon = ExtResource("2")
 description = "Увеличивает скорость передвижения на 30%."
-description_ru = "Увеличивает скорость передвижения на 30%."
 class_id = "hunter"
 ability_type = "stance"
 target_type = "self"

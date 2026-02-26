@@ -33,7 +33,6 @@ id = "concentration_aura"
 name = "Аура концентрации"
 icon = ExtResource("2")
 description = "Повышает скорость произнесения заклинаний на {P}%."
-description_ru = "Повышает скорость произнесения заклинаний на {P}%."
 class_id = "paladin"
 ability_type = "aura"
 target_type = "self"

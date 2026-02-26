@@ -35,7 +35,6 @@ id = "tailwind"
 icon = ExtResource("2")
 name = "Попутный ветер"
 description = "Повышает скорость передвижения шамана на {P}% на 10 минут. Эффект исчезает при получении урона."
-description_ru = "Повышает скорость передвижения шамана на {P}% на 10 минут. Эффект исчезает при получении урона."
 class_id = "shaman"
 ability_type = "active"
 target_type = "self"

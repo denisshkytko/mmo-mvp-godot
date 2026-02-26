@@ -61,7 +61,6 @@ id = "rapid_strikes"
 icon = ExtResource("2")
 name = "Быстрые удары"
 description = "Даёт {P}% шанс совершить дополнительную атаку при ударе."
-description_ru = "Даёт {P}% шанс совершить дополнительную атаку при ударе."
 class_id = "shaman"
 ability_type = "stance"
 target_type = "self"

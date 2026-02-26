@@ -172,7 +172,6 @@ id = "frostbolt"
 name = "Ледяная стрела"
 icon = ExtResource("2")
 description = "Наносит {X} магического урона и снижает скорость передвижения цели на 40% на {D} сек."
-description_ru = "Наносит {X} магического урона и снижает скорость передвижения цели на 40% на {D} сек."
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

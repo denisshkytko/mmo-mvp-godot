@@ -33,7 +33,6 @@ id = "power_absorption"
 name = "Поглощение силы"
 icon = ExtResource("2")
 description = "Восстанавливает {P}% маны от урона заклинаниями и исцеления союзников, а также {P2}% маны от урона автоатаками."
-description_ru = "Восстанавливает {P}% маны от урона заклинаниями и исцеления союзников, а также {P2}% маны от урона автоатаками."
 class_id = "priest"
 ability_type = "stance"
 target_type = "self"

@@ -46,7 +46,6 @@ id = "dirty_strike"
 name = "Подлый удар"
 icon = ExtResource("2")
 description = "Наносит 100% от силы атаки в виде физического урона и оглушает цель на {D} секунды."
-description_ru = "Наносит 100% от силы атаки в виде физического урона и оглушает цель на {D} секунды."
 class_id = "warrior"
 ability_type = "damage"
 target_type = "enemy"

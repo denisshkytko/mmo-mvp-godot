@@ -29,7 +29,6 @@ id = "concentration"
 name = "Концентрация"
 icon = ExtResource("2")
 description = "Восстанавливает магу 30% от максимального запаса маны."
-description_ru = "Восстанавливает магу 30% от максимального запаса маны."
 class_id = "mage"
 ability_type = "active"
 target_type = "self"

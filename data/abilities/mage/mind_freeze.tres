@@ -77,7 +77,6 @@ id = "mind_freeze"
 name = "Заморозка разума"
 icon = ExtResource("2")
 description = "Замораживает цель на {D} сек. Она не может двигаться, атаковать и произносить заклинания."
-description_ru = "Замораживает цель на {D} сек. Она не может двигаться, атаковать и произносить заклинания."
 class_id = "mage"
 ability_type = "active"
 target_type = "enemy"

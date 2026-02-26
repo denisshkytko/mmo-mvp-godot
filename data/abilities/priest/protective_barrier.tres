@@ -91,7 +91,6 @@ id = "protective_barrier"
 name = "Защитный барьер"
 icon = ExtResource("2")
 description = "Поглощает {X} ед. входящего урона до разрушения. Длительность: {D} сек."
-description_ru = "Поглощает {X} ед. входящего урона до разрушения. Длительность: {D} сек."
 class_id = "priest"
 ability_type = "active"
 target_type = "ally"

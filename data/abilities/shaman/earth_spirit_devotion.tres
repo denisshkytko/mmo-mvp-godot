@@ -104,7 +104,6 @@ id = "earth_spirit_devotion"
 name = "Преданность духам земли"
 icon = ExtResource("2")
 description = "Повышает силу и выносливость на {X} единиц."
-description_ru = "Повышает силу и выносливость на {X} единиц."
 class_id = "shaman"
 ability_type = "aura"
 target_type = "self"

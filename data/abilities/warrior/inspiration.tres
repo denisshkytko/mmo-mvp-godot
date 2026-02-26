@@ -46,7 +46,6 @@ id = "inspiration"
 name = "Воодушевление"
 icon = ExtResource("2")
 description = "Увеличивает максимальное здоровье цели на {P}% на 30 минут."
-description_ru = "Увеличивает максимальное здоровье цели на {P}% на 30 минут."
 class_id = "warrior"
 ability_type = "buff"
 target_type = "self"

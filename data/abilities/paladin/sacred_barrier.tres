@@ -32,7 +32,6 @@ id = "sacred_barrier"
 name = "Священный барьер"
 icon = ExtResource("2")
 description = "Дарует цели иммунитет к физическому урону на {D} секунд."
-description_ru = "Дарует цели иммунитет к физическому урону на {D} секунд."
 class_id = "paladin"
 ability_type = "active"
 target_type = "ally"

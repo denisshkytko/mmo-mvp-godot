@@ -128,7 +128,6 @@ id = "powerful_strike"
 name = "Мощный удар"
 icon = ExtResource("2")
 description = "Наносит {P}% физического урона."
-description_ru = "Наносит {P}% физического урона."
 class_id = "warrior"
 ability_type = "damage"
 target_type = "enemy"

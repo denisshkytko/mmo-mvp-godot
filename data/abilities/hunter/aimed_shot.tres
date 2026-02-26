@@ -58,7 +58,6 @@ id = "aimed_shot"
 name = "Прицельный выстрел"
 icon = ExtResource("2")
 description = "Наносит цели {P}% физического урона."
-description_ru = "Наносит цели {P}% физического урона."
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

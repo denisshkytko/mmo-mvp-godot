@@ -103,7 +103,6 @@ id = "cobra_aspect"
 name = "Дух кобры"
 icon = ExtResource("2")
 description = "Повышает шанс критического удара охотника на {P}%."
-description_ru = "Повышает шанс критического удара охотника на {P}%."
 class_id = "hunter"
 ability_type = "stance"
 target_type = "self"

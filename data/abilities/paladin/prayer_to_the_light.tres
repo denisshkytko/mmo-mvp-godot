@@ -57,7 +57,6 @@ id = "prayer_to_the_light"
 name = "Молитва свету"
 icon = ExtResource("2")
 description = "Восстанавливает {P}% от максимального запаса маны."
-description_ru = "Восстанавливает {P}% от максимального запаса маны."
 class_id = "paladin"
 ability_type = "active"
 target_type = "self"

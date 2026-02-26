@@ -35,7 +35,6 @@ id = "magic_shield"
 name = "Магический щит"
 icon = ExtResource("2")
 description = "Блокирует весь получаемый магический урон цели на 5 секунд."
-description_ru = "Блокирует весь получаемый магический урон цели на 5 секунд."
 class_id = "mage"
 ability_type = "active"
 target_type = "ally"

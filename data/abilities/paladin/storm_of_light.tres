@@ -76,7 +76,6 @@ id = "storm_of_light"
 name = "Буря Света"
 icon = ExtResource("2")
 description = "Наносит всем врагам вокруг {P}% физического урона и дополнительно {M} единиц магического урона."
-description_ru = "Наносит всем врагам вокруг {P}% физического урона и дополнительно {M} единиц магического урона."
 class_id = "paladin"
 ability_type = "aoe_damage"
 target_type = "self"

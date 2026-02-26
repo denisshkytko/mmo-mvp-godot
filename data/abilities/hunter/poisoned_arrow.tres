@@ -130,7 +130,6 @@ id = "poisoned_arrow"
 name = "Отравленная стрела"
 icon = ExtResource("2")
 description = "Наносит 100% физического урона и дополнительно {X} ед. магического урона в течение {D} сек."
-description_ru = "Наносит 100% физического урона и дополнительно {X} ед. магического урона в течение {D} сек."
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

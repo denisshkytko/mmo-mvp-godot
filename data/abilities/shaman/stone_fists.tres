@@ -117,7 +117,6 @@ id = "stone_fists"
 icon = ExtResource("2")
 name = "Каменные кулаки"
 description = "Повышает силу атаки на 25 единиц. Повышает уровень создаваемой угрозы."
-description_ru = "Повышает силу атаки на 25 единиц. Повышает уровень создаваемой угрозы."
 class_id = "shaman"
 ability_type = "stance"
 target_type = "self"

@@ -117,7 +117,6 @@ id = "aura_of_light_protection"
 name = "Аура светлой защиты"
 icon = ExtResource("2")
 description = "Повышает физическую защиту на {P} единиц и магическое сопротивление на {M} единиц."
-description_ru = "Повышает физическую защиту на {P} единиц и магическое сопротивление на {M} единиц."
 class_id = "paladin"
 ability_type = "aura"
 target_type = "self"

@@ -147,7 +147,6 @@ id = "healing_stream"
 name = "Исцеляющий поток"
 icon = ExtResource("2")
 description = "Восстанавливает цели {X} здоровья в течение {D} сек."
-description_ru = "Восстанавливает цели {X} здоровья в течение {D} сек."
 class_id = "priest"
 ability_type = "heal"
 target_type = "ally"

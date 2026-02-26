@@ -117,7 +117,6 @@ id = "path_of_righteousness"
 name = "Путь праведности"
 icon = ExtResource("2")
 description = "Атаки дополнительно наносят {X} единиц магического урона."
-description_ru = "Атаки дополнительно наносят {X} единиц магического урона."
 class_id = "paladin"
 ability_type = "stance"
 target_type = "self"

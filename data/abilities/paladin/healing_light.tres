@@ -140,7 +140,6 @@ id = "healing_light"
 name = "Исцеляющий свет"
 icon = ExtResource("2")
 description = "Восстанавливает цели {X} единиц здоровья."
-description_ru = "Восстанавливает цели {X} единиц здоровья."
 class_id = "paladin"
 ability_type = "heal"
 target_type = "ally"

@@ -91,7 +91,6 @@ id = "insight"
 name = "Проницательность"
 icon = ExtResource("2")
 description = "Повышает интеллект и восприятие цели на {X} на {D} сек."
-description_ru = "Повышает интеллект и восприятие цели на {X} на {D} сек."
 class_id = "mage"
 ability_type = "buff"
 target_type = "ally"

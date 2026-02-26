@@ -130,7 +130,6 @@ id = "earths_wrath"
 icon = ExtResource("2")
 name = "Гнев земли"
 description = "Наносит цели {X} единиц магического урона. Снижает скорость атаки цели на {P}% на 5 секунд."
-description_ru = "Наносит цели {X} единиц магического урона. Снижает скорость атаки цели на {P}% на 5 секунд."
 class_id = "shaman"
 ability_type = "active"
 target_type = "enemy"

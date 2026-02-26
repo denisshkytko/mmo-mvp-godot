@@ -44,7 +44,6 @@ id = "light_execution"
 name = "Казнь света"
 icon = ExtResource("2")
 description = "Наносит цели {P2}% физического урона, если цель имеет {T}% здоровья или меньше."
-description_ru = "Наносит цели {P2}% физического урона, если цель имеет {T}% здоровья или меньше."
 class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"

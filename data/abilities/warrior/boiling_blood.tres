@@ -61,7 +61,6 @@ id = "boiling_blood"
 name = "Кипящая кровь"
 icon = ExtResource("2")
 description = "Увеличивает шанс критического удара на {P}% и критический урон на {P2}%, но увеличивает получаемый урон на {X}%."
-description_ru = "Увеличивает шанс критического удара на {P}% и критический урон на {P2}%, но увеличивает получаемый урон на {X}%."
 class_id = "warrior"
 ability_type = "stance"
 target_type = "self"

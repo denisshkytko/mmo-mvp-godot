@@ -114,7 +114,6 @@ id = "hailstorm"
 name = "Град"
 icon = ExtResource("2")
 description = "Наносит {X} магического урона {X2} раз(а)."
-description_ru = "Наносит {X} магического урона {X2} раз(а)."
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

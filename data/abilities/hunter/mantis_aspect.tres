@@ -117,7 +117,6 @@ id = "mantis_aspect"
 name = "Дух богомола"
 icon = ExtResource("2")
 description = "Увеличивает скорость атаки охотника на {P}%."
-description_ru = "Увеличивает скорость атаки охотника на {P}%."
 class_id = "hunter"
 ability_type = "stance"
 target_type = "self"

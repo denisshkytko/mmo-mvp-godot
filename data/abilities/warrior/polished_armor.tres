@@ -33,7 +33,6 @@ id = "polished_armor"
 name = "Отполированные доспехи"
 icon = ExtResource("2")
 description = "Снижает получаемый урон на {P}% и увеличивает создаваемую угрозу ({P2}x)."
-description_ru = "Снижает получаемый урон на {P}% и увеличивает создаваемую угрозу ({P2}x)."
 class_id = "warrior"
 ability_type = "stance"
 target_type = "self"

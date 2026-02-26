@@ -28,7 +28,6 @@ id = "call_of_spirits"
 name = "Зов духов"
 icon = ExtResource("2")
 description = "Воскрешает цель с {HP}% запасом здоровья и маны."
-description_ru = "Воскрешает цель с {HP}% запасом здоровья и маны."
 class_id = "shaman"
 ability_type = "active"
 target_type = "corpse_player"

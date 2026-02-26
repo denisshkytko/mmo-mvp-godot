@@ -46,7 +46,6 @@ id = "meteor"
 name = "Метеорит"
 icon = ExtResource("2")
 description = "Наносит цели {X} ед. магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
-description_ru = "Наносит цели {X} ед. магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

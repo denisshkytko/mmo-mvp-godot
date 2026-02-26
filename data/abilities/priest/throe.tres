@@ -128,7 +128,6 @@ id = "throe"
 name = "Мука"
 icon = ExtResource("2")
 description = "Наносит цели {X} ед. магического урона."
-description_ru = "Наносит цели {X} ед. магического урона."
 class_id = "priest"
 ability_type = "damage"
 target_type = "enemy"

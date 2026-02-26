@@ -125,7 +125,6 @@ id = "strike_of_light"
 name = "Удар света"
 icon = ExtResource("2")
 description = "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
-description_ru = "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
 class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"

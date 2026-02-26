@@ -128,7 +128,6 @@ id = "arcane_shot"
 name = "Магический выстрел"
 icon = ExtResource("2")
 description = "Наносит цели {X} ед. магического урона."
-description_ru = "Наносит цели {X} ед. магического урона."
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

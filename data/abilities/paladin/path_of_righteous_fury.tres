@@ -33,7 +33,6 @@ id = "path_of_righteous_fury"
 name = "Путь праведной ярости"
 icon = ExtResource("2")
 description = "Повышает уровень создаваемой угрозы и восстанавливает ману в размере {P}% от нанесенного урона атаками."
-description_ru = "Повышает уровень создаваемой угрозы и восстанавливает ману в размере {P}% от нанесенного урона атаками."
 class_id = "paladin"
 ability_type = "stance"
 target_type = "self"

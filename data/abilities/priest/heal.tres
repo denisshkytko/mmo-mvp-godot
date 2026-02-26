@@ -112,7 +112,6 @@ id = "heal"
 name = "Исцеление"
 icon = ExtResource("2")
 description = "Восстанавливает цели {X} здоровья."
-description_ru = "Восстанавливает цели {X} здоровья."
 class_id = "priest"
 ability_type = "heal"
 target_type = "ally"

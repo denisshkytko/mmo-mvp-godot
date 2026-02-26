@@ -17,7 +17,7 @@ Use the same section order as existing class files:
 
 ## 2) Localization during interim phase
 Until external localization storage is introduced:
-- keep `description` (ENG) and `description_ru` (RU) in the same `.tres`.
+- keep a single `description` field in the `.tres` and use placeholders for dynamic values.
 - do not create separate RU/ENG files for one ability.
 
 ## 3) Tooltip template tokens

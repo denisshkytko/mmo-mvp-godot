@@ -154,7 +154,6 @@ id = "healing_touch"
 name = "Исцеляющее касание"
 icon = ExtResource("2")
 description = "Восстанавливает цели {X} единиц здоровья."
-description_ru = "Восстанавливает цели {X} единиц здоровья."
 class_id = "shaman"
 ability_type = "heal"
 target_type = "ally"

@@ -60,7 +60,6 @@ id = "sacred_guard"
 name = "Божественная защита"
 icon = ExtResource("2")
 description = "Дарует цели иммунитет к урону на {D} секунды."
-description_ru = "Дарует цели иммунитет к урону на {D} секунды."
 class_id = "paladin"
 ability_type = "active"
 target_type = "ally"

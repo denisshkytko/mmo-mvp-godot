@@ -100,7 +100,6 @@ id = "judging_flame"
 name = "Карающее пламя"
 icon = ExtResource("2")
 description = "Наносит цели {X} единиц магического урона."
-description_ru = "Наносит цели {X} единиц магического урона."
 class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"
