@@ -95,7 +95,7 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 			var cast_snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
 			var cast_speed_pct: float = float(cast_snap.get("cast_speed_pct", 0.0))
 			cast_time_eff = rank_data.cast_time_sec * (1.0 / (1.0 + cast_speed_pct / 100.0))
-			params.append(tr("ability.common.cast_time").format({"seconds": "%.1f" % cast_time_eff}))
+		params.append(tr("ability.common.cast_time").format({"seconds": "%.1f" % cast_time_eff}))
 	if rank_data.cooldown_sec > 0.0:
 		params.append(tr("ability.common.cooldown").format({"seconds": "%.1f" % rank_data.cooldown_sec}))
 	if rank_data.resource_cost > 0:
