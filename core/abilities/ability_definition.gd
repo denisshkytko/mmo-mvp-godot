@@ -14,10 +14,10 @@ class_name AbilityDefinition
 @export var ranks: Array[RankData] = []
 
 func get_display_name() -> String:
-	return tr(name_key)
+	return TranslationServer.translate(name_key)
 
 func get_description_template() -> String:
-	return tr(description_key)
+	return TranslationServer.translate(description_key)
 
 func get_max_rank() -> int:
 	return ranks.size()
