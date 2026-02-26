@@ -1,0 +1,390 @@
+[gd_scene load_steps=5 format=3 uid="uid://bq1obwgfdui1f"]
+
+[ext_resource type="Script" uid="uid://dv5t17eg8j84f" path="res://ui/game/hud/windows/inventory_hud.gd" id="1_wqexf"]
+[ext_resource type="PackedScene" uid="uid://bt2tbslwfrutf" path="res://ui/game/hud/shared/SharedTooltipPanel.tscn" id="2_0n5q6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wqexf"]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(7.70092e-07, 0.96191174, 0.33474815, 1)
+
+[sub_resource type="FontFile" id="FontFile_wqexf"]
+subpixel_positioning = 0
+msdf_pixel_range = 14
+msdf_size = 128
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+
+[node name="InventoryHUD" type="CanvasLayer"]
+script = ExtResource("1_wqexf")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -394.0
+offset_top = -493.0
+offset_right = -64.0
+offset_bottom = -128.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="GoldLabel" type="RichTextLabel" parent="Root/Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 155.0
+offset_bottom = 44.0
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+vertical_alignment = 1
+
+[node name="Content" type="HBoxContainer" parent="Root/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 50.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="BagSlots" type="VBoxContainer" parent="Root/Panel/Content"]
+custom_minimum_size = Vector2(32, 140)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 5
+
+[node name="BagSlot1" type="Button" parent="Root/Panel/Content/BagSlots"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="BagSlot2" type="Button" parent="Root/Panel/Content/BagSlots"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="BagSlot3" type="Button" parent="Root/Panel/Content/BagSlots"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="BagSlot4" type="Button" parent="Root/Panel/Content/BagSlots"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="GridScrollWrapper" type="Control" parent="Root/Panel/Content"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="GridScroll" type="ScrollContainer" parent="Root/Panel/Content/GridScrollWrapper"]
+custom_minimum_size = Vector2(88, 80)
+layout_mode = 1
+offset_right = 88.0
+offset_bottom = 80.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="Grid" type="GridContainer" parent="Root/Panel/Content/GridScrollWrapper/GridScroll"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
+
+[node name="Slot0" type="Panel" parent="Root/Panel/Content/GridScrollWrapper/GridScroll/Grid"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
+
+[node name="Text" type="Label" parent="Root/Panel/Content/GridScrollWrapper/GridScroll/Grid/Slot0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontFile_wqexf")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+clip_text = true
+
+[node name="QuickBar" type="HBoxContainer" parent="Root"]
+custom_minimum_size = Vector2(340, 64)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -528.0
+offset_top = -96.0
+offset_right = -64.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 16
+
+[node name="Quick0" type="Button" parent="Root/QuickBar"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/QuickBar/Quick0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Count" type="Label" parent="Root/QuickBar/Quick0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 2
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Quick1" type="Button" parent="Root/QuickBar"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/QuickBar/Quick1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Count" type="Label" parent="Root/QuickBar/Quick1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 2
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Quick2" type="Button" parent="Root/QuickBar"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/QuickBar/Quick2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Count" type="Label" parent="Root/QuickBar/Quick2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 2
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Quick3" type="Button" parent="Root/QuickBar"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/QuickBar/Quick3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Count" type="Label" parent="Root/QuickBar/Quick3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 2
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Quick4" type="Button" parent="Root/QuickBar"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root/QuickBar/Quick4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Count" type="Label" parent="Root/QuickBar/Quick4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 2
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="InvTooltip" parent="Root" instance=ExtResource("2_0n5q6")]
+z_index = 60
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 10.0
+
+[node name="SplitDialog" type="Panel" parent="Root"]
+visible = false
+custom_minimum_size = Vector2(260, 130)
+layout_mode = 0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 300.0
+offset_bottom = 170.0
+
+[node name="SplitTitle" type="Label" parent="Root/SplitDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 240.0
+offset_bottom = 30.0
+text = "Разделить"
+
+[node name="SplitSlider" type="HSlider" parent="Root/SplitDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 36.0
+offset_right = 240.0
+offset_bottom = 60.0
+
+[node name="SplitAmount" type="Label" parent="Root/SplitDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 64.0
+offset_right = 240.0
+offset_bottom = 86.0
+text = "1 / 1"
+
+[node name="SplitOk" type="Button" parent="Root/SplitDialog"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 94.0
+offset_right = 90.0
+offset_bottom = 120.0
+text = "Ок"
+
+[node name="SplitCancel" type="Button" parent="Root/SplitDialog"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 94.0
+offset_right = 190.0
+offset_bottom = 120.0
+text = "Отмена"
+
+[node name="BagFullDialog" type="AcceptDialog" parent="Root"]
+oversampling_override = 1.0
+title = "Inventory"
+dialog_text = "Bag is full."

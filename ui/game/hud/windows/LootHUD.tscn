@@ -1,0 +1,149 @@
+[gd_scene load_steps=3 format=3 uid="uid://cyfwx2chmt82i"]
+
+[ext_resource type="Script" uid="uid://65yhursyacwe" path="res://ui/game/hud/windows/loot_hud.gd" id="1_784ee"]
+[ext_resource type="PackedScene" uid="uid://bt2tbslwfrutf" path="res://ui/game/hud/shared/SharedTooltipPanel.tscn" id="2_4g0os"]
+
+[node name="LootHUD" type="CanvasLayer"]
+script = ExtResource("1_784ee")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TooltipPanel" parent="Root" instance=ExtResource("2_4g0os")]
+z_index = 50
+layout_mode = 0
+
+[node name="Panel" type="Panel" parent="Root"]
+custom_minimum_size = Vector2(504, 568)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -252.0
+offset_top = 152.0
+offset_right = 252.0
+offset_bottom = 720.0
+grow_horizontal = 2
+
+[node name="Title" type="Label" parent="Root/Panel"]
+custom_minimum_size = Vector2(80, 32)
+layout_mode = 1
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 88.0
+offset_bottom = 56.0
+theme_override_font_sizes/font_size = 22
+text = "Loot"
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Root/Panel"]
+clip_contents = false
+custom_minimum_size = Vector2(488, 432)
+layout_mode = 0
+offset_left = 8.0
+offset_top = 64.0
+offset_right = 496.0
+offset_bottom = 496.0
+
+[node name="Grid" type="GridContainer" parent="Root/Panel/Scroll"]
+custom_minimum_size = Vector2(280, 260)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="LootSlot0" type="Panel" parent="Root/Panel/Scroll/Grid"]
+custom_minimum_size = Vector2(488, 96)
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="Row" type="HBoxContainer" parent="Root/Panel/Scroll/Grid/LootSlot0"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -233.5
+offset_top = -40.0
+offset_right = 233.5
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Root/Panel/Scroll/Grid/LootSlot0/Row"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Name" type="RichTextLabel" parent="Root/Panel/Scroll/Grid/LootSlot0/Row"]
+custom_minimum_size = Vector2(264, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+scroll_active = false
+autowrap_mode = 0
+vertical_alignment = 1
+
+[node name="Count" type="Label" parent="Root/Panel/Scroll/Grid/LootSlot0/Row"]
+custom_minimum_size = Vector2(35, 48)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="TakeButton" type="Button" parent="Root/Panel/Scroll/Grid/LootSlot0/Row"]
+custom_minimum_size = Vector2(64, 80)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 22
+text = "Take"
+
+[node name="LootAllButton" type="Button" parent="Root/Panel"]
+custom_minimum_size = Vector2(120, 48)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -60.0
+offset_top = -56.0
+offset_right = 60.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+text = "Loot All"
+
+[node name="CloseButton" type="Button" parent="Root/Panel"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -56.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 56.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 22
+text = "Х"
