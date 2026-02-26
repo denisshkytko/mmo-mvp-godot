@@ -33,7 +33,7 @@ window/stretch/aspect="expand"
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://locale/ru.po")
+locale/translations=PackedStringArray("res://locale/spells/ru_spells.po")
 locale/fallback="ru"
 
 [input]
