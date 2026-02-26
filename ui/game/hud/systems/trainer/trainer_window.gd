@@ -9,6 +9,7 @@ const TRAINER_ROW_SCROLLBAR_RESERVE := 20.0
 
 @onready var panel: Panel = $Root/Panel
 @onready var title_label: Label = $Root/Panel/Title
+@onready var filter_label: Label = $Root/Panel/FilterRow/FilterLabel
 @onready var close_button: Button = $Root/Panel/CloseButton
 @onready var filter_option: OptionButton = $Root/Panel/FilterRow/FilterOption
 @onready var scroll: ScrollContainer = $Root/Panel/Scroll
@@ -36,6 +37,10 @@ func _ready() -> void:
 	_ensure_tooltip_ref()
 	if close_button != null and not close_button.pressed.is_connected(close):
 		close_button.pressed.connect(close)
+	if title_label != null:
+		title_label.text = tr("ability.trainer.title")
+	if filter_label != null:
+		filter_label.text = tr("ability.trainer.filter_label")
 	if filter_option != null:
 		filter_option.clear()
 		filter_option.add_item(tr("ability.trainer.filter.available"))

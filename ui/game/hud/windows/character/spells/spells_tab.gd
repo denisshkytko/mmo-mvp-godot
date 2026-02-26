@@ -19,9 +19,9 @@ var _filter_index: int = 0
 
 func _ready() -> void:
 	if filter_option != null and filter_option.item_count == 0:
-		filter_option.add_item("Все")
-		filter_option.add_item("Активные")
-		filter_option.add_item("Ауры/бафы")
+		filter_option.add_item(tr("ability.spells.filter.all"))
+		filter_option.add_item(tr("ability.spells.filter.active"))
+		filter_option.add_item(tr("ability.spells.filter.auras_buffs"))
 		filter_option.select(0)
 	if filter_option != null and not filter_option.item_selected.is_connected(_on_filter_selected):
 		filter_option.item_selected.connect(_on_filter_selected)
