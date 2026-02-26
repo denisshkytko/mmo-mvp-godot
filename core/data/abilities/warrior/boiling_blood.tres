@@ -58,9 +58,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "boiling_blood"
-name = "Кипящая кровь"
+name_key = "ability.boiling_blood.name"
 icon = ExtResource("2")
-description = "Увеличивает шанс критического удара на {P}% и критический урон на {P2}%, но увеличивает получаемый урон на {X}%."
+description_key = "ability.boiling_blood.desc"
 class_id = "warrior"
 ability_type = "stance"
 target_type = "self"

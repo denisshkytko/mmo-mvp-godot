@@ -30,9 +30,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "falcon_aspect"
-name = "Дух сапсан"
+name_key = "ability.falcon_aspect.name"
 icon = ExtResource("2")
-description = "Увеличивает скорость передвижения на 30%."
+description_key = "ability.falcon_aspect.desc"
 class_id = "hunter"
 ability_type = "stance"
 target_type = "self"

@@ -69,7 +69,7 @@ func _show_and_position(target_pos: Vector2) -> void:
 
 func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int, player: Player) -> String:
 	if rank_data == null:
-		return def.description
+		return def.get_description_template()
 	var spell_power: float = 0.0
 	var base_phys: int = 0
 	var max_resource: int = 0
@@ -171,7 +171,7 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 		"lightning":
 			return "Наносит цели %d единиц магического урона." % scaled_flat
 		_:
-			return _format_effect_from_template(def.description, rank_data, scaled_flat, scaled_flat2)
+			return _format_effect_from_template(def.get_description_template(), rank_data, scaled_flat, scaled_flat2)
 
 
 func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String) -> bool:

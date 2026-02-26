@@ -101,9 +101,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "fortitude"
-name = "Стойкость"
+name_key = "ability.fortitude.name"
 icon = ExtResource("2")
-description = "Повышает выносливость цели на {X} и восстанавливает {X2} здоровья каждую секунду. Действует 30 минут."
+description_key = "ability.fortitude.desc"
 class_id = "priest"
 ability_type = "buff"
 target_type = "ally"

@@ -30,9 +30,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "battle_readiness"
-name = "Боевая готовность"
+name_key = "ability.battle_readiness.name"
 icon = ExtResource("2")
-description = "Увеличивает физический урон на 15%."
+description_key = "ability.battle_readiness.desc"
 class_id = "warrior"
 ability_type = "stance"
 target_type = "self"

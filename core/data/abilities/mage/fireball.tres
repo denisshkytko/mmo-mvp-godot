@@ -169,9 +169,9 @@ burn_debuff_suffix = "burn"
 [resource]
 script = ExtResource("1")
 id = "fireball"
-name = "Огненный шар"
+name_key = "ability.fireball.name"
 icon = ExtResource("2")
-description = "Наносит {X} магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
+description_key = "ability.fireball.desc"
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

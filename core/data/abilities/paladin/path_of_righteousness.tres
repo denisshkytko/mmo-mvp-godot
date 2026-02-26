@@ -114,9 +114,9 @@ on_hit = {"on_hit_magic_bonus_flat": "value_flat"}
 [resource]
 script = ExtResource("1")
 id = "path_of_righteousness"
-name = "Путь праведности"
+name_key = "ability.path_of_righteousness.name"
 icon = ExtResource("2")
-description = "Атаки дополнительно наносят {X} единиц магического урона."
+description_key = "ability.path_of_righteousness.desc"
 class_id = "paladin"
 ability_type = "stance"
 target_type = "self"

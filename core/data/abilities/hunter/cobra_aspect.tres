@@ -100,9 +100,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "cobra_aspect"
-name = "Дух кобры"
+name_key = "ability.cobra_aspect.name"
 icon = ExtResource("2")
-description = "Повышает шанс критического удара охотника на {P}%."
+description_key = "ability.cobra_aspect.desc"
 class_id = "hunter"
 ability_type = "stance"
 target_type = "self"

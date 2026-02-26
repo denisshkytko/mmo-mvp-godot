@@ -48,9 +48,9 @@ inner_effect = SubResource("20")
 [resource]
 script = ExtResource("1")
 id = "sweeping_strikes"
-name = "Размашистые удары"
+name_key = "ability.sweeping_strikes.name"
 icon = ExtResource("2")
-description = "Наносит {P}% физического урона всем ближайшим врагам."
+description_key = "ability.sweeping_strikes.desc"
 class_id = "warrior"
 ability_type = "aoe_damage"
 target_type = "self"

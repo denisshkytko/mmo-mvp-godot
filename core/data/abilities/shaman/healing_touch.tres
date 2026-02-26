@@ -151,9 +151,9 @@ script = ExtResource("4")
 [resource]
 script = ExtResource("1")
 id = "healing_touch"
-name = "Исцеляющее касание"
+name_key = "ability.healing_touch.name"
 icon = ExtResource("2")
-description = "Восстанавливает цели {X} единиц здоровья."
+description_key = "ability.healing_touch.desc"
 class_id = "shaman"
 ability_type = "heal"
 target_type = "ally"

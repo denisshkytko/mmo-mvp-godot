@@ -125,9 +125,9 @@ scaling_mode = "phys_base_pct"
 [resource]
 script = ExtResource("1")
 id = "powerful_strike"
-name = "Мощный удар"
+name_key = "ability.powerful_strike.name"
 icon = ExtResource("2")
-description = "Наносит {P}% физического урона."
+description_key = "ability.powerful_strike.desc"
 class_id = "warrior"
 ability_type = "damage"
 target_type = "enemy"

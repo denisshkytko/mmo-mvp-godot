@@ -57,9 +57,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "sacred_guard"
-name = "Божественная защита"
+name_key = "ability.sacred_guard.name"
 icon = ExtResource("2")
-description = "Дарует цели иммунитет к урону на {D} секунды."
+description_key = "ability.sacred_guard.desc"
 class_id = "paladin"
 ability_type = "active"
 target_type = "ally"

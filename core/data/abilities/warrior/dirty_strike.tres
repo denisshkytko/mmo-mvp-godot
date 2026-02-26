@@ -43,9 +43,9 @@ effects = [SubResource("20"), SubResource("21")]
 [resource]
 script = ExtResource("1")
 id = "dirty_strike"
-name = "Подлый удар"
+name_key = "ability.dirty_strike.name"
 icon = ExtResource("2")
-description = "Наносит 100% от силы атаки в виде физического урона и оглушает цель на {D} секунды."
+description_key = "ability.dirty_strike.desc"
 class_id = "warrior"
 ability_type = "damage"
 target_type = "enemy"

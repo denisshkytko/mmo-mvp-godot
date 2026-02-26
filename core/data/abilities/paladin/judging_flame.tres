@@ -97,9 +97,9 @@ scaling_mode = "spell_power_flat"
 [resource]
 script = ExtResource("1")
 id = "judging_flame"
-name = "Карающее пламя"
+name_key = "ability.judging_flame.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} единиц магического урона."
+description_key = "ability.judging_flame.desc"
 class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"

@@ -56,9 +56,9 @@ hit_count = 5
 [resource]
 script = ExtResource("1")
 id = "panjagan"
-name = "Панджаган"
+name_key = "ability.panjagan.name"
 icon = ExtResource("2")
-description = "Охотник выпускает 5 стрел подряд, каждая из которых наносит {P}% физического урона."
+description_key = "ability.panjagan.desc"
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

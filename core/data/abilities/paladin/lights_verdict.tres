@@ -65,9 +65,9 @@ heal_effect = SubResource("22")
 [resource]
 script = ExtResource("1")
 id = "lights_verdict"
-name = "Вердикт света"
+name_key = "ability.lights_verdict.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} единиц магического урона, если цель - враг, или восстанавливает цели {X} единиц здоровья, если цель - союзник."
+description_key = "ability.lights_verdict.desc"
 class_id = "paladin"
 ability_type = "active"
 target_type = "ally_or_enemy"

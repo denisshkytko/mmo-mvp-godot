@@ -30,9 +30,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "royal_oath"
-name = "Королевское благословение"
+name_key = "ability.royal_oath.name"
 icon = ExtResource("2")
-description = "Повышает основные характеристики цели на {P}% на {D} минут."
+description_key = "ability.royal_oath.desc"
 class_id = "paladin"
 ability_type = "buff"
 target_type = "ally"

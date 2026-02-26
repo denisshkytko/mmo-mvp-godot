@@ -125,9 +125,9 @@ scaling_mode = "spell_power_flat"
 [resource]
 script = ExtResource("1")
 id = "arcane_shot"
-name = "Магический выстрел"
+name_key = "ability.arcane_shot.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} ед. магического урона."
+description_key = "ability.arcane_shot.desc"
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

@@ -30,9 +30,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "water_devotion"
-name = "Преданность духам воды"
+name_key = "ability.water_devotion.name"
 icon = ExtResource("2")
-description = "Восстанавливает 1% максимальной маны раз в 2 секунды. Повышает скорость произнесения заклинаний на 20%."
+description_key = "ability.water_devotion.desc"
 class_id = "shaman"
 ability_type = "stance"
 target_type = "self"

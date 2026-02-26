@@ -2,9 +2,9 @@ extends Resource
 class_name AbilityDefinition
 
 @export var id: String = ""
-@export var name: String = ""
+@export var name_key: String = ""
 @export var icon: Texture2D
-@export var description: String = ""
+@export var description_key: String = ""
 @export var class_id: String = ""
 @export var ability_type: String = "active"
 @export var target_type: String = "enemy"
@@ -14,7 +14,10 @@ class_name AbilityDefinition
 @export var ranks: Array[RankData] = []
 
 func get_display_name() -> String:
-	return name if name != "" else id
+	return tr(name_key)
+
+func get_description_template() -> String:
+	return tr(description_key)
 
 func get_max_rank() -> int:
 	return ranks.size()

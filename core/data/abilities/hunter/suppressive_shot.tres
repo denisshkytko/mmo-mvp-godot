@@ -56,9 +56,9 @@ max_targets = 3
 [resource]
 script = ExtResource("1")
 id = "suppressive_shot"
-name = "Подавляющий выстрел"
+name_key = "ability.suppressive_shot.name"
 icon = ExtResource("2")
-description = "Стреляет по нескольким целям, нанося каждой {P}% физического урона."
+description_key = "ability.suppressive_shot.desc"
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

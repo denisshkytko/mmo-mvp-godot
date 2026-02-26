@@ -66,9 +66,9 @@ effects = [SubResource("21"), SubResource("23"), SubResource("24")]
 [resource]
 script = ExtResource("1")
 id = "radiance"
-name = "Сияние света"
+name_key = "ability.radiance.name"
 icon = ExtResource("2")
-description = "Наносит {X} магического урона врагам и исцеляет жреца и ближайших союзников на {X}."
+description_key = "ability.radiance.desc"
 class_id = "priest"
 ability_type = "active"
 target_type = "self"

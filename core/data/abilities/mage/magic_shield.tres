@@ -32,9 +32,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "magic_shield"
-name = "Магический щит"
+name_key = "ability.magic_shield.name"
 icon = ExtResource("2")
-description = "Блокирует весь получаемый магический урон цели на 5 секунд."
+description_key = "ability.magic_shield.desc"
 class_id = "mage"
 ability_type = "active"
 target_type = "ally"
