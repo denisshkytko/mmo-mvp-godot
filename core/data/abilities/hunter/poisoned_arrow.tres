@@ -127,9 +127,9 @@ effects = [SubResource("20"), SubResource("21")]
 [resource]
 script = ExtResource("1")
 id = "poisoned_arrow"
-name = "Отравленная стрела"
+name_key = "ability.poisoned_arrow.name"
 icon = ExtResource("2")
-description = "Наносит 100% физического урона и дополнительно {X} ед. магического урона в течение {D} сек."
+description_key = "ability.poisoned_arrow.desc"
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

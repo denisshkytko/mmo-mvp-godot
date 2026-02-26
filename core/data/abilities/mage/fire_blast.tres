@@ -125,9 +125,9 @@ scaling_mode = "spell_power_flat"
 [resource]
 script = ExtResource("1")
 id = "fire_blast"
-name = "Огненный взрыв"
+name_key = "ability.fire_blast.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} магического урона."
+description_key = "ability.fire_blast.desc"
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

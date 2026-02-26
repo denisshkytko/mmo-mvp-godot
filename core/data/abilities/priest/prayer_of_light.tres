@@ -40,9 +40,9 @@ effects = [SubResource("21"), SubResource("22")]
 [resource]
 script = ExtResource("1")
 id = "prayer_of_light"
-name = "Молитва света"
+name_key = "ability.prayer_of_light.name"
 icon = ExtResource("2")
-description = "Восстанавливает {X} здоровья жрецу и всем союзникам поблизости."
+description_key = "ability.prayer_of_light.desc"
 class_id = "priest"
 ability_type = "heal"
 target_type = "ally"

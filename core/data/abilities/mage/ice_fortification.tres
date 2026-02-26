@@ -114,9 +114,9 @@ on_hit = {"retaliate_attack_speed_pct": "value_pct", "retaliate_duration_sec": "
 [resource]
 script = ExtResource("1")
 id = "ice_fortification"
-name = "Укрепление льдом"
+name_key = "ability.ice_fortification.name"
 icon = ExtResource("2")
-description = "Увеличивает физическую защиту мага на {X} и уменьшает скорость атаки атакующих врагов на 30% на 5 секунд."
+description_key = "ability.ice_fortification.desc"
 class_id = "mage"
 ability_type = "stance"
 target_type = "self"

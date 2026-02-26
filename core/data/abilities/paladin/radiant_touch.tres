@@ -95,9 +95,9 @@ script = ExtResource("4")
 [resource]
 script = ExtResource("1")
 id = "radiant_touch"
-name = "Сияющее касание"
+name_key = "ability.radiant_touch.name"
 icon = ExtResource("2")
-description = "Восстанавливает цели {X} единиц здоровья."
+description_key = "ability.radiant_touch.desc"
 class_id = "paladin"
 ability_type = "heal"
 target_type = "ally"

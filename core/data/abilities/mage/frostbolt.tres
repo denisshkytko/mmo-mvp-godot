@@ -169,9 +169,9 @@ effects = [SubResource("20"), SubResource("21")]
 [resource]
 script = ExtResource("1")
 id = "frostbolt"
-name = "Ледяная стрела"
+name_key = "ability.frostbolt.name"
 icon = ExtResource("2")
-description = "Наносит {X} магического урона и снижает скорость передвижения цели на 40% на {D} сек."
+description_key = "ability.frostbolt.desc"
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

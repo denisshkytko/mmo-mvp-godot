@@ -125,9 +125,9 @@ scaling_mode = "spell_power_flat"
 [resource]
 script = ExtResource("1")
 id = "throe"
-name = "Мука"
+name_key = "ability.throe.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} ед. магического урона."
+description_key = "ability.throe.desc"
 class_id = "priest"
 ability_type = "damage"
 target_type = "enemy"

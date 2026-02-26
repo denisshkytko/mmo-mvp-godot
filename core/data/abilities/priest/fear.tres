@@ -109,9 +109,9 @@ inner_effect = SubResource("20")
 [resource]
 script = ExtResource("1")
 id = "fear"
-name = "Оцепенение"
+name_key = "ability.fear.name"
 icon = ExtResource("2")
-description = "Сковывает страхом ближайших врагов на {D} сек. Они не могут двигаться, атаковать и произносить заклинания. Эффект снимается при получении урона."
+description_key = "ability.fear.desc"
 class_id = "priest"
 ability_type = "active"
 target_type = "self"

@@ -72,9 +72,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "inner_fire"
-name = "Внутренний огонь"
+name_key = "ability.inner_fire.name"
 icon = ExtResource("2")
-description = "Увеличивает критический эффект заклинаний на {P}% и снижает получаемый урон на {P2}%."
+description_key = "ability.inner_fire.desc"
 class_id = "priest"
 ability_type = "stance"
 target_type = "self"

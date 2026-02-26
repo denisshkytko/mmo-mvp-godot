@@ -41,9 +41,9 @@ scaling_mode = "phys_base_pct"
 [resource]
 script = ExtResource("1")
 id = "light_execution"
-name = "Казнь света"
+name_key = "ability.light_execution.name"
 icon = ExtResource("2")
-description = "Наносит цели {P2}% физического урона, если цель имеет {T}% здоровья или меньше."
+description_key = "ability.light_execution.desc"
 class_id = "paladin"
 ability_type = "damage"
 target_type = "enemy"

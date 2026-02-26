@@ -31,6 +31,11 @@ window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://locale/spells/ru_spells.po")
+locale/fallback="ru"
+
 [input]
 
 ui_left={

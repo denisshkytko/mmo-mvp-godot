@@ -114,9 +114,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "mantis_aspect"
-name = "Дух богомола"
+name_key = "ability.mantis_aspect.name"
 icon = ExtResource("2")
-description = "Увеличивает скорость атаки охотника на {P}%."
+description_key = "ability.mantis_aspect.desc"
 class_id = "hunter"
 ability_type = "stance"
 target_type = "self"

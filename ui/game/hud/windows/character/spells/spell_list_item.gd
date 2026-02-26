@@ -27,7 +27,10 @@ func set_data(definition: AbilityDefinition, learned_rank: int) -> void:
 	if icon_rect != null:
 		icon_rect.texture = definition.icon
 	if name_button != null:
-		name_button.text = "%s (R%d)" % [definition.get_display_name(), learned_rank]
+		name_button.text = tr("ability.common.level_short_with_name").format({
+			"name": definition.get_display_name(),
+			"level": learned_rank,
+		})
 
 func set_selected(is_selected: bool) -> void:
 	if is_selected:

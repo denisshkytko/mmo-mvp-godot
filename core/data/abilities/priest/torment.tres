@@ -130,9 +130,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "torment"
-name = "Пытка"
+name_key = "ability.torment.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} ед. магического урона в течение {D} сек."
+description_key = "ability.torment.desc"
 class_id = "priest"
 ability_type = "damage"
 target_type = "enemy"

@@ -81,9 +81,9 @@ script = ExtResource("4")
 [resource]
 script = ExtResource("1")
 id = "lights_call"
-name = "Зов света"
+name_key = "ability.lights_call.name"
 icon = ExtResource("2")
-description = "Воскрешает цель с {HP}% запасом здоровья и {MP}% запасом маны."
+description_key = "ability.lights_call.desc"
 class_id = "paladin"
 ability_type = "active"
 target_type = "corpse_player"

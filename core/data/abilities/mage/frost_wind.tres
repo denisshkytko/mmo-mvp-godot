@@ -140,9 +140,9 @@ effects = [SubResource("21"), SubResource("23")]
 [resource]
 script = ExtResource("1")
 id = "frost_wind"
-name = "Ледяной ветер"
+name_key = "ability.frost_wind.name"
 icon = ExtResource("2")
-description = "Наносит всем врагам вокруг мага {X} магического урона и снижает скорость передвижения на 40% на 10 секунд."
+description_key = "ability.frost_wind.desc"
 class_id = "mage"
 ability_type = "damage"
 target_type = "self"

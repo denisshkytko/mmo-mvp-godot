@@ -43,9 +43,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "inspiration"
-name = "Воодушевление"
+name_key = "ability.inspiration.name"
 icon = ExtResource("2")
-description = "Увеличивает максимальное здоровье цели на {P}% на 30 минут."
+description_key = "ability.inspiration.desc"
 class_id = "warrior"
 ability_type = "buff"
 target_type = "self"

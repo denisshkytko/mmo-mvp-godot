@@ -127,9 +127,9 @@ effects = [SubResource("20"), SubResource("21")]
 [resource]
 script = ExtResource("1")
 id = "armor_break"
-name = "Пробитие брони"
+name_key = "ability.armor_break.name"
 icon = ExtResource("2")
-description = "Наносит 100% физического урона и дополнительно {P2}% физического урона в течение 10 секунд. Дополнительный урон игнорирует физическую защиту цели."
+description_key = "ability.armor_break.desc"
 class_id = "warrior"
 ability_type = "damage"
 target_type = "enemy"

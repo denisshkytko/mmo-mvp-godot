@@ -46,9 +46,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "defensive_reflexes"
-name = "Защитные рефлексы"
+name_key = "ability.defensive_reflexes.name"
 icon = ExtResource("2")
-description = "Полностью предотвращает получение первого входящего урона любого вида. Внутреннее время восстановления: {CD} сек."
+description_key = "ability.defensive_reflexes.desc"
 class_id = "warrior"
 ability_type = "passive"
 target_type = "self"

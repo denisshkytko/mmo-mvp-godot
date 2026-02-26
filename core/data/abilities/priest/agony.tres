@@ -99,9 +99,9 @@ effects = [SubResource("20"), SubResource("21")]
 [resource]
 script = ExtResource("1")
 id = "agony"
-name = "Агония"
+name_key = "ability.agony.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} ед. магического урона и снижает скорость передвижения на 50% на {D} сек."
+description_key = "ability.agony.desc"
 class_id = "priest"
 ability_type = "damage"
 target_type = "enemy"

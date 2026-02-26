@@ -109,9 +109,9 @@ script = ExtResource("4")
 [resource]
 script = ExtResource("1")
 id = "heal"
-name = "Исцеление"
+name_key = "ability.heal.name"
 icon = ExtResource("2")
-description = "Восстанавливает цели {X} здоровья."
+description_key = "ability.heal.desc"
 class_id = "priest"
 ability_type = "heal"
 target_type = "ally"

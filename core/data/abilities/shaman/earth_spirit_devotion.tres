@@ -101,9 +101,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "earth_spirit_devotion"
-name = "Преданность духам земли"
+name_key = "ability.earth_spirit_devotion.name"
 icon = ExtResource("2")
-description = "Повышает силу и выносливость на {X} единиц."
+description_key = "ability.earth_spirit_devotion.desc"
 class_id = "shaman"
 ability_type = "aura"
 target_type = "self"

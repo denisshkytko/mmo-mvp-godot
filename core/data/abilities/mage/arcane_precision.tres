@@ -44,9 +44,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "arcane_precision"
-name = "Магическая точность"
+name_key = "ability.arcane_precision.name"
 icon = ExtResource("2")
-description = "Увеличивает шанс критического удара на {P}%."
+description_key = "ability.arcane_precision.desc"
 class_id = "mage"
 ability_type = "stance"
 target_type = "self"

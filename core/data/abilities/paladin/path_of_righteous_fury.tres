@@ -30,9 +30,9 @@ on_hit = {"mana_on_hit_pct": "value_pct", "threat_multiplier": "value_pct_2"}
 [resource]
 script = ExtResource("1")
 id = "path_of_righteous_fury"
-name = "Путь праведной ярости"
+name_key = "ability.path_of_righteous_fury.name"
 icon = ExtResource("2")
-description = "Повышает уровень создаваемой угрозы и восстанавливает ману в размере {P}% от нанесенного урона атаками."
+description_key = "ability.path_of_righteous_fury.desc"
 class_id = "paladin"
 ability_type = "stance"
 target_type = "self"

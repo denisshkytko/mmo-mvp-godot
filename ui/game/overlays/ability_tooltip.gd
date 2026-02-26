@@ -47,7 +47,10 @@ func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 		rank_data = db.call("get_rank_data", ability_id, shown_rank)
 
 	name_label.text = ability.get_display_name()
-	rank_label.text = "Rank %d/%d" % [shown_rank, ability.get_max_rank()]
+	rank_label.text = tr("ability.common.rank").format({
+		"current": shown_rank,
+		"max": ability.get_max_rank(),
+	})
 	description_label.text = _build_tooltip_text(ability, rank_data, shown_rank, player)
 	visible = true
 	move_to_front()
@@ -66,11 +69,11 @@ func _show_and_position(target_pos: Vector2) -> void:
 
 func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int, player: Player) -> String:
 	if rank_data == null:
-		return def.description
+		return def.get_description_template()
 	var spell_power: float = 0.0
 	var base_phys: int = 0
 	var max_resource: int = 0
-	var resource_label: String = "Resource"
+	var resource_label: String = tr("ability.common.resource_fallback")
 	if player != null and player.has_method("get_stats_snapshot"):
 		var snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
 		spell_power = float((snap.get("derived", {}) as Dictionary).get("spell_power", 0.0))
@@ -92,13 +95,13 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 			var cast_snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
 			var cast_speed_pct: float = float(cast_snap.get("cast_speed_pct", 0.0))
 			cast_time_eff = rank_data.cast_time_sec * (1.0 / (1.0 + cast_speed_pct / 100.0))
-		params.append("Cast: %.1fs" % cast_time_eff)
+		params.append(tr("ability.common.cast_time").format({"seconds": "%.1f" % cast_time_eff}))
 	if rank_data.cooldown_sec > 0.0:
-		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
+		params.append(tr("ability.common.cooldown").format({"seconds": "%.1f" % rank_data.cooldown_sec}))
 	if rank_data.resource_cost > 0:
 		var abs_cost: int = int(ceil(float(max_resource) * float(rank_data.resource_cost) / 100.0))
 		if abs_cost > 0:
-			params.append("Стоимость: %d %s" % [abs_cost, resource_label])
+			params.append(tr("ability.common.cost").format({"amount": abs_cost, "resource": resource_label}))
 	if not params.is_empty():
 		for p in params:
 			lines.append(p)
@@ -120,55 +123,7 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 	if scales_with_spell_power:
 		scaled_flat += int(round(spell_power))
 		scaled_flat2 += int(round(spell_power))
-	match ability_id:
-		"healing_light", "radiant_touch":
-			return "Восстанавливает цели %d единиц здоровья." % scaled_flat
-		"judging_flame":
-			return "Наносит цели %d единиц магического урона." % scaled_flat
-		"lights_verdict":
-			return "Наносит цели %d единиц магического урона, если цель - враг, или восстанавливает цели %d единиц здоровья, если цель - союзник." % [scaled_flat, scaled_flat]
-		"strike_of_light", "storm_of_light":
-			if ability_id == "storm_of_light":
-				return "Наносит всем врагам вокруг %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
-			return "Наносит цели %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
-		"path_of_righteousness":
-			return "Атаки дополнительно наносят %d единиц магического урона." % scaled_flat
-		"aura_of_light_protection":
-			return "Повышает физическую защиту на %d единиц и магическое сопротивление на %d единиц." % [rank_data.value_flat, rank_data.value_flat_2]
-		"lightbound_might":
-			return "Повышает силу атаки цели на %d единиц на %d минут." % [rank_data.value_flat, int(round(rank_data.duration_sec / 60.0))]
-		"sacred_barrier", "sacred_guard":
-			if ability_id == "sacred_barrier":
-				return "Дарует цели иммунитет к физическому урону на %d секунд." % int(rank_data.duration_sec)
-			return "Дарует цели иммунитет к урону на %d секунды." % int(rank_data.duration_sec)
-		"lights_call":
-			return "Воскрешает цель с %.0f%% запасом здоровья и %.0f%% запасом маны." % [rank_data.value_pct, rank_data.value_pct_2]
-		"lights_guidance":
-			return "Повышает восстановление маны цели на %d единиц в секунду на %d минут." % [rank_data.value_flat, int(round(rank_data.duration_sec / 60.0))]
-		"path_of_righteous_fury":
-			return "Повышает уровень создаваемой угрозы и восстанавливает ману в размере %.0f%% от нанесенного урона атаками." % rank_data.value_pct
-		"royal_oath":
-			return "Повышает основные характеристики цели на %.0f%% на %d минут." % [rank_data.value_pct, int(round(rank_data.duration_sec / 60.0))]
-		"concentration_aura":
-			return "Повышает скорость произнесения заклинаний на %.0f%%." % rank_data.value_pct
-		"path_of_light":
-			return "Атаки восстанавливают здоровье в размере %.0f%% от нанесенного урона." % rank_data.value_pct
-		"aura_of_tempering":
-			return "Повышает физический урон на %d единиц." % rank_data.value_flat
-		"prayer_to_the_light":
-			return "Восстанавливает %.0f%% от максимального запаса маны." % rank_data.value_pct
-		"light_execution":
-			return "Наносит цели %.0f%% физического урона, если цель имеет %.0f%% здоровья или меньше." % [rank_data.value_pct_2, rank_data.value_pct]
-		"stone_fists":
-			return "Повышает силу атаки на %d единиц. Повышает уровень создаваемой угрозы." % rank_data.value_flat
-		"boiling_blood":
-			return "Увеличивает шанс критического удара на %.0f%% и критический урон на %.0f%%, но увеличивает получаемый урон на %d%%." % [rank_data.value_pct, rank_data.value_pct_2, int(rank_data.value_flat)]
-		"wind_spirit_devotion":
-			return "Повышает ловкость и восприятие на %d единиц." % rank_data.value_flat
-		"lightning":
-			return "Наносит цели %d единиц магического урона." % scaled_flat
-		_:
-			return _format_effect_from_template(def.description, rank_data, scaled_flat, scaled_flat2)
+	return _format_effect_from_template(def.get_description_template(), rank_data, scaled_flat, scaled_flat2)
 
 
 func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String) -> bool:
@@ -196,6 +151,7 @@ func _format_effect_from_template(template: String, rank_data: RankData, scaled_
 	out = out.replace("{M}", str(scaled_flat2))
 	out = out.replace("{P}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{P2}", str(int(round(rank_data.value_pct_2))))
+	out = out.replace("{N}", str(int((rank_data.flags as Dictionary).get("max_targets", 0))))
 	out = out.replace("{T}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{HP}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{MP}", str(int(round(rank_data.value_pct_2))))

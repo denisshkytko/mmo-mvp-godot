@@ -30,9 +30,9 @@ on_hit = {"mana_on_heal_allies_pct": "value_pct", "mana_on_hit_pct": "value_pct_
 [resource]
 script = ExtResource("1")
 id = "power_absorption"
-name = "Поглощение силы"
+name_key = "ability.power_absorption.name"
 icon = ExtResource("2")
-description = "Восстанавливает {P}% маны от урона заклинаниями и исцеления союзников, а также {P2}% маны от урона автоатаками."
+description_key = "ability.power_absorption.desc"
 class_id = "priest"
 ability_type = "stance"
 target_type = "self"

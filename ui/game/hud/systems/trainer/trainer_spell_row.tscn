@@ -20,12 +20,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 22
-text = "Spell"
+text = ""
 
 [node name="RankLabel" type="Label" parent="."]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "R0/1"
+text = ""
 horizontal_alignment = 0
 
 [node name="CostBox" type="HBoxContainer" parent="."]
@@ -37,20 +37,20 @@ alignment = 0
 [node name="Gold" type="Label" parent="CostBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "0g"
+text = ""
 
 [node name="Silver" type="Label" parent="CostBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "0s"
+text = ""
 
 [node name="Bronze" type="Label" parent="CostBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "0b"
+text = ""
 
 [node name="LearnButton" type="Button" parent="."]
 custom_minimum_size = Vector2(80, 64)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Изучить"
+text = ""

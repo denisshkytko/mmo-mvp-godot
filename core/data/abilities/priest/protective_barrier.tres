@@ -88,9 +88,9 @@ on_hit = {}
 [resource]
 script = ExtResource("1")
 id = "protective_barrier"
-name = "Защитный барьер"
+name_key = "ability.protective_barrier.name"
 icon = ExtResource("2")
-description = "Поглощает {X} ед. входящего урона до разрушения. Длительность: {D} сек."
+description_key = "ability.protective_barrier.desc"
 class_id = "priest"
 ability_type = "active"
 target_type = "ally"

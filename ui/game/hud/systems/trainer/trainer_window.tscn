@@ -30,7 +30,7 @@ offset_top = 8.0
 offset_right = 216.0
 offset_bottom = 39.0
 theme_override_font_sizes/font_size = 22
-text = "Тренер"
+text = ""
 
 [node name="CloseButton" type="Button" parent="Root/Panel"]
 custom_minimum_size = Vector2(64, 64)
@@ -44,7 +44,7 @@ offset_right = -8.0
 offset_bottom = 72.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 22
-text = "X"
+text = "×"
 
 [node name="FilterRow" type="HBoxContainer" parent="Root/Panel"]
 layout_mode = 1
@@ -57,7 +57,7 @@ theme_override_constants/separation = 8
 [node name="FilterLabel" type="Label" parent="Root/Panel/FilterRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Показать:"
+text = ""
 
 [node name="FilterOption" type="OptionButton" parent="Root/Panel/FilterRow"]
 layout_mode = 2

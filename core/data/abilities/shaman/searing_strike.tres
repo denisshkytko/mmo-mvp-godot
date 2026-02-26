@@ -122,9 +122,9 @@ magic_effect = SubResource("21")
 [resource]
 script = ExtResource("1")
 id = "searing_strike"
-name = "Опаляющий удар"
+name_key = "ability.searing_strike.name"
 icon = ExtResource("2")
-description = "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
+description_key = "ability.searing_strike.desc"
 class_id = "shaman"
 ability_type = "damage"
 target_type = "enemy"

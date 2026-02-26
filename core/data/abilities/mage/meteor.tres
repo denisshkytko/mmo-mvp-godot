@@ -43,9 +43,9 @@ burn_debuff_suffix = "burn"
 [resource]
 script = ExtResource("1")
 id = "meteor"
-name = "Метеорит"
+name_key = "ability.meteor.name"
 icon = ExtResource("2")
-description = "Наносит цели {X} ед. магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
+description_key = "ability.meteor.desc"
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

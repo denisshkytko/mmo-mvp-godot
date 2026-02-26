@@ -30,9 +30,9 @@ on_hit = {"lifesteal_pct": "value_pct"}
 [resource]
 script = ExtResource("1")
 id = "path_of_light"
-name = "Путь света"
+name_key = "ability.path_of_light.name"
 icon = ExtResource("2")
-description = "Атаки восстанавливают здоровье в размере {P}% от нанесенного урона."
+description_key = "ability.path_of_light.desc"
 class_id = "paladin"
 ability_type = "stance"
 target_type = "self"

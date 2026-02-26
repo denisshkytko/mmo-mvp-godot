@@ -111,9 +111,9 @@ scaling_mode = "spell_power_flat"
 [resource]
 script = ExtResource("1")
 id = "hailstorm"
-name = "Град"
+name_key = "ability.hailstorm.name"
 icon = ExtResource("2")
-description = "Наносит {X} магического урона {X2} раз(а)."
+description_key = "ability.hailstorm.desc"
 class_id = "mage"
 ability_type = "damage"
 target_type = "enemy"

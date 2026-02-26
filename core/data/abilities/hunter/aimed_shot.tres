@@ -55,9 +55,9 @@ scaling_mode = "phys_base_pct"
 [resource]
 script = ExtResource("1")
 id = "aimed_shot"
-name = "Прицельный выстрел"
+name_key = "ability.aimed_shot.name"
 icon = ExtResource("2")
-description = "Наносит цели {P}% физического урона."
+description_key = "ability.aimed_shot.desc"
 class_id = "hunter"
 ability_type = "damage"
 target_type = "enemy"

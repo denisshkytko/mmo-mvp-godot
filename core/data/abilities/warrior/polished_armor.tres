@@ -30,9 +30,9 @@ on_hit = {"threat_multiplier": "value_pct_2"}
 [resource]
 script = ExtResource("1")
 id = "polished_armor"
-name = "Отполированные доспехи"
+name_key = "ability.polished_armor.name"
 icon = ExtResource("2")
-description = "Снижает получаемый урон на {P}% и увеличивает создаваемую угрозу ({P2}x)."
+description_key = "ability.polished_armor.desc"
 class_id = "warrior"
 ability_type = "stance"
 target_type = "self"

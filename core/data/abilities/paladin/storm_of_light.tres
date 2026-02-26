@@ -73,9 +73,9 @@ inner_effect = SubResource("22")
 [resource]
 script = ExtResource("1")
 id = "storm_of_light"
-name = "Буря Света"
+name_key = "ability.storm_of_light.name"
 icon = ExtResource("2")
-description = "Наносит всем врагам вокруг {P}% физического урона и дополнительно {M} единиц магического урона."
+description_key = "ability.storm_of_light.desc"
 class_id = "paladin"
 ability_type = "aoe_damage"
 target_type = "self"
