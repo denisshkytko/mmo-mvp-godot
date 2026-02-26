@@ -153,7 +153,7 @@ func _refresh_rows() -> void:
 	if OS.is_debug_build():
 		print("[TRAINER_UI] defs_count=", defs.size(), " class=", _trainer_class_id)
 	if defs.size() == 0 and _trainer_class_id == "paladin":
-		push_warning("[TRAINER_UI] AbilityDB returned 0 defs for paladin. AbilityDB may not have loaded data/abilities/*.tres.")
+		push_warning("[TRAINER_UI] AbilityDB returned 0 defs for paladin. AbilityDB may not have loaded core/data/abilities/*.tres.")
 	defs.sort_custom(func(a: AbilityDefinition, b: AbilityDefinition) -> bool:
 		var rank_a: int = int(_spellbook.learned_ranks.get(a.id, 0)) + 1
 		var rank_b: int = int(_spellbook.learned_ranks.get(b.id, 0)) + 1

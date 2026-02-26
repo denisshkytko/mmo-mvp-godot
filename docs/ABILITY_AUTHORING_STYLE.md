@@ -44,7 +44,7 @@ Use the following placeholders in `description` whenever possible:
 
 ## 6) Manifest wiring
 Every new ability must be registered in:
-- `data/abilities/abilities_manifest.tres`
+- `core/data/abilities/abilities_manifest.tres`
 
 ## 7) Icons
 - icon filename: snake_case based on ability name.

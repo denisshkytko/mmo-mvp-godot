@@ -15,8 +15,8 @@ const EFFECT_SCRIPTS := {
 	"EffectAOE": "res://core/abilities/effects/effect_aoe.gd",
 }
 
-const ABILITIES_DIR := "res://data/abilities/paladin"
-const MANIFEST_PATH := "res://data/abilities/abilities_manifest.tres"
+const ABILITIES_DIR := "res://core/data/abilities/paladin"
+const MANIFEST_PATH := "res://core/data/abilities/abilities_manifest.tres"
 
 
 func _run() -> void:
