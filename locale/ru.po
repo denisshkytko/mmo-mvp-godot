@@ -1,0 +1,544 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "ability.common.rank"
+msgstr "Уровень {current}/{max}"
+
+msgid "ability.common.level_short_with_name"
+msgstr "{name} (Ур.{level})"
+
+msgid "ability.common.cast_time"
+msgstr "Время применения: {seconds} с"
+
+msgid "ability.common.cooldown"
+msgstr "Восстановление: {seconds} с"
+
+msgid "ability.common.cost"
+msgstr "Стоимость: {amount} {resource}"
+
+msgid "ability.common.resource_fallback"
+msgstr "Ресурс"
+
+msgid "ability.healing_light.name"
+msgstr "Исцеляющий свет"
+
+msgid "ability.healing_light.desc"
+msgstr "Восстанавливает цели {X} единиц здоровья."
+
+msgid "ability.radiant_touch.name"
+msgstr "Сияющее касание"
+
+msgid "ability.radiant_touch.desc"
+msgstr "Восстанавливает цели {X} единиц здоровья."
+
+msgid "ability.judging_flame.name"
+msgstr "Карающее пламя"
+
+msgid "ability.judging_flame.desc"
+msgstr "Наносит цели {X} единиц магического урона."
+
+msgid "ability.lights_verdict.name"
+msgstr "Вердикт света"
+
+msgid "ability.lights_verdict.desc"
+msgstr "Наносит цели {X} единиц магического урона, если цель - враг, или восстанавливает цели {X} единиц здоровья, если цель - союзник."
+
+msgid "ability.strike_of_light.name"
+msgstr "Удар света"
+
+msgid "ability.strike_of_light.desc"
+msgstr "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
+
+msgid "ability.storm_of_light.name"
+msgstr "Буря Света"
+
+msgid "ability.storm_of_light.desc"
+msgstr "Наносит всем врагам вокруг {P}% физического урона и дополнительно {M} единиц магического урона."
+
+msgid "ability.path_of_righteousness.name"
+msgstr "Путь праведности"
+
+msgid "ability.path_of_righteousness.desc"
+msgstr "Атаки дополнительно наносят {X} единиц магического урона."
+
+msgid "ability.aura_of_light_protection.name"
+msgstr "Аура светлой защиты"
+
+msgid "ability.aura_of_light_protection.desc"
+msgstr "Повышает физическую защиту на {P} единиц и магическое сопротивление на {M} единиц."
+
+msgid "ability.lightbound_might.name"
+msgstr "Светоносная мощь"
+
+msgid "ability.lightbound_might.desc"
+msgstr "Повышает силу атаки цели на {X} единиц на {D} минут."
+
+msgid "ability.sacred_barrier.name"
+msgstr "Священный барьер"
+
+msgid "ability.sacred_barrier.desc"
+msgstr "Дарует цели иммунитет к физическому урону на {D} секунд."
+
+msgid "ability.sacred_guard.name"
+msgstr "Божественная защита"
+
+msgid "ability.sacred_guard.desc"
+msgstr "Дарует цели иммунитет к урону на {D} секунды."
+
+msgid "ability.lights_call.name"
+msgstr "Зов света"
+
+msgid "ability.lights_call.desc"
+msgstr "Воскрешает цель с {HP}% запасом здоровья и {MP}% запасом маны."
+
+msgid "ability.lights_guidance.name"
+msgstr "Наставление света"
+
+msgid "ability.lights_guidance.desc"
+msgstr "Повышает восстановление маны цели на {X} единиц в секунду на {D} минут."
+
+msgid "ability.path_of_righteous_fury.name"
+msgstr "Путь праведной ярости"
+
+msgid "ability.path_of_righteous_fury.desc"
+msgstr "Повышает уровень создаваемой вами угрозы. Восстанавливает ману в размере {P}% от нанесенного урона атаками."
+
+msgid "ability.royal_oath.name"
+msgstr "Королевское благословение"
+
+msgid "ability.royal_oath.desc"
+msgstr "Повышает основные характеристики цели на {P}% на {D} минут."
+
+msgid "ability.concentration_aura.name"
+msgstr "Аура концентрации"
+
+msgid "ability.concentration_aura.desc"
+msgstr "Повышает скорость произнесения заклинаний на {P}%."
+
+msgid "ability.path_of_light.name"
+msgstr "Путь света"
+
+msgid "ability.path_of_light.desc"
+msgstr "Атаки восстанавливают здоровье в размере {P}% от нанесенного урона."
+
+msgid "ability.aura_of_tempering.name"
+msgstr "Аура закалки"
+
+msgid "ability.aura_of_tempering.desc"
+msgstr "Повышает физический урон на {X} единиц."
+
+msgid "ability.prayer_to_the_light.name"
+msgstr "Молитва свету"
+
+msgid "ability.prayer_to_the_light.desc"
+msgstr "Восстанавливает {P}% от максимального запаса маны."
+
+msgid "ability.light_execution.name"
+msgstr "Казнь света"
+
+msgid "ability.light_execution.desc"
+msgstr "Наносит цели {P2}% физического урона, если цель имеет {T}% здоровья или меньше."
+
+msgid "ability.chain_lightning.name"
+msgstr "Цепная молния"
+
+msgid "ability.chain_lightning.desc"
+msgstr "Наносит цели {X} единиц магического урона. Перескакивает на 2 дополнительные цели, каждый следующий эффект наносит на 30% меньше урона."
+
+msgid "ability.call_of_spirits.name"
+msgstr "Зов духов"
+
+msgid "ability.call_of_spirits.desc"
+msgstr "Воскрешает цель с {HP}% запасом здоровья и маны."
+
+msgid "ability.earth_spirit_devotion.name"
+msgstr "Преданность стихии земли"
+
+msgid "ability.earth_spirit_devotion.desc"
+msgstr "Повышает силу и выносливость на {X} единиц."
+
+msgid "ability.earths_wrath.name"
+msgstr "Гнев земли"
+
+msgid "ability.earths_wrath.desc"
+msgstr "Наносит цели {X} единиц магического урона. Снижает скорость атаки цели на {P}% на 5 секунд."
+
+msgid "ability.healing_touch.name"
+msgstr "Исцеляющее касание"
+
+msgid "ability.healing_touch.desc"
+msgstr "Восстанавливает цели {X} единиц здоровья."
+
+msgid "ability.lesser_heal.name"
+msgstr "Малое исцеление"
+
+msgid "ability.lesser_heal.desc"
+msgstr "Восстанавливает цели {X} единиц здоровья."
+
+msgid "ability.life_surge.name"
+msgstr "Всплеск жизни"
+
+msgid "ability.life_surge.desc"
+msgstr "Восстанавливает цели {X} единиц здоровья. Перескакивает на 2 дополнительные цели, каждый следующий эффект восстанавливает на 30% меньше здоровья."
+
+msgid "ability.lightning.name"
+msgstr "Молния"
+
+msgid "ability.lightning.desc"
+msgstr "Наносит цели {X} единиц магического урона."
+
+msgid "ability.rapid_strikes.name"
+msgstr "Быстрые удары"
+
+msgid "ability.rapid_strikes.desc"
+msgstr "Даёт {P}% шанс совершить дополнительную атаку при ударе."
+
+msgid "ability.searing_strike.name"
+msgstr "Опаляющий удар"
+
+msgid "ability.searing_strike.desc"
+msgstr "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
+
+msgid "ability.spirit_of_insight.name"
+msgstr "Преданность стихии огня"
+
+msgid "ability.spirit_of_insight.desc"
+msgstr "Повышает шанс критического удара заклинаний, наносящих магический урон на {P}%."
+
+msgid "ability.spirits_aid.name"
+msgstr "Помощь духов"
+
+msgid "ability.spirits_aid.desc"
+msgstr "После смерти воскрешает шамана с {P}% запасом здоровья и маны."
+
+msgid "ability.stone_fists.name"
+msgstr "Каменные кулаки"
+
+msgid "ability.stone_fists.desc"
+msgstr "Повышает силу атаки на {X} единиц. Повышает уровень создаваемой вами угрозы."
+
+msgid "ability.stone_skin.name"
+msgstr "Каменная кожа"
+
+msgid "ability.stone_skin.desc"
+msgstr "Повышает физическую защиту цели на {P}% на 30 минут."
+
+msgid "ability.tailwind.name"
+msgstr "Попутный ветер"
+
+msgid "ability.tailwind.desc"
+msgstr "Повышает скорость передвижения шамана на {P}% на 10 минут. Эффект исчезает при получении урона."
+
+msgid "ability.water_devotion.name"
+msgstr "Преданность стихии воды"
+
+msgid "ability.water_devotion.desc"
+msgstr "Восстанавливает 1% максимальной маны раз в 2 секунды. Повышает скорость произнесения заклинаний на 20%."
+
+msgid "ability.wind_spirit_devotion.name"
+msgstr "Преданность стихии ветра"
+
+msgid "ability.wind_spirit_devotion.desc"
+msgstr "Повышает ловкость и восприятие на {X} единиц."
+
+msgid "ability.aimed_shot.name"
+msgstr "Прицельный выстрел"
+
+msgid "ability.aimed_shot.desc"
+msgstr "Наносит цели {P}% физического урона."
+
+msgid "ability.arcane_shot.name"
+msgstr "Магический выстрел"
+
+msgid "ability.arcane_shot.desc"
+msgstr "Наносит цели {X} единиц магического урона."
+
+msgid "ability.cobra_aspect.name"
+msgstr "Дух кобры"
+
+msgid "ability.cobra_aspect.desc"
+msgstr "Повышает шанс критического удара на {P}%."
+
+msgid "ability.falcon_aspect.name"
+msgstr "Дух сапсан"
+
+msgid "ability.falcon_aspect.desc"
+msgstr "Увеличивает скорость передвижения на 30%."
+
+msgid "ability.lucky_shot.name"
+msgstr "Счастливый выстрел"
+
+msgid "ability.lucky_shot.desc"
+msgstr "Наносит цели 100% физического урона. Восстанавливает охотнику ману в размере {P2}% от нанесенного урона. Всегда наносит критический урон."
+
+msgid "ability.mantis_aspect.name"
+msgstr "Дух богомола"
+
+msgid "ability.mantis_aspect.desc"
+msgstr "Увеличивает скорость атаки на {P}%."
+
+msgid "ability.panjagan.name"
+msgstr "Панджаган"
+
+msgid "ability.panjagan.desc"
+msgstr "Выпускает в цель 5 стрел подряд, каждая из которых наносит {P}% физического урона."
+
+msgid "ability.poisoned_arrow.name"
+msgstr "Отравленная стрела"
+
+msgid "ability.poisoned_arrow.desc"
+msgstr "Наносит цели 100% физического урона и дополнительно {X} ед. магического урона в течение {D} сек."
+
+msgid "ability.suppressive_shot.name"
+msgstr "Подавляющий выстрел"
+
+msgid "ability.suppressive_shot.desc"
+msgstr "Наносит {N} ближайшим врагам {P}% физического урона."
+
+msgid "ability.powerful_strike.name"
+msgstr "Мощный удар"
+
+msgid "ability.powerful_strike.desc"
+msgstr "Наносит цели {P}% физического урона."
+
+msgid "ability.armor_break.name"
+msgstr "Пробитие брони"
+
+msgid "ability.armor_break.desc"
+msgstr "Наносит цели 100% физического урона и дополнительно {P2}% физического урона в течение 10 секунд. Дополнительный урон игнорирует физическую защиту цели."
+
+msgid "ability.boiling_blood.name"
+msgstr "Кипящая кровь"
+
+msgid "ability.boiling_blood.desc"
+msgstr "Увеличивает шанс критического удара на {P}% и критический урон на {P2}%, но увеличивает получаемый урон на {X}%."
+
+msgid "ability.dirty_strike.name"
+msgstr "Подлый удар"
+
+msgid "ability.dirty_strike.desc"
+msgstr "Наносит цели 100% от силы атаки в виде физического урона и оглушает цель на {D} секунды."
+
+msgid "ability.sweeping_strikes.name"
+msgstr "Размашистые удары"
+
+msgid "ability.sweeping_strikes.desc"
+msgstr "Наносит всем ближайшим врагам {P}% физического урона."
+
+msgid "ability.defensive_reflexes.name"
+msgstr "Защитные рефлексы"
+
+msgid "ability.defensive_reflexes.desc"
+msgstr "Полностью предотвращает получение первого входящего урона любого вида."
+
+msgid "ability.polished_armor.name"
+msgstr "Отполированные доспехи"
+
+msgid "ability.polished_armor.desc"
+msgstr "Снижает получаемый урон на {P}%. Увеличивает создаваемую вами угрозу."
+
+msgid "ability.battle_readiness.name"
+msgstr "Боевая готовность"
+
+msgid "ability.battle_readiness.desc"
+msgstr "Увеличивает физический урон на 15%."
+
+msgid "ability.inspiration.name"
+msgstr "Воодушевление"
+
+msgid "ability.inspiration.desc"
+msgstr "Увеличивает максимальное здоровье цели на {P}% на 30 минут."
+
+msgid "ability.arcane_precision.name"
+msgstr "Магическая точность"
+
+msgid "ability.arcane_precision.desc"
+msgstr "Повышает шанс критического удара на {P}%."
+
+msgid "ability.concentration.name"
+msgstr "Концентрация"
+
+msgid "ability.concentration.desc"
+msgstr "Восстанавливает 30% от максимального запаса маны."
+
+msgid "ability.fireball.name"
+msgstr "Огненный шар"
+
+msgid "ability.fireball.desc"
+msgstr "Наносит цели {X} магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
+
+msgid "ability.fire_blast.name"
+msgstr "Огненный взрыв"
+
+msgid "ability.fire_blast.desc"
+msgstr "Наносит цели {X} магического урона."
+
+msgid "ability.frostbolt.name"
+msgstr "Ледяная стрела"
+
+msgid "ability.frostbolt.desc"
+msgstr "Наносит цели {X} магического урона и снижает скорость передвижения цели на 40% на {D} сек."
+
+msgid "ability.frost_wind.name"
+msgstr "Ледяной ветер"
+
+msgid "ability.frost_wind.desc"
+msgstr "Наносит всем ближайшим врагам {X} магического урона и снижает скорость их передвижения на 40% на 10 секунд."
+
+msgid "ability.hailstorm.name"
+msgstr "Град"
+
+msgid "ability.hailstorm.desc"
+msgstr "Наносит цели {X} магического урона {X2} раз(а)."
+
+msgid "ability.ice_fortification.name"
+msgstr "Укрепление льдом"
+
+msgid "ability.ice_fortification.desc"
+msgstr "Повышает физическую защиту на {X} и снижает скорость атаки атакующих врагов на 30% на 5 секунд."
+
+msgid "ability.insight.name"
+msgstr "Проницательность"
+
+msgid "ability.insight.desc"
+msgstr "Повышает интеллект и восприятие цели на {X} на {D} сек."
+
+msgid "ability.magic_shield.name"
+msgstr "Магический щит"
+
+msgid "ability.magic_shield.desc"
+msgstr "Блокирует весь получаемый магический урон цели на 5 секунд."
+
+msgid "ability.meteor.name"
+msgstr "Метеорит"
+
+msgid "ability.meteor.desc"
+msgstr "Наносит цели {X} ед. магического урона и дополнительно {P}% от нанесенного урона в течение {D} сек."
+
+msgid "ability.mind_freeze.name"
+msgstr "Заморозка разума"
+
+msgid "ability.mind_freeze.desc"
+msgstr "Замораживает цель на {D} сек. Она не может двигаться, атаковать и произносить заклинания."
+
+msgid "ability.agony.name"
+msgstr "Агония"
+
+msgid "ability.agony.desc"
+msgstr "Наносит цели {X} единиц магического урона и снижает скорость передвижения цели на 50% на {D} сек."
+
+msgid "ability.fear.name"
+msgstr "Оцепенение"
+
+msgid "ability.fear.desc"
+msgstr "Сковывает страхом ближайших врагов на {D} сек. Они не могут двигаться, атаковать и произносить заклинания. Эффект снимается при получении урона."
+
+msgid "ability.fortitude.name"
+msgstr "Стойкость"
+
+msgid "ability.fortitude.desc"
+msgstr "Повышает выносливость цели на {X} и восстанавливает {X2} здоровья каждую секунду. Действует 30 минут."
+
+msgid "ability.heal.name"
+msgstr "Исцеление"
+
+msgid "ability.heal.desc"
+msgstr "Восстанавливает цели {X} здоровья."
+
+msgid "ability.healing_stream.name"
+msgstr "Исцеляющий поток"
+
+msgid "ability.healing_stream.desc"
+msgstr "Восстанавливает цели {X} здоровья в течение {D} сек."
+
+msgid "ability.inner_fire.name"
+msgstr "Внутренний огонь"
+
+msgid "ability.inner_fire.desc"
+msgstr "Повышает критический эффект заклинаний на {P}% и снижает получаемый урон на {P2}%."
+
+msgid "ability.power_absorption.name"
+msgstr "Поглощение силы"
+
+msgid "ability.power_absorption.desc"
+msgstr "Восстанавливает {P}% маны от урона заклинаниями и исцеления союзников, а также {P2}% маны от урона атаками."
+
+msgid "ability.prayer_of_light.name"
+msgstr "Молитва света"
+
+msgid "ability.prayer_of_light.desc"
+msgstr "Восстанавливает жрецу и всем союзникам поблизости {X} здоровья."
+
+msgid "ability.protective_barrier.name"
+msgstr "Защитный барьер"
+
+msgid "ability.protective_barrier.desc"
+msgstr "Поглощает {X} единиц входящего урона цели до разрушения. Действует {D} секунд."
+
+msgid "ability.radiance.name"
+msgstr "Сияние света"
+
+msgid "ability.radiance.desc"
+msgstr "Наносит {X} магического урона всем ближайшим врагам и исцеляет жреца и ближайших союзников на {X}."
+
+msgid "ability.throe.name"
+msgstr "Мука"
+
+msgid "ability.throe.desc"
+msgstr "Наносит цели {X} единиц магического урона."
+
+msgid "ability.torment.name"
+msgstr "Пытка"
+
+msgid "ability.torment.desc"
+msgstr "Наносит цели {X} единиц магического урона в течение {D} сек."
+
+msgid "ability.trainer.required_level"
+msgstr "Треб. ур. {level}"
+
+msgid "ability.trainer.learn"
+msgstr "Изучить"
+
+msgid "ability.trainer.max_rank"
+msgstr "Макс. ур."
+
+msgid "ability.trainer.title"
+msgstr "Тренер"
+
+msgid "ability.trainer.filter_label"
+msgstr "Показать:"
+
+msgid "ability.trainer.filter.available"
+msgstr "Доступные"
+
+msgid "ability.trainer.filter.all"
+msgstr "Все"
+
+msgid "ability.spells.filter.all"
+msgstr "Все"
+
+msgid "ability.spells.filter.active"
+msgstr "Активные"
+
+msgid "ability.spells.filter.auras_buffs"
+msgstr "Ауры/бафы"
+
+msgid "ability.trainer.error.not_enough_coins"
+msgstr "Недостаточно монет"
+
+msgid "ability.trainer.error.level_required"
+msgstr "Нужен уровень {level}"
+
+msgid "ability.trainer.error.class_mismatch"
+msgstr "Тренер не для вашего класса"
+
+msgid "currency.gold.short"
+msgstr "{value}g"
+
+msgid "currency.silver.short"
+msgstr "{value}s"
+
+msgid "currency.bronze.short"
+msgstr "{value}b"
