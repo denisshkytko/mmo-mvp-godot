@@ -123,55 +123,7 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 	if scales_with_spell_power:
 		scaled_flat += int(round(spell_power))
 		scaled_flat2 += int(round(spell_power))
-	match ability_id:
-		"healing_light", "radiant_touch":
-			return "Восстанавливает цели %d единиц здоровья." % scaled_flat
-		"judging_flame":
-			return "Наносит цели %d единиц магического урона." % scaled_flat
-		"lights_verdict":
-			return "Наносит цели %d единиц магического урона, если цель - враг, или восстанавливает цели %d единиц здоровья, если цель - союзник." % [scaled_flat, scaled_flat]
-		"strike_of_light", "storm_of_light":
-			if ability_id == "storm_of_light":
-				return "Наносит всем врагам вокруг %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
-			return "Наносит цели %.0f%% физического урона и дополнительно %d единиц магического урона." % [rank_data.value_pct, scaled_flat2]
-		"path_of_righteousness":
-			return "Атаки дополнительно наносят %d единиц магического урона." % scaled_flat
-		"aura_of_light_protection":
-			return "Повышает физическую защиту на %d единиц и магическое сопротивление на %d единиц." % [rank_data.value_flat, rank_data.value_flat_2]
-		"lightbound_might":
-			return "Повышает силу атаки цели на %d единиц на %d минут." % [rank_data.value_flat, int(round(rank_data.duration_sec / 60.0))]
-		"sacred_barrier", "sacred_guard":
-			if ability_id == "sacred_barrier":
-				return "Дарует цели иммунитет к физическому урону на %d секунд." % int(rank_data.duration_sec)
-			return "Дарует цели иммунитет к урону на %d секунды." % int(rank_data.duration_sec)
-		"lights_call":
-			return "Воскрешает цель с %.0f%% запасом здоровья и %.0f%% запасом маны." % [rank_data.value_pct, rank_data.value_pct_2]
-		"lights_guidance":
-			return "Повышает восстановление маны цели на %d единиц в секунду на %d минут." % [rank_data.value_flat, int(round(rank_data.duration_sec / 60.0))]
-		"path_of_righteous_fury":
-			return "Повышает уровень создаваемой угрозы и восстанавливает ману в размере %.0f%% от нанесенного урона атаками." % rank_data.value_pct
-		"royal_oath":
-			return "Повышает основные характеристики цели на %.0f%% на %d минут." % [rank_data.value_pct, int(round(rank_data.duration_sec / 60.0))]
-		"concentration_aura":
-			return "Повышает скорость произнесения заклинаний на %.0f%%." % rank_data.value_pct
-		"path_of_light":
-			return "Атаки восстанавливают здоровье в размере %.0f%% от нанесенного урона." % rank_data.value_pct
-		"aura_of_tempering":
-			return "Повышает физический урон на %d единиц." % rank_data.value_flat
-		"prayer_to_the_light":
-			return "Восстанавливает %.0f%% от максимального запаса маны." % rank_data.value_pct
-		"light_execution":
-			return "Наносит цели %.0f%% физического урона, если цель имеет %.0f%% здоровья или меньше." % [rank_data.value_pct_2, rank_data.value_pct]
-		"stone_fists":
-			return "Повышает силу атаки на %d единиц. Повышает уровень создаваемой угрозы." % rank_data.value_flat
-		"boiling_blood":
-			return "Увеличивает шанс критического удара на %.0f%% и критический урон на %.0f%%, но увеличивает получаемый урон на %d%%." % [rank_data.value_pct, rank_data.value_pct_2, int(rank_data.value_flat)]
-		"wind_spirit_devotion":
-			return "Повышает ловкость и восприятие на %d единиц." % rank_data.value_flat
-		"lightning":
-			return "Наносит цели %d единиц магического урона." % scaled_flat
-		_:
-			return _format_effect_from_template(def.get_description_template(), rank_data, scaled_flat, scaled_flat2)
+	return _format_effect_from_template(def.get_description_template(), rank_data, scaled_flat, scaled_flat2)
 
 
 func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String) -> bool:
