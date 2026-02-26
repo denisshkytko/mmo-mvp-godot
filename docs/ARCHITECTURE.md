@@ -1,5 +1,7 @@
 # Архитектура проекта
 
+English version: `docs/ARCHITECTURE.en.md`.
+
 ## 1.1 Точка входа и поток запуска
 
 - **Стартовая сцена проекта**: `res://ui/flow/LoginUI.tscn` указана в `run/main_scene` в `project.godot`.

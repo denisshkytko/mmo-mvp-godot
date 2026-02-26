@@ -1,5 +1,7 @@
 # Ability Authoring Style (Class-agnostic)
 
+Russian version: `docs/ABILITY_AUTHORING_STYLE.ru.md`.
+
 This document fixes a single authoring style for all class abilities (`.tres`) based on the current paladin/shaman setup.
 
 ## 1) Resource structure

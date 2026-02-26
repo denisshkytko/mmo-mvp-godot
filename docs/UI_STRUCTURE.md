@@ -1,5 +1,7 @@
 # UI Structure Rules
 
+Russian version: `docs/UI_STRUCTURE.ru.md`.
+
 This document defines where UI-related code, data and assets should live.
 
 ## 1) High-level split
