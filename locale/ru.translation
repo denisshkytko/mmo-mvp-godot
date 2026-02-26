@@ -8,6 +8,7 @@ messages = {
 "ability.common.cooldown": "Восстановление: {seconds} с",
 "ability.common.cost": "Стоимость: {amount} {resource}",
 "ability.common.resource_fallback": "Ресурс",
+"ability.path_of_righteous_fury.desc": "Повышает уровень создаваемой вами угрозы. Восстанавливает ману в размере {P}% от нанесенного урона атаками.",
 "ability.trainer.required_level": "Треб. ур. {level}",
 "ability.trainer.learn": "Изучить",
 "ability.trainer.max_rank": "Макс. ранг",
