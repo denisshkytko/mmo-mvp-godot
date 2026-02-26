@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/priest/prayer_of_light.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=5]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_heal.gd" id=6]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 56
+train_cost_gold = 5856
+cooldown_sec = 0.0
+cast_time_sec = 5.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 250
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectHeal" id=20]
+script = ExtResource("6")
+
+[sub_resource type="Resource" script_class="EffectAOE" id=21]
+script = ExtResource("5")
+radius_mode = "ranged"
+target_filter = "allies_only"
+inner_effect = SubResource("20")
+
+[sub_resource type="Resource" script_class="EffectHeal" id=22]
+script = ExtResource("6")
+
+[sub_resource type="Resource" script_class="EffectSequence" id=23]
+script = ExtResource("4")
+effects = [SubResource("21"), SubResource("22")]
+
+[resource]
+script = ExtResource("1")
+id = "prayer_of_light"
+name = "Молитва света"
+icon = ExtResource("2")
+description = "Восстанавливает {X} здоровья жрецу и всем союзникам поблизости."
+class_id = "priest"
+ability_type = "heal"
+target_type = "ally"
+range_mode = "ranged"
+self_cast_fallback = true
+effect = SubResource("23")
+ranks = [SubResource("1")]

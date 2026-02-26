@@ -1,0 +1,133 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/shaman/searing_strike.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_mixed_damage.gd" id=5]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 10
+train_cost_gold = 400
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 15
+value_pct = 60.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 14
+train_cost_gold = 706
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 20
+value_pct = 70.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 18
+train_cost_gold = 1045
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 25
+value_pct = 80.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 26
+train_cost_gold = 1779
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 30
+value_pct = 90.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 34
+train_cost_gold = 2646
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 35
+value_pct = 100.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 44
+train_cost_gold = 3938
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 40
+value_pct = 110.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 54
+train_cost_gold = 5505
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 10
+value_flat = 0
+value_flat_2 = 45
+value_pct = 120.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=20]
+script = ExtResource("4")
+school = "physical"
+scaling_mode = "phys_base_pct"
+
+[sub_resource type="Resource" script_class="EffectDamage" id=21]
+script = ExtResource("4")
+school = "magic"
+scaling_mode = "spell_power_flat"
+
+[sub_resource type="Resource" script_class="EffectMixedDamage" id=22]
+script = ExtResource("5")
+physical_effect = SubResource("20")
+magic_effect = SubResource("21")
+
+[resource]
+script = ExtResource("1")
+id = "searing_strike"
+name = "Опаляющий удар"
+icon = ExtResource("2")
+description = "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
+class_id = "shaman"
+ability_type = "damage"
+target_type = "enemy"
+range_mode = "melee"
+effect = SubResource("22")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]

@@ -1,0 +1,299 @@
+[gd_scene load_steps=9 format=3 uid="uid://d2ddrgn4o57x6"]
+
+[ext_resource type="Script" uid="uid://cqh1giffvv7pe" path="res://ui/game/hud/systems/mobile/mobile_hud.gd" id="1_8po1h"]
+[ext_resource type="Script" uid="uid://b3v5ua6tgpdad" path="res://ui/game/hud/systems/mobile/move_joystick.gd" id="2_65rcb"]
+[ext_resource type="Script" uid="uid://f4yrf2m218pi" path="res://ui/game/hud/systems/mobile/skill_pad.gd" id="3_g1q8d"]
+[ext_resource type="Script" uid="uid://bxnhf2egwg0iy" path="res://ui/game/hud/systems/mobile/circular_texture_button.gd" id="4_hwcof"]
+[ext_resource type="Texture2D" uid="uid://b7rkqmicjjs08" path="res://assets/ui/mobile/Joystick.png" id="4_xlyuy"]
+[ext_resource type="Texture2D" uid="uid://nvwxea44qb35" path="res://assets/ui/mobile/LargeHandleFilled.png" id="5_suufg"]
+
+[sub_resource type="Shader" id="Shader_circle_icon"]
+code = "shader_type canvas_item;
+
+void fragment() {
+	vec2 d = UV - vec2(0.5);
+	if (length(d) > 0.5) {
+		discard;
+	}
+	COLOR = texture(TEXTURE, UV);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_circle_icon"]
+shader = SubResource("Shader_circle_icon")
+
+[node name="MobileHUD" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_8po1h")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LeftPad" type="Control" parent="Root"]
+custom_minimum_size = Vector2(320, 320)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 192.0
+offset_top = -448.0
+offset_right = 512.0
+offset_bottom = -128.0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="MoveStick" type="Control" parent="Root/LeftPad"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_65rcb")
+
+[node name="Base" type="TextureRect" parent="Root/LeftPad/MoveStick"]
+modulate = Color(1, 1, 1, 0.2)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_xlyuy")
+expand_mode = 1
+
+[node name="Knob" type="TextureRect" parent="Root/LeftPad/MoveStick"]
+modulate = Color(1, 1, 1, 0.45)
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 46.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_suufg")
+expand_mode = 1
+
+[node name="RightPad" type="Control" parent="Root"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -704.0
+offset_top = -656.0
+offset_right = -192.0
+offset_bottom = -144.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="SkillPad" type="Control" parent="Root/RightPad"]
+custom_minimum_size = Vector2(360, 360)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -400.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("3_g1q8d")
+
+[node name="QuickSkillBtn" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -232.0
+offset_top = -232.0
+offset_right = -32.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+texture_normal = ExtResource("4_xlyuy")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("4_hwcof")
+metadata/slot_index = 0
+
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/QuickSkillBtn"]
+material = SubResource("ShaderMaterial_circle_icon")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SkillBtn1" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -96.0
+offset_right = 96.0
+grow_vertical = 0
+texture_normal = ExtResource("4_xlyuy")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("4_hwcof")
+metadata/slot_index = 1
+
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn1"]
+material = SubResource("ShaderMaterial_circle_icon")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SkillBtn2" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -76.0
+offset_right = 144.0
+offset_bottom = 52.0
+grow_vertical = 2
+texture_normal = ExtResource("4_xlyuy")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("4_hwcof")
+metadata/slot_index = 2
+
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn2"]
+material = SubResource("ShaderMaterial_circle_icon")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SkillBtn3" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -76.0
+offset_top = 16.0
+offset_right = 52.0
+offset_bottom = 144.0
+grow_horizontal = 2
+texture_normal = ExtResource("4_xlyuy")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("4_hwcof")
+metadata/slot_index = 3
+
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn3"]
+material = SubResource("ShaderMaterial_circle_icon")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SkillBtn4" type="TextureButton" parent="Root/RightPad/SkillPad"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -96.0
+offset_bottom = 96.0
+grow_horizontal = 0
+texture_normal = ExtResource("4_xlyuy")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("4_hwcof")
+metadata/slot_index = 4
+
+[node name="Icon" type="TextureRect" parent="Root/RightPad/SkillPad/SkillBtn4"]
+material = SubResource("ShaderMaterial_circle_icon")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InteractBtn" type="TextureButton" parent="Root/RightPad"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -112.0
+offset_right = -16.0
+offset_bottom = 96.0
+grow_horizontal = 0
+texture_normal = ExtResource("4_xlyuy")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("4_hwcof")

@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/shaman/water_devotion.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_stance.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 40
+train_cost_gold = 3391
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 1.0
+value_pct_2 = 20.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyStance" id=20]
+script = ExtResource("4")
+buff_id = "active_stance"
+secondary_add = {"cast_speed_bonus_pct": "value_pct_2"}
+percent_add = {}
+flags = {"mana_pct_of_max_per_tick": "value_pct", "mana_tick_interval_sec": 2.0}
+on_hit = {}
+
+[resource]
+script = ExtResource("1")
+id = "water_devotion"
+name = "Преданность духам воды"
+icon = ExtResource("2")
+description = "Восстанавливает 1% максимальной маны раз в 2 секунды. Повышает скорость произнесения заклинаний на 20%."
+class_id = "shaman"
+ability_type = "stance"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("20")
+ranks = [SubResource("1")]

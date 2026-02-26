@@ -1,0 +1,133 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/strike_of_light.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_mixed_damage.gd" id=5]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 8
+train_cost_gold = 320
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 0
+value_flat_2 = 5
+value_pct = 80.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 12
+train_cost_gold = 550
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 0
+value_flat_2 = 15
+value_pct = 85.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 16
+train_cost_gold = 868
+cooldown_sec = 3.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 0
+value_flat_2 = 25
+value_pct = 90.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 26
+train_cost_gold = 1779
+cooldown_sec = 2.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 0
+value_flat_2 = 35
+value_pct = 95.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 36
+train_cost_gold = 2885
+cooldown_sec = 2.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 0
+value_flat_2 = 45
+value_pct = 100.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 46
+train_cost_gold = 4227
+cooldown_sec = 2.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 0
+value_flat_2 = 55
+value_pct = 105.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 56
+train_cost_gold = 5856
+cooldown_sec = 2.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 5
+value_flat = 0
+value_flat_2 = 65
+value_pct = 110.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=20]
+script = ExtResource("4")
+school = "physical"
+scaling_mode = "phys_base_pct"
+
+[sub_resource type="Resource" script_class="EffectDamage" id=21]
+script = ExtResource("4")
+school = "magic"
+scaling_mode = "spell_power_flat"
+
+[sub_resource type="Resource" script_class="EffectMixedDamage" id=22]
+script = ExtResource("5")
+physical_effect = SubResource("20")
+magic_effect = SubResource("21")
+
+[resource]
+script = ExtResource("1")
+id = "strike_of_light"
+name = "Удар света"
+icon = ExtResource("2")
+description = "Наносит цели {P}% физического урона и дополнительно {M} единиц магического урона."
+class_id = "paladin"
+ability_type = "damage"
+target_type = "enemy"
+range_mode = "melee"
+effect = SubResource("22")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6"), SubResource("7")]

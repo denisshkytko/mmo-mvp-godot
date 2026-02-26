@@ -1,0 +1,69 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/shaman/life_surge.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_chain_heal.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 40
+train_cost_gold = 3391
+cooldown_sec = 0.0
+cast_time_sec = 3.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 100
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 50
+train_cost_gold = 4841
+cooldown_sec = 0.0
+cast_time_sec = 3.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 200
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 0.0
+cast_time_sec = 3.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 300
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectChainHeal" id=20]
+script = ExtResource("4")
+scaling_mode = "spell_power_flat"
+jump_count = 2
+jump_heal_decay_pct = 30.0
+jump_radius_factor = 0.5
+
+[resource]
+script = ExtResource("1")
+id = "life_surge"
+name = "Всплеск жизни"
+icon = ExtResource("2")
+description = "Восстанавливает цели {X} единиц здоровья. Перескакивает на 2 дополнительные цели, каждый следующий эффект восстанавливает на 30% меньше здоровья."
+class_id = "shaman"
+ability_type = "heal"
+target_type = "ally"
+self_cast_fallback = true
+range_mode = "ranged"
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3")]

@@ -1,5 +1,7 @@
 # Архитектура проекта
 
+English version: `docs/ARCHITECTURE.en.md`.
+
 ## 1.1 Точка входа и поток запуска
 
 - **Стартовая сцена проекта**: `res://ui/flow/LoginUI.tscn` указана в `run/main_scene` в `project.godot`.
@@ -86,5 +88,5 @@
 - **loot/** — генерация лута: `LootGenerator`, `LootProfile`, `LootRights` и профили в `core/loot/profiles/`.
 - **save/** — подсистема сохранения: `SaveSystem` для чтения/записи данных персонажей в JSON.
 - **managers/** — менеджеры состояния: `AppState` управляет состоянием аккаунта/персонажа, `FlowRouter` отвечает за навигацию сцен, `GameManager` загружает персонажа в мир, управляет сменой зон и сохранением.
-- **ui/** — UI-хелперы: `TargetMarkerHelper` управляет видимостью маркера цели.
+- **game/characters/shared/** — shared character helpers: `TargetMarkerHelper` управляет видимостью маркера цели.
 - **world/** — логика мира: `DeathPipeline` — единый пайплайн смерти (труп, лут, XP, очистка цели).

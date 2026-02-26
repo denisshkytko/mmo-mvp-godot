@@ -1,0 +1,120 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/priest/fear.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_debuff.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=5]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 8
+train_cost_gold = 320
+cooldown_sec = 40.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 18
+train_cost_gold = 1045
+cooldown_sec = 40.0
+cast_time_sec = 0.0
+duration_sec = 12.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 28
+train_cost_gold = 1984
+cooldown_sec = 40.0
+cast_time_sec = 0.0
+duration_sec = 14.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=4]
+script = ExtResource("3")
+required_level = 38
+train_cost_gold = 3133
+cooldown_sec = 40.0
+cast_time_sec = 0.0
+duration_sec = 16.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=5]
+script = ExtResource("3")
+required_level = 48
+train_cost_gold = 4528
+cooldown_sec = 40.0
+cast_time_sec = 0.0
+duration_sec = 18.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=6]
+script = ExtResource("3")
+required_level = 58
+train_cost_gold = 6222
+cooldown_sec = 40.0
+cast_time_sec = 0.0
+duration_sec = 20.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyDebuff" id=20]
+script = ExtResource("4")
+buff_id = "debuff:fear"
+secondary_add = {}
+primary_add = {}
+percent_add = {}
+primary_percent_add = {}
+flags = {"remove_on_damage": true, "stunned": true}
+on_hit = {}
+
+[sub_resource type="Resource" script_class="EffectAOE" id=21]
+script = ExtResource("5")
+radius_mode = "ranged_half"
+target_filter = "enemies_only"
+inner_effect = SubResource("20")
+
+[resource]
+script = ExtResource("1")
+id = "fear"
+name = "Оцепенение"
+icon = ExtResource("2")
+description = "Сковывает страхом ближайших врагов на {D} сек. Они не могут двигаться, атаковать и произносить заклинания. Эффект снимается при получении урона."
+class_id = "priest"
+ability_type = "active"
+target_type = "self"
+range_mode = "ranged/2"
+effect = SubResource("21")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4"), SubResource("5"), SubResource("6")]

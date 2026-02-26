@@ -1,5 +1,7 @@
 # Ability Authoring Style (Class-agnostic)
 
+Russian version: `docs/ABILITY_AUTHORING_STYLE.ru.md`.
+
 This document fixes a single authoring style for all class abilities (`.tres`) based on the current paladin/shaman setup.
 
 ## 1) Resource structure
@@ -17,7 +19,7 @@ Use the same section order as existing class files:
 
 ## 2) Localization during interim phase
 Until external localization storage is introduced:
-- keep `description` (ENG) and `description_ru` (RU) in the same `.tres`.
+- keep a single `description` field in the `.tres` and use placeholders for dynamic values.
 - do not create separate RU/ENG files for one ability.
 
 ## 3) Tooltip template tokens
@@ -44,7 +46,7 @@ Use the following placeholders in `description` whenever possible:
 
 ## 6) Manifest wiring
 Every new ability must be registered in:
-- `data/abilities/abilities_manifest.tres`
+- `core/data/abilities/abilities_manifest.tres`
 
 ## 7) Icons
 - icon filename: snake_case based on ability name.

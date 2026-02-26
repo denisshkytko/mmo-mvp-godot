@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/warrior/sweeping_strikes.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_aoe.gd" id=5]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 26
+train_cost_gold = 1779
+cooldown_sec = 10.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 20
+value_flat = 0
+value_flat_2 = 0
+value_pct = 100.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 46
+train_cost_gold = 4227
+cooldown_sec = 8.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 20
+value_flat = 0
+value_flat_2 = 0
+value_pct = 100.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectDamage" id=20]
+script = ExtResource("4")
+school = "physical"
+scaling_mode = "phys_base_pct"
+
+[sub_resource type="Resource" script_class="EffectAOE" id=21]
+script = ExtResource("5")
+radius_mode = "melee"
+target_filter = "enemies_only"
+inner_effect = SubResource("20")
+
+[resource]
+script = ExtResource("1")
+id = "sweeping_strikes"
+name = "Размашистые удары"
+icon = ExtResource("2")
+description = "Наносит {P}% физического урона всем ближайшим врагам."
+class_id = "warrior"
+ability_type = "aoe_damage"
+target_type = "self"
+range_mode = "self"
+effect = SubResource("21")
+ranks = [SubResource("1"), SubResource("2")]

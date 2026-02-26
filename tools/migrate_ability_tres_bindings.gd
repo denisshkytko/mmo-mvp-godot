@@ -1,7 +1,7 @@
 @tool
 extends EditorScript
 
-const ROOT := "res://data/abilities"
+const ROOT := "res://core/data/abilities"
 const ABILITY_DEF_SCRIPT := "res://core/abilities/ability_definition.gd"
 const MANIFEST_SCRIPT := "res://core/abilities/abilities_manifest.gd"
 const RANK_DATA_SCRIPT := "res://core/abilities/rank_data.gd"

@@ -148,7 +148,7 @@ func _collect_class_ability_max_ranks(class_id: String) -> Dictionary:
 				learned_ranks[ability_id] = max_rank
 		return learned_ranks
 
-	var manifest_res: Resource = load("res://data/abilities/abilities_manifest.tres")
+	var manifest_res: Resource = load("res://core/data/abilities/abilities_manifest.tres")
 	if manifest_res == null or not (manifest_res is AbilitiesManifest):
 		return learned_ranks
 	var manifest := manifest_res as AbilitiesManifest

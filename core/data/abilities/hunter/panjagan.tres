@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/hunter/panjagan.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_panjagan.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 44
+train_cost_gold = 3938
+cooldown_sec = 15.0
+cast_time_sec = 3.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 40.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 52
+train_cost_gold = 5505
+cooldown_sec = 15.0
+cast_time_sec = 3.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 60.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=3]
+script = ExtResource("3")
+required_level = 60
+train_cost_gold = 6602
+cooldown_sec = 15.0
+cast_time_sec = 3.0
+duration_sec = 0.0
+resource_cost = 15
+value_flat = 0
+value_flat_2 = 0
+value_pct = 80.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectPanjagan" id=20]
+script = ExtResource("4")
+school = "physical"
+scaling_mode = "phys_base_pct"
+hit_count = 5
+
+[resource]
+script = ExtResource("1")
+id = "panjagan"
+name = "Панджаган"
+icon = ExtResource("2")
+description = "Охотник выпускает 5 стрел подряд, каждая из которых наносит {P}% физического урона."
+class_id = "hunter"
+ability_type = "damage"
+target_type = "enemy"
+range_mode = "ranged + 30%"
+effect = SubResource("20")
+ranks = [SubResource("1"), SubResource("2"), SubResource("3")]

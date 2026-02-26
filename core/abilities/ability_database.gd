@@ -3,8 +3,8 @@ class_name AbilityDatabase
 
 signal initialized
 
-const ABILITIES_ROOT_PATH := "res://data/abilities"
-const ABILITIES_MANIFEST_PATH := "res://data/abilities/abilities_manifest.tres"
+const ABILITIES_ROOT_PATH := "res://core/data/abilities"
+const ABILITIES_MANIFEST_PATH := "res://core/data/abilities/abilities_manifest.tres"
 const LEGACY_ABILITY_ID_ALIASES := {
 	"lights_verdict_damage": "lights_verdict",
 	"lights_verdict_heal": "lights_verdict",
@@ -22,7 +22,7 @@ func _debug_check_ability_scripts() -> void:
 	if script_res != null:
 		script_class = script_res.get_class()
 	print("[AbilityDB] ability_definition.gd loaded: ", script_res, " class=", script_class)
-	var test_res: Resource = load("res://data/abilities/paladin/healing_light.tres")
+	var test_res: Resource = load("res://core/data/abilities/paladin/healing_light.tres")
 	var test_class := "null"
 	var test_script := "null"
 	var script_class_prop := "<n/a>"

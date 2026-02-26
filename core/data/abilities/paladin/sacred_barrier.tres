@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
+[ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/sacred_barrier.png" id=2]
+[ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_apply_buff.gd" id=4]
+
+[sub_resource type="Resource" script_class="RankData" id=1]
+script = ExtResource("3")
+required_level = 6
+train_cost_gold = 240
+cooldown_sec = 300.0
+cast_time_sec = 0.0
+duration_sec = 5.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 0.0
+value_pct_2 = 0.0
+flags = {}
+
+[sub_resource type="Resource" script_class="EffectApplyBuff" id=20]
+script = ExtResource("4")
+secondary_add = {}
+percent_add = {}
+flags = {"invulnerable_all": true}
+on_hit = {}
+
+[resource]
+script = ExtResource("1")
+id = "sacred_barrier"
+name = "Священный барьер"
+icon = ExtResource("2")
+description = "Дарует цели иммунитет к физическому урону на {D} секунд."
+class_id = "paladin"
+ability_type = "active"
+target_type = "ally"
+self_cast_fallback = true
+range_mode = "ranged"
+effect = SubResource("20")
+ranks = [SubResource("1")]

@@ -1,7 +1,7 @@
 extends RefCounted
 class_name DamageHelper
 
-const COMBAT_TEXT_MANAGER_SCRIPT := preload("res://ui/game/hud/combat_text/combat_text_manager.gd")
+const COMBAT_TEXT_MANAGER_SCRIPT := preload("res://ui/game/hud/systems/combat_text/combat_text_manager.gd")
 const COMBAT_TEXT_MANAGER_NODE_NAME := "CombatTextManager"
 
 static func apply_damage(attacker: Node, target: Node, dmg: int) -> void:
