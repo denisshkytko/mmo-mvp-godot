@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://b3v5ua6tgpdad" path="res://ui/game/hud/systems/mobile/move_joystick.gd" id="2_65rcb"]
 [ext_resource type="Script" uid="uid://f4yrf2m218pi" path="res://ui/game/hud/systems/mobile/skill_pad.gd" id="3_g1q8d"]
 [ext_resource type="Script" uid="uid://bxnhf2egwg0iy" path="res://ui/game/hud/systems/mobile/circular_texture_button.gd" id="4_hwcof"]
-[ext_resource type="Texture2D" uid="uid://b7rkqmicjjs08" path="res://ui/game/hud/systems/mobile/textures/Joystick.png" id="4_xlyuy"]
-[ext_resource type="Texture2D" uid="uid://nvwxea44qb35" path="res://ui/game/hud/systems/mobile/textures/LargeHandleFilled.png" id="5_suufg"]
+[ext_resource type="Texture2D" uid="uid://b7rkqmicjjs08" path="res://assets/ui/mobile/Joystick.png" id="4_xlyuy"]
+[ext_resource type="Texture2D" uid="uid://nvwxea44qb35" path="res://assets/ui/mobile/LargeHandleFilled.png" id="5_suufg"]
 
 [sub_resource type="Shader" id="Shader_circle_icon"]
 code = "shader_type canvas_item;

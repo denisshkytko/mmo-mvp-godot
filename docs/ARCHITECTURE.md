@@ -86,5 +86,5 @@
 - **loot/** — генерация лута: `LootGenerator`, `LootProfile`, `LootRights` и профили в `core/loot/profiles/`.
 - **save/** — подсистема сохранения: `SaveSystem` для чтения/записи данных персонажей в JSON.
 - **managers/** — менеджеры состояния: `AppState` управляет состоянием аккаунта/персонажа, `FlowRouter` отвечает за навигацию сцен, `GameManager` загружает персонажа в мир, управляет сменой зон и сохранением.
-- **ui/** — UI-хелперы: `TargetMarkerHelper` управляет видимостью маркера цели.
+- **game/characters/shared/** — shared character helpers: `TargetMarkerHelper` управляет видимостью маркера цели.
 - **world/** — логика мира: `DeathPipeline` — единый пайплайн смерти (труп, лут, XP, очистка цели).

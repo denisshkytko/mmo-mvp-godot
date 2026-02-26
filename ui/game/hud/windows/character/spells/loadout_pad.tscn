@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dw3wxnk0s0qom"]
 
 [ext_resource type="Script" uid="uid://bpvyonlebbht7" path="res://ui/game/hud/windows/character/spells/loadout_pad.gd" id="1_1u5if"]
-[ext_resource type="Texture2D" uid="uid://b7rkqmicjjs08" path="res://ui/game/hud/systems/mobile/textures/Joystick.png" id="2_58wyw"]
+[ext_resource type="Texture2D" uid="uid://b7rkqmicjjs08" path="res://assets/ui/mobile/Joystick.png" id="2_58wyw"]
 
 
 [sub_resource type="Shader" id="Shader_circle_icon"]
