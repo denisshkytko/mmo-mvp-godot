@@ -47,7 +47,10 @@ func show_for(ability_id: String, rank: int, global_pos: Vector2) -> void:
 		rank_data = db.call("get_rank_data", ability_id, shown_rank)
 
 	name_label.text = ability.get_display_name()
-	rank_label.text = "Rank %d/%d" % [shown_rank, ability.get_max_rank()]
+	rank_label.text = tr("ability.common.rank").format({
+		"current": shown_rank,
+		"max": ability.get_max_rank(),
+	})
 	description_label.text = _build_tooltip_text(ability, rank_data, shown_rank, player)
 	visible = true
 	move_to_front()
@@ -70,7 +73,7 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 	var spell_power: float = 0.0
 	var base_phys: int = 0
 	var max_resource: int = 0
-	var resource_label: String = "Resource"
+	var resource_label: String = tr("ability.common.resource_fallback")
 	if player != null and player.has_method("get_stats_snapshot"):
 		var snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
 		spell_power = float((snap.get("derived", {}) as Dictionary).get("spell_power", 0.0))
@@ -92,13 +95,13 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 			var cast_snap: Dictionary = player.call("get_stats_snapshot") as Dictionary
 			var cast_speed_pct: float = float(cast_snap.get("cast_speed_pct", 0.0))
 			cast_time_eff = rank_data.cast_time_sec * (1.0 / (1.0 + cast_speed_pct / 100.0))
-		params.append("Cast: %.1fs" % cast_time_eff)
+			params.append(tr("ability.common.cast_time").format({"seconds": "%.1f" % cast_time_eff}))
 	if rank_data.cooldown_sec > 0.0:
-		params.append("Cooldown: %.1fs" % rank_data.cooldown_sec)
+		params.append(tr("ability.common.cooldown").format({"seconds": "%.1f" % rank_data.cooldown_sec}))
 	if rank_data.resource_cost > 0:
 		var abs_cost: int = int(ceil(float(max_resource) * float(rank_data.resource_cost) / 100.0))
 		if abs_cost > 0:
-			params.append("Стоимость: %d %s" % [abs_cost, resource_label])
+			params.append(tr("ability.common.cost").format({"amount": abs_cost, "resource": resource_label}))
 	if not params.is_empty():
 		for p in params:
 			lines.append(p)

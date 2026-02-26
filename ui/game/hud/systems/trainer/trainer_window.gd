@@ -38,8 +38,8 @@ func _ready() -> void:
 		close_button.pressed.connect(close)
 	if filter_option != null:
 		filter_option.clear()
-		filter_option.add_item("Доступные")
-		filter_option.add_item("Все")
+		filter_option.add_item(tr("ability.trainer.filter.available"))
+		filter_option.add_item(tr("ability.trainer.filter.all"))
 		filter_option.selected = 0
 	if filter_option != null and not filter_option.item_selected.is_connected(_on_filter_changed):
 		filter_option.item_selected.connect(_on_filter_changed)
@@ -94,7 +94,7 @@ func open_for_trainer(trainer_node: Node, player: Player, spellbook: PlayerSpell
 	panel.visible = true
 	emit_signal("hud_visibility_changed", true)
 	if title_label != null:
-		title_label.text = "Тренер"
+		title_label.text = tr("ability.trainer.title")
 	_try_refresh_rows()
 
 func close() -> void:
@@ -253,17 +253,17 @@ func _has_gold(cost: int) -> bool:
 func _notify_not_enough_gold() -> void:
 	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
 	if inv_ui != null and inv_ui.has_method("show_center_toast"):
-		inv_ui.call("show_center_toast", "Недостаточно монет")
+		inv_ui.call("show_center_toast", tr("ability.trainer.error.not_enough_coins"))
 
 func _notify_level_locked(level_req: int) -> void:
 	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
 	if inv_ui != null and inv_ui.has_method("show_center_toast"):
-		inv_ui.call("show_center_toast", "Нужен уровень %d" % level_req)
+		inv_ui.call("show_center_toast", tr("ability.trainer.error.level_required").format({"level": level_req}))
 
 func _notify_class_mismatch() -> void:
 	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
 	if inv_ui != null and inv_ui.has_method("show_center_toast"):
-		inv_ui.call("show_center_toast", "Тренер не для вашего класса")
+		inv_ui.call("show_center_toast", tr("ability.trainer.error.class_mismatch"))
 
 func _ensure_tooltip_ref() -> void:
 	if _tooltip == null or not is_instance_valid(_tooltip):

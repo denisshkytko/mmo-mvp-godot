@@ -48,7 +48,7 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 	if name_button != null:
 		name_button.text = _full_name_text
 	if rank_label != null:
-		rank_label.text = "Req.Lvl %d" % required_level
+		rank_label.text = tr("ability.trainer.required_level").format({"level": required_level})
 	if current_rank >= max_rank:
 		_set_cost_visible(false)
 	else:
@@ -56,10 +56,10 @@ func set_data(definition: AbilityDefinition, current_rank: int, max_rank: int, r
 		_set_cost_value(cost)
 	if learn_button != null:
 		if current_rank >= max_rank:
-			learn_button.text = "Макс"
+			learn_button.text = tr("ability.trainer.max_rank")
 			learn_button.disabled = true
 		else:
-			learn_button.text = "Изучить"
+			learn_button.text = tr("ability.trainer.learn")
 			learn_button.disabled = not can_learn
 	call_deferred("_fit_name_button_width")
 
@@ -101,15 +101,15 @@ func _set_cost_value(bronze_total: int) -> void:
 
 	if cost_gold_label != null:
 		cost_gold_label.visible = gold > 0
-		cost_gold_label.text = "%dg" % gold
+		cost_gold_label.text = tr("currency.gold.short").format({"value": gold})
 		cost_gold_label.modulate = COST_GOLD_COLOR
 	if cost_silver_label != null:
 		cost_silver_label.visible = silver > 0
-		cost_silver_label.text = "%ds" % silver
+		cost_silver_label.text = tr("currency.silver.short").format({"value": silver})
 		cost_silver_label.modulate = COST_SILVER_COLOR
 	if cost_bronze_label != null:
 		cost_bronze_label.visible = true
-		cost_bronze_label.text = "%db" % bronze
+		cost_bronze_label.text = tr("currency.bronze.short").format({"value": bronze})
 		cost_bronze_label.modulate = COST_BRONZE_COLOR
 
 func _on_name_pressed() -> void:
@@ -190,4 +190,3 @@ func _find_parent_scroll() -> ScrollContainer:
 			return n as ScrollContainer
 		n = n.get_parent()
 	return null
-

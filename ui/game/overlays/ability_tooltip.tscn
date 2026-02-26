@@ -29,15 +29,15 @@ theme_override_constants/separation = 4
 
 [node name="Name" type="Label" parent="Panel/Margin/VBox"]
 layout_mode = 2
-text = "Ability"
+text = "Способность"
 
 [node name="Rank" type="Label" parent="Panel/Margin/VBox"]
 layout_mode = 2
-text = "Rank 1/1"
+text = "Ранг 1/1"
 
 [node name="Description" type="RichTextLabel" parent="Panel/Margin/VBox"]
 layout_mode = 2
-text = "Description"
+text = "Описание"
 fit_content = true
 scroll_active = false
 

@@ -1,0 +1,23 @@
+[gd_resource type="Translation" format=3]
+
+[resource]
+locale = "ru"
+messages = {
+"ability.common.rank": "Ранг {current}/{max}",
+"ability.common.cast_time": "Время применения: {seconds} с",
+"ability.common.cooldown": "Восстановление: {seconds} с",
+"ability.common.cost": "Стоимость: {amount} {resource}",
+"ability.common.resource_fallback": "Ресурс",
+"ability.trainer.required_level": "Треб. ур. {level}",
+"ability.trainer.learn": "Изучить",
+"ability.trainer.max_rank": "Макс. ранг",
+"ability.trainer.title": "Тренер",
+"ability.trainer.filter.available": "Доступные",
+"ability.trainer.filter.all": "Все",
+"ability.trainer.error.not_enough_coins": "Недостаточно монет",
+"ability.trainer.error.level_required": "Нужен уровень {level}",
+"ability.trainer.error.class_mismatch": "Тренер не для вашего класса",
+"currency.gold.short": "{value}g",
+"currency.silver.short": "{value}s",
+"currency.bronze.short": "{value}b"
+}
