@@ -199,6 +199,7 @@ func _format_effect_from_template(template: String, rank_data: RankData, scaled_
 	out = out.replace("{M}", str(scaled_flat2))
 	out = out.replace("{P}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{P2}", str(int(round(rank_data.value_pct_2))))
+	out = out.replace("{N}", str(int((rank_data.flags as Dictionary).get("max_targets", 0))))
 	out = out.replace("{T}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{HP}", str(int(round(rank_data.value_pct))))
 	out = out.replace("{MP}", str(int(round(rank_data.value_pct_2))))
