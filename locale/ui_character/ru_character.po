@@ -1,0 +1,89 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "ui.character.title"
+msgstr "Персонаж"
+
+
+msgid "ui.character.unavailable"
+msgstr "Персонаж недоступен"
+
+
+msgid "ui.character.title_with_level"
+msgstr "{name} (Уровень {level})"
+
+
+msgid "ui.character.slot.head"
+msgstr "Голова"
+
+
+msgid "ui.character.slot.neck"
+msgstr "Шея"
+
+
+msgid "ui.character.slot.shoulders"
+msgstr "Плечи"
+
+
+msgid "ui.character.slot.cloak"
+msgstr "Плащ"
+
+
+msgid "ui.character.slot.chest"
+msgstr "Грудь"
+
+
+msgid "ui.character.slot.shirt"
+msgstr "Рубашка"
+
+
+msgid "ui.character.slot.bracers"
+msgstr "Наручи"
+
+
+msgid "ui.character.slot.gloves"
+msgstr "Перчатки"
+
+
+msgid "ui.character.slot.ring"
+msgstr "Кольцо"
+
+
+msgid "ui.character.slot.legs"
+msgstr "Ноги"
+
+
+msgid "ui.character.slot.feet"
+msgstr "Ступни"
+
+
+msgid "ui.character.slot.right_hand"
+msgstr "Правая рука"
+
+
+msgid "ui.character.slot.left_hand"
+msgstr "Левая рука"
+
+
+msgid "ui.character.ability_slot"
+msgstr "Ячейка {index}"
+
+
+msgid "ui.character.damage.dps"
+msgstr "УВС: {value}"
+
+
+msgid "ui.character.damage.weapon_right"
+msgstr "Урон оружия (правая рука): {value}"
+
+
+msgid "ui.character.damage.weapon_left"
+msgstr "Урон оружия (левая рука): {value}"
+
+
+msgid "ui.character.buff.food_drink"
+msgstr "Еда/Напитки"
+
+# Flow HUD (login / character select / create character)

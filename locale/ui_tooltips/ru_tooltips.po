@@ -1,0 +1,73 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "ui.tooltip.item_fallback"
+msgstr "Предмет"
+
+
+msgid "ui.tooltip.rarity"
+msgstr "Редкость: {value}"
+
+
+msgid "ui.tooltip.slot"
+msgstr "Ячейка: {value}"
+
+
+msgid "ui.tooltip.required_level"
+msgstr "Требуемый уровень: {level}"
+
+
+msgid "ui.tooltip.subtype"
+msgstr "Тип: {value}"
+
+
+msgid "ui.tooltip.material"
+msgstr "Материал: {value}"
+
+
+msgid "ui.tooltip.damage_speed"
+msgstr "Урон: {damage} Скорость: {speed}"
+
+
+msgid "ui.tooltip.dps"
+msgstr "УВС: {value}"
+
+
+msgid "ui.tooltip.effects"
+msgstr "Эффекты:"
+
+
+msgid "ui.tooltip.cooldown"
+msgstr "Восстановление: {seconds}с"
+
+
+msgid "ui.tooltip.cooldown_left"
+msgstr "Восстановление: {seconds}с ({left}с осталось)"
+
+
+msgid "ui.tooltip.price"
+msgstr "Стоимость: {value}"
+
+
+msgid "ui.tooltip.physical_defense"
+msgstr "Физическая защита: {value}"
+
+
+msgid "ui.tooltip.magic_defense"
+msgstr "Магическое сопротивление: {value}"
+
+
+msgid "ui.tooltip.hp_plus"
+msgstr "Здоровье +{value}"
+
+
+msgid "ui.tooltip.mana_plus"
+msgstr "Мана +{value}"
+
+
+msgid "ui.tooltip.over_seconds"
+msgstr "в течение {seconds}с"
+
+# Character HUD

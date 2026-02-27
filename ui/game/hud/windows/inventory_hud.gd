@@ -846,7 +846,7 @@ func _toggle_settings() -> void:
 	_settings_panel.visible = not _settings_panel.visible
 	if _settings_panel.visible:
 		_sync_settings_columns_input(_grid_columns)
-		await _refresh_settings_columns_controls()
+		_refresh_settings_columns_controls()
 
 func _hide_settings() -> void:
 	if _settings_panel != null:
@@ -865,11 +865,30 @@ func _get_settings_columns_value() -> int:
 		return max(1, _grid_columns)
 	return max(1, int(txt))
 
+func _estimate_panel_width_for_columns(cols: int) -> float:
+	var safe_cols: int = max(1, cols)
+	var slot_w: float = 80.0
+	if grid != null and grid.get_child_count() > 0:
+		var first := grid.get_child(0) as Control
+		if first != null:
+			slot_w = max(1.0, first.get_combined_minimum_size().x)
+	var hsep: float = float(grid.get_theme_constant("h_separation")) if grid != null else 0.0
+	var grid_w: float = float(safe_cols) * slot_w + float(max(0, safe_cols - 1)) * hsep
+	var pads: Dictionary = _compute_fixed_padding()
+	var left_margin_x: float = float(pads.get("left_margin_x", 0.0))
+	var pad_right: float = float(pads.get("pad_right", 10.0))
+	var separation: float = float(pads.get("separation", 0.0))
+	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
+	return left_margin_x + bag_min.x + separation + grid_w + pad_right
+
 func _get_max_fitting_columns(total_slots: int) -> int:
+	if not _panel_anchor_valid:
+		return max(1, min(20, total_slots))
 	var cap: int = max(1, min(20, total_slots))
+	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
 	var best: int = 1
 	for c in range(1, cap + 1):
-		if await _can_fit_columns(c, total_slots):
+		if _estimate_panel_width_for_columns(c) <= max_panel.x:
 			best = c
 	return best
 
@@ -881,7 +900,7 @@ func _refresh_settings_columns_controls() -> void:
 		total = _get_total_slots_from_player_fallback()
 	if total <= 0:
 		total = 1
-	var max_fit: int = await _get_max_fitting_columns(total)
+	var max_fit: int = _get_max_fitting_columns(total)
 	var current: int = clamp(_get_settings_columns_value(), 1, max_fit)
 	_sync_settings_columns_input(current)
 	_settings_minus.disabled = current <= 1
@@ -890,12 +909,12 @@ func _refresh_settings_columns_controls() -> void:
 func _on_settings_minus_pressed() -> void:
 	var current: int = _get_settings_columns_value()
 	_sync_settings_columns_input(max(1, current - 1))
-	await _refresh_settings_columns_controls()
+	_refresh_settings_columns_controls()
 
 func _on_settings_plus_pressed() -> void:
 	var current: int = _get_settings_columns_value()
 	_sync_settings_columns_input(current + 1)
-	await _refresh_settings_columns_controls()
+	_refresh_settings_columns_controls()
 
 func _on_settings_apply() -> void:
 	var n: int = _get_settings_columns_value()
@@ -919,7 +938,7 @@ func _on_settings_apply() -> void:
 	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
 	await _rebuild_layout("settings_apply")
-	await _refresh_settings_columns_controls()
+	_refresh_settings_columns_controls()
 	await _refresh()
 
 
@@ -1935,7 +1954,7 @@ func _ensure_support_ui() -> void:
 			if not _settings_sort.pressed.is_connected(_on_settings_sort):
 				_settings_sort.pressed.connect(_on_settings_sort)
 		_sync_settings_columns_input(_grid_columns)
-		await _refresh_settings_columns_controls()
+		_refresh_settings_columns_controls()
 
 	# Quick bar is part of the scene (InventoryHUD.tscn) so you can edit it visually.
 	if _quick_bar == null:

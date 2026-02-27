@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "ui.common.accept"
+msgstr "Принять"
+
+
+msgid "ui.common.cancel"
+msgstr "Отменить"
+
+
+msgid "ui.common.take"
+msgstr "Взять"
+
+
+msgid "ui.common.loot_all"
+msgstr "Взять Всё"
+
+
+msgid "ui.common.loot_title"
+msgstr "Добыча"
+
+
+msgid "ui.common.inventory_title"
+msgstr "Инвентарь"
+
+
+msgid "ui.common.merchant_title"
+msgstr "Торговец"
+
+
+msgid "ui.common.coins_with_value"
+msgstr "Монеты: {value}"
+
+
+msgid "ui.common.bag_full"
+msgstr "Сумка полна"
+
+
+msgid "ui.common.not_enough_coins"
+msgstr "Недостаточно монет"
+
+
+msgid "ui.common.currency.gold.short"
+msgstr "{value}g"
+
+
+msgid "ui.common.currency.silver.short"
+msgstr "{value}s"
+
+
+msgid "ui.common.currency.bronze.short"
+msgstr "{value}b"
+
+# Inventory specific

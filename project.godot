@@ -33,7 +33,7 @@ window/stretch/aspect="expand"
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://locale/spells/ru_spells.po", "res://locale/ui_items/ru_items.po")
+locale/translations=PackedStringArray("res://locale/spells/ru_spells.po", "res://locale/ui_common/ru_common.po", "res://locale/ui_inventory/ru_inventory.po", "res://locale/ui_merchant/ru_merchant.po", "res://locale/ui_tooltips/ru_tooltips.po", "res://locale/ui_character/ru_character.po", "res://locale/ui_flow/ru_flow.po", "res://locale/ui_hud_core/ru_hud_core.po")
 locale/fallback="ru"
 
 [input]
