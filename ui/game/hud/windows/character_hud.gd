@@ -4,6 +4,7 @@ const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
 signal hud_visibility_changed(is_open: bool)
 
 const TOOLTIP_MIN_W: float = 260.0
@@ -208,7 +209,7 @@ func _refresh() -> void:
 		stats_text.text = tr("ui.character.unavailable")
 		return
 
-	title_label.text = _trf("ui.character.title_with_level", {"name": String(_player.name), "level": _player.level})
+	title_label.text = _trf("ui.character.title_with_level", {"name": String(_player.name), "class": UI_TEXT.class_display_name(String(_player.class_id)), "level": _player.level})
 
 	var snap: Dictionary = {}
 	if _player.has_method("get_stats_snapshot"):

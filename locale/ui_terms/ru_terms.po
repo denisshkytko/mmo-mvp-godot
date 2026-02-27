@@ -11,3 +11,27 @@ msgstr "Стоимость: {value}"
 
 msgid "ui.terms.dps_with_value"
 msgstr "УВС: {value}"
+
+msgid "ui.class.paladin"
+msgstr "Паладин"
+
+msgid "ui.class.shaman"
+msgstr "Шаман"
+
+msgid "ui.class.mage"
+msgstr "Маг"
+
+msgid "ui.class.priest"
+msgstr "Жрец"
+
+msgid "ui.class.hunter"
+msgstr "Охотник"
+
+msgid "ui.class.warrior"
+msgstr "Воин"
+
+msgid "ui.class.beast"
+msgstr "Зверь"
+
+msgid "ui.class.adventurer"
+msgstr "Искатель приключений"

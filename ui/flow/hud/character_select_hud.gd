@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+
 @onready var list: ItemList = $Root/Panel/Margin/VBox/CharacterList
 @onready var delete_button: Button = $Root/Panel/Margin/VBox/Buttons/DeleteButton
 @onready var enter_button: Button = $Root/Panel/Margin/VBox/Buttons/EnterButton
@@ -45,8 +47,9 @@ func refresh_list() -> void:
 		var char_name: String = String(d.get("name", tr("ui.flow.character_select.unnamed")))
 		var lvl: int = int(d.get("level", 1))
 
-		var cls: String = String(d.get("class", "paladin"))
-		list.add_item(tr("ui.flow.character_select.list_item").format({"name": char_name, "class": cls, "level": lvl}))
+		var cls_id: String = String(d.get("class_id", d.get("class", "paladin")))
+		var cls_name: String = UI_TEXT.class_display_name(cls_id)
+		list.add_item(tr("ui.flow.character_select.list_item").format({"name": char_name, "class": cls_name, "level": lvl}))
 		list.set_item_metadata(list.item_count - 1, id)
 
 	if list.item_count > 0:

@@ -11,3 +11,13 @@ static func item_with_stack(name: String, count: int) -> String:
 		"name": name,
 		"stack": stack_count(count),
 	})
+
+static func class_display_name(class_id: String) -> String:
+	var clean := String(class_id).strip_edges().to_lower()
+	if clean == "":
+		clean = "adventurer"
+	var key := "ui.class.%s" % clean
+	var translated := TranslationServer.translate(key)
+	if translated == key:
+		return TranslationServer.translate("ui.class.adventurer")
+	return translated

@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+
 signal character_created(char_id: String)
 
 @onready var name_edit: LineEdit = $Root/Panel/Margin/VBox/NameEdit
@@ -26,18 +28,11 @@ func _ready() -> void:
 	cancel_button.focus_mode = Control.FOCUS_NONE
 
 	class_option.clear()
-	var classes := [
-		{"label": "Paladin", "id": "paladin"},
-		{"label": "Shaman", "id": "shaman"},
-		{"label": "Mage", "id": "mage"},
-		{"label": "Priest", "id": "priest"},
-		{"label": "Hunter", "id": "hunter"},
-		{"label": "Warrior", "id": "warrior"},
-	]
-	for entry in classes:
+	var class_ids: Array[String] = ["paladin", "shaman", "mage", "priest", "hunter", "warrior"]
+	for class_id in class_ids:
 		var idx := class_option.item_count
-		class_option.add_item(String(entry.get("label", "")), idx)
-		class_option.set_item_metadata(idx, String(entry.get("id", "")))
+		class_option.add_item(UI_TEXT.class_display_name(class_id), idx)
+		class_option.set_item_metadata(idx, class_id)
 	class_option.select(0)
 	class_option.disabled = false
 
