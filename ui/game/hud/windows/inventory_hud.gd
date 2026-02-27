@@ -361,8 +361,6 @@ func _get_bag_button_for_logical(logical_index: int) -> Button:
 
 func _on_bag_slot_gui_input(event: InputEvent, bag_index: int) -> void:
 	if _is_settings_open():
-		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
-			get_viewport().set_input_as_handled()
 		return
 	if not _is_open:
 		return
@@ -508,8 +506,6 @@ func _hook_slot_panels() -> void:
 
 func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 	if _is_settings_open():
-		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
-			get_viewport().set_input_as_handled()
 		return
 	if not _is_open:
 		return
@@ -1935,6 +1931,12 @@ func _ensure_support_ui() -> void:
 
 	if _settings_panel == null:
 		_settings_panel = settings_panel_scene
+	if _settings_button != null and _settings_button.get_parent() == panel:
+		panel.move_child(_settings_button, panel.get_child_count() - 1)
+
+	if _settings_panel != null and _settings_panel.get_parent() == panel:
+		panel.move_child(_settings_panel, panel.get_child_count() - 1)
+
 	if _settings_panel != null:
 		_settings_title_label = settings_title_label_scene
 		_settings_columns_label = settings_columns_label_scene
@@ -2196,7 +2198,9 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
 
-	# Keep settings panel attached to button: panel top-right is 8px left+down from button bottom-left.
+	# Keep settings button pinned to top-right and panel attached to button.
+	if _settings_button != null:
+		_settings_button.position = Vector2(panel.size.x - _settings_button.size.x - 8.0, 8.0)
 	if _settings_panel != null and _settings_button != null:
 		var anchor_point := _settings_button.position + Vector2(0.0, _settings_button.size.y) + Vector2(-8.0, 8.0)
 		_settings_panel.position = Vector2(anchor_point.x - _settings_panel.size.x, anchor_point.y)
