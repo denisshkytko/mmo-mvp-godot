@@ -60,6 +60,9 @@ var _equip_press_pos: Vector2 = Vector2.ZERO
 var _tooltip_anchor_pos: Vector2 = Vector2.ZERO
 var _tooltip_layer: CanvasLayer = null
 
+func _trf(key: String, params: Dictionary = {}) -> String:
+	return tr(key).format(params)
+
 func _ready() -> void:
 	add_to_group("character_hud")
 	if character_button != null:
@@ -101,6 +104,7 @@ func _ready() -> void:
 		_player.c_equip.equipment_changed.connect(_on_equipment_changed)
 
 	_setup_equipment_slots()
+	_localize_static_labels()
 
 	_refresh()
 	call_deferred("_refresh_layout")
@@ -165,6 +169,34 @@ func _hide_tooltip() -> void:
 	if tooltip_unequip != null:
 		tooltip_unequip.visible = false
 
+func _localize_static_labels() -> void:
+	if title_label != null:
+		title_label.text = tr("ui.character.title")
+	var slot_labels := {
+		"HeadLabel": "ui.character.slot.head",
+		"NeckLabel": "ui.character.slot.neck",
+		"ShouldersLeftLabel": "ui.character.slot.shoulders",
+		"CloakLeftLabel": "ui.character.slot.cloak",
+		"ChestLabel": "ui.character.slot.chest",
+		"ShirtLeftLabel": "ui.character.slot.shirt",
+		"BracersLabel": "ui.character.slot.bracers",
+		"GlovesLabel": "ui.character.slot.gloves",
+		"Ring1RightLabel": "ui.character.slot.ring",
+		"Ring2Label": "ui.character.slot.ring",
+		"LegsRightLabel": "ui.character.slot.legs",
+		"BootsRightLabel": "ui.character.slot.feet",
+		"RightHandLabel": "ui.character.slot.right_hand",
+		"LeftHandLabel": "ui.character.slot.left_hand",
+	}
+	for node_name in slot_labels.keys():
+		var lbl := panel.find_child(String(node_name), true, false) as Label
+		if lbl != null:
+			lbl.text = tr(String(slot_labels[node_name]))
+	for i in range(5):
+		var slot_lbl := panel.find_child("Slot%d" % i, true, false) as Label
+		if slot_lbl != null:
+			slot_lbl.text = _trf("ui.character.ability_slot", {"index": i + 1})
+
 func _refresh() -> void:
 	_player = NODE_CACHE.get_player(get_tree()) as Player
 	_breakdown_cache.clear()
@@ -172,18 +204,18 @@ func _refresh() -> void:
 	_refresh_equipment()
 
 	if _player == null:
-		title_label.text = "Character"
-		stats_text.text = "No player."
+		title_label.text = tr("ui.character.title")
+		stats_text.text = tr("ui.character.unavailable")
 		return
 
-	title_label.text = "%s  (Level %d)" % [String(_player.name), _player.level]
+	title_label.text = _trf("ui.character.title_with_level", {"name": String(_player.name), "level": _player.level})
 
 	var snap: Dictionary = {}
 	if _player.has_method("get_stats_snapshot"):
 		snap = _player.get_stats_snapshot()
 
 	if snap.is_empty():
-		stats_text.text = _fallback_text()
+		stats_text.text = tr("ui.character.unavailable")
 		return
 
 	stats_text.text = _format_snapshot(snap)
@@ -486,18 +518,6 @@ func _on_unequip_pressed() -> void:
 			_hide_tooltip()
 			_refresh()
 
-func _fallback_text() -> String:
-	if _is_rage_player():
-		return "HP %d/%d\nAttack %d\nDefense %d" % [
-			_player.current_hp, _player.max_hp,
-			_player.attack, _player.defense,
-		]
-	return "HP %d/%d\nMana %d/%d\nAttack %d\nDefense %d" % [
-		_player.current_hp, _player.max_hp,
-		_player.mana, _player.max_mana,
-		_player.attack, _player.defense,
-	]
-
 func _is_rage_player() -> bool:
 	if _player == null:
 		return false
@@ -688,7 +708,7 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		base_bonus_value = ap_part_unarmed * base_pct_bonus
 		display_damage = _format_float_clean(unarmed_hit)
 		var dps: float = float(unarmed_hit) / max(0.01, interval_r)
-		tooltip_lines.append("Урон в секунду: %.2f" % dps)
+		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_unarmed))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(0.0))
@@ -699,7 +719,7 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		base_bonus_value = base_2h * base_pct_bonus
 		display_damage = _format_float_clean(hit_2h)
 		var dps_2h: float = float(hit_2h) / max(0.01, interval_r)
-		tooltip_lines.append("Урон в секунду: %.2f" % dps_2h)
+		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps_2h}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_2h))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))
@@ -714,11 +734,11 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		var dps_dw: float = float(hit_r) / max(0.01, interval_r)
 		if interval_l > 0.0:
 			dps_dw += float(hit_l) / max(0.01, interval_l)
-		tooltip_lines.append("Урон в секунду: %.2f" % dps_dw)
+		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps_dw}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_dw))
-		tooltip_lines.append("Урон оружия (правая): %s" % _format_float_clean(float(right_weapon_damage)))
-		tooltip_lines.append("Урон оружия (левая): %s" % _format_float_clean(float(left_weapon_damage)))
+		tooltip_lines.append(_trf("ui.character.damage.weapon_right", {"value": _format_float_clean(float(right_weapon_damage))}))
+		tooltip_lines.append(_trf("ui.character.damage.weapon_left", {"value": _format_float_clean(float(left_weapon_damage))}))
 	else:
 		var ap_part_1h: float = attack_power_total
 		var base_1h: float = float(right_weapon_damage) + ap_part_1h
@@ -726,7 +746,7 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		base_bonus_value = base_1h * base_pct_bonus
 		display_damage = _format_float_clean(hit_1h)
 		var dps_1h: float = float(hit_1h) / max(0.01, interval_r)
-		tooltip_lines.append("Урон в секунду: %.2f" % dps_1h)
+		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps_1h}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_1h))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))
@@ -806,7 +826,7 @@ func _extract_buff_lines(entries: Array) -> Array[String]:
 func _resolve_buff_name(raw_label: String) -> String:
 	var label := raw_label
 	if label == "food/drink":
-		return "Еда/питьё"
+		return tr("ui.character.buff.food_drink")
 
 	var ability_id := ""
 	if label.begins_with("buff:"):

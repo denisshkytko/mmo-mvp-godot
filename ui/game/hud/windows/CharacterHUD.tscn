@@ -56,7 +56,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(290, 30)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Character"
+text = "Персонаж"
 vertical_alignment = 1
 
 [node name="Tabs" type="TabContainer" parent="Root/Panel/MarginContainer/VBoxContainer"]
@@ -126,7 +126,7 @@ alignment = 2
 [node name="HeadLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/HeadRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Head"
+text = "Голова"
 
 [node name="SlotHead" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/HeadRow"]
 custom_minimum_size = Vector2(64, 64)
@@ -150,7 +150,7 @@ alignment = 2
 [node name="NeckLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/NeckRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Neck"
+text = "Шея"
 
 [node name="SlotNeck" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/NeckRow"]
 custom_minimum_size = Vector2(64, 64)
@@ -174,7 +174,7 @@ alignment = 2
 [node name="ShouldersLeftLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Shoulders"
+text = "Плечи"
 
 [node name="SlotShoulders" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShouldersLeftRow"]
 custom_minimum_size = Vector2(64, 64)
@@ -198,7 +198,7 @@ alignment = 2
 [node name="CloakLeftLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Cloak"
+text = "Плащ"
 
 [node name="SlotCloak" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/CloakLeftRow"]
 custom_minimum_size = Vector2(64, 64)
@@ -222,7 +222,7 @@ alignment = 2
 [node name="ChestLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Chest"
+text = "Грудь"
 
 [node name="SlotChest" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ChestRow"]
 custom_minimum_size = Vector2(64, 64)
@@ -246,7 +246,7 @@ alignment = 2
 [node name="ShirtLeftLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Shirt"
+text = "Рубашка"
 
 [node name="SlotShirt" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingLeftColumn/ShirtLeftRow"]
 custom_minimum_size = Vector2(64, 64)
@@ -293,7 +293,7 @@ stretch_mode = 5
 [node name="BracersLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BracersRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Bracers"
+text = "Наручи"
 
 [node name="GlovesRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
@@ -316,7 +316,7 @@ stretch_mode = 5
 [node name="GlovesLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/GlovesRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Gloves"
+text = "Перчатки"
 
 [node name="Ring1RightRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
@@ -339,7 +339,7 @@ stretch_mode = 5
 [node name="Ring1RightLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring1RightRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Ring 1"
+text = "Кольцо"
 
 [node name="Ring2Row" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
@@ -362,7 +362,7 @@ stretch_mode = 5
 [node name="Ring2Label" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/Ring2Row"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Ring 2"
+text = "Кольцо"
 
 [node name="LegsRightRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
@@ -385,7 +385,7 @@ stretch_mode = 5
 [node name="LegsRightLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/LegsRightRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Legs"
+text = "Ноги"
 
 [node name="BootsRightRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn"]
 layout_mode = 2
@@ -408,7 +408,7 @@ stretch_mode = 5
 [node name="BootsRightLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/ClothingRow/ClothingRightColumn/BootsRightRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Boots"
+text = "Ступни"
 
 [node name="WeaponsRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox"]
 layout_mode = 2
@@ -426,7 +426,7 @@ theme_override_constants/separation = 16
 [node name="RightHandLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/RightHandRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Right Hand"
+text = "Правая рука"
 
 [node name="SlotWeaponR" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/RightHandRow"]
 custom_minimum_size = Vector2(64, 64)
@@ -464,7 +464,7 @@ stretch_mode = 5
 [node name="LeftHandLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow/LeftHandRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Left Hand"
+text = "Левая рука"
 
 [node name="WeaponsRightSpacer" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow/EquipmentPanel/Margin/EquipmentVBox/WeaponsRow"]
 layout_mode = 2
@@ -611,7 +611,7 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "slot0"
+text = "Ячейка 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -626,7 +626,7 @@ offset_right = 49.0
 offset_bottom = -39.0
 grow_vertical = 0
 theme_override_constants/outline_size = 3
-text = "slot1"
+text = "Ячейка 2"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -641,7 +641,7 @@ offset_right = 59.0
 offset_bottom = -4.0
 grow_vertical = 2
 theme_override_constants/outline_size = 3
-text = "slot2"
+text = "Ячейка 3"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -656,7 +656,7 @@ offset_right = 4.0
 offset_bottom = 51.0
 grow_horizontal = 2
 theme_override_constants/outline_size = 3
-text = "slot3"
+text = "Ячейка 4"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -671,7 +671,7 @@ offset_right = -31.0
 offset_bottom = 41.0
 grow_horizontal = 0
 theme_override_constants/outline_size = 3
-text = "slot4"
+text = "Ячейка 5"
 horizontal_alignment = 1
 vertical_alignment = 1
 
