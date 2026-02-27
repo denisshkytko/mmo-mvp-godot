@@ -977,7 +977,7 @@ func _get_panel_max_size_from_anchor() -> Vector2:
 	var top_padding: float = 20.0
 	var max_w: float = min(vp_size.x, _panel_br_anchor.x)
 	var max_h: float = min(vp_size.y - top_padding, _panel_br_anchor.y - top_padding)
-	max_h = max(0.0, max_h)
+	max_h = max(0.0, max_h - 80.0)
 	return Vector2(max_w, max_h)
 
 func _compute_fixed_padding() -> Dictionary:
