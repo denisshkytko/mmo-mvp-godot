@@ -27,6 +27,42 @@ func _ensure_slots() -> void:
 	elif buff_slots.size() > 1:
 		buff_slots.resize(1)
 
+
+
+func _is_loadout_ability_type(ability_type: String) -> bool:
+	var t := String(ability_type).strip_edges().to_lower()
+	return not (t == "" or t == "aura" or t == "stance" or t == "buff" or t == "passive")
+
+
+func auto_assign_active_slots_from_learned() -> bool:
+	_ensure_slots()
+	var db := get_node_or_null("/root/AbilityDB")
+	if db == null or not db.has_method("get_ability"):
+		return false
+	var changed: bool = false
+	var learned_ids := get_learned_abilities()
+	learned_ids.sort()
+	for ability_id in learned_ids:
+		if ability_id == "":
+			continue
+		if loadout_slots.has(ability_id):
+			continue
+		var def: AbilityDefinition = db.call("get_ability", ability_id)
+		if def == null:
+			continue
+		if not _is_loadout_ability_type(def.ability_type):
+			continue
+		for i in range(loadout_slots.size()):
+			if loadout_slots[i] == "":
+				loadout_slots[i] = ability_id
+				changed = true
+				break
+		if not loadout_slots.has(""):
+			break
+	if changed:
+		emit_signal("spellbook_changed")
+	return changed
+
 func assign_ability_to_slot(ability_id: String, slot_index: int) -> void:
 	if ability_id == "":
 		return
@@ -35,10 +71,8 @@ func assign_ability_to_slot(ability_id: String, slot_index: int) -> void:
 	var db := get_node_or_null("/root/AbilityDB")
 	if db != null and db.has_method("get_ability"):
 		var def: AbilityDefinition = db.call("get_ability", ability_id)
-		if def != null:
-			var t := String(def.ability_type)
-			if t == "aura" or t == "stance" or t == "buff" or t == "passive":
-				return
+		if def != null and not _is_loadout_ability_type(def.ability_type):
+			return
 	for i in range(loadout_slots.size()):
 		if loadout_slots[i] == ability_id:
 			loadout_slots[i] = ""
@@ -111,7 +145,7 @@ func auto_place_on_first_learn(ability_id: String) -> void:
 	if db != null and db.has_method("get_ability"):
 		var def: AbilityDefinition = db.call("get_ability", ability_id)
 		if def != null:
-			ability_type = def.ability_type
+			ability_type = String(def.ability_type).to_lower()
 	match ability_type:
 		"aura":
 			if aura_active == "":
@@ -124,6 +158,12 @@ func auto_place_on_first_learn(ability_id: String) -> void:
 				if buff_slots[i] == "":
 					buff_slots[i] = ability_id
 					break
+		_:
+			if _is_loadout_ability_type(ability_type):
+				for i in range(loadout_slots.size()):
+					if loadout_slots[i] == "":
+						loadout_slots[i] = ability_id
+						break
 
 func learn_next_rank(ability_id: String, max_rank: int) -> int:
 	if ability_id == "" or max_rank <= 0:

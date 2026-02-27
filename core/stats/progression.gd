@@ -135,9 +135,6 @@ const CLASS_TABLE: Dictionary = {
 			"bow",
 			"bow_2h",
 			"crossbow_2h",
-			"dagger_1h",
-			"sword_1h",
-			"axe_1h",
 		],
 	},
 	"warrior": {
