@@ -1,7 +1,8 @@
 extends RefCounted
+class_name TooltipTextBuilder
 
 const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
-class_name TooltipTextBuilder
+
 
 const PROG := preload("res://core/stats/progression.gd")
 
