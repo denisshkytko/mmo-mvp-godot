@@ -17,7 +17,6 @@ signal hud_visibility_changed(is_open: bool)
 @onready var settings_minus_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/MinusButton
 @onready var settings_value_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/ValueLabel
 @onready var settings_plus_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/PlusButton
-@onready var settings_apply_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ApplyButton
 @onready var settings_sort_title_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/SortTitle
 @onready var settings_sort_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/SortButton
 
@@ -84,7 +83,6 @@ var _settings_columns_label: Label = null
 var _settings_minus: Button = null
 var _settings_value: Label = null
 var _settings_plus: Button = null
-var _settings_apply: Button = null
 var _settings_sort_title: Label = null
 var _settings_sort: Button = null
 
@@ -362,6 +360,10 @@ func _get_bag_button_for_logical(logical_index: int) -> Button:
 		_: return bag_slot1
 
 func _on_bag_slot_gui_input(event: InputEvent, bag_index: int) -> void:
+	if _is_settings_open():
+		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+			get_viewport().set_input_as_handled()
+		return
 	if not _is_open:
 		return
 	if event is InputEventMouseButton:
@@ -505,6 +507,10 @@ func _hook_slot_panels() -> void:
 		slot_panel.gui_input.connect(_on_slot_gui_input.bind(i))
 
 func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
+	if _is_settings_open():
+		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+			get_viewport().set_input_as_handled()
+		return
 	if not _is_open:
 		return
 
@@ -840,11 +846,15 @@ func _position_panel_left_of_point(target_panel: Control, p: Vector2) -> void:
 
 # --- Settings ---
 
+func _is_settings_open() -> bool:
+	return _settings_panel != null and _settings_panel.visible
+
 func _toggle_settings() -> void:
 	if _settings_panel == null:
 		return
 	_settings_panel.visible = not _settings_panel.visible
 	if _settings_panel.visible:
+		_hide_tooltip()
 		_sync_settings_columns_input(_grid_columns)
 		_refresh_settings_columns_controls()
 
@@ -906,21 +916,13 @@ func _refresh_settings_columns_controls() -> void:
 	_settings_minus.disabled = current <= 1
 	_settings_plus.disabled = current >= max_fit
 
-func _on_settings_minus_pressed() -> void:
-	var current: int = _get_settings_columns_value()
-	_sync_settings_columns_input(max(1, current - 1))
-	_refresh_settings_columns_controls()
-
-func _on_settings_plus_pressed() -> void:
-	var current: int = _get_settings_columns_value()
-	_sync_settings_columns_input(current + 1)
-	_refresh_settings_columns_controls()
-
-func _on_settings_apply() -> void:
+func _apply_columns_from_settings_value() -> void:
 	var n: int = _get_settings_columns_value()
 	if n <= 0:
 		return
 	var total: int = _get_total_inventory_slots()
+	if total <= 0:
+		total = _get_total_slots_from_player_fallback()
 	if total <= 0:
 		return
 
@@ -933,13 +935,25 @@ func _on_settings_apply() -> void:
 				best_cols = c
 				break
 		_sync_settings_columns_input(best_cols)
+	if best_cols == _grid_columns:
+		_refresh_settings_columns_controls()
+		return
 	_grid_columns = best_cols
 	_save_grid_columns()
-	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
-	await _rebuild_layout("settings_apply")
+	await _rebuild_layout("settings_change")
 	_refresh_settings_columns_controls()
 	await _refresh()
+
+func _on_settings_minus_pressed() -> void:
+	var current: int = _get_settings_columns_value()
+	_sync_settings_columns_input(max(1, current - 1))
+	await _apply_columns_from_settings_value()
+
+func _on_settings_plus_pressed() -> void:
+	var current: int = _get_settings_columns_value()
+	_sync_settings_columns_input(current + 1)
+	await _apply_columns_from_settings_value()
 
 
 
@@ -1927,7 +1941,6 @@ func _ensure_support_ui() -> void:
 		_settings_minus = settings_minus_scene
 		_settings_value = settings_value_scene
 		_settings_plus = settings_plus_scene
-		_settings_apply = settings_apply_scene
 		_settings_sort_title = settings_sort_title_scene
 		_settings_sort = settings_sort_scene
 		_settings_panel.visible = false
@@ -1943,10 +1956,6 @@ func _ensure_support_ui() -> void:
 			_settings_plus.text = "+"
 			if not _settings_plus.pressed.is_connected(_on_settings_plus_pressed):
 				_settings_plus.pressed.connect(_on_settings_plus_pressed)
-		if _settings_apply != null:
-			_settings_apply.text = tr("ui.common.accept")
-			if not _settings_apply.pressed.is_connected(_on_settings_apply):
-				_settings_apply.pressed.connect(_on_settings_apply)
 		if _settings_sort_title != null:
 			_settings_sort_title.text = tr("ui.inventory.settings.sort_title")
 		if _settings_sort != null:
@@ -2187,12 +2196,10 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
 
-	# Keep the settings UI pinned to the panel's top-right corner.
-	var m: float = 8.0
-	if _settings_button != null:
-		_settings_button.position = Vector2(panel.size.x - _settings_button.size.x - m, m)
-	if _settings_panel != null:
-		_settings_panel.position = Vector2(panel.size.x - _settings_panel.size.x - m, m + _settings_button.size.y + 8.0)
+	# Keep settings panel attached to button: panel top-right is 8px left+down from button bottom-left.
+	if _settings_panel != null and _settings_button != null:
+		var anchor_point := _settings_button.position + Vector2(0.0, _settings_button.size.y) + Vector2(-8.0, 8.0)
+		_settings_panel.position = Vector2(anchor_point.x - _settings_panel.size.x, anchor_point.y)
 	return {
 		"panel_size": panel.size,
 		"scroll_view": Vector2(grid_min.x, scroll_view_h)
