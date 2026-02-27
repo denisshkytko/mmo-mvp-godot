@@ -3,15 +3,16 @@ class_name NormalAggresiveMobAI
 
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
 
 var behavior: int = Behavior.GUARD
 var speed: float = MOVE_SPEED.MOB_BASE
-var aggro_radius: float = 260.0
-var leash_distance: float = 420.0
-var patrol_radius: float = 140.0
+var aggro_radius: float = COMBAT_RANGES.AGGRO_RADIUS
+var leash_distance: float = COMBAT_RANGES.LEASH_DISTANCE
+var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
 var patrol_pause_seconds: float = 1.5
 
 var home_position: Vector2 = Vector2.ZERO

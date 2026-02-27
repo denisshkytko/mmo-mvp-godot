@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name Player
 
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -9,7 +10,7 @@ const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
 # Auto-attack
-@export var attack_range: float = 70.0
+@export var attack_range: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 @export var attack_cooldown: float = 0.8
 
 # Combat state (used for HP regen rule: HP regenerates only out of combat)

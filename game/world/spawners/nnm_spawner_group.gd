@@ -1,6 +1,8 @@
 @tool
 extends "res://game/world/spawners/base_spawner_group.gd"
+
 class_name NnmSpawnerGroup
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 const MOB_SCENE: PackedScene = preload("res://game/characters/mobs/NormalNeutralMob.tscn")
 
@@ -29,7 +31,7 @@ var body_size: int:
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
-@export var patrol_radius: float = 140.0
+@export var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
 @export var patrol_pause_seconds: float = 1.5
 var _abilities_internal: Array[String] = []
 var _body_size_internal: int = BodySize.MEDIUM
@@ -77,7 +79,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		point.global_position,
 		behavior,
 		-1.0, # leash_distance is defined on the mob itself
-		patrol_radius,
+		COMBAT_RANGES.PATROL_RADIUS,
 		patrol_pause_seconds,
 		-1.0, # move_speed is defined on the mob itself
 		level,
