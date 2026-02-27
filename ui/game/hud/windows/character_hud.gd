@@ -846,11 +846,15 @@ func _resolve_buff_name(raw_label: String) -> String:
 	if _ability_db != null and _ability_db.has_method("get_ability"):
 		if ability_id != "":
 			var def: AbilityDefinition = _ability_db.get_ability(ability_id)
-			if def != null and String(def.name) != "":
-				return String(def.name)
+			if def != null:
+				var def_name := String(def.get_display_name()).strip_edges() if def.has_method("get_display_name") else ""
+				if def_name != "":
+					return def_name
 		var direct_def: AbilityDefinition = _ability_db.get_ability(label)
-		if direct_def != null and String(direct_def.name) != "":
-			return String(direct_def.name)
+		if direct_def != null:
+			var direct_name := String(direct_def.get_display_name()).strip_edges() if direct_def.has_method("get_display_name") else ""
+			if direct_name != "":
+				return direct_name
 	return label
 
 func _build_primary_contrib_lines(key: String, snap: Dictionary) -> Array[String]:

@@ -77,6 +77,19 @@ msgstr "Неподходящий уровень предмета"
 msgid "ui.inventory.item_skill_mismatch"
 msgstr "Вы не умеете пользоваться этим"
 
+
+msgid "ui.inventory.settings.title"
+msgstr "Изменить сетку инвентаря"
+
+msgid "ui.inventory.settings.columns"
+msgstr "Количество столбцов:"
+
+msgid "ui.inventory.settings.sort_title"
+msgstr "Сортировка"
+
+msgid "ui.inventory.settings.sort"
+msgstr "Сортировать"
+
 # Merchant specific
 msgid "ui.merchant.buy"
 msgstr "Купить"

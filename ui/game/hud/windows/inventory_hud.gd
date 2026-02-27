@@ -1913,9 +1913,9 @@ func _ensure_support_ui() -> void:
 		_settings_sort = settings_sort_scene
 		_settings_panel.visible = false
 		if _settings_title_label != null:
-			_settings_title_label.text = "Изменить сетку инвентаря"
+			_settings_title_label.text = tr("ui.inventory.settings.title")
 		if _settings_columns_label != null:
-			_settings_columns_label.text = "Количество столбцов:"
+			_settings_columns_label.text = tr("ui.inventory.settings.columns")
 		if _settings_minus != null:
 			_settings_minus.text = "-"
 			if not _settings_minus.pressed.is_connected(_on_settings_minus_pressed):
@@ -1925,13 +1925,13 @@ func _ensure_support_ui() -> void:
 			if not _settings_plus.pressed.is_connected(_on_settings_plus_pressed):
 				_settings_plus.pressed.connect(_on_settings_plus_pressed)
 		if _settings_apply != null:
-			_settings_apply.text = "Принять"
+			_settings_apply.text = tr("ui.common.accept")
 			if not _settings_apply.pressed.is_connected(_on_settings_apply):
 				_settings_apply.pressed.connect(_on_settings_apply)
 		if _settings_sort_title != null:
-			_settings_sort_title.text = "Сортировка"
+			_settings_sort_title.text = tr("ui.inventory.settings.sort_title")
 		if _settings_sort != null:
-			_settings_sort.text = "Сортировать"
+			_settings_sort.text = tr("ui.inventory.settings.sort")
 			if not _settings_sort.pressed.is_connected(_on_settings_sort):
 				_settings_sort.pressed.connect(_on_settings_sort)
 		_sync_settings_columns_input(_grid_columns)
