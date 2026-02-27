@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
 signal hud_visibility_changed(is_open: bool)
 
@@ -360,7 +362,7 @@ func _format_item_label(item_id: String, count: int) -> String:
 	if db != null and db.is_ready and db.has_method("get_item_name"):
 		name = String(db.call("get_item_name", item_id))
 	if count > 1:
-		return "%s x%d" % [name, count]
+		return UI_TEXT.item_with_stack(name, count)
 	return name
 
 func _on_item_tooltip_input(event: InputEvent, item_id: String, count: int) -> void:

@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
 # Tooltip should show on release if press <= 1s.
 const TOOLTIP_HOLD_MAX_MS: int = 1000
@@ -381,7 +383,7 @@ func _refresh() -> void:
 			if label != null:
 				label.text = item_name
 			if count_label != null:
-				count_label.text = "x%d" % count
+				count_label.text = UI_TEXT.stack_count(count)
 			if icon_rect != null:
 				icon_rect.texture = icon_tex
 

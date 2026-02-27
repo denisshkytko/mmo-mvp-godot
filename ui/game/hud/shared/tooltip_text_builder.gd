@@ -1,4 +1,6 @@
 extends RefCounted
+
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
 class_name TooltipTextBuilder
 
 const PROG := preload("res://core/stats/progression.gd")
@@ -53,7 +55,7 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 
 	var lines: Array[String] = []
 	var name_part := "[color=%s][b]%s[/b][/color]" % [rarity_col, item_name]
-	lines.append(name_part + (" x%d" % count if count > 1 else ""))
+	lines.append(UI_TEXT.item_with_stack(name_part, count))
 	if rarity != "" and typ.to_lower() != "junk":
 		lines.append(TranslationServer.translate("ui.tooltip.rarity").format({"value": "[color=%s]%s[/color]" % [rarity_col, rarity]}))
 

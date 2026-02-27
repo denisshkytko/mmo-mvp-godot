@@ -55,3 +55,9 @@ msgid "ui.common.currency.bronze.short"
 msgstr "{value}b"
 
 # Inventory specific
+
+msgid "ui.common.stack_count"
+msgstr "x{count}"
+
+msgid "ui.common.item_with_stack"
+msgstr "{name} {stack}"
