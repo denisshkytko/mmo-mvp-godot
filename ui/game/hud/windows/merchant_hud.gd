@@ -58,6 +58,9 @@ var _tooltip_press_ms: int = 0
 var _tooltip_press_item_id: String = ""
 var _tooltip_press_pos: Vector2 = Vector2.ZERO
 
+func _trf(key: String, params: Dictionary = {}) -> String:
+	return tr(key).format(params)
+
 func _ready() -> void:
 	add_to_group("merchant_hud")
 	panel.visible = false
@@ -92,6 +95,14 @@ func _ready() -> void:
 		tooltip_unequip_btn.visible = false
 	if tooltip_close_button != null and not tooltip_close_button.pressed.is_connected(_hide_tooltip):
 		tooltip_close_button.pressed.connect(_hide_tooltip)
+	if qty_ok != null:
+		qty_ok.text = tr("ui.common.accept")
+	if qty_cancel != null:
+		qty_cancel.text = tr("ui.common.cancel")
+	if qty_price != null:
+		qty_price.text = _trf("ui.merchant.price_with_value", {"value": 0})
+	if title_label != null and title_label.text.strip_edges() == "":
+		title_label.text = tr("ui.common.merchant_title")
 	_setup_qty_dialog()
 
 func is_open() -> bool:
@@ -113,7 +124,7 @@ func open_for_merchant(merchant_node: Node) -> void:
 		var t: String = ""
 		if _merchant != null and _merchant.has_method("get_merchant_title"):
 			t = String(_merchant.call("get_merchant_title"))
-		title_label.text = t if t != "" else "Торговля"
+		title_label.text = t if t != "" else tr("ui.common.merchant_title")
 	_load_buy_entries()
 	_refresh_buy_grid()
 	_refresh_sell_grid()
@@ -231,7 +242,7 @@ func _refresh_buy_grid() -> void:
 		var count: int = int(entry.get("count", 1))
 		if item_id == "" or count <= 0:
 			continue
-		var cell := _build_item_cell(item_id, count, "Купить", true, -1)
+		var cell := _build_item_cell(item_id, count, tr("ui.merchant.buy"), true, -1)
 		buy_grid.add_child(cell)
 	var db := get_node_or_null("/root/DataDB")
 	if db != null and not db.is_ready:
@@ -259,7 +270,7 @@ func _refresh_sell_grid() -> void:
 		var sale_id2: int = int(entry2.get("sale_id", -1))
 		if item_id2 == "" or count2 <= 0:
 			continue
-		var cell2 := _build_item_cell(item_id2, count2, "Выкупить", false, sale_id2)
+		var cell2 := _build_item_cell(item_id2, count2, tr("ui.merchant.buyback"), false, sale_id2)
 		sell_grid.add_child(cell2)
 
 func _build_item_cell(item_id: String, count: int, action_text: String, is_buy: bool, sale_id: int = -1) -> Panel:
@@ -319,10 +330,10 @@ func _format_money_short(bronze_total: int) -> String:
 	var bronze: int = int(total % 100)
 	var parts: Array[String] = []
 	if gold > 0:
-		parts.append("%dg" % gold)
+		parts.append(tr("ui.common.currency.gold.short").format({"value": gold}))
 	if silver > 0 or gold > 0:
-		parts.append("%ds" % silver)
-	parts.append("%db" % bronze)
+		parts.append(tr("ui.common.currency.silver.short").format({"value": silver}))
+	parts.append(tr("ui.common.currency.bronze.short").format({"value": bronze}))
 	return " ".join(parts)
 
 func _ensure_tooltip_layer() -> void:
@@ -401,7 +412,7 @@ func _on_buy_button_pressed(item_id: String, count: int) -> void:
 	if stack_max <= 1:
 		_try_buy_item(item_id, 1)
 		return
-	_show_quantity_dialog(stack_max, "Купить", item_id, true)
+	_show_quantity_dialog(stack_max, tr("ui.merchant.buy"), item_id, true)
 	_qty_callback = Callable(self, "_on_buy_quantity_selected").bind(item_id)
 
 func _on_buy_quantity_selected(amount: int, item_id: String) -> void:
@@ -411,7 +422,7 @@ func request_sell_from_inventory(item_id: String, max_count: int) -> void:
 	if max_count <= 1:
 		sell_items_from_inventory(item_id, 1)
 		return
-	_show_quantity_dialog(max_count, "Продать", item_id, false)
+	_show_quantity_dialog(max_count, tr("ui.merchant.sell"), item_id, false)
 	_qty_callback = Callable(self, "_on_sell_quantity_selected").bind(item_id)
 
 func request_sell_from_inventory_slot(item_id: String, max_count: int, slot_index: int) -> void:
@@ -419,7 +430,7 @@ func request_sell_from_inventory_slot(item_id: String, max_count: int, slot_inde
 	if max_count <= 1:
 		sell_items_from_inventory_slot(item_id, 1, slot_index)
 		return
-	_show_quantity_dialog(max_count, "Продать", item_id, false)
+	_show_quantity_dialog(max_count, tr("ui.merchant.sell"), item_id, false)
 	_qty_callback = Callable(self, "_on_sell_slot_quantity_selected").bind(item_id, slot_index)
 
 func _on_sell_quantity_selected(amount: int, item_id: String) -> void:
@@ -579,7 +590,7 @@ func _notify_bag_full() -> void:
 func _notify_not_enough_gold() -> void:
 	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
 	if inv_ui != null and inv_ui.has_method("show_center_toast"):
-		inv_ui.call("show_center_toast", "Недостаточно монет")
+		inv_ui.call("show_center_toast", tr("ui.common.not_enough_coins"))
 
 func _is_sell_tab_active() -> bool:
 	return tabs.current_tab == 1
@@ -728,11 +739,11 @@ func _on_qty_value_changed(_v: float) -> void:
 func _update_qty_label() -> void:
 	var amount: int = int(qty_slider.value) if qty_slider != null else 1
 	if qty_title != null:
-		qty_title.text = "%s: %d / %d" % [_qty_title, amount, _qty_max]
+		qty_title.text = _trf("ui.merchant.qty_title", {"action": _qty_title, "current": amount, "max": _qty_max})
 	if qty_price != null:
 		var price_per := _get_buy_price(_qty_item_id) if _qty_is_buy else _get_base_price(_qty_item_id)
 		var total := price_per * amount
-		qty_price.text = "Цена: %s" % _format_money_short(total)
+		qty_price.text = _trf("ui.merchant.price_with_value", {"value": _format_money_short(total)})
 
 func _on_qty_ok_pressed() -> void:
 	var amount: int = int(qty_slider.value) if qty_slider != null else 1

@@ -64,7 +64,7 @@ offset_right = -8.0
 offset_bottom = 136.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 22
-text = "Цена: 0"
+text = "Стоимость: 0"
 
 [node name="QtyOk" type="Button" parent="Root/QtyDialog"]
 custom_minimum_size = Vector2(80, 48)
@@ -78,7 +78,7 @@ offset_right = 88.0
 offset_bottom = -8.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
-text = "Ок"
+text = "Принять"
 
 [node name="QtyCancel" type="Button" parent="Root/QtyDialog"]
 custom_minimum_size = Vector2(96, 48)
@@ -95,7 +95,7 @@ offset_bottom = -8.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
-text = "Отмена"
+text = "Отменить"
 
 [node name="Panel" type="Panel" parent="Root"]
 custom_minimum_size = Vector2(504, 912)
@@ -113,7 +113,7 @@ offset_top = 8.0
 offset_right = 256.0
 offset_bottom = 39.0
 theme_override_font_sizes/font_size = 22
-text = "Торговля"
+text = "Торговец"
 vertical_alignment = 1
 
 [node name="ItemCellTemplate" type="Panel" parent="Root/Panel"]

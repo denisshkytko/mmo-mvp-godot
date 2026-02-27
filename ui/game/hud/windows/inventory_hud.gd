@@ -115,6 +115,9 @@ var _error_layer: CanvasLayer = null
 var _initial_layout_done: bool = false
 var _initial_layout_pending: bool = false
 
+func _trf(key: String, params: Dictionary = {}) -> String:
+	return tr(key).format(params)
+
 func _ready() -> void:
 	add_to_group("inventory_ui")
 	# default to closed in actual gameplay; keep current behavior
@@ -124,6 +127,16 @@ func _ready() -> void:
 		gold_label.bbcode_enabled = true
 		gold_label.fit_content = true
 		gold_label.scroll_active = false
+
+	if split_title != null:
+		split_title.text = tr("ui.inventory.split")
+	if split_ok != null:
+		split_ok.text = tr("ui.common.accept")
+	if split_cancel != null:
+		split_cancel.text = tr("ui.common.cancel")
+	if bag_full_dialog != null:
+		bag_full_dialog.title = tr("ui.common.inventory_title")
+		bag_full_dialog.dialog_text = tr("ui.common.bag_full")
 
 	if bag_button != null:
 		bag_button.pressed.connect(_on_bag_button_pressed)
@@ -591,7 +604,7 @@ func _on_split_ok_pressed() -> void:
 		return
 	var free_idx := _find_first_free_slot(slots)
 	if free_idx == -1:
-		show_bag_full("Сумка полна")
+		show_bag_full(tr("ui.common.bag_full"))
 		_hide_split()
 		return
 	var id: String = String(d.get("id", ""))
@@ -668,12 +681,12 @@ func _show_tooltip_for_slot(slot_index: int, global_pos: Vector2) -> void:
 		var is_cons2 := _is_consumable_item(id)
 		var quick_index := _get_quick_slot_index_for_item(id)
 		_tooltip_quick_btn.visible = is_cons2
-		_tooltip_quick_btn.text = "Снять" if quick_index != -1 else "В быстрый слот"
+		_tooltip_quick_btn.text = tr("ui.inventory.quick_slot.remove") if quick_index != -1 else tr("ui.inventory.quick_slot.add")
 		_tooltip_quick_btn.disabled = false
 	if _tooltip_bag_btn != null:
 		var is_bag := _is_bag_item(id)
 		_tooltip_bag_btn.visible = is_bag
-		_tooltip_bag_btn.text = "Экипировать"
+		_tooltip_bag_btn.text = tr("ui.inventory.bag.equip")
 		_tooltip_bag_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
@@ -717,7 +730,7 @@ func _show_tooltip_for_bag_slot(bag_index: int, global_pos: Vector2) -> void:
 		_tooltip_quick_btn.visible = false
 	if _tooltip_bag_btn != null:
 		_tooltip_bag_btn.visible = true
-		_tooltip_bag_btn.text = "Снять"
+		_tooltip_bag_btn.text = tr("ui.inventory.quick_slot.remove")
 		_tooltip_bag_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
@@ -1143,7 +1156,7 @@ func _on_tooltip_quick_pressed() -> void:
 		return
 	var empty := _get_first_empty_quick_slot()
 	if empty == -1:
-		show_center_toast("Нет свободных быстрых слотов")
+		show_center_toast(tr("ui.inventory.no_free_quick_slots"))
 		return
 	_quick_refs[empty] = id
 	_persist_quick_slots()
@@ -1156,14 +1169,14 @@ func _on_tooltip_bag_pressed() -> void:
 	if _tooltip_for_bag_slot != -1:
 		var inv_slot := _find_first_free_slot(player.get_inventory_snapshot().get("slots", []))
 		if inv_slot == -1:
-			show_bag_full("Сумка полна")
+			show_bag_full(tr("ui.common.bag_full"))
 			return
 		var ok: bool = player.try_unequip_bag_to_inventory(_tooltip_for_bag_slot, inv_slot)
 		if ok:
 			_hide_tooltip()
 			await _refresh()
 		else:
-			show_bag_full("Сумка полна")
+			show_bag_full(tr("ui.common.bag_full"))
 		return
 	if _tooltip_for_slot < 0:
 		return
@@ -1182,14 +1195,14 @@ func _on_tooltip_bag_pressed() -> void:
 	var bag_slots: Array = snap.get("bag_slots", [])
 	var bag_index := _find_first_free_bag_slot(bag_slots)
 	if bag_index == -1:
-		show_center_toast("Нет свободных ячеек")
+		show_center_toast(tr("ui.inventory.no_free_slots"))
 		return
 	var ok2: bool = player.try_equip_bag_from_inventory_slot(_tooltip_for_slot, bag_index)
 	if ok2:
 		_hide_tooltip()
 		await _refresh()
 	else:
-		show_center_toast("Нет свободных ячеек")
+		show_center_toast(tr("ui.inventory.no_free_slots"))
 
 
 func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
@@ -1199,11 +1212,11 @@ func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
 	var msg: String = ""
 	match reason:
 		"hp_full":
-			msg = "Здоровье полно"
+			msg = tr("ui.inventory.hp_full")
 		"mp_full":
-			msg = "Мана полна"
+			msg = tr("ui.inventory.mp_full")
 		"hpmp_full":
-			msg = "Здоровье и мана полны"
+			msg = tr("ui.inventory.hpmp_full")
 		_:
 			# No message for cooldown/other cases for now.
 			msg = ""
@@ -1232,9 +1245,9 @@ func _show_equip_fail_toast() -> void:
 	var msg := ""
 	match reason:
 		"level":
-			msg = "Не подходящий уровень предмета"
+			msg = tr("ui.inventory.item_level_mismatch")
 		"skill":
-			msg = "Вы не умеете пользоваться этим"
+			msg = tr("ui.inventory.item_skill_mismatch")
 		_:
 			msg = ""
 	if msg == "":
@@ -1344,7 +1357,7 @@ func _refresh() -> void:
 		await _rebuild_layout("refresh_dirty")
 
 	# Gold
-	gold_label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))
+	gold_label.text = _trf("ui.common.coins_with_value", {"value": TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))})
 
 	# Render items
 	for i in range(grid.get_child_count()):
@@ -1506,7 +1519,7 @@ func _update_bag_buttons(bag_slots: Array) -> void:
 			btn.text = ""
 			btn.disabled = false
 
-func show_bag_full(message: String = "Your bags are full!") -> void:
+func show_bag_full(message: String = tr("ui.common.bag_full")) -> void:
 	bag_full_dialog.dialog_text = message
 	bag_full_dialog.popup_centered()
 
@@ -1622,53 +1635,8 @@ func _build_tooltip_text(id: String, count: int) -> String:
 	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, player)
 
 
-func _rarity_color_hex(rarity: String, typ: String) -> String:
-	var r := rarity.to_lower()
-	if r == "" and typ == "junk":
-		r = "junk"
-	match r:
-		"junk":
-			return "#8a8a8a"
-		"common":
-			return "#ffffff"
-		"uncommon":
-			return "#3bdc3b"
-		"rare":
-			return "#4aa3ff"
-		"epic":
-			return "#a335ee"
-		"legendary":
-			return "#ff8000"
-		_:
-			return "#ffffff"
 
 
-func _format_consumable_effects(c: Dictionary) -> Array[String]:
-	var out: Array[String] = []
-	var instant: bool = bool(c.get("instant", false))
-	# Potions typically use hp/mp, food/drink uses hp_total/mp_total over duration.
-	if instant:
-		var hp: int = int(c.get("hp", 0))
-		var mp: int = int(c.get("mp", 0))
-		if hp > 0:
-			out.append("restores %d hp" % hp)
-		if mp > 0:
-			out.append("restores %d mp" % mp)
-	else:
-		var dur: int = int(c.get("duration_sec", 0))
-		var hp_t: int = int(c.get("hp_total", 0))
-		var mp_t: int = int(c.get("mp_total", 0))
-		if hp_t > 0:
-			if dur > 0:
-				out.append("restores %d hp over %ds" % [hp_t, dur])
-			else:
-				out.append("restores %d hp" % hp_t)
-		if mp_t > 0:
-			if dur > 0:
-				out.append("restores %d mp over %ds" % [mp_t, dur])
-			else:
-				out.append("restores %d mp" % mp_t)
-	return out
 
 
 func rarity_idx(r: String) -> int:
@@ -2159,18 +2127,6 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 		"scroll_view": Vector2(grid_min.x, scroll_view_h)
 	}
 
-func _format_money_bronze(bronze: int) -> String:
-	bronze = max(0, bronze)
-	var gold: int = int(bronze / 10000.0)
-	var silver: int = int((bronze % 10000) / 100.0)
-	var bronze_small: int = int(bronze % 100)
-	var parts: Array[String] = []
-	if gold > 0:
-		parts.append("%dg" % gold)
-	if silver > 0 or gold > 0:
-		parts.append("%ds" % silver)
-	parts.append("%db" % bronze_small)
-	return " ".join(parts)
 
 func _ensure_tooltip_layer() -> void:
 	if _tooltip_panel == null:

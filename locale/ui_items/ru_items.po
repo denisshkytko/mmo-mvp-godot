@@ -1,0 +1,146 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+# Common buttons and labels
+msgid "ui.common.accept"
+msgstr "Принять"
+
+msgid "ui.common.cancel"
+msgstr "Отменить"
+
+msgid "ui.common.take"
+msgstr "Взять"
+
+msgid "ui.common.loot_all"
+msgstr "Взять Всё"
+
+msgid "ui.common.loot_title"
+msgstr "Добыча"
+
+msgid "ui.common.inventory_title"
+msgstr "Инвентарь"
+
+msgid "ui.common.merchant_title"
+msgstr "Торговец"
+
+msgid "ui.common.coins_with_value"
+msgstr "Монеты: {value}"
+
+msgid "ui.common.bag_full"
+msgstr "Сумка полна"
+
+msgid "ui.common.not_enough_coins"
+msgstr "Недостаточно монет"
+
+msgid "ui.common.currency.gold.short"
+msgstr "{value}g"
+
+msgid "ui.common.currency.silver.short"
+msgstr "{value}s"
+
+msgid "ui.common.currency.bronze.short"
+msgstr "{value}b"
+
+# Inventory specific
+msgid "ui.inventory.split"
+msgstr "Разделить"
+
+msgid "ui.inventory.quick_slot.remove"
+msgstr "Снять"
+
+msgid "ui.inventory.quick_slot.add"
+msgstr "В быстрый слот"
+
+msgid "ui.inventory.bag.equip"
+msgstr "Экипировать"
+
+msgid "ui.inventory.no_free_quick_slots"
+msgstr "Нет свободных быстрых слотов"
+
+msgid "ui.inventory.no_free_slots"
+msgstr "Нет свободных ячеек"
+
+msgid "ui.inventory.hp_full"
+msgstr "Запас здоровья полон"
+
+msgid "ui.inventory.mp_full"
+msgstr "Запас маны полон"
+
+msgid "ui.inventory.hpmp_full"
+msgstr "Запасы здоровья и маны полны"
+
+msgid "ui.inventory.item_level_mismatch"
+msgstr "Неподходящий уровень предмета"
+
+msgid "ui.inventory.item_skill_mismatch"
+msgstr "Вы не умеете пользоваться этим"
+
+# Merchant specific
+msgid "ui.merchant.buy"
+msgstr "Купить"
+
+msgid "ui.merchant.buyback"
+msgstr "Выкупить"
+
+msgid "ui.merchant.sell"
+msgstr "Продать"
+
+msgid "ui.merchant.price_with_value"
+msgstr "Стоимость: {value}"
+
+msgid "ui.merchant.qty_title"
+msgstr "{action}: {current} / {max}"
+
+# Tooltip labels/templates for items
+msgid "ui.tooltip.item_fallback"
+msgstr "Предмет"
+
+msgid "ui.tooltip.rarity"
+msgstr "Редкость: {value}"
+
+msgid "ui.tooltip.slot"
+msgstr "Ячейка: {value}"
+
+msgid "ui.tooltip.required_level"
+msgstr "Требуемый уровень: {level}"
+
+msgid "ui.tooltip.subtype"
+msgstr "Тип: {value}"
+
+msgid "ui.tooltip.material"
+msgstr "Материал: {value}"
+
+msgid "ui.tooltip.damage_speed"
+msgstr "Урон: {damage} Скорость: {speed}"
+
+msgid "ui.tooltip.dps"
+msgstr "УВС: {value}"
+
+msgid "ui.tooltip.effects"
+msgstr "Эффекты:"
+
+msgid "ui.tooltip.cooldown"
+msgstr "Восстановление: {seconds}с"
+
+msgid "ui.tooltip.cooldown_left"
+msgstr "Восстановление: {seconds}с ({left}с осталось)"
+
+msgid "ui.tooltip.price"
+msgstr "Стоимость: {value}"
+
+msgid "ui.tooltip.physical_defense"
+msgstr "Физическая защита: {value}"
+
+msgid "ui.tooltip.magic_defense"
+msgstr "Магическое сопротивление: {value}"
+
+msgid "ui.tooltip.hp_plus"
+msgstr "Здоровье +{value}"
+
+msgid "ui.tooltip.mana_plus"
+msgstr "Мана +{value}"
+
+msgid "ui.tooltip.over_seconds"
+msgstr "в течение {seconds}с"
