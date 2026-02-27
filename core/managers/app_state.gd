@@ -138,7 +138,27 @@ func _is_russian_letter(ch: String) -> bool:
 	var code := ch.unicode_at(0)
 	return (code >= 0x0410 and code <= 0x044F) or code == 0x0401 or code == 0x0451
 
-func create_character(char_name: String, class_id: String) -> String:
+
+func _normalize_faction_id(faction_id: String) -> String:
+	var value := faction_id.strip_edges().to_lower()
+	if value == "red":
+		return "red"
+	if value == "blue":
+		return "blue"
+	return ""
+
+func is_class_allowed_for_faction(class_id: String, faction_id: String) -> bool:
+	var cid := class_id.strip_edges().to_lower()
+	var fid := _normalize_faction_id(faction_id)
+	if cid == "":
+		return false
+	if fid == "red" and cid == "paladin":
+		return false
+	if fid == "blue" and cid == "shaman":
+		return false
+	return true
+
+func create_character(char_name: String, class_id: String, faction_id: String = "blue") -> String:
 	if not has_node("/root/SaveSystem"):
 		return ""
 
@@ -151,9 +171,15 @@ func create_character(char_name: String, class_id: String) -> String:
 	if clean_name == "":
 		return ""
 
-	var clean_class := class_id.strip_edges()
+	var clean_class := class_id.strip_edges().to_lower()
 	if clean_class == "":
 		clean_class = "warrior"
+
+	var clean_faction := _normalize_faction_id(faction_id)
+	if clean_faction == "":
+		return ""
+	if not is_class_allowed_for_faction(clean_class, clean_faction):
+		return ""
 
 	var base_equipment := Progression.get_base_equipment_for_class(clean_class)
 	var equip_snapshot: Dictionary = {}
@@ -165,7 +191,7 @@ func create_character(char_name: String, class_id: String) -> String:
 	var data := {
 		"id": id,
 		"name": clean_name,
-		"faction": "blue",
+		"faction": clean_faction,
 		"class": clean_class,
 		"class_id": clean_class,
 		"level": 1,

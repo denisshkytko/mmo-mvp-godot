@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bxfersnuyd5an"]
+[gd_scene load_steps=19 format=3 uid="uid://bxfersnuyd5an"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
 [ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_ah0r0"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bxeo6tvunc012" path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
 [ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/SpawnPoint.tscn" id="7_82kis"]
 [ext_resource type="Script" uid="uid://ceudd21vg5y8b" path="res://game/world/spawners/fnpc_spawner_group.gd" id="7_nldw7"]
+[ext_resource type="Script" path="res://game/world/spawn/first_entry_spawn_point.gd" id="10_first_entry"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -84,6 +85,11 @@ debug_color = Color(1.02277845e-07, 0.068394236, 0.08760249, 0.41960785)
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(1700, 0)
+
+[node name="FirstEntryBlue" type="Marker2D" parent="."]
+position = Vector2(1700, 0)
+script = ExtResource("10_first_entry")
+faction = "Синяя"
 
 [node name="ExitToZone02" type="Area2D" parent="."]
 position = Vector2(1800, 0)
