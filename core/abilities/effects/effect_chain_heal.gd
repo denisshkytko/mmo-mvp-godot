@@ -42,7 +42,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	while current_target != null and is_instance_valid(current_target):
 		healed_targets.append(current_target)
-		_apply_single_heal(current_target, base_heal, decay_mult, jump_index, snap)
+		_apply_single_heal(caster, current_target, base_heal, decay_mult, jump_index, snap)
 		if remaining_jumps <= 0:
 			break
 		var next_target := _find_next_target(caster, current_target, healed_targets, jump_radius)
@@ -63,7 +63,7 @@ func _compute_base_heal(rank_data: RankData, snap: Dictionary) -> int:
 		_:
 			return int(rank_data.value_flat)
 
-func _apply_single_heal(target: Node2D, base_heal: int, decay_mult: float, jump_index: int, snap: Dictionary) -> void:
+func _apply_single_heal(caster: Node, target: Node2D, base_heal: int, decay_mult: float, jump_index: int, snap: Dictionary) -> void:
 	var scaled: int = int(round(float(base_heal) * pow(decay_mult, float(jump_index))))
 	if scaled <= 0:
 		return
