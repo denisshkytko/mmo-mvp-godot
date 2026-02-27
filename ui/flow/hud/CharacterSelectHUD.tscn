@@ -44,7 +44,7 @@ theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-text = "Select character"
+text = "Выбор персонажа"
 horizontal_alignment = 1
 
 [node name="CharacterList" type="ItemList" parent="Root/Panel/Margin/VBox"]
@@ -58,17 +58,17 @@ theme_override_constants/separation = 10
 
 [node name="DeleteButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2
-text = "Delete Character"
+text = "Удалить персонажа"
 
 [node name="EnterButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Enter world"
+text = "Войти в Мир"
 
 [node name="LogoutButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Logout"
+text = "Выйти"
 
 [node name="CreateAllTestButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2

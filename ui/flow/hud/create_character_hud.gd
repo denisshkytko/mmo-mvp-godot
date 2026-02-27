@@ -7,8 +7,18 @@ signal character_created(char_id: String)
 @onready var create_button: Button = $Root/Panel/Margin/VBox/Buttons/CreateButton
 @onready var cancel_button: Button = $Root/Panel/Margin/VBox/Buttons/CancelButton
 @onready var error_label: Label = $Root/Panel/Margin/VBox/ErrorLabel
+@onready var title_label: Label = $Root/Panel/Margin/VBox/Title
 
 func _ready() -> void:
+	if title_label != null:
+		title_label.text = tr("ui.flow.character_create.title")
+	if name_edit != null:
+		name_edit.placeholder_text = tr("ui.flow.character_create.name_placeholder")
+	if create_button != null:
+		create_button.text = tr("ui.flow.character_create.create")
+	if cancel_button != null:
+		cancel_button.text = tr("ui.flow.character_create.cancel")
+
 	error_label.text = ""
 	name_edit.focus_mode = Control.FOCUS_CLICK
 	class_option.focus_mode = Control.FOCUS_CLICK
@@ -47,7 +57,7 @@ func _on_create_pressed() -> void:
 
 	var n: String = name_edit.text.strip_edges()
 	if n == "":
-		error_label.text = "Enter a name"
+		error_label.text = tr("ui.flow.character_create.error.invalid_name")
 		return
 
 	var selected_class_id: String = ""
@@ -64,7 +74,7 @@ func _on_create_pressed() -> void:
 
 	var new_id: String = AppState.create_character(n, selected_class_id)
 	if new_id == "":
-		error_label.text = "Failed to create character"
+		error_label.text = tr("ui.flow.character_create.error.create_failed")
 		return
 
 	emit_signal("character_created", new_id)

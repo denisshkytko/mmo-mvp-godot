@@ -4,8 +4,18 @@ extends CanvasLayer
 @onready var password_edit: LineEdit = $Root/Panel/Margin/VBox/PasswordEdit
 @onready var login_button: Button = $Root/Panel/Margin/VBox/LoginButton
 @onready var error_label: Label = $Root/Panel/Margin/VBox/ErrorLabel
+@onready var title_label: Label = $Root/Panel/Margin/VBox/Title
 
 func _ready() -> void:
+	if title_label != null:
+		title_label.text = tr("ui.flow.login.title")
+	if username_edit != null:
+		username_edit.placeholder_text = tr("ui.flow.login.username")
+	if password_edit != null:
+		password_edit.placeholder_text = tr("ui.flow.login.password")
+	if login_button != null:
+		login_button.text = tr("ui.flow.login.sign_in")
+
 	error_label.text = ""
 	username_edit.text = "admin"
 	password_edit.text = "admin"
@@ -46,7 +56,8 @@ func _on_login_pressed() -> void:
 func _try_login() -> void:
 	var app_state: Node = get_node_or_null("/root/AppState")
 	if app_state == null:
-		error_label.text = "AppState autoload missing"
+		error_label.text = tr("ui.flow.login.error.service_unavailable")
+		push_error("AppState autoload missing")
 		return
 
 	var ok: bool = false
@@ -57,4 +68,4 @@ func _try_login() -> void:
 		error_label.text = ""
 		FlowRouter.go_character_select()
 	else:
-		error_label.text = "Invalid login or password"
+		error_label.text = tr("ui.flow.login.error.invalid_credentials")

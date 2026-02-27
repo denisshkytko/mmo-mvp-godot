@@ -51,21 +51,21 @@ theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-text = "Login"
+text = "Вход"
 horizontal_alignment = 1
 
 [node name="UsernameEdit" type="LineEdit" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-placeholder_text = "Username"
+placeholder_text = "Имя пользователя"
 
 [node name="PasswordEdit" type="LineEdit" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-placeholder_text = "Password"
+placeholder_text = "Пароль"
 secret = true
 
 [node name="LoginButton" type="Button" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-text = "Sign in"
+text = "Войти"
 
 [node name="ErrorLabel" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2

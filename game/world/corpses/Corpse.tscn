@@ -17,11 +17,3 @@ color = Color(0.3779188, 0.37791887, 0.37791884, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_7sxr2")
-
-[node name="Hint" type="Label" parent="."]
-visible = false
-offset_left = -39.0
-offset_top = -55.0
-offset_right = 39.0
-offset_bottom = -32.0
-text = "\"E\" to loot"

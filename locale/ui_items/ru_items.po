@@ -208,3 +208,58 @@ msgstr "Урон оружия (левая рука): {value}"
 
 msgid "ui.character.buff.food_drink"
 msgstr "Еда/Напитки"
+
+# Flow HUD (login / character select / create character)
+msgid "ui.flow.login.title"
+msgstr "Вход"
+
+msgid "ui.flow.login.username"
+msgstr "Имя пользователя"
+
+msgid "ui.flow.login.password"
+msgstr "Пароль"
+
+msgid "ui.flow.login.sign_in"
+msgstr "Войти"
+
+msgid "ui.flow.login.error.service_unavailable"
+msgstr "Сервис недоступен"
+
+msgid "ui.flow.login.error.invalid_credentials"
+msgstr "Неверное имя пользователя или пароль"
+
+msgid "ui.flow.character_select.title"
+msgstr "Выбор персонажа"
+
+msgid "ui.flow.character_select.delete"
+msgstr "Удалить персонажа"
+
+msgid "ui.flow.character_select.enter_world"
+msgstr "Войти в Мир"
+
+msgid "ui.flow.character_select.logout"
+msgstr "Выйти"
+
+msgid "ui.flow.character_select.list_item"
+msgstr "{name} — {class} (ур. {level})"
+
+msgid "ui.flow.character_select.unnamed"
+msgstr "Безымянный"
+
+msgid "ui.flow.character_create.title"
+msgstr "Создание персонажа"
+
+msgid "ui.flow.character_create.name_placeholder"
+msgstr "Введите имя"
+
+msgid "ui.flow.character_create.create"
+msgstr "Создать"
+
+msgid "ui.flow.character_create.cancel"
+msgstr "Отменить"
+
+msgid "ui.flow.character_create.error.invalid_name"
+msgstr "Недопустимое имя"
+
+msgid "ui.flow.character_create.error.create_failed"
+msgstr "Ошибка при создании персонажа"

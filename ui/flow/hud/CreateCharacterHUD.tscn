@@ -44,13 +44,13 @@ alignment = 1
 
 [node name="Title" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-text = "Create character"
+text = "Создание персонажа"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NameEdit" type="LineEdit" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-placeholder_text = "Enter Name"
+placeholder_text = "Введите имя"
 
 [node name="ClassOption" type="OptionButton" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
@@ -62,11 +62,11 @@ alignment = 1
 
 [node name="CreateButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2
-text = "Create"
+text = "Создать"
 
 [node name="CancelButton" type="Button" parent="Root/Panel/Margin/VBox/Buttons"]
 layout_mode = 2
-text = "Cancel"
+text = "Отменить"
 
 [node name="ErrorLabel" type="Label" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2

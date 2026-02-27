@@ -11,7 +11,6 @@ signal died(corpse: Corpse)
 @onready var faction_rect: ColorRect = $"ColorRect"
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
-@onready var merchant_hint: Label = get_node_or_null("UI/MerchantHint") as Label
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -21,8 +20,6 @@ signal died(corpse: Corpse)
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 const BASE_XP_L1_FACTION: int = 3
-const MERCHANT_HINT_TEXT: String = "\"E\" to trade"
-const TRAINER_HINT_TEXT: String = "\"E\" to train"
 const MERCHANT_BUYBACK_TTL_MSEC: int = 10 * 60 * 1000
 
 enum FighterType { CIVILIAN, COMBATANT }
@@ -161,9 +158,6 @@ func _ready() -> void:
 
 	_update_faction_color()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
-	if merchant_hint != null:
-		merchant_hint.text = MERCHANT_HINT_TEXT
-		merchant_hint.visible = false
 
 func get_faction_id() -> String:
 	return faction_id
@@ -571,26 +565,18 @@ func _clear_direct_attackers() -> void:
 
 func _update_interaction() -> void:
 	if interaction_type != InteractionType.MERCHANT and interaction_type != InteractionType.TRAINER:
-		if merchant_hint != null:
-			merchant_hint.visible = false
-		return
-	if merchant_hint == null:
 		return
 	var p: Node = NodeCache.get_player(get_tree())
 	if p == null or not is_instance_valid(p):
-		merchant_hint.visible = false
 		return
 	var dist: float = global_position.distance_to(p.global_position)
 	var can_interact: bool = false
 	if interaction_type == InteractionType.MERCHANT:
-		merchant_hint.text = MERCHANT_HINT_TEXT
 		can_interact = _can_trade_with(p)
 	else:
-		merchant_hint.text = TRAINER_HINT_TEXT
 		can_interact = _can_train_with(p)
-	var show_hint: bool = can_interact and dist <= merchant_interact_radius
-	merchant_hint.visible = show_hint
-	if show_hint and Input.is_action_just_pressed("loot"):
+	var can_open: bool = can_interact and dist <= merchant_interact_radius
+	if can_open and Input.is_action_just_pressed("loot"):
 		if interaction_type == InteractionType.MERCHANT:
 			_try_open_merchant(p)
 		else:
