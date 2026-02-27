@@ -210,7 +210,8 @@ func _refresh() -> void:
 		return
 
 	var player_name := _resolve_player_name()
-	title_label.text = _trf("ui.character.title_with_level", {"name": player_name, "class": UI_TEXT.class_display_name(String(_player.class_id)), "level": _player.level})
+	var faction_name := UI_TEXT.faction_display_name(String(_player.faction_id))
+	title_label.text = _trf("ui.character.title_with_level", {"name": player_name, "class": UI_TEXT.class_display_name(String(_player.class_id)), "faction": faction_name, "level": _player.level})
 
 	var snap: Dictionary = {}
 	if _player.has_method("get_stats_snapshot"):

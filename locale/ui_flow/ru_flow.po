@@ -44,7 +44,7 @@ msgstr "Выйти"
 
 
 msgid "ui.flow.character_select.list_item"
-msgstr "{name} — {class} (ур. {level})"
+msgstr "{name} — {class}, {faction} (ур. {level})"
 
 
 msgid "ui.flow.character_select.unnamed"
