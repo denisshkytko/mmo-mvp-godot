@@ -71,10 +71,6 @@ msgid "ui.character.ability_slot"
 msgstr "Ячейка {index}"
 
 
-msgid "ui.character.damage.dps"
-msgstr "УВС: {value}"
-
-
 msgid "ui.character.damage.weapon_right"
 msgstr "Урон оружия (правая рука): {value}"
 

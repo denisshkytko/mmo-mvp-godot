@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "ui.terms.cancel"
+msgstr "Отменить"
+
+msgid "ui.terms.price_with_value"
+msgstr "Стоимость: {value}"
+
+msgid "ui.terms.dps_with_value"
+msgstr "УВС: {value}"

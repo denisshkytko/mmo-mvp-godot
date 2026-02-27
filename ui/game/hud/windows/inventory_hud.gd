@@ -146,7 +146,7 @@ func _ready() -> void:
 	if split_ok != null:
 		split_ok.text = tr("ui.common.accept")
 	if split_cancel != null:
-		split_cancel.text = tr("ui.common.cancel")
+		split_cancel.text = tr("ui.terms.cancel")
 	if bag_full_dialog != null:
 		bag_full_dialog.title = tr("ui.common.inventory_title")
 		bag_full_dialog.dialog_text = tr("ui.common.bag_full")

@@ -31,10 +31,6 @@ msgid "ui.tooltip.damage_speed"
 msgstr "Урон: {damage} Скорость: {speed}"
 
 
-msgid "ui.tooltip.dps"
-msgstr "УВС: {value}"
-
-
 msgid "ui.tooltip.effects"
 msgstr "Эффекты:"
 
@@ -45,10 +41,6 @@ msgstr "Восстановление: {seconds}с"
 
 msgid "ui.tooltip.cooldown_left"
 msgstr "Восстановление: {seconds}с ({left}с осталось)"
-
-
-msgid "ui.tooltip.price"
-msgstr "Стоимость: {value}"
 
 
 msgid "ui.tooltip.physical_defense"

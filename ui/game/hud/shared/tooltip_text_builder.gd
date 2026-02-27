@@ -114,7 +114,7 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var spd: float = float(w.get("attack_interval", 1.0))
 		lines.append(TranslationServer.translate("ui.tooltip.damage_speed").format({"damage": dmg, "speed": "%.2f" % spd}))
 		if spd > 0.0:
-			lines.append(TranslationServer.translate("ui.tooltip.dps").format({"value": "%.1f" % (float(dmg) / spd)}))
+			lines.append(TranslationServer.translate("ui.terms.dps_with_value").format({"value": "%.1f" % (float(dmg) / spd)}))
 
 	if meta.has("stats_modifiers") and meta.get("stats_modifiers") is Dictionary:
 		var sm: Dictionary = meta.get("stats_modifiers") as Dictionary
@@ -142,7 +142,7 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		lines.append(req_line)
 	var price: int = int(meta.get("vendor_price_bronze", 0))
 	if price > 0:
-		lines.append(TranslationServer.translate("ui.tooltip.price").format({"value": format_money_bbcode(price)}))
+		lines.append(TranslationServer.translate("ui.terms.price_with_value").format({"value": format_money_bbcode(price)}))
 
 	return "\n".join(lines)
 

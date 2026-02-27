@@ -17,7 +17,7 @@ func _ready() -> void:
 	if create_button != null:
 		create_button.text = tr("ui.flow.character_create.create")
 	if cancel_button != null:
-		cancel_button.text = tr("ui.flow.character_create.cancel")
+		cancel_button.text = tr("ui.terms.cancel")
 
 	error_label.text = ""
 	name_edit.focus_mode = Control.FOCUS_CLICK

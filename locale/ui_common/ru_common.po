@@ -7,10 +7,6 @@ msgid "ui.common.accept"
 msgstr "Принять"
 
 
-msgid "ui.common.cancel"
-msgstr "Отменить"
-
-
 msgid "ui.common.take"
 msgstr "Взять"
 

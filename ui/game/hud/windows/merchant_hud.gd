@@ -100,9 +100,9 @@ func _ready() -> void:
 	if qty_ok != null:
 		qty_ok.text = tr("ui.common.accept")
 	if qty_cancel != null:
-		qty_cancel.text = tr("ui.common.cancel")
+		qty_cancel.text = tr("ui.terms.cancel")
 	if qty_price != null:
-		qty_price.text = _trf("ui.merchant.price_with_value", {"value": 0})
+		qty_price.text = _trf("ui.terms.price_with_value", {"value": 0})
 	if title_label != null and title_label.text.strip_edges() == "":
 		title_label.text = tr("ui.common.merchant_title")
 	_setup_qty_dialog()
@@ -745,7 +745,7 @@ func _update_qty_label() -> void:
 	if qty_price != null:
 		var price_per := _get_buy_price(_qty_item_id) if _qty_is_buy else _get_base_price(_qty_item_id)
 		var total := price_per * amount
-		qty_price.text = _trf("ui.merchant.price_with_value", {"value": _format_money_short(total)})
+		qty_price.text = _trf("ui.terms.price_with_value", {"value": _format_money_short(total)})
 
 func _on_qty_ok_pressed() -> void:
 	var amount: int = int(qty_slider.value) if qty_slider != null else 1

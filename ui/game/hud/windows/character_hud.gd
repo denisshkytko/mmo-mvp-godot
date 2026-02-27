@@ -708,7 +708,7 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		base_bonus_value = ap_part_unarmed * base_pct_bonus
 		display_damage = _format_float_clean(unarmed_hit)
 		var dps: float = float(unarmed_hit) / max(0.01, interval_r)
-		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps}))
+		tooltip_lines.append(_trf("ui.terms.dps_with_value", {"value": "%.2f" % dps}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_unarmed))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(0.0))
@@ -719,7 +719,7 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		base_bonus_value = base_2h * base_pct_bonus
 		display_damage = _format_float_clean(hit_2h)
 		var dps_2h: float = float(hit_2h) / max(0.01, interval_r)
-		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps_2h}))
+		tooltip_lines.append(_trf("ui.terms.dps_with_value", {"value": "%.2f" % dps_2h}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_2h))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))
@@ -734,7 +734,7 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		var dps_dw: float = float(hit_r) / max(0.01, interval_r)
 		if interval_l > 0.0:
 			dps_dw += float(hit_l) / max(0.01, interval_l)
-		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps_dw}))
+		tooltip_lines.append(_trf("ui.terms.dps_with_value", {"value": "%.2f" % dps_dw}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_dw))
 		tooltip_lines.append(_trf("ui.character.damage.weapon_right", {"value": _format_float_clean(float(right_weapon_damage))}))
@@ -746,7 +746,7 @@ func _line_damage(title: String, snap: Dictionary) -> String:
 		base_bonus_value = base_1h * base_pct_bonus
 		display_damage = _format_float_clean(hit_1h)
 		var dps_1h: float = float(hit_1h) / max(0.01, interval_r)
-		tooltip_lines.append(_trf("ui.character.damage.dps", {"value": "%.2f" % dps_1h}))
+		tooltip_lines.append(_trf("ui.terms.dps_with_value", {"value": "%.2f" % dps_1h}))
 		tooltip_lines.append("")
 		tooltip_lines.append("Сила атаки: %s" % _format_float_clean(ap_part_1h))
 		tooltip_lines.append("Урон оружия: %s" % _format_float_clean(float(right_weapon_damage)))

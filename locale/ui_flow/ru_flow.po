@@ -63,10 +63,6 @@ msgid "ui.flow.character_create.create"
 msgstr "Создать"
 
 
-msgid "ui.flow.character_create.cancel"
-msgstr "Отменить"
-
-
 msgid "ui.flow.character_create.error.invalid_name"
 msgstr "Недопустимое имя"
 
