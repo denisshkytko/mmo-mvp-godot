@@ -145,8 +145,12 @@ func _extract_non_zero_pos(pos_v: Variant) -> Vector2:
 
 
 func _is_first_world_entry(data: Dictionary) -> bool:
+	# Жесткий флаг: если уже входил в мир, повторно first-entry не запускаем.
 	if bool(data.get("world_entered_once", false)):
 		return false
+
+	# Надежные признаки прогресса. Не учитываем equipment/spellbook,
+	# т.к. стартовый персонаж может иметь их с момента создания.
 	if int(data.get("level", 1)) > 1:
 		return false
 	if int(data.get("xp", 0)) > 0:
@@ -158,16 +162,10 @@ func _is_first_world_entry(data: Dictionary) -> bool:
 		if int(inventory.get("gold", 0)) > 0:
 			return false
 		var slots_v: Variant = inventory.get("slots", [])
-		if slots_v is Array and (slots_v as Array).size() > 0:
-			return false
-
-	var equipment_v: Variant = data.get("equipment", null)
-	if equipment_v is Dictionary and not (equipment_v as Dictionary).is_empty():
-		return false
-
-	var spellbook_v: Variant = data.get("spellbook", null)
-	if spellbook_v is Dictionary and not (spellbook_v as Dictionary).is_empty():
-		return false
+		if slots_v is Array:
+			for slot_v in (slots_v as Array):
+				if slot_v is Dictionary and not (slot_v as Dictionary).is_empty():
+					return false
 
 	return true
 

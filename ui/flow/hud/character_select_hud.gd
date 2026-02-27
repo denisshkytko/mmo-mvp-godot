@@ -44,6 +44,14 @@ func refresh_list() -> void:
 	for c in chars:
 		var d: Dictionary = c as Dictionary
 		var id: String = String(d.get("id", ""))
+		if id == "":
+			continue
+		if (not d.has("faction")) or ((not d.has("class_id")) and (not d.has("class"))):
+			# Старые записи index.json могли не содержать faction/class_id.
+			# Подтягиваем полные данные, чтобы не показывать фракцию всегда как blue.
+			var full: Dictionary = _load_character_full_safe(id)
+			if not full.is_empty():
+				d = full
 		var char_name: String = String(d.get("name", tr("ui.flow.character_select.unnamed")))
 		var lvl: int = int(d.get("level", 1))
 
@@ -59,6 +67,19 @@ func refresh_list() -> void:
 		_on_item_selected(0)
 	else:
 		_update_enter_state()
+
+
+
+func _load_character_full_safe(char_id: String) -> Dictionary:
+	var save_system := get_node_or_null("/root/SaveSystem")
+	if save_system == null:
+		return {}
+	if not save_system.has_method("load_character_full"):
+		return {}
+	var full_v: Variant = save_system.call("load_character_full", char_id)
+	if full_v is Dictionary:
+		return full_v as Dictionary
+	return {}
 
 func reset_transient_ui() -> void:
 	_selected_id = ""
