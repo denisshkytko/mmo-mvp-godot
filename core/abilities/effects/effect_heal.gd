@@ -27,7 +27,7 @@ func _apply_heal_to_target(caster: Node, target: Node, heal_amount: int) -> void
 		target.current_hp = min(target.max_hp, target.current_hp + heal_amount)
 		var actual_heal: int = max(0, int(target.current_hp) - before)
 		if actual_heal > 0:
-			DAMAGE_HELPER.show_heal(target, actual_heal)
+			DAMAGE_HELPER.show_heal(target, actual_heal, caster)
 			_restore_mana_from_ally_heal(caster, target, actual_heal)
 		return
 	if "c_stats" in target and target.c_stats != null:
@@ -37,7 +37,7 @@ func _apply_heal_to_target(caster: Node, target: Node, heal_amount: int) -> void
 			stats.current_hp = min(stats.max_hp, stats.current_hp + heal_amount)
 			var actual_heal2: int = max(0, int(stats.current_hp) - before2)
 			if actual_heal2 > 0:
-				DAMAGE_HELPER.show_heal(target, actual_heal2)
+				DAMAGE_HELPER.show_heal(target, actual_heal2, caster)
 				_restore_mana_from_ally_heal(caster, target, actual_heal2)
 			if target.has_method("_update_hp"):
 				target.call("_update_hp")

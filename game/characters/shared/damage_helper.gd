@@ -19,7 +19,7 @@ static func apply_damage(attacker: Node, target: Node, dmg: int) -> void:
 		if typeof(result2) == TYPE_INT or typeof(result2) == TYPE_FLOAT:
 			final_dmg = int(result2)
 
-	_show_damage_number(target, final_dmg, "physical")
+	_show_damage_number(attacker, target, final_dmg, "physical")
 
 	if attacker != null:
 		var danger_meter := _get_danger_meter(attacker)
@@ -50,7 +50,7 @@ static func apply_damage_typed_with_result(attacker: Node, target: Node, dmg: in
 		apply_damage(attacker, target, dmg)
 		return dmg
 
-	_show_damage_number(target, final_dmg, dmg_type)
+	_show_damage_number(attacker, target, final_dmg, dmg_type)
 
 	if attacker != null:
 		var danger_meter := _get_danger_meter(attacker)
@@ -60,7 +60,7 @@ static func apply_damage_typed_with_result(attacker: Node, target: Node, dmg: in
 		attacker.c_resource.on_damage_dealt()
 	return final_dmg
 
-static func show_heal(target: Node, heal_amount: int) -> void:
+static func show_heal(target: Node, heal_amount: int, source: Node = null) -> void:
 	if heal_amount <= 0:
 		return
 	if target == null or not is_instance_valid(target):
@@ -74,9 +74,12 @@ static func show_heal(target: Node, heal_amount: int) -> void:
 	var manager := _get_or_create_combat_text_manager(tree)
 	if manager == null:
 		return
-	manager.show_heal(t2d, heal_amount)
+	var source_2d: Node2D = null
+	if source is Node2D:
+		source_2d = source as Node2D
+	manager.show_heal(source_2d, t2d, heal_amount)
 
-static func _show_damage_number(target: Node, final_dmg: int, dmg_type: String) -> void:
+static func _show_damage_number(attacker: Node, target: Node, final_dmg: int, dmg_type: String) -> void:
 	if final_dmg <= 0:
 		return
 	if target == null or not is_instance_valid(target):
@@ -90,7 +93,10 @@ static func _show_damage_number(target: Node, final_dmg: int, dmg_type: String) 
 	var manager := _get_or_create_combat_text_manager(tree)
 	if manager == null:
 		return
-	manager.show_damage(t2d, final_dmg, dmg_type)
+	var attacker_2d: Node2D = null
+	if attacker is Node2D:
+		attacker_2d = attacker as Node2D
+	manager.show_damage(attacker_2d, t2d, final_dmg, dmg_type)
 
 static func _get_or_create_combat_text_manager(tree: SceneTree) -> CombatTextManager:
 	if tree == null:

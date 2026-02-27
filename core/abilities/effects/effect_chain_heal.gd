@@ -68,9 +68,9 @@ func _apply_single_heal(target: Node2D, base_heal: int, decay_mult: float, jump_
 	if scaled <= 0:
 		return
 	var final_heal: int = STAT_CALC.apply_crit_to_heal(scaled, snap)
-	_apply_heal_to_target(target, final_heal)
+	_apply_heal_to_target(caster, target, final_heal)
 
-func _apply_heal_to_target(target: Node, heal_amount: int) -> void:
+func _apply_heal_to_target(source: Node, target: Node, heal_amount: int) -> void:
 	if target == null or heal_amount <= 0:
 		return
 	if "current_hp" in target and "max_hp" in target:
@@ -78,7 +78,7 @@ func _apply_heal_to_target(target: Node, heal_amount: int) -> void:
 		target.current_hp = min(target.max_hp, target.current_hp + heal_amount)
 		var actual_heal: int = max(0, int(target.current_hp) - before)
 		if actual_heal > 0:
-			DAMAGE_HELPER.show_heal(target, actual_heal)
+			DAMAGE_HELPER.show_heal(target, actual_heal, source)
 		return
 	if "c_stats" in target and target.c_stats != null:
 		var stats = target.c_stats
@@ -87,7 +87,7 @@ func _apply_heal_to_target(target: Node, heal_amount: int) -> void:
 			stats.current_hp = min(stats.max_hp, stats.current_hp + heal_amount)
 			var actual_heal2: int = max(0, int(stats.current_hp) - before2)
 			if actual_heal2 > 0:
-				DAMAGE_HELPER.show_heal(target, actual_heal2)
+				DAMAGE_HELPER.show_heal(target, actual_heal2, source)
 			if target.has_method("_update_hp"):
 				target.call("_update_hp")
 			elif "hp_fill" in target and target.hp_fill != null and stats.has_method("update_hp_bar"):
