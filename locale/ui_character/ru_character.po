@@ -12,7 +12,7 @@ msgstr "Персонаж недоступен"
 
 
 msgid "ui.character.title_with_level"
-msgstr "{name} — {class} (Уровень {level})"
+msgstr "{name} — {class}, {faction} (Уровень {level})"
 
 
 msgid "ui.character.slot.head"

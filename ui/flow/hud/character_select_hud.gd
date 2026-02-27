@@ -49,7 +49,9 @@ func refresh_list() -> void:
 
 		var cls_id: String = String(d.get("class_id", d.get("class", "paladin")))
 		var cls_name: String = UI_TEXT.class_display_name(cls_id)
-		list.add_item(tr("ui.flow.character_select.list_item").format({"name": char_name, "class": cls_name, "level": lvl}))
+		var faction_id: String = String(d.get("faction", "blue"))
+		var faction_name: String = UI_TEXT.faction_display_name(faction_id)
+		list.add_item(tr("ui.flow.character_select.list_item").format({"name": char_name, "class": cls_name, "faction": faction_name, "level": lvl}))
 		list.set_item_metadata(list.item_count - 1, id)
 
 	if list.item_count > 0:

@@ -21,3 +21,13 @@ static func class_display_name(class_id: String) -> String:
 	if translated == key:
 		return TranslationServer.translate("ui.class.adventurer")
 	return translated
+
+static func faction_display_name(faction_id: String) -> String:
+	var clean := String(faction_id).strip_edges().to_lower()
+	if clean == "":
+		clean = "blue"
+	var key := "ui.faction.%s" % clean
+	var translated := TranslationServer.translate(key)
+	if translated == key:
+		return TranslationServer.translate("ui.faction.blue")
+	return translated
