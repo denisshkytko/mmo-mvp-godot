@@ -36,17 +36,19 @@ func _process(_delta: float) -> void:
 		_player = get_tree().get_first_node_in_group("player")
 		return
 
-	var n: String = "Player"
+	var n: String = ""
 	if has_node("/root/AppState"):
 		var d: Dictionary = get_node("/root/AppState").get("selected_character_data")
 		if d is Dictionary and d.has("name"):
-			n = String(d.get("name", "Player"))
+			n = String(d.get("name", "")).strip_edges()
+	if n == "" and _player.has_method("get_display_name"):
+		n = String(_player.call("get_display_name")).strip_edges()
 	name_label.text = n
 
 	# Level
 	var lvl_v: Variant = _player.get("level")
 	if lvl_v != null:
-		level_label.text = "lv %d" % int(lvl_v)
+		level_label.text = tr("ui.hud.level.short") % int(lvl_v)
 	else:
 		level_label.text = ""
 
@@ -90,7 +92,11 @@ func _process(_delta: float) -> void:
 		var mx_m: int = max(1, int(mx_m_v))
 
 		_apply_resource_bar_color("mana")
-		mana_text.text = "Mana %d/%d" % [cur_m, mx_m]
+		var resource_label := tr("ui.hud.resource.mana")
+		var player_resource_type := String(_player.get("resource_type")).to_lower()
+		if player_resource_type == "rage":
+			resource_label = tr("ui.hud.resource.rage")
+		mana_text.text = tr("ui.hud.resource.value") % [resource_label, cur_m, mx_m]
 		mana_bar.max_value = mx_m
 		mana_bar.value = cur_m
 	else:

@@ -46,8 +46,8 @@ layout_mode = 2
 
 [node name="ExitWorldButton" type="Button" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-text = "Exit World"
+text = "Покинуть Мир"
 
 [node name="ExitGameButton" type="Button" parent="Root/Panel/Margin/VBox"]
 layout_mode = 2
-text = "Exit Game"
+text = "Выйти из игры"
