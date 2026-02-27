@@ -35,3 +35,10 @@ msgstr "Зверь"
 
 msgid "ui.class.adventurer"
 msgstr "Искатель приключений"
+
+
+msgid "ui.faction.blue"
+msgstr "Синяя"
+
+msgid "ui.faction.red"
+msgstr "Красная"

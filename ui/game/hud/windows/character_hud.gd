@@ -209,7 +209,8 @@ func _refresh() -> void:
 		stats_text.text = tr("ui.character.unavailable")
 		return
 
-	title_label.text = _trf("ui.character.title_with_level", {"name": String(_player.name), "class": UI_TEXT.class_display_name(String(_player.class_id)), "level": _player.level})
+	var player_name := _resolve_player_name()
+	title_label.text = _trf("ui.character.title_with_level", {"name": player_name, "class": UI_TEXT.class_display_name(String(_player.class_id)), "level": _player.level})
 
 	var snap: Dictionary = {}
 	if _player.has_method("get_stats_snapshot"):
@@ -220,6 +221,22 @@ func _refresh() -> void:
 		return
 
 	stats_text.text = _format_snapshot(snap)
+
+
+func _resolve_player_name() -> String:
+	if has_node("/root/AppState"):
+		var data_v: Variant = get_node("/root/AppState").get("selected_character_data")
+		if data_v is Dictionary:
+			var selected_name := String((data_v as Dictionary).get("name", "")).strip_edges()
+			if selected_name != "":
+				return selected_name
+	if _player != null and _player.has_method("get_display_name"):
+		var display_name := String(_player.call("get_display_name")).strip_edges()
+		if display_name != "":
+			return display_name
+	if _player != null:
+		return String(_player.name).strip_edges()
+	return ""
 
 func _refresh_layout() -> void:
 	if panel == null:

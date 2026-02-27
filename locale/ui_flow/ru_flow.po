@@ -72,3 +72,7 @@ msgstr "Ошибка при создании персонажа"
 
 
 # Core HUD (respawn / target / player / menu)
+
+
+msgid "ui.flow.character_create.faction"
+msgstr "Фракция"

@@ -100,19 +100,43 @@ func _on_delete_pressed() -> void:
 
 
 func _on_create_all_test_pressed() -> void:
-	var class_ids: Array[String] = ["paladin", "shaman", "mage", "priest", "hunter", "warrior"]
-	for class_id in class_ids:
+	for _i in range(6):
+		var combo := _pick_random_allowed_faction_class()
+		var faction_id := String(combo.get("faction", "blue"))
+		var class_id := String(combo.get("class_id", "warrior"))
 		var nickname := _generate_test_nickname(class_id)
-		var char_id := AppState.create_character(nickname, class_id)
+		var char_id := AppState.create_character(nickname, class_id, faction_id)
 		if char_id == "":
 			continue
 		_apply_max_level_and_all_spells(char_id, class_id)
 	refresh_list()
 
 
-func _generate_test_nickname(class_id: String) -> String:
-	var prefix := class_id.substr(0, min(3, class_id.length())).to_upper()
-	return "%s_%04d" % [prefix, randi_range(1000, 9999)]
+
+
+func _pick_random_allowed_faction_class() -> Dictionary:
+	var factions: Array[String] = ["blue", "red"]
+	var faction_id := factions[randi() % factions.size()]
+	var class_ids: Array[String] = ["paladin", "shaman", "mage", "priest", "hunter", "warrior"]
+	var allowed: Array[String] = []
+	for class_id in class_ids:
+		if AppState.is_class_allowed_for_faction(class_id, faction_id):
+			allowed.append(class_id)
+	if allowed.is_empty():
+		allowed = ["warrior"]
+	var class_id := allowed[randi() % allowed.size()]
+	return {"faction": faction_id, "class_id": class_id}
+
+func _generate_test_nickname(_class_id: String) -> String:
+	var syllables := ["Ар", "Бел", "Вик", "Гор", "Дар", "Ер", "Жан", "Зор", "Ил", "Кор", "Лад", "Мар", "Ник", "Ор", "Ран", "Сав", "Тар", "Фед", "Хор", "Яр"]
+	var first := String(syllables[randi() % syllables.size()])
+	var second := String(syllables[randi() % syllables.size()]).to_lower()
+	var nick := first + second
+	if nick.length() < 3:
+		nick = "Артур"
+	if nick.length() > 18:
+		nick = nick.substr(0, 18)
+	return nick
 
 
 func _apply_max_level_and_all_spells(char_id: String, class_id: String) -> void:

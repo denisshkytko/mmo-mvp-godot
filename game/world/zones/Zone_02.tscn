@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://vw0l7rj1osth"]
+[gd_scene load_steps=8 format=3 uid="uid://vw0l7rj1osth"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_p4n78"]
 [ext_resource type="PackedScene" uid="uid://c8qhqey2vbhkc" path="res://game/characters/mobs/NormalAggressiveMob.tscn" id="2_557ad"]
 [ext_resource type="PackedScene" uid="uid://clp8k5d1jg7hp" path="res://game/world/graveyards/Graveyard.tscn" id="3_m7f8a"]
+[ext_resource type="Script" path="res://game/world/spawn/first_entry_spawn_point.gd" id="4_first_entry"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -46,6 +47,11 @@ debug_color = Color(1.02277845e-07, 0.068394236, 0.08760249, 0.41960785)
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(-1700, 0)
+
+[node name="FirstEntryRed" type="Marker2D" parent="."]
+position = Vector2(-1700, 0)
+script = ExtResource("4_first_entry")
+faction = "Красная"
 
 [node name="ExitToZone01" type="Area2D" parent="."]
 position = Vector2(-1800, 0)

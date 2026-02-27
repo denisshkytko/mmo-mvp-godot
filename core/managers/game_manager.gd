@@ -1,5 +1,7 @@
 extends Node
 
+const FIRST_ENTRY_SPAWN_POINT := preload("res://game/world/spawn/first_entry_spawn_point.gd")
+
 @onready var zone_container: Node = $"../ZoneContainer"
 
 var player: Node2D
@@ -89,28 +91,39 @@ func _load_character_into_world() -> void:
 		return
 	_has_loaded_character = true
 
-	# 1) Зона: всегда берём из data["zone"], по умолчанию Zone_01 (у тебя это уже записывается при создании)
+	# 1) Зона + точка входа
 	var zone_path: String = String(data.get("zone", "res://game/world/zones/Zone_01.tscn"))
 	zone_path = _sanitize_zone_path(zone_path)
 	if zone_path == "":
 		zone_path = "res://game/world/zones/Zone_01.tscn"
 
-	current_zone_path = zone_path
+	var spawn_name: String = "SpawnPoint"
 
-	# 2) Позиция: применяем ТОЛЬКО если она не (0,0) — иначе это “первый вход”
+	# 2) Позиция: если (0,0) — это первый вход, ищем фракционную точку первого входа
 	var pos_v: Variant = data.get("pos", null)
 	_has_override_pos = false
 	_pending_override_pos = Vector2.ZERO
+	var is_first_entry: bool = true
 	if pos_v is Dictionary:
 		var pos_d: Dictionary = pos_v as Dictionary
 		var x: float = float(pos_d.get("x", 0.0))
 		var y: float = float(pos_d.get("y", 0.0))
 		if not (is_zero_approx(x) and is_zero_approx(y)):
+			is_first_entry = false
 			_has_override_pos = true
 			_pending_override_pos = Vector2(x, y)
 
+	if is_first_entry:
+		var faction_id := String(data.get("faction", "blue")).to_lower()
+		var first_spawn: Dictionary = _find_first_entry_spawn_for_faction(faction_id)
+		if not first_spawn.is_empty():
+			zone_path = String(first_spawn.get("zone_path", zone_path))
+			spawn_name = String(first_spawn.get("spawn_name", spawn_name))
+
+	current_zone_path = zone_path
+
 	# 3) Загружаем зону
-	load_zone(zone_path, "SpawnPoint")
+	load_zone(zone_path, spawn_name)
 
 	# 4) Применяем статы/инвентарь
 	if player.has_method("apply_character_data"):
@@ -128,6 +141,49 @@ func _emit_player_spawned() -> void:
 		flow_router.call("notify_player_spawned", player, self)
 		if OS.is_debug_build():
 			print("[FLOW] player_spawned emitted. player=", player, " class=", player.get("class_id"))
+
+
+func _find_first_entry_spawn_for_faction(faction_id: String) -> Dictionary:
+	var normalized := faction_id.strip_edges().to_lower()
+	if normalized != "red":
+		normalized = "blue"
+	var zones_dir := DirAccess.open("res://game/world/zones")
+	if zones_dir == null:
+		push_error("[FirstEntry] Cannot open zones directory")
+		return {}
+	zones_dir.list_dir_begin()
+	var file_name := zones_dir.get_next()
+	while file_name != "":
+		if not zones_dir.current_is_dir() and file_name.ends_with(".tscn"):
+			var zone_path := "res://game/world/zones/" + file_name
+			var zone_scene := load(zone_path) as PackedScene
+			if zone_scene != null:
+				var root := zone_scene.instantiate()
+				var marker := _find_first_entry_marker_in_tree(root, normalized)
+				if marker != null:
+					var result := {"zone_path": zone_path, "spawn_name": String(marker.name)}
+					root.free()
+					zones_dir.list_dir_end()
+					return result
+				root.free()
+		file_name = zones_dir.get_next()
+	zones_dir.list_dir_end()
+	push_error("[FirstEntry] Spawn marker for faction '%s' not found" % normalized)
+	return {}
+
+func _find_first_entry_marker_in_tree(root: Node, faction_id: String) -> Marker2D:
+	if root == null:
+		return null
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current := stack.pop_back()
+		if current is Marker2D and current.get_script() == FIRST_ENTRY_SPAWN_POINT:
+			if current.has_method("get_faction_id") and String(current.call("get_faction_id")).to_lower() == faction_id:
+				return current as Marker2D
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	return null
 
 
 # ---------------------------
