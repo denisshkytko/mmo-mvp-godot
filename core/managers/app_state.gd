@@ -113,15 +113,43 @@ func select_character(char_id: String) -> bool:
 	selected_character_data = full
 	return true
 
+
+func validate_and_normalize_character_name(char_name: String) -> Dictionary:
+	var trimmed := char_name.strip_edges()
+	if trimmed.length() < 3 or trimmed.length() > 18:
+		return {"ok": false, "name": ""}
+	for i in range(trimmed.length()):
+		var ch := trimmed.substr(i, 1)
+		if not _is_russian_letter(ch):
+			return {"ok": false, "name": ""}
+	var normalized := _normalize_character_name_case(trimmed)
+	return {"ok": true, "name": normalized}
+
+func _normalize_character_name_case(value: String) -> String:
+	if value == "":
+		return ""
+	if value.length() == 1:
+		return value.to_upper()
+	return value.substr(0, 1).to_upper() + value.substr(1).to_lower()
+
+func _is_russian_letter(ch: String) -> bool:
+	if ch.length() != 1:
+		return false
+	var code := ch.unicode_at(0)
+	return (code >= 0x0410 and code <= 0x044F) or code == 0x0401 or code == 0x0451
+
 func create_character(char_name: String, class_id: String) -> String:
 	if not has_node("/root/SaveSystem"):
 		return ""
 
 	var id := "char_%d_%d" % [int(Time.get_unix_time_from_system()), randi_range(1000, 9999)]
 
-	var clean_name := char_name.strip_edges()
+	var name_validation: Dictionary = validate_and_normalize_character_name(char_name)
+	if not bool(name_validation.get("ok", false)):
+		return ""
+	var clean_name := String(name_validation.get("name", "")).strip_edges()
 	if clean_name == "":
-		clean_name = "Hero"
+		return ""
 
 	var clean_class := class_id.strip_edges()
 	if clean_class == "":

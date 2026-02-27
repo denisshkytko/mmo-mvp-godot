@@ -110,9 +110,16 @@ func _on_create_all_test_pressed() -> void:
 	refresh_list()
 
 
-func _generate_test_nickname(class_id: String) -> String:
-	var prefix := class_id.substr(0, min(3, class_id.length())).to_upper()
-	return "%s_%04d" % [prefix, randi_range(1000, 9999)]
+func _generate_test_nickname(_class_id: String) -> String:
+	var syllables := ["Ар", "Бел", "Вик", "Гор", "Дар", "Ер", "Жан", "Зор", "Ил", "Кор", "Лад", "Мар", "Ник", "Ор", "Ран", "Сав", "Тар", "Фед", "Хор", "Яр"]
+	var first := String(syllables[randi() % syllables.size()])
+	var second := String(syllables[randi() % syllables.size()]).to_lower()
+	var nick := first + second
+	if nick.length() < 3:
+		nick = "Артур"
+	if nick.length() > 18:
+		nick = nick.substr(0, 18)
+	return nick
 
 
 func _apply_max_level_and_all_spells(char_id: String, class_id: String) -> void:

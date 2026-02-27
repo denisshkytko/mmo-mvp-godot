@@ -50,10 +50,12 @@ func _on_cancel_pressed() -> void:
 func _on_create_pressed() -> void:
 	error_label.text = ""
 
-	var n: String = name_edit.text.strip_edges()
-	if n == "":
+	var validation: Dictionary = AppState.validate_and_normalize_character_name(name_edit.text)
+	if not bool(validation.get("ok", false)):
 		error_label.text = tr("ui.flow.character_create.error.invalid_name")
 		return
+	var n: String = String(validation.get("name", "")).strip_edges()
+	name_edit.text = n
 
 	var selected_class_id: String = ""
 	var selected_meta: Variant = class_option.get_item_metadata(class_option.selected)
