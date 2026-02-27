@@ -3,7 +3,6 @@ class_name Corpse
 
 signal despawned
 
-@onready var hint: Label = $Hint
 @onready var visual: ColorRect = $Visual
 
 @export var interact_radius: float = 60.0
@@ -135,7 +134,6 @@ func _resolve_owner_max_resource(owner: Node) -> int:
 
 func _ready() -> void:
 	_life_timer = despawn_seconds
-	hint.visible = false
 
 	var p: Node = get_tree().get_first_node_in_group("player")
 	_player_cached = p as Node2D
@@ -226,9 +224,9 @@ func _process(delta: float) -> void:
 		else:
 			_player_in_range = null
 
-	# 3) hint (строго по праву на лут)
-	hint.visible = (_player_in_range != null and has_loot() and _can_be_looted_by(_player_in_range))
-	if hint.visible and Input.is_action_just_pressed("loot"):
+	# 3) interaction (строго по праву на лут)
+	var can_loot_now: bool = (_player_in_range != null and has_loot() and _can_be_looted_by(_player_in_range))
+	if can_loot_now and Input.is_action_just_pressed("loot"):
 		_try_open_loot()
 
 	# 4) blink (только если игрок реально может лутать)
@@ -337,10 +335,9 @@ func loot_all_to_player(player_node: Node) -> void:
 func mark_looted() -> void:
 	# Помечаем труп полностью пустым:
 	# - больше не мигает
-	# - подсказка не появляется
+	# - интерактивность сброшена
 	loot_gold = 0
 	loot_slots = []
 	loot_owner_player_id = 0
 	_player_in_range = null
-	hint.visible = false
 	visual.modulate.a = 1.0

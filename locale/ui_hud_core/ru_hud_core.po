@@ -1,0 +1,31 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "You died"
+msgstr "Вы погибли"
+
+
+msgid "Respawn in %.1f"
+msgstr "Появление на кладбище через %.1f"
+
+
+msgid "ui.respawn.button"
+msgstr "Появиться на кладбище"
+
+
+msgid "ui.hud.level.short"
+msgstr "Ур. %d"
+
+
+msgid "ui.hud.resource.mana"
+msgstr "Мана"
+
+
+msgid "ui.hud.resource.rage"
+msgstr "Ярость"
+
+
+msgid "ui.hud.resource.value"
+msgstr "%s %d/%d"

@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "ui.inventory.split"
+msgstr "Разделить"
+
+
+msgid "ui.inventory.quick_slot.remove"
+msgstr "Снять"
+
+
+msgid "ui.inventory.quick_slot.add"
+msgstr "В быстрый слот"
+
+
+msgid "ui.inventory.bag.equip"
+msgstr "Экипировать"
+
+
+msgid "ui.inventory.no_free_quick_slots"
+msgstr "Нет свободных быстрых слотов"
+
+
+msgid "ui.inventory.no_free_slots"
+msgstr "Нет свободных ячеек"
+
+
+msgid "ui.inventory.hp_full"
+msgstr "Запас здоровья полон"
+
+
+msgid "ui.inventory.mp_full"
+msgstr "Запас маны полон"
+
+
+msgid "ui.inventory.hpmp_full"
+msgstr "Запасы здоровья и маны полны"
+
+
+msgid "ui.inventory.item_level_mismatch"
+msgstr "Неподходящий уровень предмета"
+
+
+msgid "ui.inventory.item_skill_mismatch"
+msgstr "Вы не умеете пользоваться этим"
+
+
+
+msgid "ui.inventory.settings.title"
+msgstr "Изменить сетку инвентаря"
+
+
+msgid "ui.inventory.settings.columns"
+msgstr "Количество столбцов:"
+
+
+msgid "ui.inventory.settings.sort_title"
+msgstr "Сортировка"
+
+
+msgid "ui.inventory.settings.sort"
+msgstr "Сортировать"
+
+# Merchant specific

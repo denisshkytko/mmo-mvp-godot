@@ -159,7 +159,7 @@ func _update_identity() -> void:
 			if nl != null:
 				lvl = int(nl)
 
-	level_label.text = "lv %d" % lvl if lvl > 0 else ""
+	level_label.text = tr("ui.hud.level.short") % lvl if lvl > 0 else ""
 
 func _get_stats_node() -> Node:
 	if _target == null:

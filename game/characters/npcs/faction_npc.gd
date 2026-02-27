@@ -5,13 +5,13 @@ class_name FactionNPC
 ## Helpers below are global classes (class_name). Avoid shadowing them.
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 signal died(corpse: Corpse)
 
 @onready var faction_rect: ColorRect = $"ColorRect"
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
-@onready var merchant_hint: Label = get_node_or_null("UI/MerchantHint") as Label
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -21,8 +21,6 @@ signal died(corpse: Corpse)
 
 const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn")
 const BASE_XP_L1_FACTION: int = 3
-const MERCHANT_HINT_TEXT: String = "\"E\" to trade"
-const TRAINER_HINT_TEXT: String = "\"E\" to train"
 const MERCHANT_BUYBACK_TTL_MSEC: int = 10 * 60 * 1000
 
 enum FighterType { CIVILIAN, COMBATANT }
@@ -69,8 +67,8 @@ var _threat_recheck_timer: float = 0.0
 @export var base_xp: int = 5
 @export var xp_per_level: int = 2
 @export var move_speed: float = MOVE_SPEED.MOB_BASE
-@export var aggro_radius: float = 260.0
-@export var leash_distance: float = 420.0
+@export var aggro_radius: float = COMBAT_RANGES.AGGRO_RADIUS
+@export var leash_distance: float = COMBAT_RANGES.LEASH_DISTANCE
 
 @export_group("Merchant")
 @export var merchant_interact_radius: float = 60.0
@@ -90,7 +88,7 @@ var _threat_recheck_timer: float = 0.0
 @export var civilian_base_per: int = 0
 @export var civilian_base_defense: int = 1
 @export var civilian_base_magic_resist: int = 0
-@export var civilian_base_attack_range: float = 55.0
+@export var civilian_base_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 @export var civilian_base_attack_cooldown: float = 1.3
 @export_subgroup("Рост базовых характеристик")
 @export var civilian_str_per_level: int = 1
@@ -110,7 +108,7 @@ var _threat_recheck_timer: float = 0.0
 @export var fighter_base_per: int = 1
 @export var fighter_base_defense: int = 3
 @export var fighter_base_magic_resist: int = 0
-@export var fighter_base_attack_range: float = 55.0
+@export var fighter_base_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 @export var fighter_base_attack_cooldown: float = 1.2
 @export_subgroup("Рост базовых характеристик")
 @export var fighter_str_per_level: int = 2
@@ -130,7 +128,7 @@ var _threat_recheck_timer: float = 0.0
 @export var mage_base_per: int = 1
 @export var mage_base_defense: int = 2
 @export var mage_base_magic_resist: int = 2
-@export var mage_base_attack_range: float = 260.0
+@export var mage_base_attack_range: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 @export var mage_base_attack_cooldown: float = 1.6
 @export var mage_projectile_scene: PackedScene
 @export_subgroup("Рост базовых характеристик")
@@ -144,14 +142,19 @@ var _threat_recheck_timer: float = 0.0
 
 func _ready() -> void:
 	add_to_group("faction_units")
+	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
+	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
+	mage_base_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
+	civilian_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
+	fighter_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 
 	if home_position == Vector2.ZERO:
 		home_position = global_position
 
 	# базовая инициализация, если NPC поставлен вручную
 	c_ai.home_position = home_position
-	c_ai.aggro_radius = aggro_radius
-	c_ai.leash_distance = leash_distance
+	c_ai.aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
+	c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	c_ai.speed = move_speed
 	c_ai.reset_to_idle()
 
@@ -161,9 +164,6 @@ func _ready() -> void:
 
 	_update_faction_color()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
-	if merchant_hint != null:
-		merchant_hint.text = MERCHANT_HINT_TEXT
-		merchant_hint.visible = false
 
 func get_faction_id() -> String:
 	return faction_id
@@ -210,9 +210,9 @@ func apply_spawn_init(
 
 	# common params (если спавнер не передал — берём из инспектора)
 	c_ai.behavior = behavior_in
-	c_ai.aggro_radius = aggro_radius
-	c_ai.leash_distance = leash_distance
-	c_ai.patrol_radius = patrol_radius_in
+	c_ai.aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
+	c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
+	c_ai.patrol_radius = COMBAT_RANGES.PATROL_RADIUS
 	c_ai.patrol_pause_seconds = patrol_pause_in
 	c_ai.speed = move_speed
 	c_ai.home_position = home_position
@@ -236,7 +236,7 @@ func apply_spawn_init(
 				civilian_magic_resist_per_level
 			)
 			c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
-			c_combat.melee_attack_range = civilian_base_attack_range
+			c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
 		FighterType.COMBATANT:
@@ -262,7 +262,7 @@ func apply_spawn_init(
 					mage_magic_resist_per_level
 				)
 				c_combat.attack_mode = FactionNPCCombat.AttackMode.RANGED
-				c_combat.ranged_attack_range = mage_base_attack_range
+				c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 				c_combat.ranged_cooldown = base_ranged
 
 				var proj: PackedScene = projectile_scene_in
@@ -279,7 +279,7 @@ func apply_spawn_init(
 					fighter_magic_resist_per_level
 				)
 				c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
-				c_combat.melee_attack_range = fighter_base_attack_range
+				c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 				c_combat.melee_cooldown = base_melee
 
 	c_stats.recalc(npc_level)
@@ -392,12 +392,12 @@ func _physics_process(delta: float) -> void:
 
 
 func _pick_target() -> Node2D:
-	var radius: float = c_ai.aggro_radius if c_ai != null else 0.0
+	var radius: float = COMBAT_RANGES.AGGRO_RADIUS if c_ai != null else 0.0
 	var threat_target := ThreatTargeting.pick_target_by_threat(
 		self,
 		faction_id,
 		home_position,
-		leash_distance,
+		COMBAT_RANGES.LEASH_DISTANCE,
 		radius,
 		direct_attackers
 	)
@@ -558,8 +558,8 @@ func _refresh_threat_target() -> void:
 		self,
 		faction_id,
 		home_position,
-		leash_distance,
-		c_ai.aggro_radius,
+		COMBAT_RANGES.LEASH_DISTANCE,
+		COMBAT_RANGES.AGGRO_RADIUS,
 		direct_attackers
 	)
 	if threat_target != null and threat_target != current_target:
@@ -571,26 +571,18 @@ func _clear_direct_attackers() -> void:
 
 func _update_interaction() -> void:
 	if interaction_type != InteractionType.MERCHANT and interaction_type != InteractionType.TRAINER:
-		if merchant_hint != null:
-			merchant_hint.visible = false
-		return
-	if merchant_hint == null:
 		return
 	var p: Node = NodeCache.get_player(get_tree())
 	if p == null or not is_instance_valid(p):
-		merchant_hint.visible = false
 		return
 	var dist: float = global_position.distance_to(p.global_position)
 	var can_interact: bool = false
 	if interaction_type == InteractionType.MERCHANT:
-		merchant_hint.text = MERCHANT_HINT_TEXT
 		can_interact = _can_trade_with(p)
 	else:
-		merchant_hint.text = TRAINER_HINT_TEXT
 		can_interact = _can_train_with(p)
-	var show_hint: bool = can_interact and dist <= merchant_interact_radius
-	merchant_hint.visible = show_hint
-	if show_hint and Input.is_action_just_pressed("loot"):
+	var can_open: bool = can_interact and dist <= merchant_interact_radius
+	if can_open and Input.is_action_just_pressed("loot"):
 		if interaction_type == InteractionType.MERCHANT:
 			_try_open_merchant(p)
 		else:

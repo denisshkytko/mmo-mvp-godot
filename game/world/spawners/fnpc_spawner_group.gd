@@ -1,6 +1,8 @@
 @tool
 extends "res://game/world/spawners/base_spawner_group.gd"
+
 class_name FnpcSpawnerGroup
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 const NPC_SCENE: PackedScene = preload("res://game/characters/npcs/FactionNPC.tscn")
 const DEFAULT_PROJECTILE: PackedScene = preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
@@ -35,7 +37,7 @@ var class_choice: int:
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
 
-@export var patrol_radius: float = 140.0
+@export var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
 @export var patrol_pause_seconds: float = 1.5
 
 const CLASS_IDS := ["paladin", "warrior", "shaman", "mage", "priest", "hunter"]
@@ -83,7 +85,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		behavior,
 		-1.0, # aggro_radius is defined on the NPC itself
 		-1.0, # leash_distance is defined on the NPC itself
-		patrol_radius,
+		COMBAT_RANGES.PATROL_RADIUS,
 		patrol_pause_seconds,
 		-1.0, # move_speed is defined on the NPC itself
 		level,

@@ -1,15 +1,27 @@
 extends CanvasLayer
 
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+
 @onready var list: ItemList = $Root/Panel/Margin/VBox/CharacterList
 @onready var delete_button: Button = $Root/Panel/Margin/VBox/Buttons/DeleteButton
 @onready var enter_button: Button = $Root/Panel/Margin/VBox/Buttons/EnterButton
 @onready var logout_button: Button = $Root/Panel/Margin/VBox/Buttons/LogoutButton
 @onready var create_all_test_button: Button = $Root/Panel/Margin/VBox/Buttons/CreateAllTestButton
+@onready var title_label: Label = $Root/Panel/Margin/VBox/Title
 
 var _selected_id: String = ""
 var _allow_enter: bool = false
 
 func _ready() -> void:
+	if title_label != null:
+		title_label.text = tr("ui.flow.character_select.title")
+	if delete_button != null:
+		delete_button.text = tr("ui.flow.character_select.delete")
+	if enter_button != null:
+		enter_button.text = tr("ui.flow.character_select.enter_world")
+	if logout_button != null:
+		logout_button.text = tr("ui.flow.character_select.logout")
+
 	enter_button.disabled = true
 
 	delete_button.pressed.connect(_on_delete_pressed)
@@ -32,11 +44,12 @@ func refresh_list() -> void:
 	for c in chars:
 		var d: Dictionary = c as Dictionary
 		var id: String = String(d.get("id", ""))
-		var char_name: String = String(d.get("name", "Unnamed"))
+		var char_name: String = String(d.get("name", tr("ui.flow.character_select.unnamed")))
 		var lvl: int = int(d.get("level", 1))
 
-		var cls: String = String(d.get("class", "paladin"))
-		list.add_item("%s — %s (lv %d)" % [char_name, cls, lvl])
+		var cls_id: String = String(d.get("class_id", d.get("class", "paladin")))
+		var cls_name: String = UI_TEXT.class_display_name(cls_id)
+		list.add_item(tr("ui.flow.character_select.list_item").format({"name": char_name, "class": cls_name, "level": lvl}))
 		list.set_item_metadata(list.item_count - 1, id)
 
 	if list.item_count > 0:

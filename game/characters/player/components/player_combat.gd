@@ -6,10 +6,11 @@ const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const PROG := preload("res://core/stats/progression.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 
-const MELEE_ATTACK_RANGE: float = 66.0
-const RANGED_ATTACK_RANGE: float = 264.0
+const MELEE_ATTACK_RANGE: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
+const RANGED_ATTACK_RANGE: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 const RANGED_WEAPON_SUBTYPES: Array[String] = [
 	"staff",
 	"staff_2h",

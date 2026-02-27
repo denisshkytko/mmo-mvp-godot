@@ -10,6 +10,16 @@ signal hud_visibility_changed(is_open: bool)
 @onready var grid: GridContainer = $Root/Panel/Content/GridScrollWrapper/GridScroll/Grid
 @onready var bag_slots: Control = $Root/Panel/Content/BagSlots
 
+@onready var settings_button_scene: Button = $Root/Panel/InvSettingsButton
+@onready var settings_panel_scene: Panel = $Root/Panel/InvSettingsPanel
+@onready var settings_title_label_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/GridTitle
+@onready var settings_columns_label_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/ColumnsLabel
+@onready var settings_minus_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/MinusButton
+@onready var settings_value_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/ValueLabel
+@onready var settings_plus_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/PlusButton
+@onready var settings_sort_title_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/SortTitle
+@onready var settings_sort_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/SortButton
+
 @onready var bag_button: Button = get_node_or_null("BagButton")
 @onready var bag_slot1: Button = $Root/Panel/Content/BagSlots/BagSlot1
 @onready var bag_slot2: Button = $Root/Panel/Content/BagSlots/BagSlot2
@@ -68,12 +78,15 @@ var _split_source_slot: int = -1
 # Settings UI (columns/rows + sort)
 var _settings_button: Button = null
 var _settings_panel: Panel = null
-var _settings_mode: OptionButton = null
-var _settings_input: LineEdit = null
-var _settings_apply: Button = null
+var _settings_title_label: Label = null
+var _settings_columns_label: Label = null
+var _settings_minus: Button = null
+var _settings_value: Label = null
+var _settings_plus: Button = null
+var _settings_sort_title: Label = null
 var _settings_sort: Button = null
 
-var _grid_columns: int = 6 # default layout for inventory
+var _grid_columns: int = 4 # default layout for inventory
 
 const _GRID_CFG_PATH := "user://inventory_grid.cfg"
 const _GRID_CFG_SECTION := "inventory_hud"
@@ -115,6 +128,9 @@ var _error_layer: CanvasLayer = null
 var _initial_layout_done: bool = false
 var _initial_layout_pending: bool = false
 
+func _trf(key: String, params: Dictionary = {}) -> String:
+	return tr(key).format(params)
+
 func _ready() -> void:
 	add_to_group("inventory_ui")
 	# default to closed in actual gameplay; keep current behavior
@@ -124,6 +140,16 @@ func _ready() -> void:
 		gold_label.bbcode_enabled = true
 		gold_label.fit_content = true
 		gold_label.scroll_active = false
+
+	if split_title != null:
+		split_title.text = tr("ui.inventory.split")
+	if split_ok != null:
+		split_ok.text = tr("ui.common.accept")
+	if split_cancel != null:
+		split_cancel.text = tr("ui.terms.cancel")
+	if bag_full_dialog != null:
+		bag_full_dialog.title = tr("ui.common.inventory_title")
+		bag_full_dialog.dialog_text = tr("ui.common.bag_full")
 
 	if bag_button != null:
 		bag_button.pressed.connect(_on_bag_button_pressed)
@@ -334,6 +360,8 @@ func _get_bag_button_for_logical(logical_index: int) -> Button:
 		_: return bag_slot1
 
 func _on_bag_slot_gui_input(event: InputEvent, bag_index: int) -> void:
+	if _is_settings_open():
+		return
 	if not _is_open:
 		return
 	if event is InputEventMouseButton:
@@ -477,6 +505,8 @@ func _hook_slot_panels() -> void:
 		slot_panel.gui_input.connect(_on_slot_gui_input.bind(i))
 
 func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
+	if _is_settings_open():
+		return
 	if not _is_open:
 		return
 
@@ -591,7 +621,7 @@ func _on_split_ok_pressed() -> void:
 		return
 	var free_idx := _find_first_free_slot(slots)
 	if free_idx == -1:
-		show_bag_full("Сумка полна")
+		show_bag_full(tr("ui.common.bag_full"))
 		_hide_split()
 		return
 	var id: String = String(d.get("id", ""))
@@ -668,12 +698,12 @@ func _show_tooltip_for_slot(slot_index: int, global_pos: Vector2) -> void:
 		var is_cons2 := _is_consumable_item(id)
 		var quick_index := _get_quick_slot_index_for_item(id)
 		_tooltip_quick_btn.visible = is_cons2
-		_tooltip_quick_btn.text = "Снять" if quick_index != -1 else "В быстрый слот"
+		_tooltip_quick_btn.text = tr("ui.inventory.quick_slot.remove") if quick_index != -1 else tr("ui.inventory.quick_slot.add")
 		_tooltip_quick_btn.disabled = false
 	if _tooltip_bag_btn != null:
 		var is_bag := _is_bag_item(id)
 		_tooltip_bag_btn.visible = is_bag
-		_tooltip_bag_btn.text = "Экипировать"
+		_tooltip_bag_btn.text = tr("ui.inventory.bag.equip")
 		_tooltip_bag_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
@@ -717,7 +747,7 @@ func _show_tooltip_for_bag_slot(bag_index: int, global_pos: Vector2) -> void:
 		_tooltip_quick_btn.visible = false
 	if _tooltip_bag_btn != null:
 		_tooltip_bag_btn.visible = true
-		_tooltip_bag_btn.text = "Снять"
+		_tooltip_bag_btn.text = tr("ui.inventory.quick_slot.remove")
 		_tooltip_bag_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
@@ -812,44 +842,114 @@ func _position_panel_left_of_point(target_panel: Control, p: Vector2) -> void:
 
 # --- Settings ---
 
+func _is_settings_open() -> bool:
+	return _settings_panel != null and _settings_panel.visible
+
 func _toggle_settings() -> void:
 	if _settings_panel == null:
 		return
 	_settings_panel.visible = not _settings_panel.visible
+	if _settings_panel.visible:
+		_hide_tooltip()
+		_sync_settings_columns_input(_grid_columns)
+		_refresh_settings_columns_controls()
 
 func _hide_settings() -> void:
 	if _settings_panel != null:
 		_settings_panel.visible = false
 
 func _sync_settings_columns_input(cols: int) -> void:
-	if _settings_input == null:
+	if _settings_value == null:
 		return
-	_settings_input.text = str(cols)
+	_settings_value.text = str(max(2, cols))
 
-func _on_settings_apply() -> void:
-	var txt: String = _settings_input.text.strip_edges()
-	var n: int = int(txt) if txt.is_valid_int() else 0
+func _get_settings_columns_value() -> int:
+	if _settings_value == null:
+		return max(2, _grid_columns)
+	var txt: String = _settings_value.text.strip_edges()
+	if not txt.is_valid_int():
+		return max(2, _grid_columns)
+	return max(2, int(txt))
+
+func _estimate_panel_width_for_columns(cols: int) -> float:
+	var safe_cols: int = max(2, cols)
+	var slot_w: float = 80.0
+	if grid != null and grid.get_child_count() > 0:
+		var first := grid.get_child(0) as Control
+		if first != null:
+			slot_w = max(1.0, first.get_combined_minimum_size().x)
+	var hsep: float = float(grid.get_theme_constant("h_separation")) if grid != null else 0.0
+	var grid_w: float = float(safe_cols) * slot_w + float(max(0, safe_cols - 1)) * hsep
+	var pads: Dictionary = _compute_fixed_padding()
+	var left_margin_x: float = float(pads.get("left_margin_x", 0.0))
+	var pad_right: float = float(pads.get("pad_right", 10.0))
+	var separation: float = float(pads.get("separation", 0.0))
+	var bag_min: Vector2 = bag_slots.get_combined_minimum_size() if bag_slots != null else Vector2.ZERO
+	return left_margin_x + bag_min.x + separation + grid_w + pad_right
+
+func _get_max_fitting_columns(total_slots: int) -> int:
+	if not _panel_anchor_valid:
+		return max(2, min(20, total_slots))
+	var cap: int = max(2, min(20, total_slots))
+	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
+	var best: int = 2
+	for c in range(2, cap + 1):
+		if _estimate_panel_width_for_columns(c) <= max_panel.x:
+			best = c
+	return best
+
+func _refresh_settings_columns_controls() -> void:
+	if _settings_minus == null or _settings_plus == null:
+		return
+	var total: int = _get_total_inventory_slots()
+	if total <= 0:
+		total = _get_total_slots_from_player_fallback()
+	if total <= 0:
+		total = 2
+	var max_fit: int = _get_max_fitting_columns(total)
+	var current: int = clamp(_get_settings_columns_value(), 2, max_fit)
+	_sync_settings_columns_input(current)
+	_settings_minus.disabled = current <= 2
+	_settings_plus.disabled = current >= max_fit
+
+func _apply_columns_from_settings_value() -> void:
+	var n: int = _get_settings_columns_value()
 	if n <= 0:
 		return
 	var total: int = _get_total_inventory_slots()
 	if total <= 0:
+		total = _get_total_slots_from_player_fallback()
+	if total <= 0:
 		return
 
-	var target_cols: int = clamp(max(1, n), 1, 20)
+	var target_cols: int = clamp(max(2, n), 2, 20)
 	var best_cols: int = target_cols
 	var fits: bool = await _can_fit_columns(target_cols, total)
 	if not fits:
-		for c in range(target_cols, 0, -1):
+		for c in range(target_cols, 1, -1):
 			if await _can_fit_columns(c, total):
 				best_cols = c
 				break
 		_sync_settings_columns_input(best_cols)
+	if best_cols == _grid_columns:
+		_refresh_settings_columns_controls()
+		return
 	_grid_columns = best_cols
 	_save_grid_columns()
-	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
-	await _rebuild_layout("settings_apply")
+	await _rebuild_layout("settings_change")
+	_refresh_settings_columns_controls()
 	await _refresh()
+
+func _on_settings_minus_pressed() -> void:
+	var current: int = _get_settings_columns_value()
+	_sync_settings_columns_input(max(2, current - 1))
+	await _apply_columns_from_settings_value()
+
+func _on_settings_plus_pressed() -> void:
+	var current: int = _get_settings_columns_value()
+	_sync_settings_columns_input(current + 1)
+	await _apply_columns_from_settings_value()
 
 
 
@@ -861,7 +961,7 @@ func _load_grid_columns() -> void:
 	if err == OK:
 		var v: Variant = cfg.get_value(_GRID_CFG_SECTION, _GRID_CFG_KEY_COLUMNS, _grid_columns)
 		if typeof(v) == TYPE_INT:
-			_grid_columns = int(v)
+			_grid_columns = max(2, int(v))
 
 func _save_grid_columns() -> void:
 	var cfg := ConfigFile.new()
@@ -877,7 +977,7 @@ func _get_panel_max_size_from_anchor() -> Vector2:
 	var top_padding: float = 20.0
 	var max_w: float = min(vp_size.x, _panel_br_anchor.x)
 	var max_h: float = min(vp_size.y - top_padding, _panel_br_anchor.y - top_padding)
-	max_h = max(0.0, max_h)
+	max_h = max(0.0, max_h - 80.0)
 	return Vector2(max_w, max_h)
 
 func _compute_fixed_padding() -> Dictionary:
@@ -1143,7 +1243,7 @@ func _on_tooltip_quick_pressed() -> void:
 		return
 	var empty := _get_first_empty_quick_slot()
 	if empty == -1:
-		show_center_toast("Нет свободных быстрых слотов")
+		show_center_toast(tr("ui.inventory.no_free_quick_slots"))
 		return
 	_quick_refs[empty] = id
 	_persist_quick_slots()
@@ -1156,14 +1256,14 @@ func _on_tooltip_bag_pressed() -> void:
 	if _tooltip_for_bag_slot != -1:
 		var inv_slot := _find_first_free_slot(player.get_inventory_snapshot().get("slots", []))
 		if inv_slot == -1:
-			show_bag_full("Сумка полна")
+			show_bag_full(tr("ui.common.bag_full"))
 			return
 		var ok: bool = player.try_unequip_bag_to_inventory(_tooltip_for_bag_slot, inv_slot)
 		if ok:
 			_hide_tooltip()
 			await _refresh()
 		else:
-			show_bag_full("Сумка полна")
+			show_bag_full(tr("ui.common.bag_full"))
 		return
 	if _tooltip_for_slot < 0:
 		return
@@ -1182,14 +1282,14 @@ func _on_tooltip_bag_pressed() -> void:
 	var bag_slots: Array = snap.get("bag_slots", [])
 	var bag_index := _find_first_free_bag_slot(bag_slots)
 	if bag_index == -1:
-		show_center_toast("Нет свободных ячеек")
+		show_center_toast(tr("ui.inventory.no_free_slots"))
 		return
 	var ok2: bool = player.try_equip_bag_from_inventory_slot(_tooltip_for_slot, bag_index)
 	if ok2:
 		_hide_tooltip()
 		await _refresh()
 	else:
-		show_center_toast("Нет свободных ячеек")
+		show_center_toast(tr("ui.inventory.no_free_slots"))
 
 
 func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
@@ -1199,11 +1299,11 @@ func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
 	var msg: String = ""
 	match reason:
 		"hp_full":
-			msg = "Здоровье полно"
+			msg = tr("ui.inventory.hp_full")
 		"mp_full":
-			msg = "Мана полна"
+			msg = tr("ui.inventory.mp_full")
 		"hpmp_full":
-			msg = "Здоровье и мана полны"
+			msg = tr("ui.inventory.hpmp_full")
 		_:
 			# No message for cooldown/other cases for now.
 			msg = ""
@@ -1232,9 +1332,9 @@ func _show_equip_fail_toast() -> void:
 	var msg := ""
 	match reason:
 		"level":
-			msg = "Не подходящий уровень предмета"
+			msg = tr("ui.inventory.item_level_mismatch")
 		"skill":
-			msg = "Вы не умеете пользоваться этим"
+			msg = tr("ui.inventory.item_skill_mismatch")
 		_:
 			msg = ""
 	if msg == "":
@@ -1344,7 +1444,15 @@ func _refresh() -> void:
 		await _rebuild_layout("refresh_dirty")
 
 	# Gold
-	gold_label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))
+	gold_label.text = _trf("ui.common.coins_with_value", {"value": TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))})
+	if gold_label != null and panel != null and _settings_button != null:
+		var max_gold_w: float = max(0.0, panel.size.x - _settings_button.size.x - 24.0)
+		var content_w: float = 0.0
+		if gold_label.has_method("get_content_width"):
+			content_w = float(gold_label.call("get_content_width"))
+		else:
+			content_w = gold_label.get_combined_minimum_size().x
+		gold_label.visible = content_w < max_gold_w
 
 	# Render items
 	for i in range(grid.get_child_count()):
@@ -1506,7 +1614,7 @@ func _update_bag_buttons(bag_slots: Array) -> void:
 			btn.text = ""
 			btn.disabled = false
 
-func show_bag_full(message: String = "Your bags are full!") -> void:
+func show_bag_full(message: String = tr("ui.common.bag_full")) -> void:
 	bag_full_dialog.dialog_text = message
 	bag_full_dialog.popup_centered()
 
@@ -1622,53 +1730,8 @@ func _build_tooltip_text(id: String, count: int) -> String:
 	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, player)
 
 
-func _rarity_color_hex(rarity: String, typ: String) -> String:
-	var r := rarity.to_lower()
-	if r == "" and typ == "junk":
-		r = "junk"
-	match r:
-		"junk":
-			return "#8a8a8a"
-		"common":
-			return "#ffffff"
-		"uncommon":
-			return "#3bdc3b"
-		"rare":
-			return "#4aa3ff"
-		"epic":
-			return "#a335ee"
-		"legendary":
-			return "#ff8000"
-		_:
-			return "#ffffff"
 
 
-func _format_consumable_effects(c: Dictionary) -> Array[String]:
-	var out: Array[String] = []
-	var instant: bool = bool(c.get("instant", false))
-	# Potions typically use hp/mp, food/drink uses hp_total/mp_total over duration.
-	if instant:
-		var hp: int = int(c.get("hp", 0))
-		var mp: int = int(c.get("mp", 0))
-		if hp > 0:
-			out.append("restores %d hp" % hp)
-		if mp > 0:
-			out.append("restores %d mp" % mp)
-	else:
-		var dur: int = int(c.get("duration_sec", 0))
-		var hp_t: int = int(c.get("hp_total", 0))
-		var mp_t: int = int(c.get("mp_total", 0))
-		if hp_t > 0:
-			if dur > 0:
-				out.append("restores %d hp over %ds" % [hp_t, dur])
-			else:
-				out.append("restores %d hp" % hp_t)
-		if mp_t > 0:
-			if dur > 0:
-				out.append("restores %d mp over %ds" % [mp_t, dur])
-			else:
-				out.append("restores %d mp" % mp_t)
-	return out
 
 
 func rarity_idx(r: String) -> int:
@@ -1868,54 +1931,49 @@ func _ensure_support_ui() -> void:
 			bag_full_dialog.reparent(_error_layer)
 
 	if _settings_button == null:
-		_settings_button = Button.new()
-		_settings_button.name = "InvSettingsButton"
+		_settings_button = settings_button_scene
+	if _settings_button != null:
 		_settings_button.text = "⋮"
-		_settings_button.size = Vector2(28, 28)
-		panel.add_child(_settings_button)
-		_settings_button.position = Vector2(panel.size.x - 34, 6)
-		_settings_button.pressed.connect(_toggle_settings)
+		if not _settings_button.pressed.is_connected(_toggle_settings):
+			_settings_button.pressed.connect(_toggle_settings)
 
 	if _settings_panel == null:
-		_settings_panel = Panel.new()
-		_settings_panel.name = "InvSettingsPanel"
+		_settings_panel = settings_panel_scene
+	if _settings_button != null and _settings_button.get_parent() == panel:
+		panel.move_child(_settings_button, panel.get_child_count() - 1)
+
+	if _settings_panel != null and _settings_panel.get_parent() == panel:
+		panel.move_child(_settings_panel, panel.get_child_count() - 1)
+
+	if _settings_panel != null:
+		_settings_title_label = settings_title_label_scene
+		_settings_columns_label = settings_columns_label_scene
+		_settings_minus = settings_minus_scene
+		_settings_value = settings_value_scene
+		_settings_plus = settings_plus_scene
+		_settings_sort_title = settings_sort_title_scene
+		_settings_sort = settings_sort_scene
 		_settings_panel.visible = false
-		panel.add_child(_settings_panel)
-		_settings_panel.position = Vector2(panel.size.x - 200, 36)
-		_settings_panel.size = Vector2(190, 120)
-		var sb3 := StyleBoxFlat.new()
-		sb3.bg_color = Color(0,0,0,0.85)
-		sb3.content_margin_left = 8
-		sb3.content_margin_right = 8
-		sb3.content_margin_top = 8
-		sb3.content_margin_bottom = 8
-		_settings_panel.add_theme_stylebox_override("panel", sb3)
-
-		_settings_mode = OptionButton.new()
-		_settings_mode.add_item("Columns", 0)
-		_settings_panel.add_child(_settings_mode)
-		_settings_mode.position = Vector2(8, 8)
-		_settings_mode.size = Vector2(90, 26)
-
-		_settings_input = LineEdit.new()
-		_settings_input.placeholder_text = "number"
-		_settings_panel.add_child(_settings_input)
-		_settings_input.position = Vector2(105, 8)
-		_settings_input.size = Vector2(70, 26)
-
-		_settings_apply = Button.new()
-		_settings_apply.text = "Apply"
-		_settings_panel.add_child(_settings_apply)
-		_settings_apply.position = Vector2(8, 44)
-		_settings_apply.size = Vector2(80, 26)
-		_settings_apply.pressed.connect(_on_settings_apply)
-
-		_settings_sort = Button.new()
-		_settings_sort.text = "Sort"
-		_settings_panel.add_child(_settings_sort)
-		_settings_sort.position = Vector2(95, 44)
-		_settings_sort.size = Vector2(80, 26)
-		_settings_sort.pressed.connect(_on_settings_sort)
+		if _settings_title_label != null:
+			_settings_title_label.text = tr("ui.inventory.settings.title")
+		if _settings_columns_label != null:
+			_settings_columns_label.text = tr("ui.inventory.settings.columns")
+		if _settings_minus != null:
+			_settings_minus.text = "-"
+			if not _settings_minus.pressed.is_connected(_on_settings_minus_pressed):
+				_settings_minus.pressed.connect(_on_settings_minus_pressed)
+		if _settings_plus != null:
+			_settings_plus.text = "+"
+			if not _settings_plus.pressed.is_connected(_on_settings_plus_pressed):
+				_settings_plus.pressed.connect(_on_settings_plus_pressed)
+		if _settings_sort_title != null:
+			_settings_sort_title.text = tr("ui.inventory.settings.sort_title")
+		if _settings_sort != null:
+			_settings_sort.text = tr("ui.inventory.settings.sort")
+			if not _settings_sort.pressed.is_connected(_on_settings_sort):
+				_settings_sort.pressed.connect(_on_settings_sort)
+		_sync_settings_columns_input(_grid_columns)
+		_refresh_settings_columns_controls()
 
 	# Quick bar is part of the scene (InventoryHUD.tscn) so you can edit it visually.
 	if _quick_bar == null:
@@ -2107,7 +2165,7 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	if panel == null or grid == null or grid_scroll == null or content == null:
 		return {}
 	_ensure_grid_child_count(total_slots)
-	grid.columns = max(1, _grid_columns)
+	grid.columns = max(2, _grid_columns)
 	grid.custom_minimum_size = Vector2.ZERO
 	grid_scroll.custom_minimum_size = Vector2.ZERO
 	if grid_scroll_wrapper != null:
@@ -2148,29 +2206,17 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	_last_applied_columns = _grid_columns
 	_layout_dirty = false
 
-	# Keep the settings UI pinned to the panel's top-right corner.
-	var m: float = 6.0
+	# Keep settings button pinned to top-right and panel attached to button.
 	if _settings_button != null:
-		_settings_button.position = Vector2(panel.size.x - _settings_button.size.x - m, m)
-	if _settings_panel != null:
-		_settings_panel.position = Vector2(panel.size.x - _settings_panel.size.x - m, m + 30.0)
+		_settings_button.position = Vector2(panel.size.x - _settings_button.size.x - 8.0, 8.0)
+	if _settings_panel != null and _settings_button != null:
+		var anchor_point := _settings_button.position + Vector2(0.0, _settings_button.size.y) + Vector2(-8.0, 8.0)
+		_settings_panel.position = Vector2(anchor_point.x - _settings_panel.size.x, anchor_point.y)
 	return {
 		"panel_size": panel.size,
 		"scroll_view": Vector2(grid_min.x, scroll_view_h)
 	}
 
-func _format_money_bronze(bronze: int) -> String:
-	bronze = max(0, bronze)
-	var gold: int = int(bronze / 10000.0)
-	var silver: int = int((bronze % 10000) / 100.0)
-	var bronze_small: int = int(bronze % 100)
-	var parts: Array[String] = []
-	if gold > 0:
-		parts.append("%dg" % gold)
-	if silver > 0 or gold > 0:
-		parts.append("%ds" % silver)
-	parts.append("%db" % bronze_small)
-	return " ".join(parts)
 
 func _ensure_tooltip_layer() -> void:
 	if _tooltip_panel == null:

@@ -135,7 +135,7 @@ layout_mode = 2
 theme_override_constants/shadow_offset_x = 5
 theme_override_fonts/font = SubResource("FontFile_p0abl")
 theme_override_font_sizes/font_size = 22
-text = "Player"
+text = ""
 vertical_alignment = 1
 
 [node name="LevelLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
@@ -144,7 +144,7 @@ size_flags_horizontal = 8
 theme_override_constants/shadow_offset_x = 5
 theme_override_fonts/font = SubResource("FontFile_0kcyj")
 theme_override_font_sizes/font_size = 22
-text = "lvl 1"
+text = "Ур. 1"
 horizontal_alignment = 2
 vertical_alignment = 1
 

@@ -110,7 +110,7 @@ script = ExtResource("3_rjbcs")
 loot_profile = SubResource("Resource_nldw7")
 level_max = 2
 behavior = 1
-patrol_radius = 350.0
+patrol_radius = 150.0
 patrol_pause_seconds = 3.0
 
 [node name="NAMSpawner" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
@@ -138,7 +138,7 @@ loot_profile_humanoids = SubResource("Resource_gbxao")
 level_max = 5
 body_size = 2
 behavior = 1
-patrol_radius = 300.0
+patrol_radius = 150.0
 
 [node name="NNMSpawner" parent="NNMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(353, 296)

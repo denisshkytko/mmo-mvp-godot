@@ -1,6 +1,9 @@
 extends RefCounted
 class_name TooltipTextBuilder
 
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+
+
 const PROG := preload("res://core/stats/progression.gd")
 
 static func rarity_color_hex(rarity: String, typ: String) -> String:
@@ -31,21 +34,21 @@ static func format_money_bbcode(bronze_total: int) -> String:
 
 	var parts: Array[String] = []
 	if gold > 0:
-		parts.append(_money_part(gold, "g", "#d7b25b"))
+		parts.append(_money_part(gold, TranslationServer.translate("ui.common.currency.gold.short").format({"value": gold}), "#d7b25b"))
 	if silver > 0:
-		parts.append(_money_part(silver, "s", "#c0c0c0"))
-	parts.append(_money_part(bronze, "b", "#c26b2b"))
+		parts.append(_money_part(silver, TranslationServer.translate("ui.common.currency.silver.short").format({"value": silver}), "#c0c0c0"))
+	parts.append(_money_part(bronze, TranslationServer.translate("ui.common.currency.bronze.short").format({"value": bronze}), "#c26b2b"))
 
 	return "[outline_size=1][outline_color=#000000]%s[/outline_color][/outline_size]" % " ".join(parts)
 
-static func _money_part(value: int, suffix: String, color: String) -> String:
-	return "[color=%s]%d%s[/color]" % [color, value, suffix]
+static func _money_part(_value: int, text: String, color: String) -> String:
+	return "[color=%s]%s[/color]" % [color, text]
 
 static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> String:
 	if meta.is_empty():
 		return ""
 
-	var item_name: String = String(meta.get("name", "Item"))
+	var item_name: String = String(meta.get("name", TranslationServer.translate("ui.tooltip.item_fallback")))
 	var typ: String = String(meta.get("type", ""))
 	var rarity: String = String(meta.get("rarity", ""))
 	var req_lvl: int = int(meta.get("required_level", meta.get("item_level", 0)))
@@ -53,13 +56,13 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 
 	var lines: Array[String] = []
 	var name_part := "[color=%s][b]%s[/b][/color]" % [rarity_col, item_name]
-	lines.append(name_part + (" x%d" % count if count > 1 else ""))
+	lines.append(UI_TEXT.item_with_stack(name_part, count))
 	if rarity != "" and typ.to_lower() != "junk":
-		lines.append("rarity: [color=%s]%s[/color]" % [rarity_col, rarity])
+		lines.append(TranslationServer.translate("ui.tooltip.rarity").format({"value": "[color=%s]%s[/color]" % [rarity_col, rarity]}))
 
 	var slot_name := _slot_label(meta, typ)
 	if slot_name != "":
-		lines.append("slot: %s" % slot_name)
+		lines.append(TranslationServer.translate("ui.tooltip.slot").format({"value": slot_name}))
 
 	var show_req: bool = typ in ["weapon", "armor", "bag", "food", "drink", "potion", "accessory", "offhand", "shield"]
 	var req_line := ""
@@ -67,7 +70,7 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var p_lvl: int = 0
 		if player != null and is_instance_valid(player) and ("level" in player):
 			p_lvl = int(player.level)
-		var lvl_line := "required level: %d" % req_lvl
+		var lvl_line := TranslationServer.translate("ui.tooltip.required_level").format({"level": req_lvl})
 		if p_lvl > 0 and p_lvl < req_lvl:
 			lvl_line = "[color=#ff5555]%s[/color]" % lvl_line
 		req_line = lvl_line
@@ -77,11 +80,11 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var subtype := String(w.get("subtype", ""))
 		if subtype != "":
 			var subtype_label := _humanize_slot(subtype)
-			var subtype_line := "subtype: %s" % subtype_label
+			var subtype_line := TranslationServer.translate("ui.tooltip.subtype").format({"value": subtype_label})
 			if player != null and is_instance_valid(player) and ("class_id" in player):
 				var allowed_types := PROG.get_allowed_weapon_types_for_class(String(player.class_id))
 				if not allowed_types.has(subtype):
-					subtype_line = "subtype: [color=#ff5555]%s[/color]" % subtype_label
+					subtype_line = TranslationServer.translate("ui.tooltip.subtype").format({"value": "[color=#ff5555]%s[/color]" % subtype_label})
 			lines.append(subtype_line)
 
 	if meta.has("armor") and meta.get("armor") is Dictionary:
@@ -90,7 +93,7 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var ma: int = int(a.get("magic_armor", 0))
 		var armor_class := String(a.get("class", "")).to_lower()
 		if armor_class != "":
-			var material_line := "material: %s" % armor_class
+			var material_line := TranslationServer.translate("ui.tooltip.material").format({"value": armor_class})
 			if player != null and is_instance_valid(player) and ("class_id" in player):
 				var allowed := PROG.get_allowed_armor_classes_for_class(String(player.class_id))
 				if armor_class != "" and not allowed.has(armor_class):
@@ -110,9 +113,9 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var w: Dictionary = meta.get("weapon") as Dictionary
 		var dmg: int = int(w.get("damage", 0))
 		var spd: float = float(w.get("attack_interval", 1.0))
-		lines.append("damage: %d  speed: %.2f" % [dmg, spd])
+		lines.append(TranslationServer.translate("ui.tooltip.damage_speed").format({"damage": dmg, "speed": "%.2f" % spd}))
 		if spd > 0.0:
-			lines.append("dps: %.1f" % (float(dmg) / spd))
+			lines.append(TranslationServer.translate("ui.terms.dps_with_value").format({"value": "%.1f" % (float(dmg) / spd)}))
 
 	if meta.has("stats_modifiers") and meta.get("stats_modifiers") is Dictionary:
 		var sm: Dictionary = meta.get("stats_modifiers") as Dictionary
@@ -123,24 +126,24 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		var c: Dictionary = meta.get("consumable") as Dictionary
 		if not c.is_empty():
 			lines.append("")
-			lines.append("effects:")
+			lines.append(TranslationServer.translate("ui.tooltip.effects"))
 			for el in _format_consumable_effects(c):
 				lines.append("  " + el)
 			var cd_total := _get_consumable_cd_total(meta)
 			if cd_total > 0.0:
-				var cd_line := "cooldown: %ds" % int(cd_total)
+				var cd_line := TranslationServer.translate("ui.tooltip.cooldown").format({"seconds": int(cd_total)})
 				if player != null and player.has_method("get_consumable_cooldown_left"):
 					var kind := _get_consumable_cd_kind(meta)
 					var left := float(player.call("get_consumable_cooldown_left", kind))
 					if left > 0.01:
-						cd_line = "cooldown: %ds (%.1fs left)" % [int(cd_total), left]
+						cd_line = TranslationServer.translate("ui.tooltip.cooldown_left").format({"seconds": int(cd_total), "left": "%.1f" % left})
 				lines.append(cd_line)
 
 	if req_line != "":
 		lines.append(req_line)
 	var price: int = int(meta.get("vendor_price_bronze", 0))
 	if price > 0:
-		lines.append("price: %s" % format_money_bbcode(price))
+		lines.append(TranslationServer.translate("ui.terms.price_with_value").format({"value": format_money_bbcode(price)}))
 
 	return "\n".join(lines)
 
@@ -170,9 +173,9 @@ static func _humanize_slot(slot_id: String) -> String:
 static func _format_defense_line(physical: int, magic: int) -> String:
 	var parts: Array[String] = []
 	if physical > 0:
-		parts.append("physical defense: %d" % physical)
+		parts.append(TranslationServer.translate("ui.tooltip.physical_defense").format({"value": physical}))
 	if magic > 0:
-		parts.append("magic defense: %d" % magic)
+		parts.append(TranslationServer.translate("ui.tooltip.magic_defense").format({"value": magic}))
 	return "  ".join(parts)
 
 static func _format_consumable_effects(consumable: Dictionary) -> Array[String]:
@@ -183,11 +186,11 @@ static func _format_consumable_effects(consumable: Dictionary) -> Array[String]:
 	var hp_total: int = int(consumable.get("hp_total", consumable.get("hp", 0)))
 	var mp_total: int = int(consumable.get("mp_total", consumable.get("mp", 0)))
 	if hp_total > 0:
-		lines.append("HP +%d" % hp_total)
+		lines.append(TranslationServer.translate("ui.tooltip.hp_plus").format({"value": hp_total}))
 	if mp_total > 0:
-		lines.append("Mana +%d" % mp_total)
+		lines.append(TranslationServer.translate("ui.tooltip.mana_plus").format({"value": mp_total}))
 	if not instant and duration_sec > 0.0:
-		lines.append("over %.0fs" % duration_sec)
+		lines.append(TranslationServer.translate("ui.tooltip.over_seconds").format({"seconds": "%.0f" % duration_sec}))
 
 	return lines
 

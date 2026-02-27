@@ -154,7 +154,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = SubResource("FontFile_5lq8m")
 theme_override_font_sizes/font_size = 22
-text = "Target"
+text = "Цель"
 vertical_alignment = 1
 
 [node name="LevelLabel" type="Label" parent="Root/Panel/Margin/VBox/Header"]
@@ -165,7 +165,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = SubResource("FontFile_b4a0j")
 theme_override_font_sizes/font_size = 22
-text = "lv 1"
+text = "Ур. 1"
 horizontal_alignment = 2
 vertical_alignment = 1
 

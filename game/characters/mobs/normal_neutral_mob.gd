@@ -5,6 +5,7 @@ class_name NormalNeutralMob
 ## Avoid shadowing them with local constants.
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 signal died(corpse: Corpse)
 
@@ -23,8 +24,8 @@ enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 @export var base_xp: int = 3
 @export var xp_per_level: int = 1
 @export var move_speed: float = MOVE_SPEED.MOB_BASE
-@export var aggro_radius: float = 260.0
-@export var leash_distance: float = 420.0
+@export var aggro_radius: float = COMBAT_RANGES.AGGRO_RADIUS
+@export var leash_distance: float = COMBAT_RANGES.LEASH_DISTANCE
 
 # размер тела выбирается спавнером
 var body_size: int = BodySize.MEDIUM
@@ -67,7 +68,7 @@ var _spawn_initialized: bool = false
 @export var small_base_per: int = 0
 @export var small_base_defense: int = 1
 @export var small_base_magic_resist: int = 0
-@export var small_base_attack_range: float = 55.0
+@export var small_base_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 @export var small_base_attack_cooldown: float = 1.3
 @export_subgroup("Рост базовых характеристик")
 @export var small_str_per_level: int = 1
@@ -87,7 +88,7 @@ var _spawn_initialized: bool = false
 @export var medium_base_per: int = 0
 @export var medium_base_defense: int = 1
 @export var medium_base_magic_resist: int = 0
-@export var medium_base_attack_range: float = 55.0
+@export var medium_base_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 @export var medium_base_attack_cooldown: float = 1.2
 @export_subgroup("Рост базовых характеристик")
 @export var medium_str_per_level: int = 1
@@ -107,7 +108,7 @@ var _spawn_initialized: bool = false
 @export var large_base_per: int = 0
 @export var large_base_defense: int = 2
 @export var large_base_magic_resist: int = 0
-@export var large_base_attack_range: float = 60.0
+@export var large_base_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 @export var large_base_attack_cooldown: float = 1.5
 @export_subgroup("Рост базовых характеристик")
 @export var large_str_per_level: int = 2
@@ -127,7 +128,7 @@ var _spawn_initialized: bool = false
 @export var humanoid_base_per: int = 1
 @export var humanoid_base_defense: int = 2
 @export var humanoid_base_magic_resist: int = 0
-@export var humanoid_base_attack_range: float = 55.0
+@export var humanoid_base_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 @export var humanoid_base_attack_cooldown: float = 1.2
 @export_subgroup("Рост базовых характеристик")
 @export var humanoid_str_per_level: int = 2
@@ -139,6 +140,12 @@ var _spawn_initialized: bool = false
 @export var humanoid_magic_resist_per_level: int = 0
 
 func _ready() -> void:
+	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
+	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
+	small_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
+	medium_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
+	large_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
+	humanoid_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	if home_position == Vector2.ZERO:
 		home_position = global_position
 
@@ -265,8 +272,8 @@ func apply_spawn_init(
 
 	if c_ai != null:
 		c_ai.behavior = behavior_in
-		c_ai.leash_distance = leash_distance
-		c_ai.patrol_radius = patrol_radius_in
+		c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
+		c_ai.patrol_radius = COMBAT_RANGES.PATROL_RADIUS
 		c_ai.patrol_pause_seconds = patrol_pause_in
 		c_ai.speed = move_speed
 		c_ai.home_position = home_position
@@ -296,13 +303,13 @@ func _apply_to_components() -> void:
 	if c_ai != null:
 		c_ai.home_position = home_position
 		c_ai.speed = move_speed
-		c_ai.leash_distance = leash_distance
+		c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 
 	# melee параметры + пресет статов по размеру
 	# (для NeutralMob — «туловище» задаёт и боевые тайминги)
 	match body_size:
 		BodySize.SMALL:
-			c_combat.melee_attack_range = small_base_attack_range
+			c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 			c_combat.melee_cooldown = small_base_attack_cooldown
 			c_stats.apply_body_preset(
 				{"str": small_base_str, "agi": small_base_agi, "end": small_base_end, "int": small_base_int, "per": small_base_per},
@@ -313,7 +320,7 @@ func _apply_to_components() -> void:
 				small_magic_resist_per_level
 			)
 		BodySize.MEDIUM:
-			c_combat.melee_attack_range = medium_base_attack_range
+			c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 			c_combat.melee_cooldown = medium_base_attack_cooldown
 			c_stats.apply_body_preset(
 				{"str": medium_base_str, "agi": medium_base_agi, "end": medium_base_end, "int": medium_base_int, "per": medium_base_per},
@@ -324,7 +331,7 @@ func _apply_to_components() -> void:
 				medium_magic_resist_per_level
 			)
 		BodySize.LARGE:
-			c_combat.melee_attack_range = large_base_attack_range
+			c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 			c_combat.melee_cooldown = large_base_attack_cooldown
 			c_stats.apply_body_preset(
 				{"str": large_base_str, "agi": large_base_agi, "end": large_base_end, "int": large_base_int, "per": large_base_per},
@@ -335,7 +342,7 @@ func _apply_to_components() -> void:
 				large_magic_resist_per_level
 			)
 		_:
-			c_combat.melee_attack_range = humanoid_base_attack_range
+			c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 			c_combat.melee_cooldown = humanoid_base_attack_cooldown
 			c_stats.apply_body_preset(
 				{"str": humanoid_base_str, "agi": humanoid_base_agi, "end": humanoid_base_end, "int": humanoid_base_int, "per": humanoid_base_per},

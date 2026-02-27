@@ -3,6 +3,7 @@ class_name NormalAggresiveMobCombat
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 enum AttackMode { MELEE, RANGED }
 
@@ -10,11 +11,11 @@ var attack_mode: int = AttackMode.MELEE
 
 # melee params
 var melee_stop_distance: float = 45.0
-var melee_attack_range: float = 55.0
+var melee_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 var melee_cooldown: float = 1.2
 
 # ranged params
-var ranged_attack_range: float = 220.0
+var ranged_attack_range: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 var ranged_cooldown: float = 1.5
 var ranged_projectile_scene: PackedScene = null
 

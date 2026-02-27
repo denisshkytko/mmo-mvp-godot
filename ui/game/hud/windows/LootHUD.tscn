@@ -39,7 +39,7 @@ offset_top = 8.0
 offset_right = 88.0
 offset_bottom = 56.0
 theme_override_font_sizes/font_size = 22
-text = "Loot"
+text = "Добыча"
 vertical_alignment = 1
 
 [node name="Scroll" type="ScrollContainer" parent="Root/Panel"]
@@ -115,7 +115,7 @@ custom_minimum_size = Vector2(64, 80)
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 22
-text = "Take"
+text = "Взять"
 
 [node name="LootAllButton" type="Button" parent="Root/Panel"]
 custom_minimum_size = Vector2(120, 48)
@@ -132,7 +132,7 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
-text = "Loot All"
+text = "Взять Всё"
 
 [node name="CloseButton" type="Button" parent="Root/Panel"]
 custom_minimum_size = Vector2(48, 48)

@@ -1,0 +1,37 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "ui.terms.cancel"
+msgstr "Отменить"
+
+msgid "ui.terms.price_with_value"
+msgstr "Стоимость: {value}"
+
+msgid "ui.terms.dps_with_value"
+msgstr "УВС: {value}"
+
+msgid "ui.class.paladin"
+msgstr "Паладин"
+
+msgid "ui.class.shaman"
+msgstr "Шаман"
+
+msgid "ui.class.mage"
+msgstr "Маг"
+
+msgid "ui.class.priest"
+msgstr "Жрец"
+
+msgid "ui.class.hunter"
+msgstr "Стрелок"
+
+msgid "ui.class.warrior"
+msgstr "Воин"
+
+msgid "ui.class.beast"
+msgstr "Зверь"
+
+msgid "ui.class.adventurer"
+msgstr "Искатель приключений"

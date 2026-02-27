@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
 # Tooltip should show on release if press <= 1s.
 const TOOLTIP_HOLD_MAX_MS: int = 1000
@@ -35,6 +37,10 @@ var _view_map: Array = []
 
 var _range_check_timer: float = 0.0
 var _icon_cache: Dictionary = {} # icon_path -> Texture2D
+
+
+func _trf(key: String, params: Dictionary = {}) -> String:
+	return tr(key).format(params)
 
 
 # --- Draggable window state (Loot Panel) ---
@@ -79,6 +85,11 @@ func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
 	loot_all_button.pressed.connect(_on_loot_all_pressed)
 	close_button.pressed.connect(close)
+	var title_label: Label = $Root/Panel/Title
+	if title_label != null:
+		title_label.text = tr("ui.common.loot_title")
+	if loot_all_button != null:
+		loot_all_button.text = tr("ui.common.loot_all")
 	if tooltip_close_button != null:
 		tooltip_close_button.pressed.connect(_hide_tooltip)
 
@@ -332,7 +343,7 @@ func _refresh() -> void:
 		slot_panel.visible = true
 		if take_button != null:
 			take_button.disabled = false
-			take_button.text = "Take"
+			take_button.text = tr("ui.common.take")
 		if icon_rect != null:
 			icon_rect.texture = null
 
@@ -341,11 +352,11 @@ func _refresh() -> void:
 
 		if t == "gold":
 			if label != null:
-				label.text = "Gold: %s" % TOOLTIP_BUILDER.format_money_bbcode(gold)
+				label.text = _trf("ui.common.coins_with_value", {"value": TOOLTIP_BUILDER.format_money_bbcode(gold)})
 			if count_label != null:
 				count_label.text = ""
 			if take_button != null:
-				take_button.text = "Take"
+				take_button.text = tr("ui.common.take")
 				# Optional icon: if you later add a gold item/icon in DB, hook it here.
 
 		elif t == "item":
@@ -372,7 +383,7 @@ func _refresh() -> void:
 			if label != null:
 				label.text = item_name
 			if count_label != null:
-				count_label.text = "x%d" % count
+				count_label.text = UI_TEXT.stack_count(count)
 			if icon_rect != null:
 				icon_rect.texture = icon_tex
 
@@ -569,9 +580,8 @@ func _show_tooltip_for_view(view_index: int) -> void:
 	var text_out: String = ""
 	var target_view := view_index
 	if t == "gold":
-		var corpse_typed := _as_corpse(_corpse)
-		var gold_amount: int = corpse_typed.loot_gold if corpse_typed != null else (int(_corpse.get("loot_gold")) if ("loot_gold" in _corpse) else 0)
-		text_out = "Gold\n" + TOOLTIP_BUILDER.format_money_bbcode(gold_amount)
+		_hide_tooltip()
+		return
 	elif t == "item":
 		var corpse_typed2 := _as_corpse(_corpse)
 		var slots: Array = corpse_typed2.loot_slots if corpse_typed2 != null else (_corpse.get("loot_slots") if ("loot_slots" in _corpse) else [])
@@ -716,75 +726,3 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _build_item_tooltip_text(item: Dictionary) -> String:
 	return TOOLTIP_BUILDER.build_item_tooltip(item, 1, _player)
-
-
-func _rarity_color_hex(rarity: String, typ: String) -> String:
-	var r := rarity.to_lower()
-	if r == "" and typ == "junk":
-		r = "junk"
-	match r:
-		"junk":
-			return "#8a8a8a"
-		"common":
-			return "#ffffff"
-		"uncommon":
-			return "#3bdc3b"
-		"rare":
-			return "#4aa3ff"
-		"epic":
-			return "#a335ee"
-		"legendary":
-			return "#ff8000"
-		_:
-			return "#ffffff"
-
-
-func _get_consumable_cd_total_for_item(item: Dictionary) -> float:
-	var typ: String = String(item.get("type", "")).to_lower()
-	if typ == "potion":
-		return 5.0
-	if typ == "food" or typ == "drink":
-		return 10.0
-	return 0.0
-
-
-func _format_consumable_effects(c: Dictionary) -> Array[String]:
-	var out: Array[String] = []
-	var instant: bool = bool(c.get("instant", false))
-	if instant:
-		var hp: int = int(c.get("hp", 0))
-		var mp: int = int(c.get("mp", 0))
-		if hp > 0:
-			out.append("restores %d hp" % hp)
-		if mp > 0:
-			out.append("restores %d mp" % mp)
-	else:
-		var dur: int = int(c.get("duration_sec", 0))
-		var hp_t: int = int(c.get("hp_total", 0))
-		var mp_t: int = int(c.get("mp_total", 0))
-		if hp_t > 0:
-			if dur > 0:
-				out.append("restores %d hp over %ds" % [hp_t, dur])
-			else:
-				out.append("restores %d hp" % hp_t)
-		if mp_t > 0:
-			if dur > 0:
-				out.append("restores %d mp over %ds" % [mp_t, dur])
-			else:
-				out.append("restores %d mp" % mp_t)
-	return out
-
-
-func _format_money_bronze(total_bronze: int) -> String:
-	var bronze: int = max(total_bronze, 0)
-	var gold: int = int(bronze / 10000)
-	bronze -= gold * 10000
-	var silver: int = int(bronze / 100)
-	bronze -= silver * 100
-	var parts: Array[String] = []
-	if gold > 0:
-		parts.append(str(gold) + "g")
-	if silver > 0 or gold > 0:
-		parts.append(str(silver) + "s")
-	parts.append(str(bronze) + "b")
-	return " ".join(parts)

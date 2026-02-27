@@ -5,6 +5,7 @@ class_name NormalAggresiveMob
 ## Avoid shadowing them with local constants.
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 signal died(corpse: Corpse)
 
@@ -26,8 +27,8 @@ enum AttackMode { MELEE, RANGED }
 @export var base_xp: int = 5
 @export var xp_per_level: int = 2
 @export var move_speed: float = MOVE_SPEED.MOB_BASE
-@export var aggro_radius: float = 260.0
-@export var leash_distance: float = 420.0
+@export var aggro_radius: float = COMBAT_RANGES.AGGRO_RADIUS
+@export var leash_distance: float = COMBAT_RANGES.LEASH_DISTANCE
 
 # Эти поля выставляет спавнер
 var mob_id: String = "slime"
@@ -64,7 +65,7 @@ var _spawn_initialized: bool = false
 @export var melee_base_magic_resist: int = 0
 @export var melee_magic_resist_per_level: int = 0
 @export var melee_stop_distance: float = 45.0
-@export var melee_attack_range: float = 55.0
+@export var melee_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 @export var melee_attack_cooldown: float = 1.2
 
 @export_subgroup("Рост базовых характеристик")
@@ -85,7 +86,7 @@ var _spawn_initialized: bool = false
 @export var ranged_defense_per_level: int = 1
 @export var ranged_base_magic_resist: int = 0
 @export var ranged_magic_resist_per_level: int = 0
-@export var ranged_attack_range: float = 220.0
+@export var ranged_attack_range: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 @export var ranged_attack_cooldown: float = 1.5
 @export var ranged_projectile_scene: PackedScene = null
 
@@ -118,6 +119,10 @@ var _threat_recheck_timer: float = 0.0
 
 
 func _ready() -> void:
+	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
+	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
+	ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
+	melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	add_to_group("faction_units")
 	player = NodeCache.get_player(get_tree()) as Node2D
 
@@ -132,8 +137,8 @@ func _ready() -> void:
 	# If the mob is placed manually in the scene, apply Common params to AI.
 	if c_ai != null:
 		c_ai.home_position = home_position
-		c_ai.aggro_radius = aggro_radius
-		c_ai.leash_distance = leash_distance
+		c_ai.aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
+		c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 		c_ai.speed = move_speed
 
 	_apply_mode_to_components()
@@ -312,9 +317,9 @@ func apply_spawn_settings(
 	if c_ai != null:
 		c_ai.behavior = behavior_in
 		# Common params are defined on the mob itself (Inspector: Common)
-		c_ai.aggro_radius = aggro_radius
-		c_ai.leash_distance = leash_distance
-		c_ai.patrol_radius = patrol_radius_in
+		c_ai.aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
+		c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
+		c_ai.patrol_radius = COMBAT_RANGES.PATROL_RADIUS
 		c_ai.patrol_pause_seconds = patrol_pause_in
 		c_ai.speed = move_speed
 
@@ -402,17 +407,17 @@ func _apply_mode_to_components() -> void:
 	# Если спавнер ещё не применил настройки — используем дефолтный aggro_radius
 	# (только если AI сейчас с "пустым" значением)
 	if c_ai.aggro_radius <= 0.0:
-		c_ai.aggro_radius = aggro_radius
+		c_ai.aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 
 	# combat
 	c_combat.attack_mode = attack_mode
 
 	c_combat.melee_stop_distance = melee_stop_distance
-	c_combat.melee_attack_range = melee_attack_range
+	c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	if not _spawn_initialized:
 		c_combat.melee_cooldown = melee_attack_cooldown
 
-	c_combat.ranged_attack_range = ranged_attack_range
+	c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 	if not _spawn_initialized:
 		c_combat.ranged_cooldown = ranged_attack_cooldown
 	c_combat.ranged_projectile_scene = ranged_projectile_scene
@@ -497,13 +502,13 @@ func _pick_target() -> Node2D:
 		self,
 		faction_id,
 		home_position,
-		leash_distance,
-		aggro_radius,
+		COMBAT_RANGES.LEASH_DISTANCE,
+		COMBAT_RANGES.AGGRO_RADIUS,
 		direct_attackers
 	)
 	if threat_target != null:
 		return threat_target
-	return FactionTargeting.pick_hostile_target(self, faction_id, aggro_radius)
+	return FactionTargeting.pick_hostile_target(self, faction_id, COMBAT_RANGES.AGGRO_RADIUS)
 
 func _notify_target_change(old_t, new_t) -> void:
 	if old_t != null and is_instance_valid(old_t):
@@ -540,8 +545,8 @@ func _refresh_threat_target() -> void:
 		self,
 		faction_id,
 		home_position,
-		leash_distance,
-		aggro_radius,
+		COMBAT_RANGES.LEASH_DISTANCE,
+		COMBAT_RANGES.AGGRO_RADIUS,
 		direct_attackers
 	)
 	if threat_target != null and threat_target != current_target:

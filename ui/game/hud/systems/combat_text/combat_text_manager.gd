@@ -2,6 +2,7 @@ extends Node2D
 class_name CombatTextManager
 
 const FLOATING_DAMAGE_NUMBER_SCENE := preload("res://ui/game/hud/systems/combat_text/floating_damage_number.tscn")
+const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 
 const PHYSICAL_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 const MAGIC_COLOR := Color(0.98, 0.86, 0.28, 1.0)
@@ -13,18 +14,20 @@ const BURST_WINDOW_MS := 160
 
 var _burst_state: Dictionary = {}
 
-func show_damage(target: Node2D, final_damage: int, dmg_type: String) -> void:
-	_show_value(target, final_damage, dmg_type)
+func show_damage(source: Node2D, target: Node2D, final_damage: int, dmg_type: String) -> void:
+	_show_value(source, target, final_damage, dmg_type)
 
-func show_heal(target: Node2D, heal_amount: int) -> void:
-	_show_value(target, heal_amount, "heal")
+func show_heal(source: Node2D, target: Node2D, heal_amount: int) -> void:
+	_show_value(source, target, heal_amount, "heal")
 
-func _show_value(target: Node2D, value: int, value_type: String) -> void:
+func _show_value(source: Node2D, target: Node2D, value: int, value_type: String) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	if value <= 0:
 		return
 	if FLOATING_DAMAGE_NUMBER_SCENE == null:
+		return
+	if not _is_player_involved(source, target):
 		return
 
 	var instance: FloatingDamageNumber = FLOATING_DAMAGE_NUMBER_SCENE.instantiate() as FloatingDamageNumber
@@ -36,6 +39,19 @@ func _show_value(target: Node2D, value: int, value_type: String) -> void:
 	instance.position = start
 	add_child(instance)
 	instance.show_value(value, _color_for_value_type(value_type))
+
+func _is_player_involved(source: Node2D, target: Node2D) -> bool:
+	var tree := get_tree()
+	if tree == null:
+		return false
+	var player: Node = NODE_CACHE.get_player(tree)
+	if player == null or not is_instance_valid(player):
+		return false
+	if target == player:
+		return true
+	if source != null and is_instance_valid(source) and source == player:
+		return true
+	return false
 
 func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
 	var x_offset: float = _burst_side_offset(burst_index)

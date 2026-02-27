@@ -13,9 +13,10 @@ var _active: bool = false
 
 func _ready() -> void:
 	panel.visible = false
-	respawn_button.text = "Воскрешение на кладбище"
+	respawn_button.text = tr("ui.respawn.button")
 	respawn_button.pressed.connect(_on_respawn_pressed)
 	spirits_aid_button.visible = false
+	spirits_aid_button.text = tr("ability.spirits_aid.name")
 	spirits_aid_button.pressed.connect(_on_spirits_aid_pressed)
 
 func open(player: Node, seconds: float) -> void:
@@ -23,7 +24,7 @@ func open(player: Node, seconds: float) -> void:
 	_time_left = seconds
 	_active = true
 	panel.visible = true
-	title_label.text = "You died"
+	title_label.text = tr("You died")
 	_update_timer_label()
 	_refresh_spirits_aid_button()
 
@@ -46,7 +47,7 @@ func _process(delta: float) -> void:
 		_force_respawn()
 
 func _update_timer_label() -> void:
-	timer_label.text = "Respawn in %.1f" % _time_left
+	timer_label.text = tr("Respawn in %.1f") % _time_left
 
 func _refresh_spirits_aid_button() -> void:
 	if spirits_aid_button == null:
