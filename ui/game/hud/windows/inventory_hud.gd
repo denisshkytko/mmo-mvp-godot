@@ -10,6 +10,17 @@ signal hud_visibility_changed(is_open: bool)
 @onready var grid: GridContainer = $Root/Panel/Content/GridScrollWrapper/GridScroll/Grid
 @onready var bag_slots: Control = $Root/Panel/Content/BagSlots
 
+@onready var settings_button_scene: Button = $Root/Panel/InvSettingsButton
+@onready var settings_panel_scene: Panel = $Root/Panel/InvSettingsPanel
+@onready var settings_title_label_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/GridTitle
+@onready var settings_columns_label_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/ColumnsLabel
+@onready var settings_minus_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/MinusButton
+@onready var settings_value_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/ValueLabel
+@onready var settings_plus_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow/PlusButton
+@onready var settings_apply_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/ApplyButton
+@onready var settings_sort_title_scene: Label = $Root/Panel/InvSettingsPanel/Margin/VBox/SortTitle
+@onready var settings_sort_scene: Button = $Root/Panel/InvSettingsPanel/Margin/VBox/SortButton
+
 @onready var bag_button: Button = get_node_or_null("BagButton")
 @onready var bag_slot1: Button = $Root/Panel/Content/BagSlots/BagSlot1
 @onready var bag_slot2: Button = $Root/Panel/Content/BagSlots/BagSlot2
@@ -68,12 +79,16 @@ var _split_source_slot: int = -1
 # Settings UI (columns/rows + sort)
 var _settings_button: Button = null
 var _settings_panel: Panel = null
-var _settings_mode: OptionButton = null
-var _settings_input: LineEdit = null
+var _settings_title_label: Label = null
+var _settings_columns_label: Label = null
+var _settings_minus: Button = null
+var _settings_value: Label = null
+var _settings_plus: Button = null
 var _settings_apply: Button = null
+var _settings_sort_title: Label = null
 var _settings_sort: Button = null
 
-var _grid_columns: int = 6 # default layout for inventory
+var _grid_columns: int = 4 # default layout for inventory
 
 const _GRID_CFG_PATH := "user://inventory_grid.cfg"
 const _GRID_CFG_SECTION := "inventory_hud"
@@ -829,19 +844,61 @@ func _toggle_settings() -> void:
 	if _settings_panel == null:
 		return
 	_settings_panel.visible = not _settings_panel.visible
+	if _settings_panel.visible:
+		_sync_settings_columns_input(_grid_columns)
+		await _refresh_settings_columns_controls()
 
 func _hide_settings() -> void:
 	if _settings_panel != null:
 		_settings_panel.visible = false
 
 func _sync_settings_columns_input(cols: int) -> void:
-	if _settings_input == null:
+	if _settings_value == null:
 		return
-	_settings_input.text = str(cols)
+	_settings_value.text = str(max(1, cols))
+
+func _get_settings_columns_value() -> int:
+	if _settings_value == null:
+		return max(1, _grid_columns)
+	var txt: String = _settings_value.text.strip_edges()
+	if not txt.is_valid_int():
+		return max(1, _grid_columns)
+	return max(1, int(txt))
+
+func _get_max_fitting_columns(total_slots: int) -> int:
+	var cap: int = max(1, min(20, total_slots))
+	var best: int = 1
+	for c in range(1, cap + 1):
+		if await _can_fit_columns(c, total_slots):
+			best = c
+	return best
+
+func _refresh_settings_columns_controls() -> void:
+	if _settings_minus == null or _settings_plus == null:
+		return
+	var total: int = _get_total_inventory_slots()
+	if total <= 0:
+		total = _get_total_slots_from_player_fallback()
+	if total <= 0:
+		total = 1
+	var max_fit: int = await _get_max_fitting_columns(total)
+	var current: int = clamp(_get_settings_columns_value(), 1, max_fit)
+	_sync_settings_columns_input(current)
+	_settings_minus.disabled = current <= 1
+	_settings_plus.disabled = current >= max_fit
+
+func _on_settings_minus_pressed() -> void:
+	var current: int = _get_settings_columns_value()
+	_sync_settings_columns_input(max(1, current - 1))
+	await _refresh_settings_columns_controls()
+
+func _on_settings_plus_pressed() -> void:
+	var current: int = _get_settings_columns_value()
+	_sync_settings_columns_input(current + 1)
+	await _refresh_settings_columns_controls()
 
 func _on_settings_apply() -> void:
-	var txt: String = _settings_input.text.strip_edges()
-	var n: int = int(txt) if txt.is_valid_int() else 0
+	var n: int = _get_settings_columns_value()
 	if n <= 0:
 		return
 	var total: int = _get_total_inventory_slots()
@@ -862,6 +919,7 @@ func _on_settings_apply() -> void:
 	# Mark layout dirty so the panel will be resized/anchored once (no repeated reflows).
 	_layout_dirty = true
 	await _rebuild_layout("settings_apply")
+	await _refresh_settings_columns_controls()
 	await _refresh()
 
 
@@ -1836,54 +1894,48 @@ func _ensure_support_ui() -> void:
 			bag_full_dialog.reparent(_error_layer)
 
 	if _settings_button == null:
-		_settings_button = Button.new()
-		_settings_button.name = "InvSettingsButton"
+		_settings_button = settings_button_scene
+	if _settings_button != null:
 		_settings_button.text = "⋮"
-		_settings_button.size = Vector2(28, 28)
-		panel.add_child(_settings_button)
-		_settings_button.position = Vector2(panel.size.x - 34, 6)
-		_settings_button.pressed.connect(_toggle_settings)
+		if not _settings_button.pressed.is_connected(_toggle_settings):
+			_settings_button.pressed.connect(_toggle_settings)
 
 	if _settings_panel == null:
-		_settings_panel = Panel.new()
-		_settings_panel.name = "InvSettingsPanel"
+		_settings_panel = settings_panel_scene
+	if _settings_panel != null:
+		_settings_title_label = settings_title_label_scene
+		_settings_columns_label = settings_columns_label_scene
+		_settings_minus = settings_minus_scene
+		_settings_value = settings_value_scene
+		_settings_plus = settings_plus_scene
+		_settings_apply = settings_apply_scene
+		_settings_sort_title = settings_sort_title_scene
+		_settings_sort = settings_sort_scene
 		_settings_panel.visible = false
-		panel.add_child(_settings_panel)
-		_settings_panel.position = Vector2(panel.size.x - 200, 36)
-		_settings_panel.size = Vector2(190, 120)
-		var sb3 := StyleBoxFlat.new()
-		sb3.bg_color = Color(0,0,0,0.85)
-		sb3.content_margin_left = 8
-		sb3.content_margin_right = 8
-		sb3.content_margin_top = 8
-		sb3.content_margin_bottom = 8
-		_settings_panel.add_theme_stylebox_override("panel", sb3)
-
-		_settings_mode = OptionButton.new()
-		_settings_mode.add_item("Columns", 0)
-		_settings_panel.add_child(_settings_mode)
-		_settings_mode.position = Vector2(8, 8)
-		_settings_mode.size = Vector2(90, 26)
-
-		_settings_input = LineEdit.new()
-		_settings_input.placeholder_text = "number"
-		_settings_panel.add_child(_settings_input)
-		_settings_input.position = Vector2(105, 8)
-		_settings_input.size = Vector2(70, 26)
-
-		_settings_apply = Button.new()
-		_settings_apply.text = "Apply"
-		_settings_panel.add_child(_settings_apply)
-		_settings_apply.position = Vector2(8, 44)
-		_settings_apply.size = Vector2(80, 26)
-		_settings_apply.pressed.connect(_on_settings_apply)
-
-		_settings_sort = Button.new()
-		_settings_sort.text = "Sort"
-		_settings_panel.add_child(_settings_sort)
-		_settings_sort.position = Vector2(95, 44)
-		_settings_sort.size = Vector2(80, 26)
-		_settings_sort.pressed.connect(_on_settings_sort)
+		if _settings_title_label != null:
+			_settings_title_label.text = "Изменить сетку инвентаря"
+		if _settings_columns_label != null:
+			_settings_columns_label.text = "Количество столбцов:"
+		if _settings_minus != null:
+			_settings_minus.text = "-"
+			if not _settings_minus.pressed.is_connected(_on_settings_minus_pressed):
+				_settings_minus.pressed.connect(_on_settings_minus_pressed)
+		if _settings_plus != null:
+			_settings_plus.text = "+"
+			if not _settings_plus.pressed.is_connected(_on_settings_plus_pressed):
+				_settings_plus.pressed.connect(_on_settings_plus_pressed)
+		if _settings_apply != null:
+			_settings_apply.text = "Принять"
+			if not _settings_apply.pressed.is_connected(_on_settings_apply):
+				_settings_apply.pressed.connect(_on_settings_apply)
+		if _settings_sort_title != null:
+			_settings_sort_title.text = "Сортировка"
+		if _settings_sort != null:
+			_settings_sort.text = "Сортировать"
+			if not _settings_sort.pressed.is_connected(_on_settings_sort):
+				_settings_sort.pressed.connect(_on_settings_sort)
+		_sync_settings_columns_input(_grid_columns)
+		await _refresh_settings_columns_controls()
 
 	# Quick bar is part of the scene (InventoryHUD.tscn) so you can edit it visually.
 	if _quick_bar == null:
@@ -2117,11 +2169,11 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	_layout_dirty = false
 
 	# Keep the settings UI pinned to the panel's top-right corner.
-	var m: float = 6.0
+	var m: float = 8.0
 	if _settings_button != null:
 		_settings_button.position = Vector2(panel.size.x - _settings_button.size.x - m, m)
 	if _settings_panel != null:
-		_settings_panel.position = Vector2(panel.size.x - _settings_panel.size.x - m, m + 30.0)
+		_settings_panel.position = Vector2(panel.size.x - _settings_panel.size.x - m, m + _settings_button.size.y + 8.0)
 	return {
 		"panel_size": panel.size,
 		"scroll_view": Vector2(grid_min.x, scroll_view_h)

@@ -65,6 +65,88 @@ scroll_active = false
 autowrap_mode = 0
 vertical_alignment = 1
 
+
+[node name="InvSettingsButton" type="Button" parent="Root/Panel"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 0
+offset_left = 294.0
+offset_top = 8.0
+offset_right = 322.0
+offset_bottom = 36.0
+text = "⋮"
+
+[node name="InvSettingsPanel" type="Panel" parent="Root/Panel"]
+visible = false
+custom_minimum_size = Vector2(236, 212)
+layout_mode = 0
+offset_left = 86.0
+offset_top = 44.0
+offset_right = 322.0
+offset_bottom = 256.0
+
+[node name="Margin" type="MarginContainer" parent="Root/Panel/InvSettingsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Root/Panel/InvSettingsPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GridTitle" type="Label" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
+layout_mode = 2
+text = "Изменить сетку инвентаря"
+autowrap_mode = 2
+
+[node name="ColumnsRow" type="HBoxContainer" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ColumnsLabel" type="Label" parent="Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Количество столбцов:"
+vertical_alignment = 1
+
+[node name="MinusButton" type="Button" parent="Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "-"
+
+[node name="ValueLabel" type="Label" parent="Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow"]
+custom_minimum_size = Vector2(36, 28)
+layout_mode = 2
+text = "4"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlusButton" type="Button" parent="Root/Panel/InvSettingsPanel/Margin/VBox/ColumnsRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "+"
+
+[node name="ApplyButton" type="Button" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
+layout_mode = 2
+text = "Принять"
+
+[node name="Separator" type="HSeparator" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="SortTitle" type="Label" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
+layout_mode = 2
+text = "Сортировка"
+
+[node name="SortButton" type="Button" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
+layout_mode = 2
+text = "Сортировать"
+
 [node name="Content" type="HBoxContainer" parent="Root/Panel"]
 layout_mode = 1
 anchors_preset = 15
