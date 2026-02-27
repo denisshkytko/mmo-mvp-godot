@@ -861,18 +861,18 @@ func _hide_settings() -> void:
 func _sync_settings_columns_input(cols: int) -> void:
 	if _settings_value == null:
 		return
-	_settings_value.text = str(max(1, cols))
+	_settings_value.text = str(max(2, cols))
 
 func _get_settings_columns_value() -> int:
 	if _settings_value == null:
-		return max(1, _grid_columns)
+		return max(2, _grid_columns)
 	var txt: String = _settings_value.text.strip_edges()
 	if not txt.is_valid_int():
-		return max(1, _grid_columns)
-	return max(1, int(txt))
+		return max(2, _grid_columns)
+	return max(2, int(txt))
 
 func _estimate_panel_width_for_columns(cols: int) -> float:
-	var safe_cols: int = max(1, cols)
+	var safe_cols: int = max(2, cols)
 	var slot_w: float = 80.0
 	if grid != null and grid.get_child_count() > 0:
 		var first := grid.get_child(0) as Control
@@ -889,11 +889,11 @@ func _estimate_panel_width_for_columns(cols: int) -> float:
 
 func _get_max_fitting_columns(total_slots: int) -> int:
 	if not _panel_anchor_valid:
-		return max(1, min(20, total_slots))
-	var cap: int = max(1, min(20, total_slots))
+		return max(2, min(20, total_slots))
+	var cap: int = max(2, min(20, total_slots))
 	var max_panel: Vector2 = _get_panel_max_size_from_anchor()
-	var best: int = 1
-	for c in range(1, cap + 1):
+	var best: int = 2
+	for c in range(2, cap + 1):
 		if _estimate_panel_width_for_columns(c) <= max_panel.x:
 			best = c
 	return best
@@ -905,11 +905,11 @@ func _refresh_settings_columns_controls() -> void:
 	if total <= 0:
 		total = _get_total_slots_from_player_fallback()
 	if total <= 0:
-		total = 1
+		total = 2
 	var max_fit: int = _get_max_fitting_columns(total)
-	var current: int = clamp(_get_settings_columns_value(), 1, max_fit)
+	var current: int = clamp(_get_settings_columns_value(), 2, max_fit)
 	_sync_settings_columns_input(current)
-	_settings_minus.disabled = current <= 1
+	_settings_minus.disabled = current <= 2
 	_settings_plus.disabled = current >= max_fit
 
 func _apply_columns_from_settings_value() -> void:
@@ -922,11 +922,11 @@ func _apply_columns_from_settings_value() -> void:
 	if total <= 0:
 		return
 
-	var target_cols: int = clamp(max(1, n), 1, 20)
+	var target_cols: int = clamp(max(2, n), 2, 20)
 	var best_cols: int = target_cols
 	var fits: bool = await _can_fit_columns(target_cols, total)
 	if not fits:
-		for c in range(target_cols, 0, -1):
+		for c in range(target_cols, 1, -1):
 			if await _can_fit_columns(c, total):
 				best_cols = c
 				break
@@ -943,7 +943,7 @@ func _apply_columns_from_settings_value() -> void:
 
 func _on_settings_minus_pressed() -> void:
 	var current: int = _get_settings_columns_value()
-	_sync_settings_columns_input(max(1, current - 1))
+	_sync_settings_columns_input(max(2, current - 1))
 	await _apply_columns_from_settings_value()
 
 func _on_settings_plus_pressed() -> void:
@@ -961,7 +961,7 @@ func _load_grid_columns() -> void:
 	if err == OK:
 		var v: Variant = cfg.get_value(_GRID_CFG_SECTION, _GRID_CFG_KEY_COLUMNS, _grid_columns)
 		if typeof(v) == TYPE_INT:
-			_grid_columns = int(v)
+			_grid_columns = max(2, int(v))
 
 func _save_grid_columns() -> void:
 	var cfg := ConfigFile.new()
@@ -1445,6 +1445,14 @@ func _refresh() -> void:
 
 	# Gold
 	gold_label.text = _trf("ui.common.coins_with_value", {"value": TOOLTIP_BUILDER.format_money_bbcode(int(snap.get("gold", 0)))})
+	if gold_label != null and panel != null and _settings_button != null:
+		var max_gold_w: float = max(0.0, panel.size.x - _settings_button.size.x - 24.0)
+		var content_w: float = 0.0
+		if gold_label.has_method("get_content_width"):
+			content_w = float(gold_label.call("get_content_width"))
+		else:
+			content_w = gold_label.get_combined_minimum_size().x
+		gold_label.visible = content_w < max_gold_w
 
 	# Render items
 	for i in range(grid.get_child_count()):
@@ -2157,7 +2165,7 @@ func _apply_layout_sizes(total_slots: int) -> Dictionary:
 	if panel == null or grid == null or grid_scroll == null or content == null:
 		return {}
 	_ensure_grid_child_count(total_slots)
-	grid.columns = max(1, _grid_columns)
+	grid.columns = max(2, _grid_columns)
 	grid.custom_minimum_size = Vector2.ZERO
 	grid_scroll.custom_minimum_size = Vector2.ZERO
 	if grid_scroll_wrapper != null:
