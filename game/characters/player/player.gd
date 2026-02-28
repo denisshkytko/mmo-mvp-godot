@@ -585,6 +585,7 @@ func apply_character_data(d: Dictionary) -> void:
 		c_spellbook.stance_active = String(sdata.get("stance_active", ""))
 		c_spellbook.buff_slots = _to_string_array(sdata.get("buff_slots", [""]))
 		c_spellbook._ensure_slots()
+		c_spellbook.auto_assign_active_slots_from_learned()
 		_apply_spellbook_passives()
 	if cast_bar != null:
 		cast_bar.visible = false
@@ -626,7 +627,7 @@ func _grant_starter_abilities() -> void:
 		if after_rank > before_rank:
 			granted_any = true
 	if granted_any:
-		c_spellbook.emit_signal("spellbook_changed")
+		c_spellbook.auto_assign_active_slots_from_learned()
 		_request_save("starter_abilities_lvl1")
 
 func _on_ability_db_initialized_for_starters() -> void:

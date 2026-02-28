@@ -99,19 +99,20 @@ func _load_character_into_world() -> void:
 
 	var spawn_name: String = "SpawnPoint"
 
-	# 2) Позиция: если (0,0) — это первый вход, ищем фракционную точку первого входа
+	# 2) Позиция: если позиции нет, пробуем last_world_pos; первый вход определяем
+	# по признакам сохранения, а не только по (0,0), чтобы при сбое не телепортировать
+	# уже существующего персонажа в точку первого входа.
 	var pos_v: Variant = data.get("pos", null)
+	if not (pos_v is Dictionary):
+		pos_v = data.get("last_world_pos", null)
 	_has_override_pos = false
 	_pending_override_pos = Vector2.ZERO
-	var is_first_entry: bool = true
-	if pos_v is Dictionary:
-		var pos_d: Dictionary = pos_v as Dictionary
-		var x: float = float(pos_d.get("x", 0.0))
-		var y: float = float(pos_d.get("y", 0.0))
-		if not (is_zero_approx(x) and is_zero_approx(y)):
-			is_first_entry = false
-			_has_override_pos = true
-			_pending_override_pos = Vector2(x, y)
+	var is_first_entry: bool = _is_first_world_entry(data)
+	var restored_pos: Vector2 = _extract_non_zero_pos(pos_v)
+	if restored_pos != Vector2.ZERO:
+		is_first_entry = false
+		_has_override_pos = true
+		_pending_override_pos = restored_pos
 
 	if is_first_entry:
 		var faction_id := String(data.get("faction", "blue")).to_lower()
@@ -131,6 +132,42 @@ func _load_character_into_world() -> void:
 
 	# 5) Сохраним состояние входа (debounce)
 	request_save("enter_world")
+
+
+func _extract_non_zero_pos(pos_v: Variant) -> Vector2:
+	if pos_v is Dictionary:
+		var pos_d: Dictionary = pos_v as Dictionary
+		var x: float = float(pos_d.get("x", 0.0))
+		var y: float = float(pos_d.get("y", 0.0))
+		if not (is_zero_approx(x) and is_zero_approx(y)):
+			return Vector2(x, y)
+	return Vector2.ZERO
+
+
+func _is_first_world_entry(data: Dictionary) -> bool:
+	# Жесткий флаг: если уже входил в мир, повторно first-entry не запускаем.
+	if bool(data.get("world_entered_once", false)):
+		return false
+
+	# Надежные признаки прогресса. Не учитываем equipment/spellbook,
+	# т.к. стартовый персонаж может иметь их с момента создания.
+	if int(data.get("level", 1)) > 1:
+		return false
+	if int(data.get("xp", 0)) > 0:
+		return false
+
+	var inventory_v: Variant = data.get("inventory", null)
+	if inventory_v is Dictionary:
+		var inventory: Dictionary = inventory_v as Dictionary
+		if int(inventory.get("gold", 0)) > 0:
+			return false
+		var slots_v: Variant = inventory.get("slots", [])
+		if slots_v is Array:
+			for slot_v in (slots_v as Array):
+				if slot_v is Dictionary and not (slot_v as Dictionary).is_empty():
+					return false
+
+	return true
 
 
 func _emit_player_spawned() -> void:
@@ -176,7 +213,7 @@ func _find_first_entry_marker_in_tree(root: Node, faction_id: String) -> Marker2
 		return null
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
-		var current := stack.pop_back()
+		var current: Node = stack.pop_back() as Node
 		if current is Marker2D and current.get_script() == FIRST_ENTRY_SPAWN_POINT:
 			if current.has_method("get_faction_id") and String(current.call("get_faction_id")).to_lower() == faction_id:
 				return current as Marker2D
@@ -217,6 +254,9 @@ func _do_save_now() -> void:
 	# зона
 	if current_zone_path != "":
 		data["zone"] = current_zone_path
+	data["world_entered_once"] = true
+	data["last_world_zone"] = current_zone_path
+	data["last_world_pos"] = {"x": float(player.global_position.x), "y": float(player.global_position.y)}
 
 	AppState.save_selected_character(data)
 

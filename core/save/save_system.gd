@@ -81,10 +81,13 @@ func save_character_full(data: Dictionary) -> void:
 	var index := load_index()
 	var chars: Array = index.get("characters", [])
 
+	var class_id: String = String(data.get("class_id", data.get("class", "adventurer")))
 	var summary := {
 		"id": id,
 		"name": String(data.get("name", "Unnamed")),
-		"class": String(data.get("class", "adventurer")),
+		"class": class_id,
+		"class_id": class_id,
+		"faction": String(data.get("faction", "blue")),
 		"level": int(data.get("level", 1)),
 		"updated_at": int(Time.get_unix_time_from_system())
 	}

@@ -13,16 +13,16 @@ msgid "ui.terms.dps_with_value"
 msgstr "УВС: {value}"
 
 msgid "ui.class.paladin"
-msgstr "Паладин"
+msgstr "Храмовник"
 
 msgid "ui.class.shaman"
 msgstr "Шаман"
 
 msgid "ui.class.mage"
-msgstr "Маг"
+msgstr "Мистик"
 
 msgid "ui.class.priest"
-msgstr "Жрец"
+msgstr "Инквизитор"
 
 msgid "ui.class.hunter"
 msgstr "Стрелок"
