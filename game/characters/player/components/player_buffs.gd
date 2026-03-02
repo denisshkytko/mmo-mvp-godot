@@ -243,6 +243,12 @@ func _apply_periodic_damage_effects(delta: float) -> void:
 				break
 			if p.c_stats.has_method("apply_periodic_damage"):
 				var dealt: int = int(p.c_stats.call("apply_periodic_damage", damage_per_tick, school, ignore_mitigation))
+				if dealt > 0:
+					var dot_attacker: Node = null
+					var caster_ref_txt: Variant = data.get("caster_ref", null)
+					if caster_ref_txt != null and caster_ref_txt is Node and is_instance_valid(caster_ref_txt):
+						dot_attacker = caster_ref_txt as Node
+					DAMAGE_HELPER.show_damage(p, dealt, school, dot_attacker)
 				if dealt > 0 and school == "magic":
 					var caster_ref: Variant = data.get("caster_ref", null)
 					if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):

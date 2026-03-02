@@ -4,6 +4,7 @@ class_name NormalNeutralMobStats
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 
@@ -195,6 +196,11 @@ func tick_status_effects(delta: float) -> void:
 						dmg = int(ceil(float(damage_per_tick) * (1.0 - reduction_pct / 100.0)))
 						dmg = max(1, dmg)
 					current_hp = max(0, current_hp - dmg)
+					var dot_attacker: Node = null
+					var caster_ref: Variant = data.get("caster_ref", null)
+					if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
+						dot_attacker = caster_ref as Node
+					DAMAGE_HELPER.show_damage(get_parent(), dmg, school, dot_attacker)
 					if current_hp <= 0:
 						is_dead = true
 				data["dot_tick_acc"] = acc

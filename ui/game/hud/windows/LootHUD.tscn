@@ -43,7 +43,7 @@ text = "Добыча"
 vertical_alignment = 1
 
 [node name="Scroll" type="ScrollContainer" parent="Root/Panel"]
-clip_contents = false
+clip_contents = true
 custom_minimum_size = Vector2(488, 432)
 layout_mode = 0
 offset_left = 8.0

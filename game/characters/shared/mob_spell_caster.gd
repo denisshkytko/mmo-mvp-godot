@@ -62,6 +62,9 @@ func tick(delta: float, preferred_target: Node) -> void:
 	if _owner_is_stunned():
 		interrupt_cast("stunned")
 		return
+	if _owner_is_moving():
+		interrupt_cast("movement")
+		return
 
 	if _cast_time_left > 0.0:
 		_cast_time_left = max(0.0, _cast_time_left - delta)
@@ -198,6 +201,15 @@ func _update_state_locks() -> void:
 		if _owner_current_mana() <= 0:
 			_mana_lock = true
 
+
+func _owner_is_moving() -> bool:
+	if _owner == null:
+		return false
+	if "velocity" in _owner:
+		var v: Variant = _owner.get("velocity")
+		if v is Vector2:
+			return (v as Vector2).length_squared() > 0.0001
+	return false
 
 func _owner_is_stunned() -> bool:
 	if _owner == null:
