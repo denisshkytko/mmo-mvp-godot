@@ -242,6 +242,12 @@ func _physics_process(_delta: float) -> void:
 		move_and_slide()
 		return
 	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
+		if c_ability_caster != null and c_ability_caster.is_casting():
+			c_ability_caster.interrupt_cast("stunned")
+		if cast_bar != null:
+			cast_bar.set_cast_visible(false)
+			cast_bar.set_progress01(0.0)
+			cast_bar.set_icon_texture(null)
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return

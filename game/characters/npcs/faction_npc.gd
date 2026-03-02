@@ -320,6 +320,12 @@ func _physics_process(delta: float) -> void:
 		_die()
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
+		if c_spell_caster != null:
+			c_spell_caster.interrupt_cast("stunned")
+		if cast_bar != null:
+			cast_bar.set_cast_visible(false)
+			cast_bar.set_progress01(0.0)
+			cast_bar.set_icon_texture(null)
 		velocity = Vector2.ZERO
 		move_and_slide()
 		if c_combat != null:

@@ -210,7 +210,10 @@ func _apply_periodic_heal_effects(delta: float) -> void:
 func _apply_periodic_damage_effects(delta: float) -> void:
 	for k in _buffs.keys():
 		var id: String = String(k)
-		var entry: Dictionary = _buffs[id] as Dictionary
+		var entry_v: Variant = _buffs.get(id, null)
+		if not (entry_v is Dictionary):
+			continue
+		var entry: Dictionary = entry_v as Dictionary
 		var data: Dictionary = entry.get("data", {}) as Dictionary
 		var flags: Dictionary = data.get("flags", {}) as Dictionary
 		var total_pct: float = float(flags.get("dot_total_pct_of_attack_damage", 0.0))
