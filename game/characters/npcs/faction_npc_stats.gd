@@ -225,6 +225,47 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {},
 		"source": src,
 	}
 
+
+
+func get_active_stance_data() -> Dictionary:
+	for k in _status_effects.keys():
+		var id: String = String(k)
+		if id == "active_stance" or id.begins_with("stance:"):
+			var entry: Dictionary = _status_effects[id] as Dictionary
+			var data: Dictionary = entry.get("data", {}) as Dictionary
+			if data.has("on_hit"):
+				return data.get("on_hit", {}) as Dictionary
+			return data
+	return {}
+
+
+func try_apply_attacker_slow_from_stance(attacker: Node, dmg_type: String = "physical") -> void:
+	if attacker == null or not is_instance_valid(attacker):
+		return
+	if dmg_type != "physical":
+		return
+	var stance_data: Dictionary = get_active_stance_data()
+	if stance_data.is_empty():
+		return
+	var slow_pct: float = float(stance_data.get("retaliate_attack_speed_pct", 0.0))
+	var debuff_duration: float = float(stance_data.get("retaliate_duration_sec", 0.0))
+	if slow_pct >= 0.0 or debuff_duration <= 0.0:
+		return
+	var mult: float = max(0.1, 1.0 + slow_pct / 100.0)
+	var data := {
+		"ability_id": "ice_fortification",
+		"source": "debuff",
+		"is_debuff": true,
+		"attack_speed_multiplier": mult,
+	}
+	if attacker.has_method("add_or_refresh_buff"):
+		attacker.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_buffs" in attacker and attacker.c_buffs != null:
+		attacker.c_buffs.add_or_refresh_buff("debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_stats" in attacker and attacker.c_stats != null and attacker.c_stats.has_method("add_or_refresh_buff"):
+		attacker.c_stats.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
 func get_buffs_snapshot() -> Array:
 	var arr: Array = []
 	for k in _status_effects.keys():

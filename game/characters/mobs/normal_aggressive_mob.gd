@@ -393,6 +393,8 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 	final = max(1, final)
 	c_stats.current_hp = max(0, c_stats.current_hp - final)
 	var died_now: bool = c_stats.current_hp <= 0
+	if final > 0 and attacker != null and is_instance_valid(attacker) and c_stats != null and c_stats.has_method("try_apply_attacker_slow_from_stance"):
+		c_stats.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
 	c_stats.update_hp_bar(hp_fill)
 	if c_resource != null:
 		c_resource.on_damage_taken()
