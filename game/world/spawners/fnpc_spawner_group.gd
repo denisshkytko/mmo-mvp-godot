@@ -27,7 +27,7 @@ var class_choice: int:
 	set(v):
 		_class_choice_internal = int(v)
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
-@export_enum("None", "Заклинатель огня", "Заклинатель льда", "Охотник", "Воин", "Послушник", "Рыцарь", "Заклинатель стихий")
+		notify_property_list_changed()
 var spell_preset_id: String = "none":
 	get:
 		return _spell_preset_id_internal
@@ -50,6 +50,35 @@ const C_PRIEST := 4
 const C_HUNTER := 5
 var _class_choice_internal: int = C_PALADIN
 var _spell_preset_id_internal: String = "none"
+
+func _get_property_list() -> Array[Dictionary]:
+	var props: Array[Dictionary] = []
+	props.append({
+		"name": "spell_preset_id",
+		"type": TYPE_STRING,
+		"hint": PROPERTY_HINT_ENUM,
+		"hint_string": _build_spell_preset_hint(),
+		"usage": PROPERTY_USAGE_DEFAULT,
+	})
+	return props
+
+func _build_spell_preset_hint() -> String:
+	var cls := _get_current_class_id()
+	match cls:
+		"mage":
+			return "none:None,mage_fire_caster:Заклинатель огня,mage_ice_caster:Заклинатель льда"
+		"hunter":
+			return "none:None,hunter_hunter:Охотник"
+		"warrior":
+			return "none:None,warrior_warrior:Воин"
+		"priest":
+			return "none:None,priest_novice:Послушник"
+		"paladin":
+			return "none:None,paladin_knight:Рыцарь"
+		"shaman":
+			return "none:None,shaman_elementalist:Заклинатель стихий"
+		_:
+			return "none:None"
 
 func _get_spawn_scene() -> PackedScene:
 	return NPC_SCENE

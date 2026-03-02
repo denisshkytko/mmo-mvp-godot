@@ -21,8 +21,8 @@ var body_size: int:
 	set(v):
 		_body_size_internal = int(v)
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
+		notify_property_list_changed()
 @export var skin_id: String = ""
-@export_enum("None", "Охотник")
 var spell_preset_id: String = "none":
 	get:
 		return _spell_preset_id_internal
@@ -37,6 +37,22 @@ var spell_preset_id: String = "none":
 var _spell_preset_id_internal: String = "none"
 var _body_size_internal: int = BodySize.MEDIUM
 
+
+func _get_property_list() -> Array[Dictionary]:
+	var props: Array[Dictionary] = []
+	props.append({
+		"name": "spell_preset_id",
+		"type": TYPE_STRING,
+		"hint": PROPERTY_HINT_ENUM,
+		"hint_string": _build_spell_preset_hint(),
+		"usage": PROPERTY_USAGE_DEFAULT,
+	})
+	return props
+
+func _build_spell_preset_hint() -> String:
+	if _get_current_class_id() == "hunter":
+		return "none:None,hunter_hunter:Охотник"
+	return "none:None"
 
 func _get_spawn_scene() -> PackedScene:
 	return MOB_SCENE

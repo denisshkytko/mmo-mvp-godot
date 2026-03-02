@@ -8,7 +8,7 @@ func set_cast_visible(v: bool) -> void:
 	visible = v
 
 func set_progress01(progress: float) -> void:
-	var p := clamp(progress, 0.0, 1.0)
+	var p: float = clamp(progress, 0.0, 1.0)
 	bar_fill.anchor_right = p
 
 func set_icon_texture(tex: Texture2D) -> void:
