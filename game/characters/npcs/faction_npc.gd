@@ -310,7 +310,8 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if c_stats.is_dead:
+	if c_stats.is_dead or c_stats.current_hp <= 0:
+		_die()
 		return
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
@@ -484,7 +485,7 @@ func is_in_combat() -> bool:
 	return true
 
 func _die() -> void:
-	if c_stats.is_dead:
+	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
 	if current_target != null:

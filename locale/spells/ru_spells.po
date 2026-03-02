@@ -543,6 +543,9 @@ msgstr "Рыцарь"
 msgid "mob_spell_preset.shaman_elementalist"
 msgstr "Заклинатель стихий"
 
+msgid "mob_spell_preset.none"
+msgstr "Нет"
+
 msgid "ability.throe.desc"
 msgstr "Наносит цели {X} единиц магического урона."
 

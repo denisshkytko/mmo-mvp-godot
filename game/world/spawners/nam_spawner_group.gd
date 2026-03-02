@@ -52,7 +52,7 @@ var _spell_preset_id_internal: String = "none"
 func _get_property_list() -> Array[Dictionary]:
 	var props: Array[Dictionary] = []
 	props.append({
-		"name": "spell_preset_id",
+		"name": "Mob Setup/spell_preset_id",
 		"type": TYPE_STRING,
 		"hint": PROPERTY_HINT_ENUM,
 		"hint_string": _build_spell_preset_hint(),
@@ -60,23 +60,34 @@ func _get_property_list() -> Array[Dictionary]:
 	})
 	return props
 
+func _set(property: StringName, value: Variant) -> bool:
+	if String(property) == "Mob Setup/spell_preset_id":
+		spell_preset_id = String(value)
+		return true
+	return false
+
+func _get(property: StringName) -> Variant:
+	if String(property) == "Mob Setup/spell_preset_id":
+		return spell_preset_id
+	return null
+
 func _build_spell_preset_hint() -> String:
 	var cls := _get_current_class_id()
 	match cls:
 		"mage":
-			return "none:None,mage_fire_caster:Заклинатель огня,mage_ice_caster:Заклинатель льда"
+			return "none:Нет,mage_fire_caster,mage_ice_caster"
 		"hunter":
-			return "none:None,hunter_hunter:Охотник"
+			return "none:Нет,hunter_hunter"
 		"warrior":
-			return "none:None,warrior_warrior:Воин"
+			return "none:Нет,warrior_warrior"
 		"priest":
-			return "none:None,priest_novice:Послушник"
+			return "none:Нет,priest_novice"
 		"paladin":
-			return "none:None,paladin_knight:Рыцарь"
+			return "none:Нет,paladin_knight"
 		"shaman":
-			return "none:None,shaman_elementalist:Заклинатель стихий"
+			return "none:Нет,shaman_elementalist"
 		_:
-			return "none:None"
+			return "none:Нет"
 
 
 func _get_spawn_scene() -> PackedScene:

@@ -41,7 +41,7 @@ var _body_size_internal: int = BodySize.MEDIUM
 func _get_property_list() -> Array[Dictionary]:
 	var props: Array[Dictionary] = []
 	props.append({
-		"name": "spell_preset_id",
+		"name": "Neutral Setup/spell_preset_id",
 		"type": TYPE_STRING,
 		"hint": PROPERTY_HINT_ENUM,
 		"hint_string": _build_spell_preset_hint(),
@@ -49,10 +49,21 @@ func _get_property_list() -> Array[Dictionary]:
 	})
 	return props
 
+func _set(property: StringName, value: Variant) -> bool:
+	if String(property) == "Neutral Setup/spell_preset_id":
+		spell_preset_id = String(value)
+		return true
+	return false
+
+func _get(property: StringName) -> Variant:
+	if String(property) == "Neutral Setup/spell_preset_id":
+		return spell_preset_id
+	return null
+
 func _build_spell_preset_hint() -> String:
 	if _get_current_class_id() == "hunter":
-		return "none:None,hunter_hunter:Охотник"
-	return "none:None"
+		return "none:Нет,hunter_hunter"
+	return "none:Нет"
 
 func _get_spawn_scene() -> PackedScene:
 	return MOB_SCENE
