@@ -15,6 +15,7 @@ var _cast_payload: Dictionary = {}
 
 var _heal_lock: bool = false
 var _mana_lock: bool = false
+var _stationary_cooldown_left: float = 0.0
 
 func setup(owner: Node) -> void:
 	_owner = owner
@@ -29,6 +30,7 @@ func configure(ability_ids: Array[String], actor_level: int) -> void:
 	_cast_payload = {}
 	_heal_lock = false
 	_mana_lock = false
+	_stationary_cooldown_left = 0.0
 
 	var db: Node = _owner.get_node_or_null("/root/AbilityDB") if _owner != null else null
 	if db == null or not db.has_method("get_ability") or not db.has_method("get_rank_for_level") or not db.has_method("get_rank_data"):
@@ -63,8 +65,14 @@ func tick(delta: float, preferred_target: Node) -> void:
 		interrupt_cast("stunned")
 		return
 	if _owner_is_moving():
-		interrupt_cast("movement")
+		_stationary_cooldown_left = 0.2
+		if _cast_time_left > 0.0:
+			interrupt_cast("movement")
 		return
+	if _stationary_cooldown_left > 0.0:
+		_stationary_cooldown_left = max(0.0, _stationary_cooldown_left - delta)
+		if _stationary_cooldown_left > 0.0:
+			return
 
 	if _cast_time_left > 0.0:
 		_cast_time_left = max(0.0, _cast_time_left - delta)

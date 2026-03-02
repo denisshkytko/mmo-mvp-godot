@@ -242,9 +242,10 @@ func _physics_process(delta: float) -> void:
 
 	if cast_bar != null:
 		var casting := c_spell_caster.is_casting()
-		cast_bar.set_cast_visible(casting)
-		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if casting else 0.0)
-		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if casting else null)
+		var show_cast: bool = casting and _is_combat_visible_for_player()
+		cast_bar.set_cast_visible(show_cast)
+		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if show_cast else 0.0)
+		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if show_cast else null)
 
 # ------------------------------------------------------------
 # Called by Spawner
@@ -409,6 +410,19 @@ func is_in_combat() -> bool:
 	if "is_dead" in current_target and bool(current_target.get("is_dead")):
 		return false
 	return true
+
+
+
+func _is_combat_visible_for_player() -> bool:
+	var player_node := NodeCache.get_player(get_tree())
+	if player_node == null or not is_instance_valid(player_node):
+		return false
+	if current_target != null and is_instance_valid(current_target) and current_target == player_node:
+		return true
+	var player_id := player_node.get_instance_id()
+	if direct_attackers.has(player_id):
+		return true
+	return false
 
 
 func on_player_died() -> void:
