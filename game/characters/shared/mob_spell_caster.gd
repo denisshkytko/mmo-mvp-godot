@@ -15,6 +15,7 @@ var _cast_payload: Dictionary = {}
 
 var _heal_lock: bool = false
 var _mana_lock: bool = false
+var _stationary_cooldown_left: float = 0.0
 
 func setup(owner: Node) -> void:
 	_owner = owner
@@ -29,6 +30,7 @@ func configure(ability_ids: Array[String], actor_level: int) -> void:
 	_cast_payload = {}
 	_heal_lock = false
 	_mana_lock = false
+	_stationary_cooldown_left = 0.0
 
 	var db: Node = _owner.get_node_or_null("/root/AbilityDB") if _owner != null else null
 	if db == null or not db.has_method("get_ability") or not db.has_method("get_rank_for_level") or not db.has_method("get_rank_data"):
@@ -59,6 +61,18 @@ func tick(delta: float, preferred_target: Node) -> void:
 		return
 	_tick_cooldowns(delta)
 	_update_state_locks()
+	if _owner_is_stunned():
+		interrupt_cast("stunned")
+		return
+	if _owner_is_moving():
+		_stationary_cooldown_left = 0.2
+		if _cast_time_left > 0.0:
+			interrupt_cast("movement")
+		return
+	if _stationary_cooldown_left > 0.0:
+		_stationary_cooldown_left = max(0.0, _stationary_cooldown_left - delta)
+		if _stationary_cooldown_left > 0.0:
+			return
 
 	if _cast_time_left > 0.0:
 		_cast_time_left = max(0.0, _cast_time_left - delta)
@@ -119,6 +133,14 @@ func should_block_auto_attack() -> bool:
 	if _heal_lock:
 		return true
 	return false
+
+
+func interrupt_cast(_reason: String = "interrupted") -> void:
+	if _cast_time_left <= 0.0 and _cast_payload.is_empty():
+		return
+	_cast_time_left = 0.0
+	_cast_total_time = 0.0
+	_cast_payload = {}
 
 func is_casting() -> bool:
 	return _cast_time_left > 0.0
@@ -186,6 +208,25 @@ func _update_state_locks() -> void:
 	else:
 		if _owner_current_mana() <= 0:
 			_mana_lock = true
+
+
+func _owner_is_moving() -> bool:
+	if _owner == null:
+		return false
+	if "velocity" in _owner:
+		var v: Variant = _owner.get("velocity")
+		if v is Vector2:
+			return (v as Vector2).length_squared() > 0.0001
+	return false
+
+func _owner_is_stunned() -> bool:
+	if _owner == null:
+		return false
+	if "c_buffs" in _owner and _owner.c_buffs != null and _owner.c_buffs.has_method("is_stunned"):
+		return bool(_owner.c_buffs.call("is_stunned"))
+	if "c_stats" in _owner and _owner.c_stats != null and _owner.c_stats.has_method("is_stunned"):
+		return bool(_owner.c_stats.call("is_stunned"))
+	return false
 
 func _owner_health_pct() -> float:
 	var stats := _owner_stats_node()

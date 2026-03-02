@@ -60,6 +60,11 @@ static func apply_damage_typed_with_result(attacker: Node, target: Node, dmg: in
 		attacker.c_resource.on_damage_dealt()
 	return final_dmg
 
+static func show_damage(target: Node, damage_amount: int, dmg_type: String = "physical", attacker: Node = null) -> void:
+	if damage_amount <= 0:
+		return
+	_show_damage_number(attacker, target, damage_amount, dmg_type)
+
 static func show_heal(target: Node, heal_amount: int, source: Node = null) -> void:
 	if heal_amount <= 0:
 		return

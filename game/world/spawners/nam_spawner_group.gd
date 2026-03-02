@@ -21,7 +21,7 @@ var class_choice: int:
 		_class_choice_internal = int(v)
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
 		notify_property_list_changed()
-var spell_preset_id: String = "none":
+@export var spell_preset_id: String = "none":
 	get:
 		return _spell_preset_id_internal
 	set(v):
@@ -49,27 +49,10 @@ var _spell_preset_id_internal: String = "none"
 # BaseSpawnerGroup уже содержит respawn_seconds
 
 
-func _get_property_list() -> Array[Dictionary]:
-	var props: Array[Dictionary] = []
-	props.append({
-		"name": "Mob Setup/spell_preset_id",
-		"type": TYPE_STRING,
-		"hint": PROPERTY_HINT_ENUM,
-		"hint_string": _build_spell_preset_hint(),
-		"usage": PROPERTY_USAGE_DEFAULT,
-	})
-	return props
-
-func _set(property: StringName, value: Variant) -> bool:
-	if String(property) == "Mob Setup/spell_preset_id":
-		spell_preset_id = String(value)
-		return true
-	return false
-
-func _get(property: StringName) -> Variant:
-	if String(property) == "Mob Setup/spell_preset_id":
-		return spell_preset_id
-	return null
+func _validate_property(property: Dictionary) -> void:
+	if String(property.get("name", "")) == "spell_preset_id":
+		property["hint"] = PROPERTY_HINT_ENUM
+		property["hint_string"] = _build_spell_preset_hint()
 
 func _build_spell_preset_hint() -> String:
 	var cls := _get_current_class_id()

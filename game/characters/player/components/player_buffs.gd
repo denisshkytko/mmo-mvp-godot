@@ -210,7 +210,10 @@ func _apply_periodic_heal_effects(delta: float) -> void:
 func _apply_periodic_damage_effects(delta: float) -> void:
 	for k in _buffs.keys():
 		var id: String = String(k)
-		var entry: Dictionary = _buffs[id] as Dictionary
+		var entry_v: Variant = _buffs.get(id, null)
+		if not (entry_v is Dictionary):
+			continue
+		var entry: Dictionary = entry_v as Dictionary
 		var data: Dictionary = entry.get("data", {}) as Dictionary
 		var flags: Dictionary = data.get("flags", {}) as Dictionary
 		var total_pct: float = float(flags.get("dot_total_pct_of_attack_damage", 0.0))
@@ -240,6 +243,12 @@ func _apply_periodic_damage_effects(delta: float) -> void:
 				break
 			if p.c_stats.has_method("apply_periodic_damage"):
 				var dealt: int = int(p.c_stats.call("apply_periodic_damage", damage_per_tick, school, ignore_mitigation))
+				if dealt > 0:
+					var dot_attacker: Node = null
+					var caster_ref_txt: Variant = data.get("caster_ref", null)
+					if caster_ref_txt != null and caster_ref_txt is Node and is_instance_valid(caster_ref_txt):
+						dot_attacker = caster_ref_txt as Node
+					DAMAGE_HELPER.show_damage(p, dealt, school, dot_attacker)
 				if dealt > 0 and school == "magic":
 					var caster_ref: Variant = data.get("caster_ref", null)
 					if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):

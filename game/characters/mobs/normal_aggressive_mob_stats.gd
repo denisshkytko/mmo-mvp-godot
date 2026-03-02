@@ -4,6 +4,7 @@ class_name NormalAggresiveMobStats
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 var mob_level: int = 1
 
@@ -148,30 +149,43 @@ func tick_status_effects(delta: float) -> void:
 		var data: Dictionary = entry.get("data", {}) as Dictionary
 		var flags: Dictionary = data.get("flags", {}) as Dictionary
 		var total_pct: float = float(flags.get("dot_total_pct_of_attack_damage", 0.0))
-		if total_pct > 0.0:
-			var source_attack_damage: float = float(flags.get("dot_source_attack_damage", 0.0))
-			if source_attack_damage > 0.0 and not is_dead:
-				var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
-				var interval: float = max(0.1, float(flags.get("dot_tick_interval_sec", 1.0)))
-				var total_damage: float = source_attack_damage * total_pct / 100.0
-				var ticks_total: int = max(1, int(round(duration / interval)))
-				var damage_per_tick: int = max(1, int(round(total_damage / float(ticks_total))))
-				var acc: float = float(data.get("dot_tick_acc", 0.0)) + delta
-				while acc >= interval and not is_dead:
-					acc -= interval
-					var school: String = String(flags.get("dot_damage_school", "physical"))
-					var ignore_mitigation: bool = bool(flags.get("dot_ignore_physical_mitigation", false))
-					var dmg := damage_per_tick
-					if not ignore_mitigation and school == "physical":
-						var reduction_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
-						dmg = int(ceil(float(damage_per_tick) * (1.0 - reduction_pct / 100.0)))
-						dmg = max(1, dmg)
-					current_hp = max(0, current_hp - dmg)
-					if current_hp <= 0:
-						is_dead = true
-				data["dot_tick_acc"] = acc
-				entry["data"] = data
-				_status_effects[id] = entry
+		var source_attack_damage: float = float(flags.get("dot_source_attack_damage", 0.0))
+		var total_damage_flat: float = float(flags.get("dot_total_damage_flat", 0.0))
+		var bonus_damage_flat: float = float(flags.get("dot_bonus_damage_flat", 0.0))
+		var total_damage: float = 0.0
+		if total_damage_flat > 0.0 or bonus_damage_flat != 0.0:
+			total_damage = max(0.0, total_damage_flat + bonus_damage_flat)
+		elif total_pct > 0.0 and source_attack_damage > 0.0:
+			total_damage = max(0.0, source_attack_damage * total_pct / 100.0)
+		if total_damage > 0.0 and not is_dead:
+			var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
+			var interval: float = max(0.1, float(flags.get("dot_tick_interval_sec", 1.0)))
+			var ticks_total: int = max(1, int(round(duration / interval)))
+			var damage_per_tick: int = max(1, int(round(total_damage / float(ticks_total))))
+			var acc: float = float(data.get("dot_tick_acc", 0.0)) + delta
+			while acc >= interval and not is_dead:
+				acc -= interval
+				var school: String = String(flags.get("dot_damage_school", "physical"))
+				var ignore_mitigation: bool = bool(flags.get("dot_ignore_physical_mitigation", false))
+				var dmg := damage_per_tick
+				if not ignore_mitigation and school == "physical":
+					var reduction_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
+					dmg = int(ceil(float(damage_per_tick) * (1.0 - reduction_pct / 100.0)))
+					dmg = max(1, dmg)
+				current_hp = max(0, current_hp - dmg)
+				var dot_attacker: Node = null
+				var caster_ref: Variant = data.get("caster_ref", null)
+				if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
+					dot_attacker = caster_ref as Node
+				var owner_entity: Node = get_parent()
+				if owner_entity != null and owner_entity.get_parent() != null and owner_entity.get_parent() is Node2D:
+					owner_entity = owner_entity.get_parent()
+				DAMAGE_HELPER.show_damage(owner_entity, dmg, school, dot_attacker)
+				if current_hp <= 0:
+					is_dead = true
+			data["dot_tick_acc"] = acc
+			entry["data"] = data
+			_status_effects[id] = entry
 		var left: float = float(entry.get("time_left", 0.0))
 		if left >= 999999.0:
 			continue
@@ -213,6 +227,47 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {},
 		"source": src,
 	}
 
+
+
+func get_active_stance_data() -> Dictionary:
+	for k in _status_effects.keys():
+		var id: String = String(k)
+		if id == "active_stance" or id.begins_with("stance:"):
+			var entry: Dictionary = _status_effects[id] as Dictionary
+			var data: Dictionary = entry.get("data", {}) as Dictionary
+			if data.has("on_hit"):
+				return data.get("on_hit", {}) as Dictionary
+			return data
+	return {}
+
+
+func try_apply_attacker_slow_from_stance(attacker: Node, dmg_type: String = "physical") -> void:
+	if attacker == null or not is_instance_valid(attacker):
+		return
+	if dmg_type != "physical":
+		return
+	var stance_data: Dictionary = get_active_stance_data()
+	if stance_data.is_empty():
+		return
+	var slow_pct: float = float(stance_data.get("retaliate_attack_speed_pct", 0.0))
+	var debuff_duration: float = float(stance_data.get("retaliate_duration_sec", 0.0))
+	if slow_pct >= 0.0 or debuff_duration <= 0.0:
+		return
+	var mult: float = max(0.1, 1.0 + slow_pct / 100.0)
+	var data := {
+		"ability_id": "ice_fortification",
+		"source": "debuff",
+		"is_debuff": true,
+		"attack_speed_multiplier": mult,
+	}
+	if attacker.has_method("add_or_refresh_buff"):
+		attacker.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_buffs" in attacker and attacker.c_buffs != null:
+		attacker.c_buffs.add_or_refresh_buff("debuff:ice_fortification:attack_speed", debuff_duration, data)
+		return
+	if "c_stats" in attacker and attacker.c_stats != null and attacker.c_stats.has_method("add_or_refresh_buff"):
+		attacker.c_stats.call("add_or_refresh_buff", "debuff:ice_fortification:attack_speed", debuff_duration, data)
 func get_buffs_snapshot() -> Array:
 	var arr: Array = []
 	for k in _status_effects.keys():

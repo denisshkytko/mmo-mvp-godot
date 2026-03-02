@@ -487,6 +487,12 @@ func take_damage(raw_damage: int) -> void:
 func _on_death() -> void:
 	# 1) помечаем игрока мёртвым (останавливаем движение/атаки)
 	p.is_dead = true
+	if p.c_ability_caster != null and p.c_ability_caster.has_method("interrupt_cast"):
+		p.c_ability_caster.call("interrupt_cast", "death")
+	if "cast_bar" in p and p.cast_bar != null:
+		p.cast_bar.set_cast_visible(false)
+		p.cast_bar.set_progress01(0.0)
+		p.cast_bar.set_icon_texture(null)
 
 	if p.get_parent() != null:
 		var corpse: Corpse = DEATH_PIPELINE.spawn_corpse(p.get_parent(), p.global_position)

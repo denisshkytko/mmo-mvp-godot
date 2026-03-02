@@ -184,6 +184,12 @@ func _physics_process(delta: float) -> void:
 		_die()
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
+		if c_spell_caster != null:
+			c_spell_caster.interrupt_cast("stunned")
+		if cast_bar != null:
+			cast_bar.set_cast_visible(false)
+			cast_bar.set_progress01(0.0)
+			cast_bar.set_icon_texture(null)
 		velocity = Vector2.ZERO
 		move_and_slide()
 		c_combat.reset_combat()
@@ -234,11 +240,15 @@ func _physics_process(delta: float) -> void:
 			c_combat.tick(delta, self, aggressor, snap)
 		c_spell_caster.tick(delta, aggressor)
 
+	if (aggressor == null or not is_instance_valid(aggressor)) and c_spell_caster != null and c_spell_caster.is_casting():
+		c_spell_caster.interrupt_cast("lost_target")
+
 	if cast_bar != null:
 		var casting := c_spell_caster.is_casting()
-		cast_bar.set_cast_visible(casting)
-		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if casting else 0.0)
-		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if casting else null)
+		var show_cast: bool = casting and _is_combat_visible_for_player()
+		cast_bar.set_cast_visible(show_cast)
+		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if show_cast else 0.0)
+		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if show_cast else null)
 
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"
@@ -423,6 +433,8 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 	final = max(1, final)
 	c_stats.current_hp = max(0, c_stats.current_hp - final)
 	var died_now: bool = c_stats.current_hp <= 0
+	if final > 0 and attacker != null and is_instance_valid(attacker) and c_stats != null and c_stats.has_method("try_apply_attacker_slow_from_stance"):
+		c_stats.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
 	c_stats.update_hp_bar(hp_fill)
 	if c_resource != null:
 		c_resource.on_damage_taken()
@@ -459,7 +471,26 @@ func is_in_combat() -> bool:
 		return false
 	return true
 
+
+func _is_combat_visible_for_player() -> bool:
+	var player_node := NodeCache.get_player(get_tree())
+	if player_node == null or not is_instance_valid(player_node):
+		return false
+	if aggressor != null and is_instance_valid(aggressor) and aggressor == player_node:
+		return true
+	var player_id := player_node.get_instance_id()
+	if direct_attackers.has(player_id):
+		return true
+	return false
+
+
 func on_player_died() -> void:
+	if c_spell_caster != null:
+		c_spell_caster.interrupt_cast("player_died")
+	if cast_bar != null:
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 	# чтобы нейтралы тоже отпускали
 	is_aggressive = false
 	aggressor = null
@@ -477,6 +508,12 @@ func on_player_died() -> void:
 # Death + loot/xp (как у агрессивного)
 # ---------------------------
 func _die() -> void:
+	if c_spell_caster != null:
+		c_spell_caster.interrupt_cast("death")
+	if cast_bar != null:
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
