@@ -177,38 +177,43 @@ func tick_status_effects(delta: float) -> void:
 		var data: Dictionary = entry.get("data", {}) as Dictionary
 		var flags: Dictionary = data.get("flags", {}) as Dictionary
 		var total_pct: float = float(flags.get("dot_total_pct_of_attack_damage", 0.0))
-		if total_pct > 0.0:
-			var source_attack_damage: float = float(flags.get("dot_source_attack_damage", 0.0))
-			if source_attack_damage > 0.0 and not is_dead:
-				var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
-				var interval: float = max(0.1, float(flags.get("dot_tick_interval_sec", 1.0)))
-				var total_damage: float = source_attack_damage * total_pct / 100.0
-				var ticks_total: int = max(1, int(round(duration / interval)))
-				var damage_per_tick: int = max(1, int(round(total_damage / float(ticks_total))))
-				var acc: float = float(data.get("dot_tick_acc", 0.0)) + delta
-				while acc >= interval and not is_dead:
-					acc -= interval
-					var school: String = String(flags.get("dot_damage_school", "physical"))
-					var ignore_mitigation: bool = bool(flags.get("dot_ignore_physical_mitigation", false))
-					var dmg := damage_per_tick
-					if not ignore_mitigation and school == "physical":
-						var reduction_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
-						dmg = int(ceil(float(damage_per_tick) * (1.0 - reduction_pct / 100.0)))
-						dmg = max(1, dmg)
-					current_hp = max(0, current_hp - dmg)
-					var dot_attacker: Node = null
-					var caster_ref: Variant = data.get("caster_ref", null)
-					if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
-						dot_attacker = caster_ref as Node
-					var owner_entity: Node = get_parent()
-					if owner_entity != null and owner_entity.get_parent() != null and owner_entity.get_parent() is Node2D:
-						owner_entity = owner_entity.get_parent()
-					DAMAGE_HELPER.show_damage(owner_entity, dmg, school, dot_attacker)
-					if current_hp <= 0:
-						is_dead = true
-				data["dot_tick_acc"] = acc
-				entry["data"] = data
-				_status_effects[id] = entry
+		var source_attack_damage: float = float(flags.get("dot_source_attack_damage", 0.0))
+		var total_damage_flat: float = float(flags.get("dot_total_damage_flat", 0.0))
+		var bonus_damage_flat: float = float(flags.get("dot_bonus_damage_flat", 0.0))
+		var total_damage: float = 0.0
+		if total_damage_flat > 0.0 or bonus_damage_flat != 0.0:
+			total_damage = max(0.0, total_damage_flat + bonus_damage_flat)
+		elif total_pct > 0.0 and source_attack_damage > 0.0:
+			total_damage = max(0.0, source_attack_damage * total_pct / 100.0)
+		if total_damage > 0.0 and not is_dead:
+			var duration: float = max(0.01, float(data.get("duration_sec", entry.get("time_left", 0.0))))
+			var interval: float = max(0.1, float(flags.get("dot_tick_interval_sec", 1.0)))
+			var ticks_total: int = max(1, int(round(duration / interval)))
+			var damage_per_tick: int = max(1, int(round(total_damage / float(ticks_total))))
+			var acc: float = float(data.get("dot_tick_acc", 0.0)) + delta
+			while acc >= interval and not is_dead:
+				acc -= interval
+				var school: String = String(flags.get("dot_damage_school", "physical"))
+				var ignore_mitigation: bool = bool(flags.get("dot_ignore_physical_mitigation", false))
+				var dmg := damage_per_tick
+				if not ignore_mitigation and school == "physical":
+					var reduction_pct: float = float(_snapshot.get("physical_reduction_pct", 0.0))
+					dmg = int(ceil(float(damage_per_tick) * (1.0 - reduction_pct / 100.0)))
+					dmg = max(1, dmg)
+				current_hp = max(0, current_hp - dmg)
+				var dot_attacker: Node = null
+				var caster_ref: Variant = data.get("caster_ref", null)
+				if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
+					dot_attacker = caster_ref as Node
+				var owner_entity: Node = get_parent()
+				if owner_entity != null and owner_entity.get_parent() != null and owner_entity.get_parent() is Node2D:
+					owner_entity = owner_entity.get_parent()
+				DAMAGE_HELPER.show_damage(owner_entity, dmg, school, dot_attacker)
+				if current_hp <= 0:
+					is_dead = true
+			data["dot_tick_acc"] = acc
+			entry["data"] = data
+			_status_effects[id] = entry
 		var left: float = float(entry.get("time_left", 0.0))
 		if left >= 999999.0:
 			continue
