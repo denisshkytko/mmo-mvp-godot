@@ -240,6 +240,9 @@ func _physics_process(delta: float) -> void:
 			c_combat.tick(delta, self, aggressor, snap)
 		c_spell_caster.tick(delta, aggressor)
 
+	if (aggressor == null or not is_instance_valid(aggressor)) and c_spell_caster != null and c_spell_caster.is_casting():
+		c_spell_caster.interrupt_cast("lost_target")
+
 	if cast_bar != null:
 		var casting := c_spell_caster.is_casting()
 		var show_cast: bool = casting and _is_combat_visible_for_player()
@@ -482,6 +485,12 @@ func _is_combat_visible_for_player() -> bool:
 
 
 func on_player_died() -> void:
+	if c_spell_caster != null:
+		c_spell_caster.interrupt_cast("player_died")
+	if cast_bar != null:
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 	# чтобы нейтралы тоже отпускали
 	is_aggressive = false
 	aggressor = null
@@ -499,6 +508,12 @@ func on_player_died() -> void:
 # Death + loot/xp (как у агрессивного)
 # ---------------------------
 func _die() -> void:
+	if c_spell_caster != null:
+		c_spell_caster.interrupt_cast("death")
+	if cast_bar != null:
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true

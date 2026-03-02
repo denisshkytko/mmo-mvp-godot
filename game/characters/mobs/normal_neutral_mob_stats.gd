@@ -200,7 +200,10 @@ func tick_status_effects(delta: float) -> void:
 					var caster_ref: Variant = data.get("caster_ref", null)
 					if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
 						dot_attacker = caster_ref as Node
-					DAMAGE_HELPER.show_damage(get_parent(), dmg, school, dot_attacker)
+					var owner_entity: Node = get_parent()
+					if owner_entity != null and owner_entity.get_parent() != null and owner_entity.get_parent() is Node2D:
+						owner_entity = owner_entity.get_parent()
+					DAMAGE_HELPER.show_damage(owner_entity, dmg, school, dot_attacker)
 					if current_hp <= 0:
 						is_dead = true
 				data["dot_tick_acc"] = acc

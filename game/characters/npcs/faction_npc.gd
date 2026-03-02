@@ -412,6 +412,9 @@ func _physics_process(delta: float) -> void:
 			c_combat.tick(delta, self, current_target, snap)
 		c_spell_caster.tick(delta, current_target)
 
+	if (current_target == null or not is_instance_valid(current_target)) and c_spell_caster != null and c_spell_caster.is_casting():
+		c_spell_caster.interrupt_cast("lost_target")
+
 	if cast_bar != null:
 		var casting := c_spell_caster.is_casting()
 		var show_cast: bool = casting and _is_combat_visible_for_player()
@@ -494,6 +497,12 @@ func is_in_combat() -> bool:
 	return true
 
 func _die() -> void:
+	if c_spell_caster != null:
+		c_spell_caster.interrupt_cast("death")
+	if cast_bar != null:
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
