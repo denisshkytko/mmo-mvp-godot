@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MobSpellPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/mob_spell_preset.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "hunter_hunter"
+class_id = "hunter"
+name_key = "mob_spell_preset.hunter_hunter"
+primary_ability_id = "mantis_aspect"
+secondary_ability_id_1 = "poisoned_arrow"
+secondary_ability_id_2 = "aimed_shot"

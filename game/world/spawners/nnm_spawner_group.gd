@@ -20,20 +20,21 @@ var body_size: int:
 		return _body_size_internal
 	set(v):
 		_body_size_internal = int(v)
-		_abilities_internal = _filter_abilities_for_class(_abilities_internal)
+		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
 @export var skin_id: String = ""
-@export var abilities: Array[String]:
+@export_enum("None", "Охотник")
+var spell_preset_id: String = "none":
 	get:
-		return _abilities_internal
-	set(value):
-		_abilities_internal = _filter_abilities_for_class(value)
+		return _spell_preset_id_internal
+	set(v):
+		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
 @export var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
 @export var patrol_pause_seconds: float = 1.5
-var _abilities_internal: Array[String] = []
+var _spell_preset_id_internal: String = "none"
 var _body_size_internal: int = BodySize.MEDIUM
 
 
@@ -73,6 +74,8 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 
 	if OS.is_debug_build() and level == 1:
 		print("[SPAWN][NNM] body_size=", body_size, " class_id=", class_id, " profile_id=", profile_id)
+	var abilities_for_level := MobSpellPresetDB.resolve_ability_ids_for_level(spell_preset_id, class_id, level)
+	var preset_name_key := MobSpellPresetDB.get_preset_name_key(spell_preset_id)
 
 	mob.call_deferred(
 		"apply_spawn_init",
@@ -89,7 +92,8 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		class_id,
 		profile_id,
 		mob_variant,
-		_abilities_internal
+		abilities_for_level,
+		preset_name_key
 	)
 	return true
 
@@ -98,19 +102,6 @@ func _get_current_class_id() -> String:
 		return "hunter"
 	return "beast"
 
-func _filter_abilities_for_class(values: Array[String]) -> Array[String]:
-	var out: Array[String] = []
+func _sanitize_spell_preset_for_class(value: String) -> String:
 	var class_id := _get_current_class_id()
-	var db: Node = null
-	if is_inside_tree():
-		db = get_node_or_null("/root/AbilityDB")
-	for ability_id in values:
-		if ability_id == "":
-			continue
-		if db != null and db.has_method("get_ability"):
-			var def: AbilityDefinition = db.call("get_ability", ability_id)
-			if def != null and (class_id == "" or def.class_id == class_id):
-				out.append(ability_id)
-		else:
-			out.append(ability_id)
-	return out
+	return MobSpellPresetDB.get_allowed_preset_id(value, class_id)

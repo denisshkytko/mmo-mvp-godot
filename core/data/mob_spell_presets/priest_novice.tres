@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MobSpellPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/mob_spell_preset.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "priest_novice"
+class_id = "priest"
+name_key = "mob_spell_preset.priest_novice"
+primary_ability_id = "fortitude"
+secondary_ability_id_1 = "healing_stream"
+secondary_ability_id_2 = "agony"

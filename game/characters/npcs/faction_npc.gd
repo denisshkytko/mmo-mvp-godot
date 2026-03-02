@@ -40,6 +40,8 @@ var npc_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 var abilities: Array[String] = []
+var spell_preset_name_key: String = ""
+var c_spell_caster: MobSpellCaster = MobSpellCaster.new()
 
 var home_position: Vector2 = Vector2.ZERO
 var current_target: Node2D = null
@@ -164,9 +166,16 @@ func _ready() -> void:
 
 	_update_faction_color()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
+	c_spell_caster.setup(self)
 
 func get_faction_id() -> String:
 	return faction_id
+
+func get_display_name() -> String:
+	var suffix := String(TranslationServer.translate(spell_preset_name_key)).to_lower()
+	if suffix == "":
+		return String(name)
+	return "%s %s" % [String(name), suffix]
 
 # Спавнер вызывает сразу после instantiate()
 func apply_spawn_init(
@@ -187,7 +196,8 @@ func apply_spawn_init(
 	growth_profile_id_in: String = "",
 	merchant_preset_in: MerchantPreset = null,
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
-	abilities_in: Array[String] = []
+	abilities_in: Array[String] = [],
+	spell_preset_name_key_in: String = ""
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -201,6 +211,7 @@ func apply_spawn_init(
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
 	merchant_preset = merchant_preset_in if merchant_preset_in != null else merchant_preset
 	abilities = abilities_in.duplicate()
+	spell_preset_name_key = spell_preset_name_key_in
 
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
@@ -223,6 +234,7 @@ func apply_spawn_init(
 		c_stats.growth_profile_id = growth_profile_id_in
 		c_stats.mob_variant = mob_variant
 	_setup_resource_from_class(class_id_in)
+	c_spell_caster.configure(abilities, npc_level)
 
 	# presets + combat mode
 	match fighter_type:
@@ -389,6 +401,7 @@ func _physics_process(delta: float) -> void:
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		c_combat.tick(delta, self, current_target, snap)
+		c_spell_caster.tick(delta, current_target)
 
 
 func _pick_target() -> Node2D:

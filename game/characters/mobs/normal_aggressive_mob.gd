@@ -37,6 +37,8 @@ var mob_level: int = 1
 var attack_mode: int = AttackMode.MELEE
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 var abilities: Array[String] = []
+var spell_preset_name_key: String = ""
+var c_spell_caster: MobSpellCaster = MobSpellCaster.new()
 
 var home_position: Vector2 = Vector2.ZERO
 
@@ -142,6 +144,7 @@ func _ready() -> void:
 		c_ai.speed = move_speed
 
 	_apply_mode_to_components()
+	c_spell_caster.setup(self)
 	# Пересчёт в _ready нужен только если моб размещён вручную в сцене.
 	# Для мобов из спавнера пересчёт выполняется в apply_spawn_init/set_level.
 	if not _spawn_initialized:
@@ -226,6 +229,7 @@ func _physics_process(delta: float) -> void:
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		c_combat.tick(delta, self, current_target, snap)
+		c_spell_caster.tick(delta, current_target)
 
 # ------------------------------------------------------------
 # Called by Spawner
@@ -244,7 +248,8 @@ func apply_spawn_init(
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
-	abilities_in: Array[String] = []
+	abilities_in: Array[String] = [],
+	spell_preset_name_key_in: String = ""
 ) -> void:
 	# Эти поля должны выставляться до расчётов/AI
 
@@ -257,6 +262,7 @@ func apply_spawn_init(
 	if loot_profile_in != null:
 		loot_profile = loot_profile_in
 	abilities = abilities_in.duplicate()
+	spell_preset_name_key = spell_preset_name_key_in
 
 	apply_spawn_settings(
 		spawn_pos,
@@ -295,6 +301,7 @@ func apply_spawn_init(
 
 	# уровень/режим атаки выставляем как было
 	set_level(level_in)
+	c_spell_caster.configure(abilities, mob_level)
 	_spawn_initialized = true
 
 
@@ -495,6 +502,12 @@ func _on_leash_return_started() -> void:
 
 func get_faction_id() -> String:
 	return faction_id
+
+func get_display_name() -> String:
+	var suffix := String(TranslationServer.translate(spell_preset_name_key)).to_lower()
+	if suffix == "":
+		return String(name)
+	return "%s %s" % [String(name), suffix]
 
 
 func _pick_target() -> Node2D:
