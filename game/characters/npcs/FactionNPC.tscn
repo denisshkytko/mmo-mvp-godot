@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dpwtpikwhfl2f"]
+[gd_scene load_steps=10 format=3 uid="uid://dpwtpikwhfl2f"]
 
 [ext_resource type="Script" uid="uid://bqkvq7otwihom" path="res://game/characters/npcs/faction_npc.gd" id="1_h35rw"]
 [ext_resource type="Script" uid="uid://cpjigvttt30kj" path="res://game/characters/npcs/faction_npc_ai.gd" id="2_vdddp"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://0qyj1oasme43" path="res://game/characters/npcs/faction_npc_stats.gd" id="4_otmjk"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_w36hx"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_lgduo"]
+[ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="7_castbar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
 size = Vector2(24, 24)
@@ -54,6 +55,8 @@ color = Color(0.38720772, 0.18201989, 0.97702104, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]
 shape = SubResource("RectangleShape2D_ex06h")
+
+[node name="CastBar" parent="." instance=ExtResource("7_castbar")]
 
 [node name="Components" type="Node" parent="."]
 

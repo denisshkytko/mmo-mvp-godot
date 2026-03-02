@@ -217,14 +217,28 @@ func tick_status_effects(delta: float) -> void:
 func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {}, ability_id: String = "", source: String = "") -> void:
 	if id == "":
 		return
+	var data_dict := data.duplicate(true)
+	var src := source if source != "" else String(data_dict.get("source", ""))
+	if src == "buff":
+		var owner_id := int(data_dict.get("caster_owner_id", 0))
+		for k in _status_effects.keys():
+			var key: String = String(k)
+			var existing: Dictionary = _status_effects[key] as Dictionary
+			if String(existing.get("source", "")) != "buff":
+				continue
+			var edata: Dictionary = existing.get("data", {}) as Dictionary
+			if int(edata.get("caster_owner_id", 0)) != owner_id:
+				continue
+			if key != id:
+				_status_effects.erase(key)
 	var left := duration_sec
 	if left <= 0.0:
 		left = 999999.0
 	_status_effects[id] = {
 		"time_left": left,
-		"data": data.duplicate(true),
-		"ability_id": ability_id if ability_id != "" else String(data.get("ability_id", "")),
-		"source": source if source != "" else String(data.get("source", "")),
+		"data": data_dict,
+		"ability_id": ability_id if ability_id != "" else String(data_dict.get("ability_id", "")),
+		"source": src,
 	}
 
 func get_buffs_snapshot() -> Array:

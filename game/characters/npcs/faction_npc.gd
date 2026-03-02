@@ -12,6 +12,7 @@ signal died(corpse: Corpse)
 @onready var faction_rect: ColorRect = $"ColorRect"
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
+@onready var cast_bar: CastBarWidget = $CastBar
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -400,8 +401,15 @@ func _physics_process(delta: float) -> void:
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		c_combat.tick(delta, self, current_target, snap)
+		if not c_spell_caster.should_block_auto_attack():
+			c_combat.tick(delta, self, current_target, snap)
 		c_spell_caster.tick(delta, current_target)
+
+	if cast_bar != null:
+		var casting := c_spell_caster.is_casting()
+		cast_bar.set_cast_visible(casting)
+		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if casting else 0.0)
+		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if casting else null)
 
 
 func _pick_target() -> Node2D:

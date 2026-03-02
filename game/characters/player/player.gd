@@ -181,7 +181,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_spellbook: PlayerSpellbook = $Components/Spellbook as PlayerSpellbook
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
-@onready var cast_bar: ProgressBar = $CastBar
+@onready var cast_bar: CastBarWidget = $CastBar
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
 
 
@@ -228,8 +228,9 @@ func _ready() -> void:
 
 	_apply_spellbook_passives()
 	if cast_bar != null:
-		cast_bar.visible = false
-		cast_bar.value = 0.0
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 
 func get_danger_meter() -> DangerMeterComponent:
 	return c_danger
@@ -288,8 +289,9 @@ func _process(delta: float) -> void:
 
 	if cast_bar != null and c_ability_caster != null:
 		var casting := c_ability_caster.is_casting()
-		cast_bar.visible = casting
-		cast_bar.value = c_ability_caster.get_cast_progress() * 100.0 if casting else 0.0
+		cast_bar.set_cast_visible(casting)
+		cast_bar.set_progress01(c_ability_caster.get_cast_progress() if casting else 0.0)
+		cast_bar.set_icon_texture(c_ability_caster.get_cast_icon() if casting else null)
 
 
 # -----------------------
@@ -372,8 +374,9 @@ func _request_save(kind: String) -> void:
 func _on_spellbook_changed() -> void:
 	_apply_spellbook_passives()
 	if cast_bar != null:
-		cast_bar.visible = false
-		cast_bar.value = 0.0
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 	_request_save("spellbook_changed")
 
 func _apply_spellbook_passives() -> void:
@@ -588,8 +591,9 @@ func apply_character_data(d: Dictionary) -> void:
 		c_spellbook.auto_assign_active_slots_from_learned()
 		_apply_spellbook_passives()
 	if cast_bar != null:
-		cast_bar.visible = false
-		cast_bar.value = 0.0
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 	if c_spellbook != null and ((not (spellbook_v is Dictionary)) or c_spellbook.learned_ranks.is_empty()):
 		_grant_starter_abilities()
 

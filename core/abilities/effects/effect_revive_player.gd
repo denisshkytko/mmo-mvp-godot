@@ -30,10 +30,11 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 		respawn_ui.call("close")
 
 	if owner.has_node("CastBar"):
-		var cast_bar := owner.get_node("CastBar") as ProgressBar
+		var cast_bar := owner.get_node("CastBar") as CastBarWidget
 		if cast_bar != null:
-			cast_bar.visible = false
-			cast_bar.value = 0.0
+			cast_bar.set_cast_visible(false)
+			cast_bar.set_progress01(0.0)
+			cast_bar.set_icon_texture(null)
 
 	if owner.c_buffs != null:
 		owner.c_buffs.clear_all()
