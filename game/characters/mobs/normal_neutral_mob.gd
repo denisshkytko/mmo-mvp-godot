@@ -11,6 +11,7 @@ signal died(corpse: Corpse)
 
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
+@onready var cast_bar: CastBarWidget = $CastBar
 
 @onready var c_ai: NormalNeutralMobAI = $Components/AI as NormalNeutralMobAI
 @onready var c_combat: NormalNeutralMobCombat = $Components/Combat as NormalNeutralMobCombat
@@ -34,6 +35,8 @@ var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_n
 var skin_id: String = ""
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 var abilities: Array[String] = []
+var spell_preset_name_key: String = ""
+var c_spell_caster: MobSpellCaster = MobSpellCaster.new()
 
 var home_position: Vector2 = Vector2.ZERO
 
@@ -156,6 +159,7 @@ func _ready() -> void:
 
 	# Для мобов из спавнера пересчёт делается в apply_spawn_init.
 	# Здесь оставляем только ручную инициализацию.
+	c_spell_caster.setup(self)
 	if not _spawn_initialized:
 		_apply_to_components()
 		_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
@@ -170,7 +174,8 @@ func _process(_delta: float) -> void:
 	TargetMarkerHelper.set_marker_visible(target_marker, is_aggro_on_player)
 
 func _physics_process(delta: float) -> void:
-	if c_stats.is_dead:
+	if c_stats.is_dead or c_stats.current_hp <= 0:
+		_die()
 		return
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
@@ -225,7 +230,15 @@ func _physics_process(delta: float) -> void:
 	# атака только если агрессивен
 	if is_aggressive and aggressor != null and is_instance_valid(aggressor):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		c_combat.tick(delta, self, aggressor, snap)
+		if not c_spell_caster.should_block_auto_attack():
+			c_combat.tick(delta, self, aggressor, snap)
+		c_spell_caster.tick(delta, aggressor)
+
+	if cast_bar != null:
+		var casting := c_spell_caster.is_casting()
+		cast_bar.set_cast_visible(casting)
+		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if casting else 0.0)
+		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if casting else null)
 
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"
@@ -257,7 +270,8 @@ func apply_spawn_init(
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
-	abilities_in: Array[String] = []
+	abilities_in: Array[String] = [],
+	spell_preset_name_key_in: String = ""
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -265,8 +279,10 @@ func apply_spawn_init(
 	if loot_profile_in != null:
 		loot_profile = loot_profile_in
 	abilities = abilities_in.duplicate()
+	spell_preset_name_key = spell_preset_name_key_in
 	# Common params (speed/leash/aggro) are configured on the mob itself.
 	mob_level = max(1, level_in)
+	c_spell_caster.configure(abilities, mob_level)
 	body_size = body_size_in
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 
@@ -461,7 +477,7 @@ func on_player_died() -> void:
 # Death + loot/xp (как у агрессивного)
 # ---------------------------
 func _die() -> void:
-	if c_stats.is_dead:
+	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
 	if _prev_aggressor != null:
@@ -508,6 +524,12 @@ func _base_xp_l1_by_size() -> int:
 
 func get_danger_meter() -> DangerMeterComponent:
 	return c_danger
+
+func get_display_name() -> String:
+	var suffix := String(TranslationServer.translate(spell_preset_name_key)).to_lower()
+	if suffix == "":
+		return String(name)
+	return "%s %s" % [String(name), suffix]
 
 func _now_sec() -> float:
 	return float(Time.get_ticks_msec()) / 1000.0

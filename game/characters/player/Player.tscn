@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://rwedipw6jwwn"]
+[gd_scene load_steps=15 format=3 uid="uid://rwedipw6jwwn"]
 
 [ext_resource type="Script" uid="uid://bat5o7j41jp0r" path="res://game/characters/player/player.gd" id="1_p0vlq"]
 [ext_resource type="Script" uid="uid://chlq040cx6wia" path="res://game/characters/player/components/player_stats.gd" id="2_dcag1"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="8_3yo6h"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="9_uox5w"]
 [ext_resource type="Script" uid="uid://cmfp07uiqwjw0" path="res://game/characters/player/interaction_detector.gd" id="10_8sru1"]
+[ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="11_castbar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5q5h1"]
 size = Vector2(24, 24)
@@ -33,16 +34,7 @@ offset_bottom = 16.0
 color = Color(0.14901961, 0.12941177, 1, 1)
 
 
-[node name="CastBar" type="ProgressBar" parent="."]
-visible = false
-offset_left = -22.0
-offset_top = -38.0
-offset_right = 22.0
-offset_bottom = -30.0
-max_value = 100.0
-show_percentage = false
-mouse_filter = 2
-value = 0.0
+[node name="CastBar" parent="." instance=ExtResource("11_castbar")]
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_5q5h1")

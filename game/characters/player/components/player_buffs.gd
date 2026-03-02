@@ -256,6 +256,18 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ab
 	var data_dict := _normalize_buff_data(data)
 	var entry_ability_id: String = ability_id if ability_id != "" else String(data_dict.get("ability_id", ""))
 	var entry_source: String = source if source != "" else String(data_dict.get("source", ""))
+	if entry_source == "buff":
+		var owner_id := int(data_dict.get("caster_owner_id", 0))
+		for k in _buffs.keys():
+			var key: String = String(k)
+			var existing: Dictionary = _buffs[key] as Dictionary
+			if String(existing.get("source", "")) != "buff":
+				continue
+			var edata: Dictionary = existing.get("data", {}) as Dictionary
+			if int(edata.get("caster_owner_id", 0)) != owner_id:
+				continue
+			if key != id:
+				_buffs.erase(key)
 	var effective_duration: float = duration_sec
 	if effective_duration <= 0.0:
 		effective_duration = 999999.0

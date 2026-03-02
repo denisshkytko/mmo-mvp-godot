@@ -167,6 +167,14 @@ func get_cast_progress() -> float:
 		return 0.0
 	return clamp(1.0 - (_cast_time_left / _cast_total_time), 0.0, 1.0)
 
+func get_cast_icon() -> Texture2D:
+	if _cast_payload.is_empty():
+		return null
+	var def: AbilityDefinition = _cast_payload.get("def") as AbilityDefinition
+	if def == null:
+		return null
+	return def.icon
+
 func get_cooldown_left(ability_id: String) -> float:
 	return float(_cooldowns.get(ability_id, 0.0))
 

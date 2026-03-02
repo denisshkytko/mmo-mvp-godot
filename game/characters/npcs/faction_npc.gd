@@ -12,6 +12,7 @@ signal died(corpse: Corpse)
 @onready var faction_rect: ColorRect = $"ColorRect"
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
+@onready var cast_bar: CastBarWidget = $CastBar
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -40,6 +41,8 @@ var npc_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
 var abilities: Array[String] = []
+var spell_preset_name_key: String = ""
+var c_spell_caster: MobSpellCaster = MobSpellCaster.new()
 
 var home_position: Vector2 = Vector2.ZERO
 var current_target: Node2D = null
@@ -164,9 +167,16 @@ func _ready() -> void:
 
 	_update_faction_color()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
+	c_spell_caster.setup(self)
 
 func get_faction_id() -> String:
 	return faction_id
+
+func get_display_name() -> String:
+	var suffix := String(TranslationServer.translate(spell_preset_name_key)).to_lower()
+	if suffix == "":
+		return String(name)
+	return "%s %s" % [String(name), suffix]
 
 # Спавнер вызывает сразу после instantiate()
 func apply_spawn_init(
@@ -187,7 +197,8 @@ func apply_spawn_init(
 	growth_profile_id_in: String = "",
 	merchant_preset_in: MerchantPreset = null,
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
-	abilities_in: Array[String] = []
+	abilities_in: Array[String] = [],
+	spell_preset_name_key_in: String = ""
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -201,6 +212,7 @@ func apply_spawn_init(
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
 	merchant_preset = merchant_preset_in if merchant_preset_in != null else merchant_preset
 	abilities = abilities_in.duplicate()
+	spell_preset_name_key = spell_preset_name_key_in
 
 	# yellow не инициирует бой
 	proactive_aggro = (faction_id != "yellow")
@@ -223,6 +235,7 @@ func apply_spawn_init(
 		c_stats.growth_profile_id = growth_profile_id_in
 		c_stats.mob_variant = mob_variant
 	_setup_resource_from_class(class_id_in)
+	c_spell_caster.configure(abilities, npc_level)
 
 	# presets + combat mode
 	match fighter_type:
@@ -297,7 +310,8 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if c_stats.is_dead:
+	if c_stats.is_dead or c_stats.current_hp <= 0:
+		_die()
 		return
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
@@ -388,7 +402,15 @@ func _physics_process(delta: float) -> void:
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
-		c_combat.tick(delta, self, current_target, snap)
+		if not c_spell_caster.should_block_auto_attack():
+			c_combat.tick(delta, self, current_target, snap)
+		c_spell_caster.tick(delta, current_target)
+
+	if cast_bar != null:
+		var casting := c_spell_caster.is_casting()
+		cast_bar.set_cast_visible(casting)
+		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if casting else 0.0)
+		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if casting else null)
 
 
 func _pick_target() -> Node2D:
@@ -463,7 +485,7 @@ func is_in_combat() -> bool:
 	return true
 
 func _die() -> void:
-	if c_stats.is_dead:
+	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
 	if current_target != null:

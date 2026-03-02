@@ -26,12 +26,13 @@ var class_choice: int:
 		return _class_choice_internal
 	set(v):
 		_class_choice_internal = int(v)
-		_abilities_internal = _filter_abilities_for_class(_abilities_internal)
-@export var abilities: Array[String]:
+		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
+		notify_property_list_changed()
+var spell_preset_id: String = "none":
 	get:
-		return _abilities_internal
-	set(value):
-		_abilities_internal = _filter_abilities_for_class(value)
+		return _spell_preset_id_internal
+	set(v):
+		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 
 @export_group("Behavior After Spawn")
@@ -48,7 +49,47 @@ const C_MAGE := 3
 const C_PRIEST := 4
 const C_HUNTER := 5
 var _class_choice_internal: int = C_PALADIN
-var _abilities_internal: Array[String] = []
+var _spell_preset_id_internal: String = "none"
+
+func _get_property_list() -> Array[Dictionary]:
+	var props: Array[Dictionary] = []
+	props.append({
+		"name": "Faction NPC Setup/spell_preset_id",
+		"type": TYPE_STRING,
+		"hint": PROPERTY_HINT_ENUM,
+		"hint_string": _build_spell_preset_hint(),
+		"usage": PROPERTY_USAGE_DEFAULT,
+	})
+	return props
+
+func _set(property: StringName, value: Variant) -> bool:
+	if String(property) == "Faction NPC Setup/spell_preset_id":
+		spell_preset_id = String(value)
+		return true
+	return false
+
+func _get(property: StringName) -> Variant:
+	if String(property) == "Faction NPC Setup/spell_preset_id":
+		return spell_preset_id
+	return null
+
+func _build_spell_preset_hint() -> String:
+	var cls := _get_current_class_id()
+	match cls:
+		"mage":
+			return "none:Нет,mage_fire_caster,mage_ice_caster"
+		"hunter":
+			return "none:Нет,hunter_hunter"
+		"warrior":
+			return "none:Нет,warrior_warrior"
+		"priest":
+			return "none:Нет,priest_novice"
+		"paladin":
+			return "none:Нет,paladin_knight"
+		"shaman":
+			return "none:Нет,shaman_elementalist"
+		_:
+			return "none:Нет"
 
 func _get_spawn_scene() -> PackedScene:
 	return NPC_SCENE
@@ -75,6 +116,8 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 
 	if OS.is_debug_build():
 		print("[SPAWN][FNPC] type=", fighter_type, " class_id=", class_id, " profile_id=", profile_id, " lvl=", level, " point=", point.global_position)
+	var abilities_for_level := MobSpellPresetDB.resolve_ability_ids_for_level(spell_preset_id, class_id, level)
+	var preset_name_key := MobSpellPresetDB.get_preset_name_key(spell_preset_id)
 
 	mob.call_deferred(
 		"apply_spawn_init",
@@ -95,26 +138,14 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		profile_id,
 		merchant_preset,
 		mob_variant,
-		_abilities_internal
+		abilities_for_level,
+		preset_name_key
 	)
 	return true
 
 func _get_current_class_id() -> String:
 	return CLASS_IDS[_class_choice_internal]
 
-func _filter_abilities_for_class(values: Array[String]) -> Array[String]:
-	var out: Array[String] = []
+func _sanitize_spell_preset_for_class(value: String) -> String:
 	var class_id := _get_current_class_id()
-	var db: Node = null
-	if is_inside_tree():
-		db = get_node_or_null("/root/AbilityDB")
-	for ability_id in values:
-		if ability_id == "":
-			continue
-		if db != null and db.has_method("get_ability"):
-			var def: AbilityDefinition = db.call("get_ability", ability_id)
-			if def != null and (class_id == "" or def.class_id == class_id):
-				out.append(ability_id)
-		else:
-			out.append(ability_id)
-	return out
+	return MobSpellPresetDB.get_allowed_preset_id(value, class_id)

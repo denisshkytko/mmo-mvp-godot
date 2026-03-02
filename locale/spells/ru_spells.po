@@ -522,6 +522,30 @@ msgstr "Повышает скорость передвижения шамана 
 msgid "ability.tailwind.name"
 msgstr "Попутный ветер"
 
+msgid "mob_spell_preset.mage_fire_caster"
+msgstr "Заклинатель огня"
+
+msgid "mob_spell_preset.mage_ice_caster"
+msgstr "Заклинатель льда"
+
+msgid "mob_spell_preset.hunter_hunter"
+msgstr "Охотник"
+
+msgid "mob_spell_preset.warrior_warrior"
+msgstr "Воин"
+
+msgid "mob_spell_preset.priest_novice"
+msgstr "Послушник"
+
+msgid "mob_spell_preset.paladin_knight"
+msgstr "Рыцарь"
+
+msgid "mob_spell_preset.shaman_elementalist"
+msgstr "Заклинатель стихий"
+
+msgid "mob_spell_preset.none"
+msgstr "Нет"
+
 msgid "ability.throe.desc"
 msgstr "Наносит цели {X} единиц магического урона."
 

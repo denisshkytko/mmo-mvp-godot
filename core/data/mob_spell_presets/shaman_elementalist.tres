@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MobSpellPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/abilities/mob_spell_preset.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "shaman_elementalist"
+class_id = "shaman"
+name_key = "mob_spell_preset.shaman_elementalist"
+primary_ability_id = "lightning"
+secondary_ability_id_1 = "earths_wrath"
+secondary_ability_id_2 = "searing_strike"

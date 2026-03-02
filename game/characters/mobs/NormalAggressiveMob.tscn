@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c8qhqey2vbhkc"]
+[gd_scene load_steps=11 format=3 uid="uid://c8qhqey2vbhkc"]
 
 [ext_resource type="Script" uid="uid://cvfcjvpmn6mum" path="res://game/characters/mobs/normal_aggressive_mob.gd" id="1_tamd3"]
 [ext_resource type="PackedScene" uid="uid://nas2p81wwe7r" path="res://game/characters/mobs/projectiles/HomingProjectile.tscn" id="2_8u31h"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dgcctk2ufrluw" path="res://game/characters/mobs/normal_aggressive_mob_stats.gd" id="4_q1mdw"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_tdnly"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_1p0up"]
+[ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="7_castbar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
 size = Vector2(24, 24)
@@ -56,6 +57,8 @@ color = Color(1, 0.02745098, 0.007843138, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]
 shape = SubResource("RectangleShape2D_ex06h")
+
+[node name="CastBar" parent="." instance=ExtResource("7_castbar")]
 
 [node name="Components" type="Node" parent="."]
 
