@@ -18,6 +18,8 @@ var _player: Node = null
 var _target: Node = null
 var _panel_stylebox_base: StyleBox = null
 var _mana_fill_color: Color = Color(0.23921569, 0.0, 1.0, 1.0)
+var _full_target_name: String = ""
+var _target_level_text: String = ""
 
 func _ready() -> void:
 	panel.visible = false
@@ -84,6 +86,7 @@ func _process(_delta: float) -> void:
 		_update_identity()
 		_update_relation_color()
 
+	_fit_identity_row()
 	_update_hp()
 	_update_resource()
 	_update_effects()
@@ -145,7 +148,7 @@ func _update_identity() -> void:
 		else:
 			display_name = String(_target.name)
 
-	name_label.text = display_name
+	_full_target_name = display_name
 
 	var lvl: int = 0
 	if _target.has_method("get_level"):
@@ -159,8 +162,60 @@ func _update_identity() -> void:
 			if nl != null:
 				lvl = int(nl)
 
-	level_label.text = tr("ui.hud.level.short") % lvl if lvl > 0 else ""
+	_target_level_text = tr("ui.hud.level.short") % lvl if lvl > 0 else ""
+	_fit_identity_row()
 
+
+func _fit_identity_row() -> void:
+	if name_label == null or level_label == null or panel == null:
+		return
+	level_label.text = _target_level_text
+	if _full_target_name == "":
+		name_label.text = ""
+		return
+	var header_width: float = max(1.0, panel.size.x - 16.0)
+	var name_font: Font = name_label.get_theme_font("font")
+	var name_font_size: int = name_label.get_theme_font_size("font_size")
+	var level_font: Font = level_label.get_theme_font("font")
+	var level_font_size: int = level_label.get_theme_font_size("font_size")
+	if name_font == null:
+		name_label.text = _full_target_name
+		return
+	if level_font == null:
+		level_font = name_font
+		level_font_size = name_font_size
+	var level_width: float = 0.0
+	if _target_level_text != "":
+		level_width = level_font.get_string_size(_target_level_text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, level_font_size).x
+	var sep: int = 0
+	var header := name_label.get_parent()
+	if header is HBoxContainer and _target_level_text != "":
+		sep = int((header as HBoxContainer).get_theme_constant("separation"))
+	var name_width: float = max(1.0, header_width - level_width - float(sep))
+	name_label.text = _truncate_with_ellipsis(_full_target_name, name_font, name_font_size, name_width)
+
+
+func _truncate_with_ellipsis(text: String, font: Font, font_size: int, max_width: float) -> String:
+	if text == "" or font == null:
+		return text
+	if font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x <= max_width:
+		return text
+	var ellipsis := "..."
+	if font.get_string_size(ellipsis, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x > max_width:
+		return ellipsis
+	var low := 0
+	var high := text.length()
+	var best := ellipsis
+	while low <= high:
+		var mid := int((low + high) / 2)
+		var candidate := text.substr(0, mid) + ellipsis
+		var candidate_w := font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+		if candidate_w <= max_width:
+			best = candidate
+			low = mid + 1
+		else:
+			high = mid - 1
+	return best
 func _get_stats_node() -> Node:
 	if _target == null:
 		return null

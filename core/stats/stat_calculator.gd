@@ -584,8 +584,25 @@ static func apply_crit_to_heal(base_heal: int, snap: Dictionary) -> int:
 
 static func _merge_flags(dest: Dictionary, incoming: Dictionary) -> void:
     for k in incoming.keys():
-        if bool(incoming.get(k, false)):
+        if _variant_is_true(incoming.get(k, false)):
             dest[k] = true
+
+
+static func _variant_is_true(value: Variant) -> bool:
+    match typeof(value):
+        TYPE_BOOL:
+            return value
+        TYPE_INT:
+            return int(value) != 0
+        TYPE_FLOAT:
+            return not is_zero_approx(float(value))
+        TYPE_STRING, TYPE_STRING_NAME:
+            var s: String = String(value).strip_edges().to_lower()
+            return s == "true" or s == "1" or s == "yes"
+        TYPE_NIL:
+            return false
+        _:
+            return true
 
 static func _merge_on_hit(dest: Dictionary, incoming: Dictionary) -> void:
     for k in incoming.keys():
