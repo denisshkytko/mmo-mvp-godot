@@ -51,6 +51,24 @@ func _is_player_involved(source: Node2D, target: Node2D) -> bool:
 		return true
 	if source != null and is_instance_valid(source) and source == player:
 		return true
+	if _node_has_player_engagement(target, player):
+		return true
+	if source != null and is_instance_valid(source) and _node_has_player_engagement(source, player):
+		return true
+	return false
+
+
+func _node_has_player_engagement(node: Node, player: Node) -> bool:
+	if node == null or player == null:
+		return false
+	if "current_target" in node and node.get("current_target") == player:
+		return true
+	if "aggressor" in node and node.get("aggressor") == player:
+		return true
+	if "direct_attackers" in node:
+		var d: Variant = node.get("direct_attackers")
+		if d is Dictionary and (d as Dictionary).has(player.get_instance_id()):
+			return true
 	return false
 
 func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:

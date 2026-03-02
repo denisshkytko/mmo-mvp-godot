@@ -34,7 +34,12 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	var data_dict := data_res.to_dict()
 	data_dict["ability_id"] = ability_id
-	data_dict["source"] = String(context.get("source", ""))
+	var source_tag: String = String(context.get("source", "")).strip_edges().to_lower()
+	if source_tag == "" and context.get("ability_def", null) is AbilityDefinition:
+		var def_ctx: AbilityDefinition = context.get("ability_def") as AbilityDefinition
+		if def_ctx != null:
+			source_tag = String(def_ctx.ability_type).strip_edges().to_lower()
+	data_dict["source"] = source_tag
 	data_dict["is_debuff"] = bool(context.get("is_debuff", false))
 	data_dict["caster_ref"] = caster
 	data_dict["caster_owner_id"] = caster.get_instance_id() if caster != null else 0
