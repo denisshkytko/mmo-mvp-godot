@@ -240,7 +240,10 @@ func _build_best_rare_equipment_for_class(class_id: String, level: int) -> Dicti
 	var db := get_node_or_null("/root/DataDB")
 	if db == null:
 		return {}
-	var items_dict: Dictionary = db.get("items", {}) as Dictionary
+	var items_dict: Dictionary = {}
+	var raw_items = db.get("items")
+	if raw_items is Dictionary:
+		items_dict = raw_items as Dictionary
 	if items_dict.is_empty():
 		return {}
 
