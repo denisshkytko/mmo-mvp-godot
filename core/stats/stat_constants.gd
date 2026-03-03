@@ -18,7 +18,7 @@ class_name StatConstants
 const HP_PER_END: float = 20.0
 const HP_PER_STR: float = 0.0
 
-const MANA_PER_INT: float = 10.0
+const MANA_PER_INT: float = 15.0
 
 # --- Primary -> regen (per second, can be fractional) ---
 const HP_REGEN_PER_END: float = 0.1
@@ -62,7 +62,7 @@ const MOB_UNARMED_AP_MULT: float = 1.5
 
 # --- Speed ratings ---
 const AS_FROM_AGI: float = 2.0
-const CS_FROM_INT: float = 0.5
+const CS_FROM_INT: float = 1.0
 
 const AS_FROM_SPEED: int = 1
 const CS_FROM_SPEED: int = 1
@@ -89,4 +89,4 @@ const CDMG_FROM_PER: float = 2.5
 const CDMG_K: float = 100.0
 
 const EVADE_K: float = 120.0
-const BLOCK_K: float = 120.0
+const BLOCK_K: float = 80.0
