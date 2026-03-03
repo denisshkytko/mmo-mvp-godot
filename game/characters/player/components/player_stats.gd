@@ -279,8 +279,6 @@ func _build_snapshot() -> Dictionary:
 		buffs = p.c_buffs.get_buffs_snapshot()
 
 	var snapshot_level := p.level
-	if not _use_legacy_primary:
-		snapshot_level = 1
 	# Build dedicated snapshots for clear UI decomposition:
 	# - base_no_buffs_snapshot: pure base+level, no gear, no buffs
 	# - equipment_only_snapshot: base+level+gear, no buffs
@@ -361,6 +359,12 @@ func _map_modifier(gear: Dictionary, stat_key: String, value: int) -> void:
 			secondary["crit_chance_rating"] = int(secondary.get("crit_chance_rating", 0)) + value
 		"CritDamageRating":
 			secondary["crit_damage_rating"] = int(secondary.get("crit_damage_rating", 0)) + value
+		"EvadeRating":
+			secondary["evade_rating"] = int(secondary.get("evade_rating", 0)) + value
+		"BlockRating":
+			secondary["block_chance_rating"] = int(secondary.get("block_chance_rating", 0)) + value
+		"BlockValue":
+			secondary["block_value"] = int(secondary.get("block_value", 0)) + value
 		"HPRegen":
 			secondary["hp_regen"] = float(secondary.get("hp_regen", 0.0)) + float(value)
 		"ManaRegen":
@@ -425,6 +429,9 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 	if _is_damage_type_blocked(dmg_type, flags):
 		return 0
 
+	if _roll_evade():
+		return 0
+
 	var pct: float
 	if dmg_type == "magic":
 		pct = float(_snapshot.get("magic_reduction_pct", 0.0))
@@ -432,6 +439,9 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 		pct = float(_snapshot.get("physical_reduction_pct", 0.0))
 	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
+	final = _apply_shield_block_if_any(final)
+	if final <= 0:
+		return 0
 	if p.c_buffs != null and p.c_buffs.has_method("absorb_incoming_damage"):
 		final = int(p.c_buffs.call("absorb_incoming_damage", final))
 		if final <= 0:
@@ -447,6 +457,29 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 	if p.current_hp <= 0:
 		_on_death()
 	return final
+
+func _roll_evade() -> bool:
+	var evade_pct: float = clamp(float(_snapshot.get("evade_chance_pct", 0.0)), 0.0, 100.0)
+	if evade_pct <= 0.0:
+		return false
+	return randf() * 100.0 < evade_pct
+
+func _apply_shield_block_if_any(damage_after_mitigation: int) -> int:
+	if damage_after_mitigation <= 0:
+		return 0
+	if p == null or p.c_equip == null or not p.c_equip.has_method("has_left_shield_equipped"):
+		return damage_after_mitigation
+	if not bool(p.c_equip.call("has_left_shield_equipped")):
+		return damage_after_mitigation
+	var block_chance_pct: float = clamp(float(_snapshot.get("block_chance_pct", 0.0)), 0.0, 100.0)
+	if block_chance_pct <= 0.0:
+		return damage_after_mitigation
+	if randf() * 100.0 >= block_chance_pct:
+		return damage_after_mitigation
+	var block_value: int = max(0, int(round(float(_snapshot.get("derived", {}).get("block_value", 0.0)))))
+	if block_value <= 0:
+		return damage_after_mitigation
+	return max(0, damage_after_mitigation - block_value)
 
 
 func _is_damage_type_blocked(dmg_type: String, flags: Dictionary) -> bool:

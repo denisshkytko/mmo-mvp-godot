@@ -40,7 +40,8 @@ func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary) -
 		"phys_base_pct":
 			var base_phys: int = 0
 			if "c_combat" in caster and caster.c_combat != null:
-				base_phys = caster.c_combat.get_attack_damage()
+				if caster.c_combat.has_method("get_attack_damage"):
+					base_phys = int(caster.c_combat.call("get_attack_damage"))
 			return int(round(float(base_phys) * float(rank_data.value_pct) / 100.0))
 		"spell_power_flat":
 			return int(rank_data.value_flat) + int(round(spell_power))

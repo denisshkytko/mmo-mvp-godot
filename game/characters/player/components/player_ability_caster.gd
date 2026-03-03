@@ -103,7 +103,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 		return {"ok": false, "reason": "no_resource"}
 
 	var cdr_pct: float = float(snap.get("cooldown_reduction_pct", 0.0))
-	var cd_eff: float = max(0.0, rank_data.cooldown_sec * (1.0 - cdr_pct / 100.0))
+	var cd_eff: float = rank_data.cooldown_sec * (1.0 / (1.0 + max(0.0, cdr_pct) / 100.0))
 
 	var cast_speed_pct: float = float(snap.get("cast_speed_pct", 0.0))
 	var cast_mult: float = 1.0 / (1.0 + cast_speed_pct / 100.0)

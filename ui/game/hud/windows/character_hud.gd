@@ -34,6 +34,9 @@ const DERIVED_PRIMARY_COEFFS := {
 	"cast_speed_rating": {"int": STAT_CONST.CS_FROM_INT},
 	"crit_chance_rating": {"per": STAT_CONST.CRIT_FROM_PER, "agi": STAT_CONST.CRIT_FROM_AGI},
 	"crit_damage_rating": {"per": STAT_CONST.CDMG_FROM_PER},
+	"evade_rating": {"agi": STAT_CONST.EVADE_FROM_AGI, "per": STAT_CONST.EVADE_FROM_PER},
+	"block_chance_rating": {"str": STAT_CONST.BLOCK_CHANCE_FROM_STR, "per": STAT_CONST.BLOCK_CHANCE_FROM_PER},
+	"block_value": {"str": STAT_CONST.BLOCK_VALUE_FROM_STR},
 }
 
 @onready var character_button: Button = get_node_or_null("CharacterButton")
@@ -555,12 +558,12 @@ func _format_snapshot(snap: Dictionary) -> String:
 
 	# Primary (single column, full names)
 	lines.append("[b]Основные характеристики[/b]")
-	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает силу атаки и физическую защиту"))
-	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает скорость атаки, рейтинг крит. шанса и силу атаки"))
-	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья и защиту"))
-	var int_text := "Увеличивает силу заклинаний и магическое сопротивление" if is_rage_player else "Увеличивает запас маны, восстановление маны, силу заклинаний и магическое сопротивление"
+	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает силу атаки, рейтинг блока, значение блока и физическую защиту"))
+	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает силу атаки, рейтинг уклонения, рейтинг крит. шанса и скорость атаки"))
+	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья, физическую защиту и магическое сопротивление"))
+	var int_text := "Увеличивает силу заклинаний, магическое сопротивление и скорость произнесения заклинаний" if is_rage_player else "Увеличивает запас маны, восстановление маны, силу заклинаний, магическое сопротивление и скорость произнесения заклинаний"
 	lines.append(_line_primary_stat("Интеллект", "int", snap, int_text))
-	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. шанса и рейтинг крит. урона"))
+	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. урона, рейтинг крит. шанса, рейтинг уклонения и рейтинг блока"))
 
 	lines.append("")
 	if is_rage_player:
@@ -590,7 +593,7 @@ func _format_snapshot(snap: Dictionary) -> String:
 		"Рейтинг крит. урона",
 		"crit_damage_rating",
 		snap,
-		"Критический урон x%.2f" % float(snap.get("crit_multiplier", 2.0))
+		"Критический урон x%.2f" % float(snap.get("crit_multiplier", 1.5))
 	))
 
 	lines.append("")
@@ -603,11 +606,13 @@ func _format_snapshot(snap: Dictionary) -> String:
 		snap,
 		speed_text
 	))
+	var atk_speed_pct_value: float = float(snap.get("attack_speed_pct", 0.0))
+	var atk_speed_mult_value: float = 1.0 + atk_speed_pct_value / 100.0
 	lines.append(_line_with_breakdown(
 		"Скорость атаки",
 		"attack_speed_rating",
 		snap,
-		"Увеличивает скорость атаки на %.2f%%" % float(snap.get("attack_speed_pct", 0.0))
+		"Увеличивает скорость атаки на %.2f%%\nТекущая скорость атаки: x%.2f" % [atk_speed_pct_value, atk_speed_mult_value]
 	))
 	lines.append(_line_with_breakdown(
 		"Скорость произнесения заклинаний",
@@ -629,6 +634,24 @@ func _format_snapshot(snap: Dictionary) -> String:
 		"magic_resist",
 		snap,
 		"Снижает получаемый магический урон на %.2f%%" % float(snap.get("magic_mitigation_pct", 0.0))
+	))
+	lines.append(_line_with_breakdown(
+		"Рейтинг уклонения",
+		"evade_rating",
+		snap,
+		"Шанс уклонения %.2f%%" % float(snap.get("evade_chance_pct", 0.0))
+	))
+	lines.append(_line_with_breakdown(
+		"Рейтинг блока",
+		"block_chance_rating",
+		snap,
+		"Шанс блока %.2f%% (только со щитом)" % float(snap.get("block_chance_pct", 0.0))
+	))
+	lines.append(_line_with_breakdown(
+		"Значение блока",
+		"block_value",
+		snap,
+		"Сколько урона дополнительно поглощается успешным блоком"
 	))
 
 	return "\n".join(lines)

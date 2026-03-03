@@ -103,7 +103,7 @@ msgid "ability.armor_break.name"
 msgstr "Пробитие брони"
 
 msgid "ability.aura_of_light_protection.desc"
-msgstr "Повышает физическую защиту на {P} единиц и магическое сопротивление на {M} единиц."
+msgstr "Повышает физическую защиту на {X} единиц и магическое сопротивление на {M} единиц."
 
 msgid "ability.aura_of_light_protection.name"
 msgstr "Аура светлой защиты"

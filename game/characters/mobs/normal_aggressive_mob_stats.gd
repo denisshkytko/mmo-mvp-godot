@@ -113,8 +113,8 @@ func _apply_defense_multiplier(mult: float) -> void:
 	derived["defense"] = defense
 	derived["magic_resist"] = magic_resist
 	_snapshot["derived"] = derived
-	var phys_reduction := STAT_CALC._mitigation_pct(defense)
-	var magic_reduction := STAT_CALC._mitigation_pct(magic_resist)
+	var phys_reduction := STAT_CALC._mitigation_pct(defense, float(mob_level))
+	var magic_reduction := STAT_CALC._mitigation_pct(magic_resist, float(mob_level))
 	_snapshot["physical_reduction_pct"] = phys_reduction
 	_snapshot["magic_reduction_pct"] = magic_reduction
 	_snapshot["defense_mitigation_pct"] = phys_reduction
@@ -305,7 +305,9 @@ func is_stunned() -> bool:
 			return true
 	return false
 func get_stats_snapshot() -> Dictionary:
-	return _snapshot.duplicate(true)
+	var out := _snapshot.duplicate(true)
+	out["mob_variant"] = MOB_VARIANT.clamp_variant(mob_variant)
+	return out
 
 func apply_damage(raw_physical_damage: int) -> bool:
 	if is_dead:
@@ -317,7 +319,7 @@ func apply_damage(raw_physical_damage: int) -> bool:
 	else:
 		var d: Dictionary = _snapshot.get("derived", {}) as Dictionary
 		var def_v: float = float(d.get("defense", defense_value))
-		reduction_pct = STAT_CALC._mitigation_pct(def_v)
+		reduction_pct = STAT_CALC._mitigation_pct(def_v, float(mob_level))
 	var dmg: int = int(ceil(float(raw_physical_damage) * (1.0 - reduction_pct / 100.0)))
 	dmg = max(1, dmg)
 
