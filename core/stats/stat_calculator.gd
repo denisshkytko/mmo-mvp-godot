@@ -321,8 +321,8 @@ static func build_player_snapshot(
     var evade_chance_pct: float = _rating_to_pct(float(derived.evade_rating), level_k, C.EVADE_K)
     var block_chance_pct: float = _rating_to_pct(float(derived.block_chance_rating), level_k, C.BLOCK_K)
 
-    var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
-    var mag_reduction_pct: float = _mitigation_pct(float(derived.magic_resist))
+    var phys_reduction_pct: float = _mitigation_pct(float(derived.defense), level_k)
+    var mag_reduction_pct: float = _mitigation_pct(float(derived.magic_resist), level_k)
     var incoming_reduction_pct: float = float(derived.incoming_damage_reduction_pct) * 100.0
     var incoming_taken_bonus_pct: float = float(derived.get("incoming_damage_taken_pct_bonus", 0.0))
     if incoming_reduction_pct != 0.0 or incoming_taken_bonus_pct != 0.0:
@@ -573,10 +573,11 @@ static func _apply_percent_bonus(derived: Dictionary, breakdown: Dictionary, key
     _add_breakdown_line(breakdown[key], "percent", add, "+%d%%" % int(round(pct * 100.0)))
 
 
-static func _mitigation_pct(value: float) -> float:
+static func _mitigation_pct(value: float, level: float = 1.0) -> float:
     if value <= 0.0:
         return 0.0
-    var mult: float = C.MITIGATION_K / (C.MITIGATION_K + value)
+    var denom: float = value + max(1.0, level) * C.MITIGATION_K
+    var mult: float = (max(1.0, level) * C.MITIGATION_K) / max(0.01, denom)
     var pct: float = 100.0 * (1.0 - mult)
     return clamp(pct, 0.0, C.MAX_MITIGATION_PCT)
 

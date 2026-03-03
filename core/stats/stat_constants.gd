@@ -47,10 +47,10 @@ const RES_FROM_END: float = 0.5
 const RES_FROM_INT: float = 1.0
 
 # --- New defense ratings ---
-const EVADE_FROM_AGI: float = 1.0
-const EVADE_FROM_PER: float = 0.5
-const BLOCK_CHANCE_FROM_STR: float = 0.5
-const BLOCK_CHANCE_FROM_PER: float = 0.5
+const EVADE_FROM_AGI: float = 2.0
+const EVADE_FROM_PER: float = 1.0
+const BLOCK_CHANCE_FROM_STR: float = 2.0
+const BLOCK_CHANCE_FROM_PER: float = 1.0
 const BLOCK_VALUE_FROM_STR: float = 1.0
 
 # Mitigation curve constant for converting Defense/Resist to %.
@@ -61,7 +61,7 @@ const OFFHAND_MULT: float = 0.75
 const MOB_UNARMED_AP_MULT: float = 1.5
 
 # --- Speed ratings ---
-const AS_FROM_AGI: float = 0.5
+const AS_FROM_AGI: float = 2.0
 const CS_FROM_INT: float = 0.5
 
 const AS_FROM_SPEED: int = 1
@@ -77,15 +77,15 @@ const HASTE_CDR_K: float = 150.0
 
 # --- Crit ratings ---
 const BASE_CRIT_CHANCE_PCT: float = 0.0
-const CRIT_FROM_PER: float = 0.5
-const CRIT_FROM_AGI: float = 0.5
+const CRIT_FROM_PER: float = 1.5
+const CRIT_FROM_AGI: float = 1.0
 const CRIT_K: float = 60.0
 
 # Crit damage:
 # - base crit multiplier is x1.5
 # - bonus is converted from crit damage rating via DR curve
 const BASE_CRIT_MULTIPLIER: float = 1.5
-const CDMG_FROM_PER: float = 2.0
+const CDMG_FROM_PER: float = 2.5
 const CDMG_K: float = 100.0
 
 const EVADE_K: float = 120.0

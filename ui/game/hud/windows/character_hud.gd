@@ -558,12 +558,12 @@ func _format_snapshot(snap: Dictionary) -> String:
 
 	# Primary (single column, full names)
 	lines.append("[b]Основные характеристики[/b]")
-	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает силу атаки, физическую защиту, рейтинг и значение блока"))
+	lines.append(_line_primary_stat("Сила", "str", snap, "Увеличивает силу атаки, рейтинг блока, значение блока и физическую защиту"))
 	lines.append(_line_primary_stat("Ловкость", "agi", snap, "Увеличивает силу атаки, рейтинг уклонения, рейтинг крит. шанса и скорость атаки"))
 	lines.append(_line_primary_stat("Выносливость", "end", snap, "Увеличивает здоровье, восстановление здоровья, физическую защиту и магическое сопротивление"))
 	var int_text := "Увеличивает силу заклинаний, магическое сопротивление и скорость произнесения заклинаний" if is_rage_player else "Увеличивает запас маны, восстановление маны, силу заклинаний, магическое сопротивление и скорость произнесения заклинаний"
 	lines.append(_line_primary_stat("Интеллект", "int", snap, int_text))
-	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. шанса, рейтинг крит. урона, рейтинг уклонения и рейтинг блока"))
+	lines.append(_line_primary_stat("Восприятие", "per", snap, "Увеличивает рейтинг крит. урона, рейтинг крит. шанса, рейтинг уклонения и рейтинг блока"))
 
 	lines.append("")
 	if is_rage_player:
@@ -606,11 +606,13 @@ func _format_snapshot(snap: Dictionary) -> String:
 		snap,
 		speed_text
 	))
+	var atk_speed_pct_value: float = float(snap.get("attack_speed_pct", 0.0))
+	var atk_speed_mult_value: float = 1.0 + atk_speed_pct_value / 100.0
 	lines.append(_line_with_breakdown(
 		"Скорость атаки",
 		"attack_speed_rating",
 		snap,
-		"Увеличивает скорость атаки на %.2f%%" % float(snap.get("attack_speed_pct", 0.0))
+		"Увеличивает скорость атаки на %.2f%%\nТекущая скорость атаки: x%.2f" % [atk_speed_pct_value, atk_speed_mult_value]
 	))
 	lines.append(_line_with_breakdown(
 		"Скорость произнесения заклинаний",
