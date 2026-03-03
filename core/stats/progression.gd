@@ -2,7 +2,7 @@ extends RefCounted
 class_name Progression
 
 const MAX_LEVEL: int = 60
-const HOSTILE_TARGET_MULT: float = 2.2
+const HOSTILE_TARGET_MULT: float = 1.55
 
 const CLASS_IDS: Array = [
 	"paladin",

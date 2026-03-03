@@ -9,18 +9,18 @@ enum MobVariant {
 static func primary_mult(variant: int) -> float:
 	match variant:
 		MobVariant.RARE:
-			return 2.0
+			return 1.25
 		MobVariant.ELITE:
-			return 3.5
+			return 1.8
 		_:
 			return 1.0
 
 static func defense_mult(variant: int) -> float:
 	match variant:
 		MobVariant.RARE:
-			return 1.5
+			return 1.15
 		MobVariant.ELITE:
-			return 2.0
+			return 1.35
 		_:
 			return 1.0
 
