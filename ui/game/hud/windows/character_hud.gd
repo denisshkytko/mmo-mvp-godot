@@ -595,24 +595,6 @@ func _format_snapshot(snap: Dictionary) -> String:
 		snap,
 		"Критический урон x%.2f" % float(snap.get("crit_multiplier", 1.5))
 	))
-	lines.append(_line_with_breakdown(
-		"Рейтинг уклонения",
-		"evade_rating",
-		snap,
-		"Шанс уклонения %.2f%%" % float(snap.get("evade_chance_pct", 0.0))
-	))
-	lines.append(_line_with_breakdown(
-		"Рейтинг блока",
-		"block_chance_rating",
-		snap,
-		"Шанс блока %.2f%% (только со щитом)" % float(snap.get("block_chance_pct", 0.0))
-	))
-	lines.append(_line_with_breakdown(
-		"Значение блока",
-		"block_value",
-		snap,
-		"Сколько урона дополнительно поглощается успешным блоком"
-	))
 
 	lines.append("")
 	lines.append("[b]Скорость[/b]")
@@ -650,6 +632,24 @@ func _format_snapshot(snap: Dictionary) -> String:
 		"magic_resist",
 		snap,
 		"Снижает получаемый магический урон на %.2f%%" % float(snap.get("magic_mitigation_pct", 0.0))
+	))
+	lines.append(_line_with_breakdown(
+		"Рейтинг уклонения",
+		"evade_rating",
+		snap,
+		"Шанс уклонения %.2f%%" % float(snap.get("evade_chance_pct", 0.0))
+	))
+	lines.append(_line_with_breakdown(
+		"Рейтинг блока",
+		"block_chance_rating",
+		snap,
+		"Шанс блока %.2f%% (только со щитом)" % float(snap.get("block_chance_pct", 0.0))
+	))
+	lines.append(_line_with_breakdown(
+		"Значение блока",
+		"block_value",
+		snap,
+		"Сколько урона дополнительно поглощается успешным блоком"
 	))
 
 	return "\n".join(lines)

@@ -279,8 +279,6 @@ func _build_snapshot() -> Dictionary:
 		buffs = p.c_buffs.get_buffs_snapshot()
 
 	var snapshot_level := p.level
-	if not _use_legacy_primary:
-		snapshot_level = 1
 	# Build dedicated snapshots for clear UI decomposition:
 	# - base_no_buffs_snapshot: pure base+level, no gear, no buffs
 	# - equipment_only_snapshot: base+level+gear, no buffs

@@ -50,7 +50,7 @@ const RES_FROM_INT: float = 1.0
 const EVADE_FROM_AGI: float = 1.0
 const EVADE_FROM_PER: float = 0.5
 const BLOCK_CHANCE_FROM_STR: float = 0.5
-const BLOCK_CHANCE_FROM_PER: float = 1.0
+const BLOCK_CHANCE_FROM_PER: float = 0.5
 const BLOCK_VALUE_FROM_STR: float = 1.0
 
 # Mitigation curve constant for converting Defense/Resist to %.

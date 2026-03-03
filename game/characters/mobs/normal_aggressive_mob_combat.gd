@@ -82,3 +82,12 @@ func _fire_ranged(actor: Node2D, target: Node2D, damage: int) -> void:
 
 func get_stop_distance() -> float:
 	return melee_stop_distance if attack_mode == AttackMode.MELEE else ranged_attack_range
+
+func get_attack_damage() -> int:
+	var owner := get_parent()
+	if owner != null and "c_stats" in owner and owner.c_stats != null and owner.c_stats.has_method("get_stats_snapshot"):
+		var snap: Dictionary = owner.c_stats.call("get_stats_snapshot") as Dictionary
+		var derived: Dictionary = snap.get("derived", {}) as Dictionary
+		var ap: float = float(derived.get("attack_power", 0.0))
+		return max(1, STAT_CALC.compute_mob_unarmed_hit(ap))
+	return 1
