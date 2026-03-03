@@ -504,8 +504,12 @@ static func build_mob_snapshot_from_primary_values(
         }
     }
 
+    # `primary` here is already the final level-adjusted value from progression
+    # (base + per-level growth + hostile profile multiplier). We still must pass
+    # the real level into snapshot build so level-dependent conversions
+    # (mitigation / ratings curves) are computed correctly for mobs/NPCs.
     var per_lvl := {"str": 0, "agi": 0, "end": 0, "int": 0, "per": 0}
-    return build_player_snapshot(1, primary, per_lvl, gear, [])
+    return build_player_snapshot(level, primary, per_lvl, gear, [])
 
 
 static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, sec: Dictionary, source: String) -> void:
