@@ -3,6 +3,7 @@ class_name NormalNeutralMobCombat
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 
 var melee_stop_distance: float = 45.0
 var melee_attack_range: float = 55.0
@@ -30,6 +31,8 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var ap: float = float(derived.get("attack_power", 0.0))
 	var raw: int = STAT_CALC.compute_mob_unarmed_hit(ap)
+	var variant_id: int = int(snap.get("mob_variant", MOB_VARIANT.MobVariant.NORMAL))
+	raw = int(round(float(raw) * MOB_VARIANT.damage_mult(variant_id)))
 	var dmg: int = STAT_CALC.apply_crit_to_damage(raw, snap)
 
 	var aspct: float = float(snap.get("attack_speed_pct", 0.0))

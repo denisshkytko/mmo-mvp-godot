@@ -305,7 +305,9 @@ func is_stunned() -> bool:
 			return true
 	return false
 func get_stats_snapshot() -> Dictionary:
-	return _snapshot.duplicate(true)
+	var out := _snapshot.duplicate(true)
+	out["mob_variant"] = MOB_VARIANT.clamp_variant(mob_variant)
+	return out
 
 func apply_damage(raw_physical_damage: int) -> bool:
 	if is_dead:

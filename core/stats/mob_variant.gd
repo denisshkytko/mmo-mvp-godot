@@ -24,6 +24,15 @@ static func defense_mult(variant: int) -> float:
 		_:
 			return 1.0
 
+static func damage_mult(variant: int) -> float:
+	match variant:
+		MobVariant.RARE:
+			return 1.10
+		MobVariant.ELITE:
+			return 1.25
+		_:
+			return 1.0
+
 static func xp_mult(variant: int) -> float:
 	match variant:
 		MobVariant.RARE:
