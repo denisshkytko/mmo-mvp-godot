@@ -227,6 +227,21 @@ func has_left_offhand_item() -> bool:
 	var meta := _get_item_meta(id)
 	return String(meta.get("type", "")).to_lower() == "offhand"
 
+func has_left_shield_equipped() -> bool:
+	if is_left_hand_blocked():
+		return false
+	var left_item := _get_slot_item("weapon_l")
+	if left_item.is_empty():
+		return false
+	var id: String = String(left_item.get("id", ""))
+	if id == "":
+		return false
+	var meta := _get_item_meta(id)
+	if String(meta.get("type", "")).to_lower() != "offhand":
+		return false
+	var offhand: Dictionary = meta.get("offhand", {}) as Dictionary
+	return String(offhand.get("slot", "")).to_lower() == "shield"
+
 func try_equip_from_inventory_slot(inv_slot_index: int, target_slot_id: String = "") -> bool:
 	last_equip_fail_reason = ""
 	if p == null or p.c_inv == null:

@@ -169,6 +169,49 @@ func _ready() -> void:
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 	c_spell_caster.setup(self)
 
+
+func _roll_evade(snap: Dictionary) -> bool:
+	var evade_pct: float = clamp(float(snap.get("evade_chance_pct", 0.0)), 0.0, 100.0)
+	if evade_pct <= 0.0:
+		return false
+	return randf() * 100.0 < evade_pct
+
+func _apply_shield_block_if_any(damage_after_mitigation: int, snap: Dictionary) -> int:
+	if damage_after_mitigation <= 0:
+		return 0
+	if not _has_left_shield_equipped():
+		return damage_after_mitigation
+	var block_chance_pct: float = clamp(float(snap.get("block_chance_pct", 0.0)), 0.0, 100.0)
+	if block_chance_pct <= 0.0:
+		return damage_after_mitigation
+	if randf() * 100.0 >= block_chance_pct:
+		return damage_after_mitigation
+	var block_value: int = max(0, int(round(float((snap.get("derived", {}) as Dictionary).get("block_value", 0.0)))))
+	if block_value <= 0:
+		return damage_after_mitigation
+	return max(0, damage_after_mitigation - block_value)
+
+func _has_left_shield_equipped() -> bool:
+	var equip := c_stats.get_equipment_snapshot() if c_stats != null and c_stats.has_method("get_equipment_snapshot") else {}
+	if equip.is_empty():
+		return false
+	var left: Variant = equip.get("weapon_l", null)
+	if not (left is Dictionary):
+		return false
+	var item: Dictionary = left as Dictionary
+	var item_id: String = String(item.get("id", ""))
+	if item_id == "":
+		return false
+	var db := get_node_or_null("/root/DataDB")
+	if db == null or not db.has_method("get_item"):
+		return false
+	var meta: Dictionary = db.call("get_item", item_id) as Dictionary
+	if String(meta.get("type", "")).to_lower() != "offhand":
+		return false
+	var offhand: Dictionary = meta.get("offhand", {}) as Dictionary
+	return String(offhand.get("slot", "")).to_lower() == "shield"
+
+
 func get_faction_id() -> String:
 	return faction_id
 
@@ -452,6 +495,8 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 	regen_active = false
 
 	var snap: Dictionary = c_stats.get_stats_snapshot()
+	if _roll_evade(snap):
+		return 0
 	var pct: float
 	if dmg_type == "magic":
 		pct = float(snap.get("magic_reduction_pct", 0.0))
@@ -459,6 +504,9 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 		pct = float(snap.get("physical_reduction_pct", 0.0))
 	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
+	final = _apply_shield_block_if_any(final, snap)
+	if final <= 0:
+		return 0
 	c_stats.current_hp = max(0, c_stats.current_hp - final)
 	var died_now: bool = c_stats.current_hp <= 0
 	if final > 0 and attacker != null and is_instance_valid(attacker) and c_stats != null and c_stats.has_method("try_apply_attacker_slow_from_stance"):

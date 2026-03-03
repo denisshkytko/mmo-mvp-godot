@@ -113,6 +113,9 @@ static func build_player_snapshot(
         "cast_speed_rating": 0,
         "crit_chance_rating": 0,
         "crit_damage_rating": 0,
+        "evade_rating": 0,
+        "block_chance_rating": 0,
+        "block_value": 0,
         "magic_crit_chance_bonus_pct": 0.0,
         "cast_speed_bonus_pct": 0.0,
     }
@@ -138,6 +141,9 @@ static func build_player_snapshot(
         "cast_speed_rating": [],
         "crit_chance_rating": [],
         "crit_damage_rating": [],
+        "evade_rating": [],
+        "block_chance_rating": [],
+        "block_value": [],
         "magic_crit_chance_bonus_pct": [],
         "cast_speed_bonus_pct": [],
     }
@@ -189,6 +195,17 @@ static func build_player_snapshot(
 
     derived.crit_damage_rating = prim.per * C.CDMG_FROM_PER
     _add_breakdown_line(breakdown.crit_damage_rating, "PER", prim.per * C.CDMG_FROM_PER)
+
+    derived.evade_rating = prim.agi * C.EVADE_FROM_AGI + prim.per * C.EVADE_FROM_PER
+    _add_breakdown_line(breakdown.evade_rating, "AGI", prim.agi * C.EVADE_FROM_AGI)
+    _add_breakdown_line(breakdown.evade_rating, "PER", prim.per * C.EVADE_FROM_PER)
+
+    derived.block_chance_rating = prim.str * C.BLOCK_CHANCE_FROM_STR + prim.per * C.BLOCK_CHANCE_FROM_PER
+    _add_breakdown_line(breakdown.block_chance_rating, "STR", prim.str * C.BLOCK_CHANCE_FROM_STR)
+    _add_breakdown_line(breakdown.block_chance_rating, "PER", prim.per * C.BLOCK_CHANCE_FROM_PER)
+
+    derived.block_value = prim.str * C.BLOCK_VALUE_FROM_STR
+    _add_breakdown_line(breakdown.block_value, "STR", prim.str * C.BLOCK_VALUE_FROM_STR)
 
     # ------------------
     # 3) Apply gear flat secondary
@@ -287,18 +304,22 @@ static func build_player_snapshot(
     # ------------------
     # 6) Conversions to % (for UI)
     # ------------------
-    var atk_speed_pct: float = float(derived.attack_speed_rating) / C.AS_RATING_PER_1PCT
-    var cast_speed_pct: float = float(derived.cast_speed_rating) / C.CS_RATING_PER_1PCT + float(derived.cast_speed_bonus_pct)
-    var cooldown_reduction_pct: float = 0.0
-    if C.COOLDOWN_RATING_PER_1PCT > 0.0:
-        cooldown_reduction_pct = float(derived.speed) / C.COOLDOWN_RATING_PER_1PCT
-    var crit_from_rating := float(derived.crit_chance_rating) / C.CRIT_RATING_PER_1PCT
-    var crit_chance_pct: float = C.BASE_CRIT_CHANCE_PCT + crit_from_rating + float(derived.get("crit_chance_pct_bonus", 0.0))
-    crit_chance_pct = clamp(crit_chance_pct, 1.0, 100.0)
+    var level_k: float = max(1.0, float(level))
+    var atk_speed_pct: float = _haste_pct(float(derived.attack_speed_rating), level_k, C.HASTE_AS_K)
+    var cast_speed_pct: float = _haste_pct(float(derived.cast_speed_rating), level_k, C.HASTE_CS_K) + float(derived.cast_speed_bonus_pct)
+    var cooldown_reduction_pct: float = _haste_pct(float(derived.speed), level_k, C.HASTE_CDR_K)
+
+    var crit_base_pct: float = _rating_to_pct(float(derived.crit_chance_rating), level_k, C.CRIT_K)
+    var crit_chance_pct: float = clamp(C.BASE_CRIT_CHANCE_PCT + crit_base_pct + float(derived.get("crit_chance_pct_bonus", 0.0)), 0.0, 100.0)
     var magic_crit_chance_bonus_pct: float = float(derived.magic_crit_chance_bonus_pct)
-    var magic_crit_chance_pct: float = clamp(crit_chance_pct + magic_crit_chance_bonus_pct, 1.0, 100.0)
-    var crit_mult: float = 2.0 + (float(derived.crit_damage_rating) / C.CDMG_RATING_PER_0_01_MULT) * 0.01 + (float(derived.get("crit_damage_pct_bonus", 0.0)) / 100.0)
+    var magic_crit_chance_pct: float = clamp(crit_chance_pct + magic_crit_chance_bonus_pct, 0.0, 100.0)
+
+    var crit_bonus_pct: float = _rating_to_pct(float(derived.crit_damage_rating), level_k, C.CDMG_K)
+    var crit_mult: float = C.BASE_CRIT_MULTIPLIER + (crit_bonus_pct / 100.0) + (float(derived.get("crit_damage_pct_bonus", 0.0)) / 100.0)
     var magic_crit_mult: float = crit_mult + (float(derived.get("magic_crit_damage_pct_bonus", 0.0)) / 100.0)
+
+    var evade_chance_pct: float = _rating_to_pct(float(derived.evade_rating), level_k, C.EVADE_K)
+    var block_chance_pct: float = _rating_to_pct(float(derived.block_chance_rating), level_k, C.BLOCK_K)
 
     var phys_reduction_pct: float = _mitigation_pct(float(derived.defense))
     var mag_reduction_pct: float = _mitigation_pct(float(derived.magic_resist))
@@ -323,6 +344,8 @@ static func build_player_snapshot(
         "magic_crit_chance_pct": magic_crit_chance_pct,
         "crit_multiplier": crit_mult,
         "magic_crit_multiplier": magic_crit_mult,
+        "evade_chance_pct": evade_chance_pct,
+        "block_chance_pct": block_chance_pct,
 
         # both keys for compatibility
         "physical_reduction_pct": phys_reduction_pct,
@@ -517,6 +540,9 @@ static func _apply_flat_secondary(derived: Dictionary, breakdown: Dictionary, se
         "incoming_damage_taken_pct_bonus",
         "crit_chance_rating",
         "crit_damage_rating",
+        "evade_rating",
+        "block_chance_rating",
+        "block_value",
         "magic_crit_chance_bonus_pct",
         "cast_speed_bonus_pct",
         "attack_speed_rating",
@@ -555,6 +581,22 @@ static func _mitigation_pct(value: float) -> float:
     return clamp(pct, 0.0, C.MAX_MITIGATION_PCT)
 
 
+static func _rating_to_pct(rating: float, level: float, k: float) -> float:
+    if rating <= 0.0:
+        return 0.0
+    var denom: float = rating + max(1.0, level) * max(0.01, k)
+    if denom <= 0.0:
+        return 0.0
+    return clamp((rating / denom) * 100.0, 0.0, 100.0)
+
+
+static func _haste_pct(rating: float, level: float, k: float) -> float:
+    if rating <= 0.0:
+        return 0.0
+    var denom: float = max(1.0, level) * max(0.01, k)
+    return max(0.0, (rating / denom) * 100.0)
+
+
 static func apply_crit_to_damage(base_damage: int, snap: Dictionary) -> int:
     return apply_crit_to_damage_typed(base_damage, snap, "physical")
 
@@ -564,7 +606,7 @@ static func apply_crit_to_damage_typed(base_damage: int, snap: Dictionary, schoo
     var crit_chance := float(snap.get("crit_chance_pct", 0.0))
     if school == "magic":
         crit_chance = float(snap.get("magic_crit_chance_pct", crit_chance))
-    var crit_mult := float(snap.get("crit_multiplier", 2.0))
+    var crit_mult := float(snap.get("crit_multiplier", C.BASE_CRIT_MULTIPLIER))
     if school == "magic":
         crit_mult = float(snap.get("magic_crit_multiplier", crit_mult))
     if randf() * 100.0 < crit_chance:
@@ -575,7 +617,7 @@ static func apply_crit_to_damage_typed(base_damage: int, snap: Dictionary, schoo
 static func apply_crit_to_heal(base_heal: int, snap: Dictionary) -> int:
     var heal := base_heal
     var crit_chance := float(snap.get("crit_chance_pct", 0.0))
-    var crit_mult := float(snap.get("magic_crit_multiplier", snap.get("crit_multiplier", 2.0)))
+    var crit_mult := float(snap.get("magic_crit_multiplier", snap.get("crit_multiplier", C.BASE_CRIT_MULTIPLIER)))
     if randf() * 100.0 < crit_chance:
         heal = int(round(float(heal) * crit_mult))
     if base_heal > 0:
