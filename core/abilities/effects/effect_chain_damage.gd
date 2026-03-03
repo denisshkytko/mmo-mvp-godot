@@ -3,7 +3,6 @@ class_name EffectChainDamage
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
-const ABILITY_BALANCE := preload("res://core/abilities/ability_balance.gd")
 const PLAYER_COMBAT := preload("res://game/characters/player/components/player_combat.gd")
 
 @export var school: String = "magic" # physical | magic
@@ -29,7 +28,6 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	var base_damage: int = _compute_base_damage(caster, rank_data, snap)
 	if base_damage <= 0:
 		return
-	base_damage = ABILITY_BALANCE.apply_damage_balance(base_damage, rank_data, context, school)
 
 	var remaining_jumps: int = max(0, int(rank_data.flags.get("jump_count", jump_count)))
 	var decay_pct: float = float(rank_data.flags.get("jump_damage_decay_pct", jump_damage_decay_pct))

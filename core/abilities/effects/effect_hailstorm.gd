@@ -3,7 +3,6 @@ class_name EffectHailstorm
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
-const ABILITY_BALANCE := preload("res://core/abilities/ability_balance.gd")
 
 @export var school: String = "magic" # physical | magic
 @export var scaling_mode: String = "spell_power_flat" # flat | phys_base_pct | spell_power_flat | attack_power_pct
@@ -19,7 +18,6 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	var base_damage: int = _compute_base_damage(caster, rank_data, snap)
 	if base_damage <= 0:
 		return
-	base_damage = ABILITY_BALANCE.apply_damage_balance(base_damage, rank_data, context, school)
 
 	var hit_count: int = max(1, int(rank_data.value_flat_2))
 	for _i in range(hit_count):
