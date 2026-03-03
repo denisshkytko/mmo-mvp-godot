@@ -435,7 +435,7 @@ func _apply_shield_block_if_any(damage_after_mitigation: int, snap: Dictionary) 
 	return max(0, damage_after_mitigation - block_value)
 
 func _has_left_shield_equipped() -> bool:
-	var equip := c_stats.get_equipment_snapshot() if c_stats != null and c_stats.has_method("get_equipment_snapshot") else {}
+	var equip: Dictionary = c_stats.get_equipment_snapshot() if c_stats != null and c_stats.has_method("get_equipment_snapshot") else {}
 	if equip.is_empty():
 		return false
 	var left: Variant = equip.get("weapon_l", null)
