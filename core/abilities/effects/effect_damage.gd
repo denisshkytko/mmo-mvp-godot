@@ -3,6 +3,7 @@ class_name EffectDamage
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const ABILITY_BALANCE := preload("res://core/abilities/ability_balance.gd")
 
 @export var school: String = "magic" # physical | magic
 @export var scaling_mode: String = "spell_power_flat" # flat | phys_base_pct | spell_power_flat | attack_power_pct
@@ -42,6 +43,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	if base <= 0:
 		return
+	base = ABILITY_BALANCE.apply_damage_balance(base, rank_data, context, school)
 
 	var final: int = STAT_CALC.apply_crit_to_damage_typed(base, snap, school)
 	var dealt: int = DAMAGE_HELPER.apply_damage_typed_with_result(caster, target, final, school)
