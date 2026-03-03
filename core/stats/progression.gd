@@ -27,8 +27,8 @@ const DEBUG_LOGS: bool = false
 
 const CLASS_TABLE: Dictionary = {
 	"paladin": {
-		"base_primary": {"str": 12.0, "agi": 8.0, "end": 12.0, "int": 12.0, "per": 7.0},
-		"per_level": {"str": 1.2, "agi": 0.8, "end": 1.2, "int": 1.2, "per": 0.8},
+		"base_primary": {"str": 25.0, "agi": 10.0, "end": 25.0, "int": 25.0, "per": 15.0},
+		"per_level": {"str": 4.0, "agi": 1.0, "end": 4.0, "int": 4.0, "per": 2.0},
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.60,
 		"attack_role": "melee",
@@ -50,8 +50,8 @@ const CLASS_TABLE: Dictionary = {
 		],
 	},
 	"shaman": {
-		"base_primary": {"str": 8.0, "agi": 9.0, "end": 9.0, "int": 10.0, "per": 8.0},
-		"per_level": {"str": 0.9, "agi": 0.8, "end": 1.0, "int": 1.4, "per": 0.7},
+		"base_primary": {"str": 20.0, "agi": 15.0, "end": 20.0, "int": 25.0, "per": 20.0},
+		"per_level": {"str": 3.0, "agi": 2.0, "end": 3.0, "int": 4.0, "per": 3.0},
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.75,
 		"npc_base_ranged_attack_interval": 1.75,
@@ -73,8 +73,8 @@ const CLASS_TABLE: Dictionary = {
 		],
 	},
 	"mage": {
-		"base_primary": {"str": 5.0, "agi": 8.0, "end": 6.0, "int": 14.0, "per": 10.0},
-		"per_level": {"str": 0.2, "agi": 0.8, "end": 0.9, "int": 1.7, "per": 1.2},
+		"base_primary": {"str": 10.0, "agi": 12.0, "end": 15.0, "int": 40.0, "per": 23.0},
+		"per_level": {"str": 2.0, "agi": 1.0, "end": 2.0, "int": 7.0, "per": 3.0},
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.95,
 		"npc_base_ranged_attack_interval": 1.60,
@@ -95,8 +95,8 @@ const CLASS_TABLE: Dictionary = {
 		],
 	},
 	"priest": {
-		"base_primary": {"str": 6.0, "agi": 7.0, "end": 7.0, "int": 13.0, "per": 9.0},
-		"per_level": {"str": 0.6, "agi": 0.7, "end": 0.9, "int": 1.3, "per": 1.1},
+		"base_primary": {"str": 12.0, "agi": 14.0, "end": 18.0, "int": 33.0, "per": 23.0},
+		"per_level": {"str": 1.0, "agi": 2.0, "end": 3.0, "int": 6.0, "per": 3.0},
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.90,
 		"npc_base_ranged_attack_interval": 1.70,
@@ -117,8 +117,8 @@ const CLASS_TABLE: Dictionary = {
 		],
 	},
 	"hunter": {
-		"base_primary": {"str": 9.0, "agi": 14.0, "end": 9.0, "int": 10.0, "per": 10.0},
-		"per_level": {"str": 0.8, "agi": 1.4, "end": 0.9, "int": 1.0, "per": 1.2},
+		"base_primary": {"str": 15.0, "agi": 35.0, "end": 15.0, "int": 10.0, "per": 25.0},
+		"per_level": {"str": 2.0, "agi": 6.0, "end": 2.0, "int": 1.0, "per": 4.0},
 		"resource_type": "mana",
 		"base_melee_attack_interval": 1.80,
 		"npc_base_ranged_attack_interval": 1.70,
@@ -138,8 +138,8 @@ const CLASS_TABLE: Dictionary = {
 		],
 	},
 	"warrior": {
-		"base_primary": {"str": 14.0, "agi": 10.0, "end": 13.0, "int": 4.0, "per": 6.0},
-		"per_level": {"str": 1.4, "agi": 1.0, "end": 1.3, "int": 0.3, "per": 0.6},
+		"base_primary": {"str": 35.0, "agi": 15.0, "end": 30.0, "int": 8.0, "per": 12.0},
+		"per_level": {"str": 6.0, "agi": 2.0, "end": 5.0, "int": 1.0, "per": 1.0},
 		"resource_type": "rage",
 		"base_melee_attack_interval": 1.50,
 		"attack_role": "melee",
