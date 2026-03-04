@@ -26,6 +26,16 @@
 - **Radiance** (AoE heal+damage): `100/200 -> 140/280`, cooldown `15s -> 12s`.
 - **Prayer of Light**: `250 -> 380`, cast time `5.0 -> 4.0`.
 
+#### Экономика ресурса / манакосты
+- **Throe**: `8 -> 8` (оставлен как базовый filler по цене).
+- **Agony**: `8 -> 9`.
+- **Torment**: `8 -> 10`.
+- **Heal**: `8 -> 9`.
+- **Healing Stream**: `8 -> 10`.
+- **Protective Barrier**: `12 -> 14`.
+- **Prayer of Light**: `16 -> 18`.
+- Обоснование: после буста throughput скорректированы манакосты для лучшего anti-spam-контроля, сохраняя sustain-роль жреца.
+
 #### Buffs/Stances/Defensive utility
 - **Fortitude**: END `5..30 -> 6..36`, regen tick `2..12 -> 3..18`.
 - **Protective Barrier**: absorb `150..750 -> 190..950`.
@@ -65,6 +75,16 @@ Goal: keep priest identity as a hybrid support/caster (sustain, control, protect
 - **Healing Stream**: `25..225 -> 35..315`, mid-rank cast time `1.0 -> 0.8`, final `1.5 -> 1.2`.
 - **Radiance** (AoE heal+damage): `100/200 -> 140/280`, cooldown `15s -> 12s`.
 - **Prayer of Light**: `250 -> 380`, cast time `5.0 -> 4.0`.
+
+#### Resource economy / mana costs
+- **Throe**: `8 -> 8` (kept as baseline filler cost).
+- **Agony**: `8 -> 9`.
+- **Torment**: `8 -> 10`.
+- **Heal**: `8 -> 9`.
+- **Healing Stream**: `8 -> 10`.
+- **Protective Barrier**: `12 -> 14`.
+- **Prayer of Light**: `16 -> 18`.
+- Rationale: after throughput buffs, mana costs were adjusted for stronger anti-spam control while preserving priest sustain identity.
 
 #### Buffs/Stances/Defensive utility
 - **Fortitude**: END `5..30 -> 6..36`, regen tick `2..12 -> 3..18`.
