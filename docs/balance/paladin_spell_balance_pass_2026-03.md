@@ -19,6 +19,12 @@
 - **Strike of Light**: magic add `5..65 -> 8..86`, phys pct `80..110 -> 85..115`.
 - **Light Execution**: execute pct `250 -> 300`, cooldown `6s -> 5s`, cost `8 -> 10`.
 
+
+#### Auras (checked and tuned)
+- **Aura of Light Protection**: `DEF 50..350 -> 60..420`, `RES 25..175 -> 35..245`.
+- **Aura of Tempering**: `50/65/80/95 -> 60/80/100/120` physical bonus.
+- **Concentration Aura**: added high-rank scaling (`10%` at L22, `16%` at L50).
+
 #### Buffs / stances / mana economy
 - **Lightbound Might**: `10..70 -> 12..84`.
 - **Light's Guidance** (mana regen buff): `5/7/9/11/13/15 -> 7/10/13/16/19/22`.
@@ -51,6 +57,12 @@ Goal: strengthen paladin identity as a **hybrid frontline class** (melee pressur
 - **Storm of Light**: magic add `50/100/150 -> 70/130/190`, phys pct `100/110/120 -> 100/115/130`, cooldown `10s -> 8s`, cost `12 -> 14`.
 - **Strike of Light**: magic add `5..65 -> 8..86`, phys pct `80..110 -> 85..115`.
 - **Light Execution**: execute pct `250 -> 300`, cooldown `6s -> 5s`, cost `8 -> 10`.
+
+
+#### Auras (checked and tuned)
+- **Aura of Light Protection**: `DEF 50..350 -> 60..420`, `RES 25..175 -> 35..245`.
+- **Aura of Tempering**: `50/65/80/95 -> 60/80/100/120` physical bonus.
+- **Concentration Aura**: added high-rank scaling (`10%` at L22, `16%` at L50).
 
 #### Buffs / stances / mana economy
 - **Lightbound Might**: `10..70 -> 12..84`.
