@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CLASS_INT = {
     "mage": {"base": 20.0, "per_level": 3.0},
     "priest": {"base": 17.0, "per_level": 2.0},
+    "paladin": {"base": 12.0, "per_level": 2.0},
 }
 
 MANA_PER_INT = 15.0
@@ -22,14 +23,17 @@ ROTATIONS = {
     ("mage", "dps"): ["meteor", "hailstorm", "fire_blast", "frost_wind", "fireball"],
     ("priest", "dps"): ["radiance", "agony", "torment", "throe"],
     ("priest", "heal_group"): ["prayer_of_light", "radiance", "protective_barrier", "healing_stream", "heal"],
+    ("paladin", "dps"): ["storm_of_light", "lights_verdict", "light_execution", "judging_flame", "strike_of_light"],
+    ("paladin", "heal_group"): ["healing_light", "radiant_touch", "lights_verdict", "prayer_to_the_light"],
 }
 
 STANCE_BY_PROFILE = {
     ("mage", "dps"): None,
     ("priest", "dps"): "power_absorption",
     ("priest", "heal_group"): "power_absorption",
+    ("paladin", "dps"): "path_of_righteous_fury",
+    ("paladin", "heal_group"): "path_of_light",
 }
-
 
 @dataclass
 class RankData:
@@ -112,16 +116,16 @@ def rank_for_level(ability: AbilityData, level: int) -> Optional[RankData]:
 def class_stats(class_id: str, level: int) -> Dict[str, float]:
     ci = CLASS_INT[class_id]
     stat_int = ci["base"] + ci["per_level"] * (level - 1)
+    mana_regen = stat_int * MANA_REGEN_PER_INT
     return {
         "int": stat_int,
         "max_mana": stat_int * MANA_PER_INT,
-        "mana_regen": stat_int * MANA_REGEN_PER_INT,
+        "mana_regen": mana_regen,
         "spell_power": stat_int * SPELL_POWER_FROM_INT,
     }
 
 
-def estimate_effect_amount(ability: AbilityData, rank: RankData, spell_power: float) -> int:
-    # Generic approximation from current spell effects: base throughput ~= value_flat + spell_power.
+def estimate_effect_amount(rank: RankData, spell_power: float) -> int:
     return max(0, rank.value_flat + int(round(spell_power)))
 
 
@@ -136,9 +140,11 @@ def get_stance_return_pcts(class_id: str, profile: str, level: int, abilities: D
     if stance_rank is None:
         return 0.0, 0.0
 
-    # For priest `power_absorption` value_pct powers mana returns on spell damage/heal.
     if stance_id == "power_absorption":
         return stance_rank.value_pct, stance_rank.value_pct
+
+    # Paladin `path_of_righteous_fury` returns mana on weapon hit; ability simulation below
+    # doesn't model autos directly, so we keep this conservative as 0 here.
     return 0.0, 0.0
 
 
@@ -175,12 +181,15 @@ def simulate_profile(class_id: str, level: int, profile: str, duration_sec: floa
             mana -= r.resource_cost
             cds[aid] = t + r.cooldown_sec
 
-            amount = estimate_effect_amount(a, r, spell_power)
-            if amount > 0:
-                if a.ability_type in {"damage", "active"}:
-                    mana += amount * (return_pct_damage / 100.0)
-                if a.ability_type in {"heal", "buff", "active"}:
-                    mana += amount * (return_pct_heal / 100.0)
+            if aid == "prayer_to_the_light":
+                mana += stats["max_mana"] * (r.value_pct / 100.0)
+            else:
+                amount = estimate_effect_amount(r, spell_power)
+                if amount > 0:
+                    if a.ability_type in {"damage", "active", "aoe_damage"}:
+                        mana += amount * (return_pct_damage / 100.0)
+                    if a.ability_type in {"heal", "buff", "active"}:
+                        mana += amount * (return_pct_heal / 100.0)
 
         mana += mana_regen * dt
         mana = max(0.0, min(stats["max_mana"], mana))
@@ -200,10 +209,14 @@ def evaluate_status(quick_spend_pct: float, mana60_pct: float) -> str:
 
 
 def build_report() -> str:
-    data = {"mage": load_class_abilities("mage"), "priest": load_class_abilities("priest")}
+    data = {
+        "mage": load_class_abilities("mage"),
+        "priest": load_class_abilities("priest"),
+        "paladin": load_class_abilities("paladin"),
+    }
 
     lines: List[str] = []
-    lines.append("# Mana sustain audit (Mage + Priest, 2026-03)")
+    lines.append("# Mana sustain audit (Mage + Priest + Paladin, 2026-03)")
     lines.append("")
     lines.append("Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana regen active in combat.")
     lines.append("")
@@ -214,7 +227,15 @@ def build_report() -> str:
     lines.append("- **Status**: `OK` / `WARN` / `RISK` by thresholds above.")
     lines.append("")
 
-    for class_id, profile in [("mage", "dps"), ("priest", "dps"), ("priest", "heal_group")]:
+    profiles = [
+        ("mage", "dps"),
+        ("priest", "dps"),
+        ("priest", "heal_group"),
+        ("paladin", "dps"),
+        ("paladin", "heal_group"),
+    ]
+
+    for class_id, profile in profiles:
         lines.append(f"## {class_id.capitalize()} / profile `{profile}`")
         lines.append("")
         lines.append("| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |")
@@ -233,12 +254,14 @@ def build_report() -> str:
     lines.append("## Notes")
     lines.append("")
     lines.append("- Priest profiles include simplified mana return from `Power Absorption` (`value_pct`).")
-    lines.append("- Results are intended as balancing guardrails; live tuning can refine assumptions per encounter type.")
+    lines.append("- Paladin baseline does not force long-duration buff pre-application (`Lights Guidance`); values are conservative.")
+    lines.append("- Paladin `Path of Righteous Fury` mana-on-hit from autos is not modeled explicitly here (conservative estimate).")
+    lines.append("- Results are balancing guardrails; final tuning should still be validated by encounter playtests.")
     return "\n".join(lines) + "\n"
 
 
 def main() -> None:
-    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_2026-03.md"
+    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_paladin_2026-03.md"
     out.write_text(build_report(), encoding="utf-8")
     print(f"written: {out}")
 

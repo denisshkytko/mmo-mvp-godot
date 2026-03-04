@@ -9,28 +9,28 @@
 script = ExtResource("3")
 required_level = 40
 train_cost_gold = 3391
-cooldown_sec = 6.0
+cooldown_sec = 5.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 8
+resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
 value_pct = 30.0
-value_pct_2 = 250.0
+value_pct_2 = 300.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=2]
 script = ExtResource("3")
 required_level = 60
 train_cost_gold = 6602
-cooldown_sec = 6.0
+cooldown_sec = 5.0
 cast_time_sec = 0.0
 duration_sec = 0.0
-resource_cost = 8
+resource_cost = 10
 value_flat = 0
 value_flat_2 = 0
 value_pct = 40.0
-value_pct_2 = 250.0
+value_pct_2 = 300.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectDamage" id=20]
