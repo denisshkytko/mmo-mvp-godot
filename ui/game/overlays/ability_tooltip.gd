@@ -123,7 +123,7 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 	if scales_with_spell_power:
 		scaled_flat += int(round(spell_power))
 		scaled_flat2 += int(round(spell_power))
-	return _format_effect_from_template(def.get_description_template(), rank_data, scaled_flat, scaled_flat2)
+	return _format_effect_from_template(def, def.get_description_template(), rank_data, scaled_flat, scaled_flat2)
 
 
 func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String) -> bool:
@@ -142,20 +142,40 @@ func _ability_scales_with_spell_power(def: AbilityDefinition, ability_id: String
 			return true
 
 
-func _format_effect_from_template(template: String, rank_data: RankData, scaled_flat: int, scaled_flat2: int) -> String:
+func _format_effect_from_template(def: AbilityDefinition, template: String, rank_data: RankData, scaled_flat: int, scaled_flat2: int) -> String:
 	if template.strip_edges() == "":
 		return ""
 	var out := template
+	var effect := def.effect if def != null else null
+	var effect_flags: Dictionary = {}
+	if effect != null and effect.get("flags") is Dictionary:
+		effect_flags = effect.get("flags") as Dictionary
+	var jump_count: int = int(effect.get("jump_count")) if effect != null else 0
+	var hit_count: int = int(effect.get("hit_count")) if effect != null else 0
+	var jump_decay: float = 0.0
+	if effect != null:
+		if effect.get("jump_damage_decay_pct") != null:
+			jump_decay = float(effect.get("jump_damage_decay_pct"))
+		elif effect.get("jump_heal_decay_pct") != null:
+			jump_decay = float(effect.get("jump_heal_decay_pct"))
+	var tick_interval: float = float(effect_flags.get("mana_tick_interval_sec", 0.0))
 	out = out.replace("{X}", str(scaled_flat))
 	out = out.replace("{X2}", str(int(rank_data.value_flat_2)))
 	out = out.replace("{M}", str(scaled_flat2))
 	out = out.replace("{P}", _format_rank_number(float(rank_data.value_pct)))
 	out = out.replace("{P2}", _format_rank_number(float(rank_data.value_pct_2)))
+	out = out.replace("{AP}", _format_rank_number(absf(float(rank_data.value_pct))))
+	out = out.replace("{AP2}", _format_rank_number(absf(float(rank_data.value_pct_2))))
 	out = out.replace("{N}", str(int((rank_data.flags as Dictionary).get("max_targets", 0))))
+	out = out.replace("{J}", str(jump_count))
+	out = out.replace("{HC}", str(hit_count))
+	out = out.replace("{JD}", _format_rank_number(jump_decay))
+	out = out.replace("{TI}", _format_rank_number(tick_interval))
 	out = out.replace("{T}", _format_rank_number(float(rank_data.value_pct)))
 	out = out.replace("{HP}", _format_rank_number(float(rank_data.value_pct)))
 	out = out.replace("{MP}", _format_rank_number(float(rank_data.value_pct_2)))
 	out = out.replace("{D}", str(int(round(rank_data.duration_sec))))
+	out = out.replace("{DM}", _format_rank_number(float(rank_data.duration_sec) / 60.0))
 	return out
 
 
