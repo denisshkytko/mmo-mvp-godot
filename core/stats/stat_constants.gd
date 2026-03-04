@@ -27,10 +27,10 @@ const HP_REGEN_PER_STR: float = 0.0
 const MANA_REGEN_PER_INT: float = 0.1
 
 # --- Primary -> powers (units) ---
-const AP_FROM_STR: float = 2.0
-const AP_FROM_AGI: float = 1.0
+const AP_FROM_STR: float = 1.5
+const AP_FROM_AGI: float = 0.5
 
-const SP_FROM_INT: float = 1.0
+const SP_FROM_INT: float = 0.5
 
 # How much AttackPower translates into raw physical damage.
 const AP_DAMAGE_SCALAR: float = 0.35
@@ -40,7 +40,7 @@ const SP_DAMAGE_SCALAR: float = 0.40
 
 # --- Primary -> defenses (units) ---
 const DEF_FROM_STR: float = 0.5
-const DEF_FROM_END: float = 1.0
+const DEF_FROM_END: float = 1.5
 const DEF_FROM_AGI: float = 0.0
 
 const RES_FROM_END: float = 0.5
@@ -48,9 +48,9 @@ const RES_FROM_INT: float = 1.0
 
 # --- New defense ratings ---
 const EVADE_FROM_AGI: float = 2.0
-const EVADE_FROM_PER: float = 1.0
+const EVADE_FROM_PER: float = 0.5
 const BLOCK_CHANCE_FROM_STR: float = 2.0
-const BLOCK_CHANCE_FROM_PER: float = 1.0
+const BLOCK_CHANCE_FROM_PER: float = 0.5
 const BLOCK_VALUE_FROM_STR: float = 1.0
 
 # Mitigation curve constant for converting Defense/Resist to %.
@@ -78,7 +78,7 @@ const HASTE_CDR_K: float = 150.0
 # --- Crit ratings ---
 const BASE_CRIT_CHANCE_PCT: float = 0.0
 const CRIT_FROM_PER: float = 1.5
-const CRIT_FROM_AGI: float = 1.0
+const CRIT_FROM_AGI: float = 0.5
 const CRIT_K: float = 60.0
 
 # Crit damage:
