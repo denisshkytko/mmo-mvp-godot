@@ -2,6 +2,7 @@ extends Control
 class_name AbilityTooltip
 
 const OFFSET := Vector2(12, 10)
+const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
 
 @onready var panel: PanelContainer = $Panel
 @onready var name_label: Label = $Panel/Margin/VBox/Name
@@ -121,8 +122,10 @@ func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: floa
 	var scaled_flat: int = int(rank_data.value_flat)
 	var scaled_flat2: int = int(rank_data.value_flat_2)
 	if scales_with_spell_power:
-		scaled_flat += int(round(spell_power))
-		scaled_flat2 += int(round(spell_power))
+		var kind := "heal" if def.ability_type == "heal" else "direct"
+		var sp_bonus: int = SP_SCALING.bonus_flat(spell_power, rank_data, kind)
+		scaled_flat += sp_bonus
+		scaled_flat2 += sp_bonus
 	return _format_effect_from_template(def, def.get_description_template(), rank_data, scaled_flat, scaled_flat2)
 
 

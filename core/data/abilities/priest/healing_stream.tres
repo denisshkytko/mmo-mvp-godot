@@ -138,7 +138,7 @@ secondary_add = {}
 primary_add = {}
 percent_add = {}
 primary_percent_add = {}
-flags = {"hp_hot_bonus_flat": "caster_spell_power", "hp_hot_tick_interval_sec": 1.0, "hp_hot_total_flat": "value_flat"}
+flags = {"hp_hot_bonus_flat": "caster_spell_power_hot", "hp_hot_tick_interval_sec": 1.0, "hp_hot_total_flat": "value_flat"}
 on_hit = {}
 
 [resource]

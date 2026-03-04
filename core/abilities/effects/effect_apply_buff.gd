@@ -1,6 +1,8 @@
 extends AbilityEffect
 class_name EffectApplyBuff
 
+const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
+
 const BuffData := preload("res://core/buffs/buff_data.gd")
 
 @export var buff_id: String = ""
@@ -86,6 +88,16 @@ func _resolve_value(value, rank_data: RankData, is_percent: bool, context: Dicti
 				var snap: Dictionary = context.get("caster_snapshot", {}) as Dictionary
 				var derived: Dictionary = snap.get("derived", {}) as Dictionary
 				return float(derived.get("spell_power", 0.0))
+			"caster_spell_power_dot":
+				var snap_dot: Dictionary = context.get("caster_snapshot", {}) as Dictionary
+				var derived_dot: Dictionary = snap_dot.get("derived", {}) as Dictionary
+				var sp_dot: float = float(derived_dot.get("spell_power", 0.0))
+				return float(SP_SCALING.bonus_flat(sp_dot, rank_data, "dot"))
+			"caster_spell_power_hot":
+				var snap_hot: Dictionary = context.get("caster_snapshot", {}) as Dictionary
+				var derived_hot: Dictionary = snap_hot.get("derived", {}) as Dictionary
+				var sp_hot: float = float(derived_hot.get("spell_power", 0.0))
+				return float(SP_SCALING.bonus_flat(sp_hot, rank_data, "hot"))
 			_:
 				return null
 	if typeof(value) == TYPE_INT or typeof(value) == TYPE_FLOAT:

@@ -3,6 +3,7 @@ class_name EffectHeal
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or target == null or rank_data == null:
@@ -13,7 +14,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var spell_power: float = float(derived.get("spell_power", 0.0))
-	var raw: int = int(rank_data.value_flat) + int(round(spell_power))
+	var raw: int = int(rank_data.value_flat) + SP_SCALING.bonus_flat(spell_power, rank_data, "heal")
 	if raw <= 0:
 		return
 	var final: int = STAT_CALC.apply_crit_to_heal(raw, snap)

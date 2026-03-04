@@ -124,7 +124,7 @@ secondary_add = {}
 primary_add = {}
 percent_add = {}
 primary_percent_add = {}
-flags = {"dot_bonus_damage_flat": "caster_spell_power", "dot_damage_school": "magic", "dot_tick_interval_sec": 1.0, "dot_total_damage_flat": "value_flat"}
+flags = {"dot_bonus_damage_flat": "caster_spell_power_dot", "dot_damage_school": "magic", "dot_tick_interval_sec": 1.0, "dot_total_damage_flat": "value_flat"}
 on_hit = {}
 
 [resource]
