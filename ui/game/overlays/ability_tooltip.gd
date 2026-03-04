@@ -153,8 +153,11 @@ func _format_effect_from_template(def: AbilityDefinition, template: String, rank
 	var effect_flags: Dictionary = {}
 	if effect != null and effect.get("flags") is Dictionary:
 		effect_flags = effect.get("flags") as Dictionary
-	var jump_count: int = int(effect.get("jump_count")) if effect != null else 0
-	var hit_count: int = int(effect.get("hit_count")) if effect != null else 0
+	var jump_count: int = 0
+	var hit_count: int = 0
+	if effect != null:
+		jump_count = _variant_to_int(effect.get("jump_count"), 0)
+		hit_count = _variant_to_int(effect.get("hit_count"), 0)
 	var jump_decay: float = 0.0
 	if effect != null:
 		if effect.get("jump_damage_decay_pct") != null:
@@ -186,6 +189,18 @@ func _format_rank_number(value: float) -> String:
 	if is_equal_approx(value, round(value)):
 		return str(int(round(value)))
 	return "%.1f" % value
+
+
+func _variant_to_int(value: Variant, fallback: int = 0) -> int:
+	if value == null:
+		return fallback
+	if value is int:
+		return value
+	if value is float:
+		return int(round(value))
+	if value is String and (value as String).is_valid_int():
+		return (value as String).to_int()
+	return fallback
 
 func _position_tooltip(target_pos: Vector2) -> void:
 	if not visible:
