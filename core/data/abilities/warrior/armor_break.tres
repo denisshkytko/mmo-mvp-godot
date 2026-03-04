@@ -11,98 +11,98 @@
 script = ExtResource("3")
 required_level = 10
 train_cost_gold = 400
-cooldown_sec = 10.0
-cast_time_sec = 1.0
+cooldown_sec = 9.0
+cast_time_sec = 0.0
 duration_sec = 10.0
-resource_cost = 10
-value_flat = 0
-value_flat_2 = 0
-value_pct = 100.0
-value_pct_2 = 60.0
-flags = {}
-
-[sub_resource type="Resource" script_class="RankData" id=2]
-script = ExtResource("3")
-required_level = 14
-train_cost_gold = 706
-cooldown_sec = 10.0
-cast_time_sec = 1.0
-duration_sec = 10.0
-resource_cost = 10
+resource_cost = 11
 value_flat = 0
 value_flat_2 = 0
 value_pct = 100.0
 value_pct_2 = 70.0
 flags = {}
 
-[sub_resource type="Resource" script_class="RankData" id=3]
+[sub_resource type="Resource" script_class="RankData" id=2]
 script = ExtResource("3")
-required_level = 20
-train_cost_gold = 1211
-cooldown_sec = 10.0
-cast_time_sec = 1.0
+required_level = 14
+train_cost_gold = 706
+cooldown_sec = 9.0
+cast_time_sec = 0.0
 duration_sec = 10.0
-resource_cost = 10
+resource_cost = 11
 value_flat = 0
 value_flat_2 = 0
 value_pct = 100.0
 value_pct_2 = 80.0
 flags = {}
 
-[sub_resource type="Resource" script_class="RankData" id=4]
+[sub_resource type="Resource" script_class="RankData" id=3]
 script = ExtResource("3")
-required_level = 28
-train_cost_gold = 1984
-cooldown_sec = 10.0
-cast_time_sec = 1.0
+required_level = 20
+train_cost_gold = 1211
+cooldown_sec = 9.0
+cast_time_sec = 0.0
 duration_sec = 10.0
-resource_cost = 10
+resource_cost = 11
 value_flat = 0
 value_flat_2 = 0
 value_pct = 100.0
 value_pct_2 = 90.0
 flags = {}
 
-[sub_resource type="Resource" script_class="RankData" id=5]
+[sub_resource type="Resource" script_class="RankData" id=4]
 script = ExtResource("3")
-required_level = 36
-train_cost_gold = 2885
-cooldown_sec = 10.0
-cast_time_sec = 1.0
+required_level = 28
+train_cost_gold = 1984
+cooldown_sec = 9.0
+cast_time_sec = 0.0
 duration_sec = 10.0
-resource_cost = 10
+resource_cost = 11
 value_flat = 0
 value_flat_2 = 0
 value_pct = 100.0
 value_pct_2 = 100.0
 flags = {}
 
-[sub_resource type="Resource" script_class="RankData" id=6]
+[sub_resource type="Resource" script_class="RankData" id=5]
 script = ExtResource("3")
-required_level = 44
-train_cost_gold = 3938
-cooldown_sec = 10.0
-cast_time_sec = 1.0
+required_level = 36
+train_cost_gold = 2885
+cooldown_sec = 9.0
+cast_time_sec = 0.0
 duration_sec = 10.0
-resource_cost = 10
+resource_cost = 11
 value_flat = 0
 value_flat_2 = 0
 value_pct = 100.0
 value_pct_2 = 110.0
 flags = {}
 
-[sub_resource type="Resource" script_class="RankData" id=7]
+[sub_resource type="Resource" script_class="RankData" id=6]
 script = ExtResource("3")
-required_level = 52
-train_cost_gold = 5505
-cooldown_sec = 10.0
-cast_time_sec = 1.0
+required_level = 44
+train_cost_gold = 3938
+cooldown_sec = 9.0
+cast_time_sec = 0.0
 duration_sec = 10.0
-resource_cost = 10
+resource_cost = 11
 value_flat = 0
 value_flat_2 = 0
 value_pct = 100.0
 value_pct_2 = 120.0
+flags = {}
+
+[sub_resource type="Resource" script_class="RankData" id=7]
+script = ExtResource("3")
+required_level = 52
+train_cost_gold = 5505
+cooldown_sec = 9.0
+cast_time_sec = 0.0
+duration_sec = 10.0
+resource_cost = 11
+value_flat = 0
+value_flat_2 = 0
+value_pct = 100.0
+value_pct_2 = 130.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectDamage" id=20]

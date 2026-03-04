@@ -13,6 +13,7 @@ CLASS_INT = {
     "paladin": {"base": 12.0, "per_level": 2.0},
     "shaman": {"base": 12.0, "per_level": 3.0},
     "hunter": {"base": 10.0, "per_level": 1.5},
+    "warrior": {"base": 8.0, "per_level": 1.0},
 }
 
 MANA_PER_INT = 15.0
@@ -30,6 +31,7 @@ ROTATIONS = {
     ("shaman", "dps"): ["chain_lightning", "earths_wrath", "lightning", "searing_strike"],
     ("shaman", "heal_group"): ["life_surge", "healing_touch", "lesser_heal"],
     ("hunter", "dps"): ["poisoned_arrow", "suppressive_shot", "aimed_shot", "arcane_shot", "lucky_shot"],
+    ("warrior", "dps"): ["armor_break", "sweeping_strikes", "dirty_strike", "powerful_strike"],
 }
 
 STANCE_BY_PROFILE = {
@@ -41,6 +43,7 @@ STANCE_BY_PROFILE = {
     ("shaman", "dps"): "stone_fists",
     ("shaman", "heal_group"): "water_devotion",
     ("hunter", "dps"): "cobra_aspect",
+    ("warrior", "dps"): "battle_readiness",
 }
 
 @dataclass
@@ -232,10 +235,11 @@ def build_report() -> str:
         "paladin": load_class_abilities("paladin"),
         "shaman": load_class_abilities("shaman"),
         "hunter": load_class_abilities("hunter"),
+        "warrior": load_class_abilities("warrior"),
     }
 
     lines: List[str] = []
-    lines.append("# Mana sustain audit (Mage + Priest + Paladin + Shaman + Hunter, 2026-03)")
+    lines.append("# Mana sustain audit (Mage + Priest + Paladin + Shaman + Hunter + Warrior, 2026-03)")
     lines.append("")
     lines.append("Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana regen active in combat.")
     lines.append("")
@@ -255,6 +259,7 @@ def build_report() -> str:
         ("shaman", "dps"),
         ("shaman", "heal_group"),
         ("hunter", "dps"),
+        ("warrior", "dps"),
     ]
 
     for class_id, profile in profiles:
@@ -280,12 +285,13 @@ def build_report() -> str:
     lines.append("- Paladin `Path of Righteous Fury` mana-on-hit from autos is not modeled explicitly here (conservative estimate).")
     lines.append("- Shaman heal profile includes Water Devotion mana-over-time stance contribution in sustain estimate.")
     lines.append("- Hunter profile includes only active-cast rotation and does not model bonus mana from every possible on-hit interaction (conservative estimate).")
+    lines.append("- Warrior profile models ability-cast pressure only; basic auto-attack cadence and external sustain effects are not simulated.")
     lines.append("- Results are balancing guardrails; final tuning should still be validated by encounter playtests.")
     return "\n".join(lines) + "\n"
 
 
 def main() -> None:
-    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_paladin_shaman_hunter_2026-03.md"
+    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_paladin_shaman_hunter_warrior_2026-03.md"
     out.write_text(build_report(), encoding="utf-8")
     print(f"written: {out}")
 
