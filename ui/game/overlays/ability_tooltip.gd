@@ -149,14 +149,21 @@ func _format_effect_from_template(template: String, rank_data: RankData, scaled_
 	out = out.replace("{X}", str(scaled_flat))
 	out = out.replace("{X2}", str(int(rank_data.value_flat_2)))
 	out = out.replace("{M}", str(scaled_flat2))
-	out = out.replace("{P}", str(int(round(rank_data.value_pct))))
-	out = out.replace("{P2}", str(int(round(rank_data.value_pct_2))))
+	out = out.replace("{P}", _format_rank_number(float(rank_data.value_pct)))
+	out = out.replace("{P2}", _format_rank_number(float(rank_data.value_pct_2)))
 	out = out.replace("{N}", str(int((rank_data.flags as Dictionary).get("max_targets", 0))))
-	out = out.replace("{T}", str(int(round(rank_data.value_pct))))
-	out = out.replace("{HP}", str(int(round(rank_data.value_pct))))
-	out = out.replace("{MP}", str(int(round(rank_data.value_pct_2))))
+	out = out.replace("{T}", _format_rank_number(float(rank_data.value_pct)))
+	out = out.replace("{HP}", _format_rank_number(float(rank_data.value_pct)))
+	out = out.replace("{MP}", _format_rank_number(float(rank_data.value_pct_2)))
 	out = out.replace("{D}", str(int(round(rank_data.duration_sec))))
 	return out
+
+
+func _format_rank_number(value: float) -> String:
+	if is_equal_approx(value, round(value)):
+		return str(int(round(value)))
+	return "%.1f" % value
+
 func _position_tooltip(target_pos: Vector2) -> void:
 	if not visible:
 		return

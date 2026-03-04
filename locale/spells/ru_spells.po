@@ -559,7 +559,7 @@ msgid "ability.torment.name"
 msgstr "Пытка"
 
 msgid "ability.water_devotion.desc"
-msgstr "Восстанавливает 1% максимальной маны раз в 2 секунды. Повышает скорость произнесения заклинаний на 20%."
+msgstr "Восстанавливает {P}% максимальной маны раз в 2 секунды. Повышает скорость произнесения заклинаний на {P2}%."
 
 msgid "ability.water_devotion.name"
 msgstr "Преданность стихии воды"
