@@ -10,7 +10,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Mage / profile `dps`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 1155 | 7.7 | 99.8% | 100.0% | 0.2% | OK |
 | 40 | 2055 | 13.7 | 100.0% | 100.0% | 0.0% | OK |
@@ -18,7 +18,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Priest / profile `dps`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 825 | 5.5 | 95.6% | 78.8% | 4.4% | OK |
 | 40 | 1425 | 9.5 | 100.0% | 100.0% | 0.0% | OK |
@@ -26,7 +26,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Priest / profile `heal_group`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 825 | 5.5 | 87.6% | 38.2% | 12.4% | OK |
 | 40 | 1425 | 9.5 | 96.1% | 80.4% | 3.9% | OK |
@@ -34,7 +34,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Paladin / profile `dps`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 750 | 5.0 | 100.0% | 100.0% | 0.0% | OK |
 | 40 | 1350 | 9.0 | 99.1% | 99.0% | 0.9% | OK |
@@ -42,7 +42,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Paladin / profile `heal_group`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 750 | 5.0 | 99.0% | 95.2% | 1.0% | OK |
 | 40 | 1350 | 9.0 | 100.0% | 100.0% | 0.0% | OK |
@@ -50,7 +50,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Shaman / profile `dps`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 1035 | 6.9 | 98.0% | 89.8% | 2.0% | OK |
 | 40 | 1935 | 12.9 | 100.0% | 100.0% | 0.0% | OK |
@@ -58,7 +58,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Shaman / profile `heal_group`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 1035 | 6.9 | 100.0% | 100.0% | 0.0% | OK |
 | 40 | 1935 | 12.9 | 100.0% | 100.0% | 0.0% | OK |
@@ -66,7 +66,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Hunter / profile `dps`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 578 | 3.9 | 85.3% | 31.4% | 14.7% | OK |
 | 40 | 1028 | 6.9 | 97.6% | 92.8% | 2.4% | OK |
@@ -74,11 +74,11 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 
 ## Warrior / profile `dps`
 
-| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |
+| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
-| 20 | 405 | 2.7 | 99.1% | 99.8% | 0.9% | OK |
-| 40 | 705 | 4.7 | 98.0% | 99.3% | 2.0% | OK |
-| 60 | 1005 | 6.7 | 99.4% | 99.7% | 0.6% | OK |
+| 20 | 100 | 0.0 | 100.0% | 100.0% | 0.0% | OK |
+| 40 | 100 | 0.0 | 89.3% | 96.0% | 10.7% | OK |
+| 60 | 100 | 0.0 | 89.3% | 92.0% | 10.7% | OK |
 
 ## Notes
 
@@ -87,5 +87,5 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 - Paladin `Path of Righteous Fury` mana-on-hit from autos is not modeled explicitly here (conservative estimate).
 - Shaman heal profile includes Water Devotion mana-over-time stance contribution in sustain estimate.
 - Hunter profile includes only active-cast rotation and does not model bonus mana from every possible on-hit interaction (conservative estimate).
-- Warrior profile models ability-cast pressure only; basic auto-attack cadence and external sustain effects are not simulated.
+- Warrior profile uses rage economy model (max=100, no mana-regen) with rage gain from dealt/taken hits and auto-attack cadence assumptions.
 - Results are balancing guardrails; final tuning should still be validated by encounter playtests.

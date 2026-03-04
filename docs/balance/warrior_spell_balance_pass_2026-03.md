@@ -9,9 +9,9 @@
 ### Изменения по всем способностям
 
 #### Core damage / pressure
-- **Powerful Strike**: `110..145 -> 120..176`, cooldown `5.0 -> 4.5`, cost `5 -> 6`.
-- **Armor Break**: DoT pct `60..120 -> 70..130`, cooldown `10 -> 9`, cast `1.0 -> 0.0`, cost `10 -> 11`.
-- **Sweeping Strikes**: `100/100 -> 115/135`, cooldown `10/8 -> 9/7`, cost `15 -> 16`.
+- **Powerful Strike**: `110..145 -> 120..176`, cooldown `5.0 -> 4.5`, cost `5 -> 4`.
+- **Armor Break**: DoT pct `60..120 -> 70..130`, cooldown `10 -> 9`, cast `1.0 -> 0.0`, cost `10 -> 8`.
+- **Sweeping Strikes**: `100/100 -> 115/135`, cooldown `10/8 -> 9/7`, cost `15 -> 12`.
 - **Dirty Strike**: `100% -> 120%` weapon scaling, cooldown `10 -> 9`.
 
 #### Stances / utility / passives
@@ -20,6 +20,7 @@
 - **Boiling Blood**: clearer risk/reward curve (incoming damage penalty `30/25/20`, crit `10/15/20 -> 12/18/24`, crit damage `20/30/40 -> 24/34/44`).
 - **Inspiration**: max HP bonus `20/40 -> 25/45`.
 - **Defensive Reflexes**: passive reset cooldown `8/6 -> 7/5`.
+- **Rage economy**: warrior combat rage generation tuned to `+3 on damage dealt / +4 on damage taken` with delayed out-of-combat decay (`5s` delay).
 
 ### Ожидаемый эффект
 
@@ -38,9 +39,9 @@ Goal: reinforce warrior identity as an aggressive frontline class with clear bur
 ### Full ability changes
 
 #### Core damage / pressure
-- **Powerful Strike**: `110..145 -> 120..176`, cooldown `5.0 -> 4.5`, cost `5 -> 6`.
-- **Armor Break**: DoT pct `60..120 -> 70..130`, cooldown `10 -> 9`, cast `1.0 -> 0.0`, cost `10 -> 11`.
-- **Sweeping Strikes**: `100/100 -> 115/135`, cooldown `10/8 -> 9/7`, cost `15 -> 16`.
+- **Powerful Strike**: `110..145 -> 120..176`, cooldown `5.0 -> 4.5`, cost `5 -> 4`.
+- **Armor Break**: DoT pct `60..120 -> 70..130`, cooldown `10 -> 9`, cast `1.0 -> 0.0`, cost `10 -> 8`.
+- **Sweeping Strikes**: `100/100 -> 115/135`, cooldown `10/8 -> 9/7`, cost `15 -> 12`.
 - **Dirty Strike**: `100% -> 120%` weapon scaling, cooldown `10 -> 9`.
 
 #### Stances / utility / passives
@@ -49,6 +50,7 @@ Goal: reinforce warrior identity as an aggressive frontline class with clear bur
 - **Boiling Blood**: clearer risk/reward curve (incoming damage penalty `30/25/20`, crit `10/15/20 -> 12/18/24`, crit damage `20/30/40 -> 24/34/44`).
 - **Inspiration**: max HP bonus `20/40 -> 25/45`.
 - **Defensive Reflexes**: passive reset cooldown `8/6 -> 7/5`.
+- **Rage economy**: warrior combat rage generation tuned to `+3 on damage dealt / +4 on damage taken` with delayed out-of-combat decay (`5s` delay).
 
 ### Expected effect
 

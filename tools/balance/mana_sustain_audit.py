@@ -21,6 +21,11 @@ MANA_REGEN_PER_INT = 0.1
 SPELL_POWER_FROM_INT = 0.5
 GCD_SEC = 1.0
 LEVELS = [20, 40, 60]
+WARRIOR_RAGE_MAX = 100.0
+WARRIOR_RAGE_GAIN_ON_DEAL = 3.0
+WARRIOR_RAGE_GAIN_ON_TAKE = 4.0
+WARRIOR_AUTO_HIT_INTERVAL = 1.5
+WARRIOR_INCOMING_HIT_INTERVAL = 3.0
 
 ROTATIONS = {
     ("mage", "dps"): ["meteor", "hailstorm", "fire_blast", "frost_wind", "fireball"],
@@ -125,6 +130,14 @@ def rank_for_level(ability: AbilityData, level: int) -> Optional[RankData]:
 
 
 def class_stats(class_id: str, level: int) -> Dict[str, float]:
+    if class_id == "warrior":
+        return {
+            "int": 0.0,
+            "max_mana": WARRIOR_RAGE_MAX,
+            "mana_regen": 0.0,
+            "spell_power": 0.0,
+        }
+
     ci = CLASS_INT[class_id]
     stat_int = ci["base"] + ci["per_level"] * (level - 1)
     mana_regen = stat_int * MANA_REGEN_PER_INT
@@ -208,8 +221,14 @@ def simulate_profile(class_id: str, level: int, profile: str, duration_sec: floa
                 if amount > 0:
                     if a.ability_type in {"damage", "active", "aoe_damage"}:
                         mana += amount * (return_pct_damage / 100.0)
+                        if class_id == "warrior":
+                            mana += WARRIOR_RAGE_GAIN_ON_DEAL
                     if a.ability_type in {"heal", "buff", "active"}:
                         mana += amount * (return_pct_heal / 100.0)
+
+        if class_id == "warrior":
+            mana += (dt / WARRIOR_AUTO_HIT_INTERVAL) * WARRIOR_RAGE_GAIN_ON_DEAL
+            mana += (dt / WARRIOR_INCOMING_HIT_INTERVAL) * WARRIOR_RAGE_GAIN_ON_TAKE
 
         mana += (mana_regen + water_regen_per_sec) * dt
         mana = max(0.0, min(stats["max_mana"], mana))
@@ -265,7 +284,7 @@ def build_report() -> str:
     for class_id, profile in profiles:
         lines.append(f"## {class_id.capitalize()} / profile `{profile}`")
         lines.append("")
-        lines.append("| Level | Mana pool | Regen/s | Mana after 12s | Mana after 60s | Quick spend 12s | Status |")
+        lines.append("| Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |")
         lines.append("|---:|---:|---:|---:|---:|---:|:---:|")
         for lvl in LEVELS:
             st = class_stats(class_id, lvl)
@@ -285,7 +304,7 @@ def build_report() -> str:
     lines.append("- Paladin `Path of Righteous Fury` mana-on-hit from autos is not modeled explicitly here (conservative estimate).")
     lines.append("- Shaman heal profile includes Water Devotion mana-over-time stance contribution in sustain estimate.")
     lines.append("- Hunter profile includes only active-cast rotation and does not model bonus mana from every possible on-hit interaction (conservative estimate).")
-    lines.append("- Warrior profile models ability-cast pressure only; basic auto-attack cadence and external sustain effects are not simulated.")
+    lines.append("- Warrior profile uses rage economy model (max=100, no mana-regen) with rage gain from dealt/taken hits and auto-attack cadence assumptions.")
     lines.append("- Results are balancing guardrails; final tuning should still be validated by encounter playtests.")
     return "\n".join(lines) + "\n"
 
