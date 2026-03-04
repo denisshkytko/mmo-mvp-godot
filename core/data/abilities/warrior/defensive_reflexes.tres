@@ -9,7 +9,7 @@
 script = ExtResource("3")
 required_level = 50
 train_cost_gold = 4610
-cooldown_sec = 8.0
+cooldown_sec = 7.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
@@ -23,7 +23,7 @@ flags = {}
 script = ExtResource("3")
 required_level = 60
 train_cost_gold = 6295
-cooldown_sec = 6.0
+cooldown_sec = 5.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0

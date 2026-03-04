@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/paladin/concentration_aura.png" id=2]
@@ -16,6 +16,21 @@ resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
 value_pct = 10.0
+value_pct_2 = 0.0
+flags = {}
+
+
+[sub_resource type="Resource" script_class="RankData" id=2]
+script = ExtResource("3")
+required_level = 50
+train_cost_gold = 4841
+cooldown_sec = 0.0
+cast_time_sec = 0.0
+duration_sec = 0.0
+resource_cost = 0
+value_flat = 0
+value_flat_2 = 0
+value_pct = 16.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -38,4 +53,4 @@ ability_type = "aura"
 target_type = "self"
 range_mode = "self"
 effect = SubResource("20")
-ranks = [SubResource("1")]
+ranks = [SubResource("1"), SubResource("2")]

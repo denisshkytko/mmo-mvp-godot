@@ -14,6 +14,10 @@ var label_name: String = "Mana"
 @export var rage_gain_on_take_flat: int = 3
 @export var rage_decay_delay_sec: float = 0.0
 @export var rage_decay_per_sec: float = 2.0
+@export var warrior_rage_gain_on_deal_flat: int = 3
+@export var warrior_rage_gain_on_take_flat: int = 4
+@export var warrior_rage_decay_delay_sec: float = 5.0
+@export var warrior_rage_decay_per_sec: float = 2.0
 
 var _last_combat_time_sec: float = -999999.0
 var _rage_decay_accum: float = 0.0
@@ -33,6 +37,11 @@ func configure_from_class_id(class_id: String) -> void:
 	set_type(t)
 
 	if resource_type == "rage":
+		if class_id == "warrior":
+			rage_gain_on_deal_flat = warrior_rage_gain_on_deal_flat
+			rage_gain_on_take_flat = warrior_rage_gain_on_take_flat
+			rage_decay_delay_sec = warrior_rage_decay_delay_sec
+			rage_decay_per_sec = warrior_rage_decay_per_sec
 		max_resource = rage_max_value
 		resource = clamp(resource, 0, max_resource)
 		return

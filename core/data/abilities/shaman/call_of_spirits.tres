@@ -10,13 +10,13 @@ script = ExtResource("3")
 required_level = 34
 train_cost_gold = 2646
 cooldown_sec = 0.0
-cast_time_sec = 5.0
+cast_time_sec = 4.0
 duration_sec = 0.0
-resource_cost = 16
+resource_cost = 14
 value_flat = 0
 value_flat_2 = 0
-value_pct = 20.0
-value_pct_2 = 20.0
+value_pct = 30.0
+value_pct_2 = 30.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectRevivePlayer" id=20]

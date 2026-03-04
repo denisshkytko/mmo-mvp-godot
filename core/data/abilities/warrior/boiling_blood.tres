@@ -13,10 +13,10 @@ cooldown_sec = 0.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
-value_flat = 30
+value_flat = 25
 value_flat_2 = 0
-value_pct = 10.0
-value_pct_2 = 20.0
+value_pct = 12.0
+value_pct_2 = 24.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=2]
@@ -27,10 +27,10 @@ cooldown_sec = 0.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
-value_flat = 25
+value_flat = 20
 value_flat_2 = 0
-value_pct = 15.0
-value_pct_2 = 30.0
+value_pct = 18.0
+value_pct_2 = 34.0
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=3]
@@ -41,10 +41,10 @@ cooldown_sec = 0.0
 cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 0
-value_flat = 20
+value_flat = 15
 value_flat_2 = 0
-value_pct = 20.0
-value_pct_2 = 40.0
+value_pct = 24.0
+value_pct_2 = 44.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectApplyStance" id=20]

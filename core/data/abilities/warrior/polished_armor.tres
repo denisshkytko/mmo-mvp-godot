@@ -15,8 +15,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 15.0
-value_pct_2 = 5.0
+value_pct = 18.0
+value_pct_2 = 6.0
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectApplyStance" id=20]

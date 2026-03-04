@@ -3,6 +3,7 @@ class_name EffectFireball
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
 
 @export var school: String = "magic"
 @export var scaling_mode: String = "spell_power_flat"
@@ -64,7 +65,7 @@ func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary) -
 		"attack_power_pct":
 			return int(round(attack_power * float(rank_data.value_pct) / 100.0))
 		_:
-			return int(rank_data.value_flat) + int(round(spell_power))
+			return int(rank_data.value_flat) + SP_SCALING.bonus_flat(spell_power, rank_data, "direct")
 
 
 func _apply_debuff_to_target(target: Node, entry_id: String, duration_sec: float, data: Dictionary) -> void:

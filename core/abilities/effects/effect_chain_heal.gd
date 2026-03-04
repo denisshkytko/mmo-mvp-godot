@@ -4,6 +4,7 @@ class_name EffectChainHeal
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const PLAYER_COMBAT := preload("res://game/characters/player/components/player_combat.gd")
+const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
 
 @export var scaling_mode: String = "spell_power_flat" # flat | spell_power_flat
 @export var jump_count: int = 2 # number of additional jumps after primary target
@@ -59,7 +60,7 @@ func _compute_base_heal(rank_data: RankData, snap: Dictionary) -> int:
 		"flat":
 			return int(rank_data.value_flat)
 		"spell_power_flat":
-			return int(rank_data.value_flat) + int(round(spell_power))
+			return int(rank_data.value_flat) + SP_SCALING.bonus_flat(spell_power, rank_data, "heal")
 		_:
 			return int(rank_data.value_flat)
 
