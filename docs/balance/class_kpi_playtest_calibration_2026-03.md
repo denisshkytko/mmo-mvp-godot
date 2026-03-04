@@ -51,3 +51,16 @@ Result:
 
 - Non-linear per-rank growth is **allowed but optional**; use only when needed to solve specific breakpoint issues.
 - Keep default preference for simple linear growth if gameplay quality is already acceptable.
+
+## Iteration 2 (follow-up micro-tuning)
+
+Additional targeted pressure increases (high-rank mostly):
+- Mage: `fireball` (24+) and `frost_wind` (all ranks in current table).
+- Paladin: `strike_of_light` (26+).
+- Shaman: `lightning` (26+) and `lesser_heal` (36+).
+- Hunter: `arcane_shot` (34+).
+
+Observation after rerunning KPI report:
+- status buckets remain `OK` in all modeled profiles,
+- the simplified audit model is still insensitive to some high-rank cost increases,
+- therefore encounter playtests are now the deciding validation gate for finalization.

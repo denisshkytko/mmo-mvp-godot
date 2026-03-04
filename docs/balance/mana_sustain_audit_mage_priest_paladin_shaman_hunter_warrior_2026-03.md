@@ -37,8 +37,8 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 | Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 750 | 5.0 | 100.0% | 100.0% | 0.0% | OK |
-| 40 | 1350 | 9.0 | 98.2% | 95.9% | 1.8% | OK |
-| 60 | 1950 | 13.0 | 99.7% | 100.0% | 0.3% | OK |
+| 40 | 1350 | 9.0 | 97.9% | 94.4% | 2.1% | OK |
+| 60 | 1950 | 13.0 | 99.6% | 100.0% | 0.4% | OK |
 
 ## Paladin / profile `heal_group`
 
