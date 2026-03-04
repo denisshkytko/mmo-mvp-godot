@@ -15,8 +15,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 10.0
-value_pct_2 = 1.1
+value_pct = 12.0
+value_pct_2 = 1.12
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=2]
@@ -29,8 +29,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 15.0
-value_pct_2 = 1.15
+value_pct = 17.0
+value_pct_2 = 1.17
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=3]
@@ -43,8 +43,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 20.0
-value_pct_2 = 1.2
+value_pct = 22.0
+value_pct_2 = 1.22
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=4]
@@ -57,8 +57,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 25.0
-value_pct_2 = 1.25
+value_pct = 27.0
+value_pct_2 = 1.27
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=5]
@@ -71,8 +71,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 30.0
-value_pct_2 = 1.3
+value_pct = 32.0
+value_pct_2 = 1.32
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=6]
@@ -85,8 +85,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 35.0
-value_pct_2 = 1.35
+value_pct = 37.0
+value_pct_2 = 1.37
 flags = {}
 
 [sub_resource type="Resource" script_class="RankData" id=7]
@@ -99,8 +99,8 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 40.0
-value_pct_2 = 1.4
+value_pct = 42.0
+value_pct_2 = 1.42
 flags = {}
 
 [sub_resource type="Resource" script_class="EffectApplyStance" id=20]

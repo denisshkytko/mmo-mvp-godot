@@ -12,6 +12,7 @@ CLASS_INT = {
     "priest": {"base": 17.0, "per_level": 2.0},
     "paladin": {"base": 12.0, "per_level": 2.0},
     "shaman": {"base": 12.0, "per_level": 3.0},
+    "hunter": {"base": 10.0, "per_level": 1.5},
 }
 
 MANA_PER_INT = 15.0
@@ -28,6 +29,7 @@ ROTATIONS = {
     ("paladin", "heal_group"): ["healing_light", "radiant_touch", "lights_verdict", "prayer_to_the_light"],
     ("shaman", "dps"): ["chain_lightning", "earths_wrath", "lightning", "searing_strike"],
     ("shaman", "heal_group"): ["life_surge", "healing_touch", "lesser_heal"],
+    ("hunter", "dps"): ["poisoned_arrow", "suppressive_shot", "aimed_shot", "arcane_shot", "lucky_shot"],
 }
 
 STANCE_BY_PROFILE = {
@@ -38,6 +40,7 @@ STANCE_BY_PROFILE = {
     ("paladin", "heal_group"): "path_of_light",
     ("shaman", "dps"): "stone_fists",
     ("shaman", "heal_group"): "water_devotion",
+    ("hunter", "dps"): "cobra_aspect",
 }
 
 @dataclass
@@ -228,10 +231,11 @@ def build_report() -> str:
         "priest": load_class_abilities("priest"),
         "paladin": load_class_abilities("paladin"),
         "shaman": load_class_abilities("shaman"),
+        "hunter": load_class_abilities("hunter"),
     }
 
     lines: List[str] = []
-    lines.append("# Mana sustain audit (Mage + Priest + Paladin + Shaman, 2026-03)")
+    lines.append("# Mana sustain audit (Mage + Priest + Paladin + Shaman + Hunter, 2026-03)")
     lines.append("")
     lines.append("Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana regen active in combat.")
     lines.append("")
@@ -250,6 +254,7 @@ def build_report() -> str:
         ("paladin", "heal_group"),
         ("shaman", "dps"),
         ("shaman", "heal_group"),
+        ("hunter", "dps"),
     ]
 
     for class_id, profile in profiles:
@@ -274,12 +279,13 @@ def build_report() -> str:
     lines.append("- Paladin baseline does not force long-duration buff pre-application (`Lights Guidance`); values are conservative.")
     lines.append("- Paladin `Path of Righteous Fury` mana-on-hit from autos is not modeled explicitly here (conservative estimate).")
     lines.append("- Shaman heal profile includes Water Devotion mana-over-time stance contribution in sustain estimate.")
+    lines.append("- Hunter profile includes only active-cast rotation and does not model bonus mana from every possible on-hit interaction (conservative estimate).")
     lines.append("- Results are balancing guardrails; final tuning should still be validated by encounter playtests.")
     return "\n".join(lines) + "\n"
 
 
 def main() -> None:
-    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_paladin_shaman_2026-03.md"
+    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_paladin_shaman_hunter_2026-03.md"
     out.write_text(build_report(), encoding="utf-8")
     print(f"written: {out}")
 
