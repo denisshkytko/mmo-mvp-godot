@@ -21,7 +21,7 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 | Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 825 | 5.5 | 95.6% | 78.8% | 4.4% | OK |
-| 40 | 1425 | 9.5 | 100.0% | 100.0% | 0.0% | OK |
+| 40 | 1425 | 9.5 | 98.8% | 93.8% | 1.2% | OK |
 | 60 | 2025 | 13.5 | 100.0% | 100.0% | 0.0% | OK |
 
 ## Priest / profile `heal_group`
@@ -37,8 +37,8 @@ Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana 
 | Level | Resource pool | Passive regen/s | Resource after 12s | Resource after 60s | Quick spend 12s | Status |
 |---:|---:|---:|---:|---:|---:|:---:|
 | 20 | 750 | 5.0 | 100.0% | 100.0% | 0.0% | OK |
-| 40 | 1350 | 9.0 | 99.1% | 99.0% | 0.9% | OK |
-| 60 | 1950 | 13.0 | 100.0% | 100.0% | 0.0% | OK |
+| 40 | 1350 | 9.0 | 98.2% | 95.9% | 1.8% | OK |
+| 60 | 1950 | 13.0 | 99.7% | 100.0% | 0.3% | OK |
 
 ## Paladin / profile `heal_group`
 

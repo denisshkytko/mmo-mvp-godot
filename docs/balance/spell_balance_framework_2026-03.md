@@ -54,6 +54,12 @@
 - Каждая стойка/аура должна иметь ясный tradeoff (урон / защита / sustain / utility).
 - Избегаем ситуаций, где один stance доминирует во всех сценариях.
 
+### 3.6 Rank progression shape (linear / non-linear)
+- Линейный рост по рангам (например `+10` на каждый следующий ранг) — базовый и предпочтительный вариант.
+- **Нелинейный рост разрешён**, если это реально улучшает игровой опыт на конкретных «точках получения ранга» (power spikes, провалы темпа, breakpoints по TTK/HPS).
+- Нелинейные шаги фиксируем только после KPI+playtest проверки; это рекомендация, а не обязательство для каждого спелла.
+- При нелинейной кривой обязательно документируем причину в class-pass отчёте (какой ранг/уровень, какой KPI/сценарий исправляем).
+
 ## 4) Минимальный процесс для каждого следующего класса
 
 1. Собрать текущие RankData по всем заклинаниям класса.
@@ -80,6 +86,7 @@ This document defines a **unified spell-balance workflow** so future class passe
 - Adjust resource cost with throughput changes.
 - Cast/cooldown tuned by practical combat value, not tooltip value only.
 - Keep stance/aura tradeoffs explicit and non-dominant.
+- Rank progression can be linear by default, but non-linear steps are allowed when KPI/playtests show they are needed at specific rank breakpoints.
 
 ### Minimal repeatable process
 - Gather rank data -> define profile rotations -> run KPI at 20/40/60 -> tune package -> document pass.
