@@ -15,8 +15,8 @@ cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 12
 value_flat = 0
-value_flat_2 = 15
-value_pct = 60.0
+value_flat_2 = 18
+value_pct = 65.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -29,8 +29,8 @@ cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 12
 value_flat = 0
-value_flat_2 = 20
-value_pct = 70.0
+value_flat_2 = 24
+value_pct = 75.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -43,8 +43,8 @@ cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 12
 value_flat = 0
-value_flat_2 = 25
-value_pct = 80.0
+value_flat_2 = 30
+value_pct = 85.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -57,8 +57,8 @@ cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 12
 value_flat = 0
-value_flat_2 = 30
-value_pct = 90.0
+value_flat_2 = 36
+value_pct = 95.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -71,8 +71,8 @@ cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 12
 value_flat = 0
-value_flat_2 = 35
-value_pct = 100.0
+value_flat_2 = 42
+value_pct = 105.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -85,8 +85,8 @@ cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 12
 value_flat = 0
-value_flat_2 = 40
-value_pct = 110.0
+value_flat_2 = 48
+value_pct = 115.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -99,8 +99,8 @@ cast_time_sec = 0.0
 duration_sec = 0.0
 resource_cost = 12
 value_flat = 0
-value_flat_2 = 45
-value_pct = 120.0
+value_flat_2 = 54
+value_pct = 125.0
 value_pct_2 = 0.0
 flags = {}
 

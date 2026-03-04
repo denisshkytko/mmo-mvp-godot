@@ -15,7 +15,7 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 20.0
+value_pct = 18.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -29,7 +29,7 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 25.0
+value_pct = 22.0
 value_pct_2 = 0.0
 flags = {}
 
@@ -43,7 +43,7 @@ duration_sec = 0.0
 resource_cost = 0
 value_flat = 0
 value_flat_2 = 0
-value_pct = 30.0
+value_pct = 26.0
 value_pct_2 = 0.0
 flags = {}
 

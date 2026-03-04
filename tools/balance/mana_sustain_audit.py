@@ -11,6 +11,7 @@ CLASS_INT = {
     "mage": {"base": 20.0, "per_level": 3.0},
     "priest": {"base": 17.0, "per_level": 2.0},
     "paladin": {"base": 12.0, "per_level": 2.0},
+    "shaman": {"base": 12.0, "per_level": 3.0},
 }
 
 MANA_PER_INT = 15.0
@@ -25,6 +26,8 @@ ROTATIONS = {
     ("priest", "heal_group"): ["prayer_of_light", "radiance", "protective_barrier", "healing_stream", "heal"],
     ("paladin", "dps"): ["storm_of_light", "lights_verdict", "light_execution", "judging_flame", "strike_of_light"],
     ("paladin", "heal_group"): ["healing_light", "radiant_touch", "lights_verdict", "prayer_to_the_light"],
+    ("shaman", "dps"): ["chain_lightning", "earths_wrath", "lightning", "searing_strike"],
+    ("shaman", "heal_group"): ["life_surge", "healing_touch", "lesser_heal"],
 }
 
 STANCE_BY_PROFILE = {
@@ -33,6 +36,8 @@ STANCE_BY_PROFILE = {
     ("priest", "heal_group"): "power_absorption",
     ("paladin", "dps"): "path_of_righteous_fury",
     ("paladin", "heal_group"): "path_of_light",
+    ("shaman", "dps"): "stone_fists",
+    ("shaman", "heal_group"): "water_devotion",
 }
 
 @dataclass
@@ -155,6 +160,15 @@ def simulate_profile(class_id: str, level: int, profile: str, duration_sec: floa
     spell_power = stats["spell_power"]
     return_pct_damage, return_pct_heal = get_stance_return_pcts(class_id, profile, level, abilities)
 
+    stance_id = STANCE_BY_PROFILE.get((class_id, profile))
+    water_regen_per_sec = 0.0
+    if class_id == "shaman" and stance_id == "water_devotion":
+        wd = abilities.get("water_devotion")
+        if wd is not None:
+            rwd = rank_for_level(wd, level)
+            if rwd is not None:
+                water_regen_per_sec = stats["max_mana"] * (rwd.value_pct / 100.0) / 2.0
+
     t = 0.0
     cds: Dict[str, float] = {}
 
@@ -191,7 +205,7 @@ def simulate_profile(class_id: str, level: int, profile: str, duration_sec: floa
                     if a.ability_type in {"heal", "buff", "active"}:
                         mana += amount * (return_pct_heal / 100.0)
 
-        mana += mana_regen * dt
+        mana += (mana_regen + water_regen_per_sec) * dt
         mana = max(0.0, min(stats["max_mana"], mana))
         t += dt
         if mana <= 0.01:
@@ -213,10 +227,11 @@ def build_report() -> str:
         "mage": load_class_abilities("mage"),
         "priest": load_class_abilities("priest"),
         "paladin": load_class_abilities("paladin"),
+        "shaman": load_class_abilities("shaman"),
     }
 
     lines: List[str] = []
-    lines.append("# Mana sustain audit (Mage + Priest + Paladin, 2026-03)")
+    lines.append("# Mana sustain audit (Mage + Priest + Paladin + Shaman, 2026-03)")
     lines.append("")
     lines.append("Assumptions: no gear, no consumables, current class progression, GCD=1.0s, mana regen active in combat.")
     lines.append("")
@@ -233,6 +248,8 @@ def build_report() -> str:
         ("priest", "heal_group"),
         ("paladin", "dps"),
         ("paladin", "heal_group"),
+        ("shaman", "dps"),
+        ("shaman", "heal_group"),
     ]
 
     for class_id, profile in profiles:
@@ -256,12 +273,13 @@ def build_report() -> str:
     lines.append("- Priest profiles include simplified mana return from `Power Absorption` (`value_pct`).")
     lines.append("- Paladin baseline does not force long-duration buff pre-application (`Lights Guidance`); values are conservative.")
     lines.append("- Paladin `Path of Righteous Fury` mana-on-hit from autos is not modeled explicitly here (conservative estimate).")
+    lines.append("- Shaman heal profile includes Water Devotion mana-over-time stance contribution in sustain estimate.")
     lines.append("- Results are balancing guardrails; final tuning should still be validated by encounter playtests.")
     return "\n".join(lines) + "\n"
 
 
 def main() -> None:
-    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_paladin_2026-03.md"
+    out = ROOT / "docs" / "balance" / "mana_sustain_audit_mage_priest_paladin_shaman_2026-03.md"
     out.write_text(build_report(), encoding="utf-8")
     print(f"written: {out}")
 
