@@ -1,0 +1,1342 @@
+{
+  "tilesets": [
+    {
+      "id": "assets_tiles_desert",
+      "folder": "assets/tiles/Desert/Land And Road",
+      "tile_size": 64,
+      "direct_tiles": [
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_1.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_10.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_11.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_12.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_13.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_14.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_15.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_16.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_17.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_18.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_19.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_2.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_20.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_21.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_22.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_23.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_24.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_25.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_26.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_3.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_4.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_5.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_6.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_7.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_8.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/road_9.png",
+          "size": [
+            64,
+            64
+          ]
+        }
+      ],
+      "sheets": [
+        {
+          "path": "assets/tiles/Desert/Land And Road/bg.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_1.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_10.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_11.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_12.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_13.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_14.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_15.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_16.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_17.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_18.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_2.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_3.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_4.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_5.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_6.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_7.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_8.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Desert/Land And Road/land_9.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        }
+      ],
+      "estimated_total_tiles": 330
+    },
+    {
+      "id": "assets_tiles_forest",
+      "folder": "assets/tiles/Forest/Land And Road",
+      "tile_size": 32,
+      "direct_tiles": [
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_01.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_02.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_03.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_04.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_05.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_06.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_07.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_08.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_09.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_10.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_11.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_12.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_13.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_14.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_15.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_16.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_17.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_18.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_19.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_20.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_21.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_22.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_23.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_24.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_25.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_26.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_27.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_28.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_29.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_30.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_31.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_32.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_33.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_34.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_35.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_36.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_37.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_38.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_39.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_40.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_41.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_42.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_43.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_44.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_45.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_46.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_47.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_48.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_49.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_50.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_51.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_52.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_53.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_54.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_55.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_56.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_57.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_58.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_59.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_60.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_61.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_62.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_63.png",
+          "size": [
+            32,
+            32
+          ]
+        },
+        {
+          "path": "assets/tiles/Forest/Land And Road/FieldsTile_64.png",
+          "size": [
+            32,
+            32
+          ]
+        }
+      ],
+      "sheets": [],
+      "estimated_total_tiles": 64
+    },
+    {
+      "id": "assets_tiles_swamp",
+      "folder": "assets/tiles/Swamp/Land And Road",
+      "tile_size": 64,
+      "direct_tiles": [
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_1.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_10.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_11.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_12.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_13.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_2.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_3.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_4.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_5.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_6.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_7.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_8.png",
+          "size": [
+            64,
+            64
+          ]
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_9.png",
+          "size": [
+            64,
+            64
+          ]
+        }
+      ],
+      "sheets": [
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_1.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_10.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_11.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_12.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_13.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_14.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_15.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_16.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_17.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_18.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_19.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_2.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_20.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_21.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_22.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_23.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_24.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_25.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_26.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_3.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_4.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_5.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_6.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_7.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_8.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/land_9.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_14.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_15.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_16.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        },
+        {
+          "path": "assets/tiles/Swamp/Land And Road/road_17.png",
+          "size": [
+            256,
+            256
+          ],
+          "slice_size": [
+            64,
+            64
+          ],
+          "estimated_tiles": 16
+        }
+      ],
+      "estimated_total_tiles": 493
+    }
+  ]
+}

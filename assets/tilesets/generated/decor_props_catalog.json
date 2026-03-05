@@ -1,0 +1,1628 @@
+{
+  "decor": [
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/1.png",
+      "size": [
+        48,
+        26
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/10.png",
+      "size": [
+        17,
+        40
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/11.png",
+      "size": [
+        21,
+        40
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/12.png",
+      "size": [
+        20,
+        23
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/13.png",
+      "size": [
+        43,
+        54
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/14.png",
+      "size": [
+        23,
+        21
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/15.png",
+      "size": [
+        23,
+        21
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/16.png",
+      "size": [
+        23,
+        21
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/17.png",
+      "size": [
+        23,
+        21
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/2.png",
+      "size": [
+        41,
+        38
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/3.png",
+      "size": [
+        19,
+        21
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/4.png",
+      "size": [
+        15,
+        13
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/5.png",
+      "size": [
+        26,
+        17
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/6.png",
+      "size": [
+        14,
+        19
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/7.png",
+      "size": [
+        20,
+        14
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/8.png",
+      "size": [
+        28,
+        42
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decor/9.png",
+      "size": [
+        16,
+        40
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Black_mushrooms1_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Black_mushrooms1_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Black_mushrooms2_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Black_mushrooms2_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_pearl1_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_pearl1_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_pearl2_grass_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_pearl2_ground_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_white1_grass_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_white1_ground_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_white2_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Caury_white2_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Dragon_bones_shadow1.png",
+      "size": [
+        191,
+        148
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Dragon_bones_shadow2.png",
+      "size": [
+        191,
+        148
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Dragon_bones_shadow3.png",
+      "size": [
+        191,
+        148
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Monster_fish_bones_shadow1.png",
+      "size": [
+        89,
+        47
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Monster_fish_bones_shadow2.png",
+      "size": [
+        89,
+        47
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Monster_fish_bones_shadow3.png",
+      "size": [
+        89,
+        47
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Ship1_shadow1.png",
+      "size": [
+        169,
+        74
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Ship1_shadow2.png",
+      "size": [
+        169,
+        74
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Ship1_shadow3.png",
+      "size": [
+        169,
+        74
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Ship2_shadow1.png",
+      "size": [
+        76,
+        37
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Ship2_shadow2.png",
+      "size": [
+        76,
+        37
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/Ship2_shadow3.png",
+      "size": [
+        76,
+        37
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/White_ruins1.png",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/White_ruins2.png",
+      "size": [
+        80,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/White_ruins3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/White_ruins4.png",
+      "size": [
+        48,
+        48
+      ]
+    },
+    {
+      "path": "assets/tiles/Coast/Decor/White_ruins5.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Cave_entrance2_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Cave_entrance3_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Dragon_bones_full_ground_shadow.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Sand_ruins1.png",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Sand_ruins2.png",
+      "size": [
+        80,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Sand_ruins3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Sand_ruins4.png",
+      "size": [
+        48,
+        48
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Sand_ruins5.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Water_ruins1.png",
+      "size": [
+        80,
+        96
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Water_ruins2.png",
+      "size": [
+        64,
+        80
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Water_ruins3.png",
+      "size": [
+        48,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Water_ruins4.png",
+      "size": [
+        48,
+        48
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/Water_ruins5.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/decor_2.png",
+      "size": [
+        258,
+        279
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/decor_6.png",
+      "size": [
+        122,
+        94
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_1.png",
+      "size": [
+        106,
+        79
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_10.png",
+      "size": [
+        769,
+        630
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_11.png",
+      "size": [
+        1422,
+        643
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_12.png",
+      "size": [
+        948,
+        660
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_4.png",
+      "size": [
+        262,
+        181
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_5.png",
+      "size": [
+        181,
+        136
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_6.png",
+      "size": [
+        199,
+        188
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_7.png",
+      "size": [
+        125,
+        100
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_8.png",
+      "size": [
+        163,
+        103
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/stones_9.png",
+      "size": [
+        148,
+        101
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/tree_11.png",
+      "size": [
+        206,
+        367
+      ]
+    },
+    {
+      "path": "assets/tiles/Desert/Decor/tree_12.png",
+      "size": [
+        221,
+        301
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/1.png",
+      "size": [
+        26,
+        23
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/2.png",
+      "size": [
+        37,
+        26
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/3.png",
+      "size": [
+        33,
+        22
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/4.png",
+      "size": [
+        39,
+        25
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/5.png",
+      "size": [
+        41,
+        25
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/6.png",
+      "size": [
+        40,
+        26
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Blue-green_balls_tree1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Blue-green_balls_tree2.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Blue-green_balls_tree3.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Brown_ruins1.png",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Brown_ruins2.png",
+      "size": [
+        80,
+        80
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Brown_ruins3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Brown_ruins4.png",
+      "size": [
+        48,
+        48
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Brown_ruins5.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Cave_entrance1_grass_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Cave_entrance1_ground_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Chanterelles1.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Chanterelles2.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Chanterelles3.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Dragon_bones_full_grass_shadow.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Ent_man.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Ent_woman.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Orange_mushrooms1_grass_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Orange_mushrooms1_ground_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Orange_mushrooms2_grass_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Orange_mushrooms2_ground_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_leaf_tree1.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_leaf_tree2.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_leaf_tree3.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock1_grass_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock1_ground_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock2_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock2_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock3_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock3_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock4_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock4_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock5_grass_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Oval_rock5_ground_shadow.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Rock_statue_deer_grass_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Rock_statue_deer_ground_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Rock_statue_old_man_grass_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Rock_statue_old_man_ground_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Swirling tree1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Swirling tree2.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Swirling tree3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Tree1.png",
+      "size": [
+        66,
+        77
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Tree2.png",
+      "size": [
+        29,
+        26
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Willow1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Willow2.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Willow3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yellow_ruins1.png",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yellow_ruins2.png",
+      "size": [
+        80,
+        80
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yellow_ruins3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yellow_ruins4.png",
+      "size": [
+        48,
+        48
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yellow_ruins5.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yurt1_grass_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yurt1_ground_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yurt2_grass_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Decor/Yurt2_ground_shadow.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Grass/1.png",
+      "size": [
+        5,
+        6
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Grass/2.png",
+      "size": [
+        9,
+        6
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Grass/3.png",
+      "size": [
+        5,
+        7
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Grass/4.png",
+      "size": [
+        8,
+        5
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Grass/5.png",
+      "size": [
+        6,
+        10
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Grass/6.png",
+      "size": [
+        5,
+        8
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Shadow/1.png",
+      "size": [
+        20,
+        21
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Shadow/2.png",
+      "size": [
+        29,
+        25
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Shadow/3.png",
+      "size": [
+        30,
+        26
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Shadow/4.png",
+      "size": [
+        44,
+        37
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Shadow/5.png",
+      "size": [
+        55,
+        44
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Shadow/6.png",
+      "size": [
+        95,
+        62
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Stone/1.png",
+      "size": [
+        10,
+        9
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Stone/2.png",
+      "size": [
+        9,
+        7
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Stone/3.png",
+      "size": [
+        6,
+        5
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Stone/4.png",
+      "size": [
+        4,
+        3
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Stone/5.png",
+      "size": [
+        9,
+        8
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Stone/6.png",
+      "size": [
+        11,
+        9
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Beige_green_mushroom1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Beige_green_mushroom2.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Beige_green_mushroom3.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Brown-gray_ruins1.png",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Brown-gray_ruins2.png",
+      "size": [
+        80,
+        80
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Brown-gray_ruins3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Brown-gray_ruins4.png",
+      "size": [
+        48,
+        48
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Brown-gray_ruins5.png",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Cave_entrance2_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Cave_entrance3_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Curved_tree1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Curved_tree2.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Curved_tree3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Light_balls_tree1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Light_balls_tree2.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Light_balls_tree3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Rock_statue_fox_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Rock_statue_fox_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Rock_statue_head_grass_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Rock_statue_head_ground_shadow.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Rock_statue_mother_grass_shadow.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/Rock_statue_mother_ground_shadow.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/White-red_mushroom1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/White-red_mushroom2.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/White-red_mushroom3.png",
+      "size": [
+        64,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/White_tree1.png",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "path": "assets/tiles/Swamp/Decor/White_tree2.png",
+      "size": [
+        64,
+        64
+      ]
+    }
+  ],
+  "props": [
+    {
+      "path": "assets/tiles/Cities And Settlements/Box/1.png",
+      "size": [
+        20,
+        22
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Box/2.png",
+      "size": [
+        20,
+        22
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Box/3.png",
+      "size": [
+        16,
+        21
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Box/4.png",
+      "size": [
+        16,
+        22
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Box/5.png",
+      "size": [
+        18,
+        25
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Altar.png",
+      "size": [
+        192,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Candelabra.png",
+      "size": [
+        96,
+        32
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Candelabra_alternative_fit.png",
+      "size": [
+        384,
+        48
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Candles.png",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Cathedral/Exterior.png",
+      "size": [
+        256,
+        304
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Cathedral/Interior_objects.png",
+      "size": [
+        304,
+        160
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Cathedral/Walls_Interior.png",
+      "size": [
+        160,
+        528
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Decorative_cracks.png",
+      "size": [
+        304,
+        240
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/House/1.png",
+      "size": [
+        116,
+        112
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/House/2.png",
+      "size": [
+        156,
+        135
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/House/4.png",
+      "size": [
+        154,
+        149
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Walls_street.png",
+      "size": [
+        336,
+        288
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Workshop/Exterior_house.png",
+      "size": [
+        400,
+        208
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Workshop/Forge.png",
+      "size": [
+        384,
+        96
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Workshop/Interior_objects.png",
+      "size": [
+        208,
+        624
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Workshop/Light_animation.png",
+      "size": [
+        128,
+        288
+      ]
+    },
+    {
+      "path": "assets/tiles/Cities And Settlements/Workshop/Walls_interior.png",
+      "size": [
+        256,
+        272
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/1.png",
+      "size": [
+        57,
+        36
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/2.png",
+      "size": [
+        36,
+        51
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/3.png",
+      "size": [
+        53,
+        34
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/4.png",
+      "size": [
+        56,
+        38
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/5.png",
+      "size": [
+        22,
+        14
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/6.png",
+      "size": [
+        22,
+        13
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/Animated Campfire/1.png",
+      "size": [
+        192,
+        64
+      ]
+    },
+    {
+      "path": "assets/tiles/Forest/Camp/Animated Campfire/2.png",
+      "size": [
+        192,
+        32
+      ]
+    }
+  ],
+  "special_sheet_slicing": [
+    {
+      "id": "assets_tiles_cities_and_settlements_cathedral",
+      "folder": "assets/tiles/Cities And Settlements/Cathedral",
+      "slice_size": [
+        16,
+        16
+      ],
+      "sheets": [
+        {
+          "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Altar.png",
+          "size": [
+            192,
+            32
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 24
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Candelabra.png",
+          "size": [
+            96,
+            32
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 12
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Candelabra_alternative_fit.png",
+          "size": [
+            384,
+            48
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 72
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Cathedral/Animation/Candles.png",
+          "size": [
+            96,
+            96
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 36
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Cathedral/Exterior.png",
+          "size": [
+            256,
+            304
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 304
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Cathedral/Interior_objects.png",
+          "size": [
+            304,
+            160
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 190
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Cathedral/Walls_Interior.png",
+          "size": [
+            160,
+            528
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 330
+        }
+      ]
+    },
+    {
+      "id": "assets_tiles_cities_and_settlements_workshop",
+      "folder": "assets/tiles/Cities And Settlements/Workshop",
+      "slice_size": [
+        16,
+        16
+      ],
+      "sheets": [
+        {
+          "path": "assets/tiles/Cities And Settlements/Workshop/Exterior_house.png",
+          "size": [
+            400,
+            208
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 325
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Workshop/Forge.png",
+          "size": [
+            384,
+            96
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 144
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Workshop/Interior_objects.png",
+          "size": [
+            208,
+            624
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 507
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Workshop/Light_animation.png",
+          "size": [
+            128,
+            288
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 144
+        },
+        {
+          "path": "assets/tiles/Cities And Settlements/Workshop/Walls_interior.png",
+          "size": [
+            256,
+            272
+          ],
+          "slice_size": [
+            16,
+            16
+          ],
+          "estimated_tiles": 272
+        }
+      ]
+    }
+  ]
+}
