@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://douegrebgwmmk"
-path="res://.godot/imported/0_Dark_Oracle_Throwing_000.png-85db509f3d04fa4c035cf899f5758c4b.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Throwing_000.png-a9fc062952e8a645bf26be4c72af0d63.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_000.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Throwing_000.png-85db509f3d04fa4c035cf899f5758c4b.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_000.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Throwing_000.png-a9fc062952e8a645bf26be4c72af0d63.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbvaeeqemm87w"
-path="res://.godot/imported/0_Fallen_Angels_Idle Blinking_001.png-bcb016eb706b638cb0e8b879b813413f.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Idle Blinking_001.png-d86f6549a35d790c067392d8cd87a4f5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_1/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_001.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Idle Blinking_001.png-bcb016eb706b638cb0e8b879b813413f.ctex"]
+source_file="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_001.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Idle Blinking_001.png-d86f6549a35d790c067392d8cd87a4f5.ctex"]
 
 [params]
 

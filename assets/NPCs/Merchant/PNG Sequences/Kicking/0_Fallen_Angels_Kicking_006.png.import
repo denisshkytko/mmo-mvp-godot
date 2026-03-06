@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbetukj8u64ac"
-path="res://.godot/imported/0_Fallen_Angels_Kicking_006.png-1f6c7e7d8aea2507e832b5938baef780.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Kicking_006.png-5e18ef0d418dac46045d976e8590f862.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_1/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_006.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Kicking_006.png-1f6c7e7d8aea2507e832b5938baef780.ctex"]
+source_file="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_006.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Kicking_006.png-5e18ef0d418dac46045d976e8590f862.ctex"]
 
 [params]
 

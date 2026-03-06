@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://chjn0t1uuc1bh"
-path="res://.godot/imported/0_Fallen_Angels_Dying_000.png-60186dfadc36a92fe73ee5d1ae77b022.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Dying_000.png-a4a0d88571cf86199a4f71a3a009be1a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Dying/0_Fallen_Angels_Dying_000.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Dying_000.png-60186dfadc36a92fe73ee5d1ae77b022.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Dying/0_Fallen_Angels_Dying_000.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Dying_000.png-a4a0d88571cf86199a4f71a3a009be1a.ctex"]
 
 [params]
 

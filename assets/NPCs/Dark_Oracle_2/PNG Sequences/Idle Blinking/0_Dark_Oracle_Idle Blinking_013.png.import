@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4j47e5mw24jr"
-path="res://.godot/imported/0_Dark_Oracle_Idle Blinking_013.png-2e6dabd04fec8f6d005d196fc2d1903b.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Idle Blinking_013.png-74c984c265a313e1a2e1734b7f80b053.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_013.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Idle Blinking_013.png-2e6dabd04fec8f6d005d196fc2d1903b.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_013.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Idle Blinking_013.png-74c984c265a313e1a2e1734b7f80b053.ctex"]
 
 [params]
 

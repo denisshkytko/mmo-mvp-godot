@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://de3ph6k5iwrnq"
-path="res://.godot/imported/0_Fallen_Angels_Running_003.png-0135f2223313e7277282beb92bf16a6f.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Running_003.png-ee0409ebac356d8d2ce4cdbe57ed1759.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Running/0_Fallen_Angels_Running_003.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Running_003.png-0135f2223313e7277282beb92bf16a6f.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Running/0_Fallen_Angels_Running_003.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Running_003.png-ee0409ebac356d8d2ce4cdbe57ed1759.ctex"]
 
 [params]
 

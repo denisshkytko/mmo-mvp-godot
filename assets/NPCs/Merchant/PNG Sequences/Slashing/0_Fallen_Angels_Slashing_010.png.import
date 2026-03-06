@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqry7ulq5u6ke"
-path="res://.godot/imported/0_Fallen_Angels_Slashing_010.png-598bd64e001c425de2b8882809c97c0e.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Slashing_010.png-373452b1ded7eb5c9bb4bfee9aa41981.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_1/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_010.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Slashing_010.png-598bd64e001c425de2b8882809c97c0e.ctex"]
+source_file="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_010.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Slashing_010.png-373452b1ded7eb5c9bb4bfee9aa41981.ctex"]
 
 [params]
 

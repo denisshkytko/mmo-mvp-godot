@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://durmehv50f5iu"
-path="res://.godot/imported/0_Dark_Oracle_Slashing_001.png-8e73d0495245d832260d09c459b861c2.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Slashing_001.png-03b42c637e78da08e3426d442b44a805.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_001.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Slashing_001.png-8e73d0495245d832260d09c459b861c2.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_001.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Slashing_001.png-03b42c637e78da08e3426d442b44a805.ctex"]
 
 [params]
 

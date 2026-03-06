@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bx4548mbetvwa"
-path="res://.godot/imported/Body.png-451ce5b60b640413f1d11e508c040067.ctex"
+path="res://.godot/imported/Body.png-2872c14dafff9e02368f0f36c5d520a6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/Vector Parts/Body.png"
-dest_files=["res://.godot/imported/Body.png-451ce5b60b640413f1d11e508c040067.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/Vector Parts/Body.png"
+dest_files=["res://.godot/imported/Body.png-2872c14dafff9e02368f0f36c5d520a6.ctex"]
 
 [params]
 

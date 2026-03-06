@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxi62m267mmsr"
-path="res://.godot/imported/0_Dark_Oracle_Hurt_009.png-8eec0a93ae58af5879a9bd720483c831.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Hurt_009.png-f96b500d43fdf7b8259c64b0b4ab741c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_009.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Hurt_009.png-8eec0a93ae58af5879a9bd720483c831.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_009.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Hurt_009.png-f96b500d43fdf7b8259c64b0b4ab741c.ctex"]
 
 [params]
 

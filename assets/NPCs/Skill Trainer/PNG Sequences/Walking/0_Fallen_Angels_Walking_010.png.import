@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di3dkbv0cbldr"
-path="res://.godot/imported/0_Fallen_Angels_Walking_010.png-2aab564051db97509dd93a8f104ecb16.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Walking_010.png-2bbd5cbb82b4e0d7f25f1b78080fbb2c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Walking/0_Fallen_Angels_Walking_010.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Walking_010.png-2aab564051db97509dd93a8f104ecb16.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Walking/0_Fallen_Angels_Walking_010.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Walking_010.png-2bbd5cbb82b4e0d7f25f1b78080fbb2c.ctex"]
 
 [params]
 

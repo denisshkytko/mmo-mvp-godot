@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jmv3a7i02n28"
-path="res://.godot/imported/0_Dark_Oracle_Dying_011.png-1a8a1f4d6dba2d3b37b3c5665fdc7696.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Dying_011.png-053a4baf2c9031e49739d76e70f4a68d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Dying/0_Dark_Oracle_Dying_011.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Dying_011.png-1a8a1f4d6dba2d3b37b3c5665fdc7696.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Dying/0_Dark_Oracle_Dying_011.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Dying_011.png-053a4baf2c9031e49739d76e70f4a68d.ctex"]
 
 [params]
 

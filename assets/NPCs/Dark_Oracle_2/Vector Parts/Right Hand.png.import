@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://x7ojhsms3e21"
-path="res://.godot/imported/Right Hand.png-7477b015702b48ef7e4c128771973ed5.ctex"
+path="res://.godot/imported/Right Hand.png-388faf153b5ac7bd0d50ed52d9604bbe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/Vector Parts/Right Hand.png"
-dest_files=["res://.godot/imported/Right Hand.png-7477b015702b48ef7e4c128771973ed5.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/Vector Parts/Right Hand.png"
+dest_files=["res://.godot/imported/Right Hand.png-388faf153b5ac7bd0d50ed52d9604bbe.ctex"]
 
 [params]
 

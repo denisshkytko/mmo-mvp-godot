@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp1rn5j0b1ayc"
-path="res://.godot/imported/0_Fallen_Angels_Hurt_003.png-12596f488c2ac972bb9b22f75c816e2a.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Hurt_003.png-7ddbc72236df21f2605bea78c4035e08.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_003.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Hurt_003.png-12596f488c2ac972bb9b22f75c816e2a.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_003.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Hurt_003.png-7ddbc72236df21f2605bea78c4035e08.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccsa0th0c15px"
-path="res://.godot/imported/Left Leg.png-188fb79b2bf739d9d24eeda77109f2b0.ctex"
+path="res://.godot/imported/Left Leg.png-3356a3943a421d7dcd635d2782ca1cbf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/Vector Parts/Left Leg.png"
-dest_files=["res://.godot/imported/Left Leg.png-188fb79b2bf739d9d24eeda77109f2b0.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/Vector Parts/Left Leg.png"
+dest_files=["res://.godot/imported/Left Leg.png-3356a3943a421d7dcd635d2782ca1cbf.ctex"]
 
 [params]
 

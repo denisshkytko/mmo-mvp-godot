@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bgx0eqnff2ljt"
-path="res://.godot/imported/Face 01.png-2ec9f5f1ec9fb73c87408e3623788090.ctex"
+path="res://.godot/imported/Face 01.png-2011a832df2c0a54ead8aba30060d87a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_1/Vector Parts/Face 01.png"
-dest_files=["res://.godot/imported/Face 01.png-2ec9f5f1ec9fb73c87408e3623788090.ctex"]
+source_file="res://assets/NPCs/Merchant/Vector Parts/Face 01.png"
+dest_files=["res://.godot/imported/Face 01.png-2011a832df2c0a54ead8aba30060d87a.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cyjivbe2chx3y"
-path="res://.godot/imported/0_Fallen_Angels_Slashing_011.png-f7574e377fd13578cf1a6ac7e8647e2d.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Slashing_011.png-d18c1b1d2552bd223c3e6e211f6a85be.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_011.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Slashing_011.png-f7574e377fd13578cf1a6ac7e8647e2d.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_011.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Slashing_011.png-d18c1b1d2552bd223c3e6e211f6a85be.ctex"]
 
 [params]
 

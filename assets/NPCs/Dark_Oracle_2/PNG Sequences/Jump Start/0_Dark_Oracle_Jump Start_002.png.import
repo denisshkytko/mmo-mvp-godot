@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bt2ce0ltj0vce"
-path="res://.godot/imported/0_Dark_Oracle_Jump Start_002.png-334c8e28fdd5183ff65c834756b4b2ba.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Jump Start_002.png-faa50e3accba6e88c5429f08b62cf659.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Jump Start/0_Dark_Oracle_Jump Start_002.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Jump Start_002.png-334c8e28fdd5183ff65c834756b4b2ba.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Jump Start/0_Dark_Oracle_Jump Start_002.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Jump Start_002.png-faa50e3accba6e88c5429f08b62cf659.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dl8e7acnny0ov"
-path="res://.godot/imported/Right Leg.png-f4c9b67d66233a033dc1cd3896881c65.ctex"
+path="res://.godot/imported/Right Leg.png-2ad141a8ed25b3608ddc5f1947b7ad0d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/Vector Parts/Right Leg.png"
-dest_files=["res://.godot/imported/Right Leg.png-f4c9b67d66233a033dc1cd3896881c65.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/Vector Parts/Right Leg.png"
+dest_files=["res://.godot/imported/Right Leg.png-2ad141a8ed25b3608ddc5f1947b7ad0d.ctex"]
 
 [params]
 

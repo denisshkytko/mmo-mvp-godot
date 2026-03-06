@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kldstnj2f7pj"
-path="res://.godot/imported/Head.png-75ed37a5f1b9addf16b707f6a54b8f15.ctex"
+path="res://.godot/imported/Head.png-1fe04fc610aac670620f987a1d3b76c9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/Vector Parts/Head.png"
-dest_files=["res://.godot/imported/Head.png-75ed37a5f1b9addf16b707f6a54b8f15.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/Vector Parts/Head.png"
+dest_files=["res://.godot/imported/Head.png-1fe04fc610aac670620f987a1d3b76c9.ctex"]
 
 [params]
 

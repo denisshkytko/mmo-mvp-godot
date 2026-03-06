@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dj6nscpm0n1y1"
-path="res://.godot/imported/0_Fallen_Angels_Run Slashing_006.png-77c6dd17fa6160952f6fce758d9c84f7.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Run Slashing_006.png-e173e95ba1d51d1c51927f60c172a3ba.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_006.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Run Slashing_006.png-77c6dd17fa6160952f6fce758d9c84f7.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_006.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Run Slashing_006.png-e173e95ba1d51d1c51927f60c172a3ba.ctex"]
 
 [params]
 

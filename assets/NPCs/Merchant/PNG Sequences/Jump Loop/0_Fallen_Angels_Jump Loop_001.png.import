@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kxi7ot4qwpwi"
-path="res://.godot/imported/0_Fallen_Angels_Jump Loop_001.png-ace27fc48b9561c916f46405d9e0e864.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Jump Loop_001.png-1f063a8e32fb6ee2ffd62f1d7b07787a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_1/PNG Sequences/Jump Loop/0_Fallen_Angels_Jump Loop_001.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Jump Loop_001.png-ace27fc48b9561c916f46405d9e0e864.ctex"]
+source_file="res://assets/NPCs/Merchant/PNG Sequences/Jump Loop/0_Fallen_Angels_Jump Loop_001.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Jump Loop_001.png-1f063a8e32fb6ee2ffd62f1d7b07787a.ctex"]
 
 [params]
 

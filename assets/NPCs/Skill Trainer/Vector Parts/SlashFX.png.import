@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7vw2rxqf3b2x"
-path="res://.godot/imported/SlashFX.png-9727d99d189ef19b8e0ff1b5de6c2fa3.ctex"
+path="res://.godot/imported/SlashFX.png-b25693b734371b1a60708d5c92776ddb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/Vector Parts/SlashFX.png"
-dest_files=["res://.godot/imported/SlashFX.png-9727d99d189ef19b8e0ff1b5de6c2fa3.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/Vector Parts/SlashFX.png"
+dest_files=["res://.godot/imported/SlashFX.png-b25693b734371b1a60708d5c92776ddb.ctex"]
 
 [params]
 

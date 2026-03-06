@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhf8we6l77fhy"
-path="res://.godot/imported/0_Fallen_Angels_Idle Blinking_017.png-095d5662fb4bff0270fb734f95eb904d.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Idle Blinking_017.png-5541c089f676af48047a0e5e3e25d13d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_017.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Idle Blinking_017.png-095d5662fb4bff0270fb734f95eb904d.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_017.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Idle Blinking_017.png-5541c089f676af48047a0e5e3e25d13d.ctex"]
 
 [params]
 

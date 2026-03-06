@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdqjoi62q7bgq"
-path="res://.godot/imported/Left Hand.png-c1c3c9358c78f1e6901cc8d1112fcea4.ctex"
+path="res://.godot/imported/Left Hand.png-f5b16f01f2c90f4fb634da8cd9838f98.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/Vector Parts/Left Hand.png"
-dest_files=["res://.godot/imported/Left Hand.png-c1c3c9358c78f1e6901cc8d1112fcea4.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/Vector Parts/Left Hand.png"
+dest_files=["res://.godot/imported/Left Hand.png-f5b16f01f2c90f4fb634da8cd9838f98.ctex"]
 
 [params]
 

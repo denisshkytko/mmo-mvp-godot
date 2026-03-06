@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hexox2qbepa0"
-path="res://.godot/imported/0_Fallen_Angels_Jump Start_005.png-e667fff2b24abea30e4eefc5d1c3c8de.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Jump Start_005.png-d41f9711a4a4f7d52b4253017b30eb9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Jump Start/0_Fallen_Angels_Jump Start_005.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Jump Start_005.png-e667fff2b24abea30e4eefc5d1c3c8de.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Jump Start/0_Fallen_Angels_Jump Start_005.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Jump Start_005.png-d41f9711a4a4f7d52b4253017b30eb9a.ctex"]
 
 [params]
 

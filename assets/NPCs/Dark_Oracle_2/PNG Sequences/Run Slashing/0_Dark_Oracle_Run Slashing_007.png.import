@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dx5xtcrc4ruyl"
-path="res://.godot/imported/0_Dark_Oracle_Run Slashing_007.png-5d2548ad88f2b6735679d1f0665da097.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Run Slashing_007.png-3e5e33c55f799b58ec03d6972d2022b6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_007.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Run Slashing_007.png-5d2548ad88f2b6735679d1f0665da097.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_007.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Run Slashing_007.png-3e5e33c55f799b58ec03d6972d2022b6.ctex"]
 
 [params]
 

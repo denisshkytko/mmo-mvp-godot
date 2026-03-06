@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmilbotnj7bcv"
-path="res://.godot/imported/SlashFX.png-9fb707943fd54ed83ab6b9af79b76400.ctex"
+path="res://.godot/imported/SlashFX.png-b94b75eb85b44626f60970496cc70e19.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/Vector Parts/SlashFX.png"
-dest_files=["res://.godot/imported/SlashFX.png-9fb707943fd54ed83ab6b9af79b76400.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/Vector Parts/SlashFX.png"
+dest_files=["res://.godot/imported/SlashFX.png-b94b75eb85b44626f60970496cc70e19.ctex"]
 
 [params]
 

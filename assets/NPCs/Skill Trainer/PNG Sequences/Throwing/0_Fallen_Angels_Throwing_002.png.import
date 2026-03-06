@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dtut4epx3loog"
-path="res://.godot/imported/0_Fallen_Angels_Throwing_002.png-46daf066da9d8f6e3da93e667502df97.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Throwing_002.png-786ae03b1a30841eca3b34eb1624b19a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_002.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Throwing_002.png-46daf066da9d8f6e3da93e667502df97.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_002.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Throwing_002.png-786ae03b1a30841eca3b34eb1624b19a.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dmtfd5xprebmt"
-path="res://.godot/imported/0_Fallen_Angels_Throwing_008.png-b9f3b59e1367504d4e705b9596fbbcc3.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Throwing_008.png-31699a06afd8c9cfa385edaed82a4809.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_1/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_008.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Throwing_008.png-b9f3b59e1367504d4e705b9596fbbcc3.ctex"]
+source_file="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_008.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Throwing_008.png-31699a06afd8c9cfa385edaed82a4809.ctex"]
 
 [params]
 

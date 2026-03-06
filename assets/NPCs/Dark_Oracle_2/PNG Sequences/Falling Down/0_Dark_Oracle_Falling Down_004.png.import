@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://db1q6nxyw0t06"
-path="res://.godot/imported/0_Dark_Oracle_Falling Down_004.png-d88e7cca23f543ab17bc17f65149ef71.ctex"
+path="res://.godot/imported/0_Dark_Oracle_Falling Down_004.png-9adcb0213ea1c759ff2ecf00f12038ad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/dark-oracle/Dark_Oracle_2/PNG Sequences/Falling Down/0_Dark_Oracle_Falling Down_004.png"
-dest_files=["res://.godot/imported/0_Dark_Oracle_Falling Down_004.png-d88e7cca23f543ab17bc17f65149ef71.ctex"]
+source_file="res://assets/NPCs/Dark_Oracle_2/PNG Sequences/Falling Down/0_Dark_Oracle_Falling Down_004.png"
+dest_files=["res://.godot/imported/0_Dark_Oracle_Falling Down_004.png-9adcb0213ea1c759ff2ecf00f12038ad.ctex"]
 
 [params]
 

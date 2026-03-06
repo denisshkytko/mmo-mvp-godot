@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://23qfrak4xxht"
-path="res://.godot/imported/0_Fallen_Angels_Kicking_000.png-92b7fa8c62ec8d766fe553228182ae4b.ctex"
+path="res://.godot/imported/0_Fallen_Angels_Kicking_000.png-88bfec6f4e1db77fef3b8d0cb5305a9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/fallen-angel/Fallen_Angels_2/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_000.png"
-dest_files=["res://.godot/imported/0_Fallen_Angels_Kicking_000.png-92b7fa8c62ec8d766fe553228182ae4b.ctex"]
+source_file="res://assets/NPCs/Skill Trainer/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_000.png"
+dest_files=["res://.godot/imported/0_Fallen_Angels_Kicking_000.png-88bfec6f4e1db77fef3b8d0cb5305a9a.ctex"]
 
 [params]
 

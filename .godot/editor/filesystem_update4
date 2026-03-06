@@ -1,8 +1,0 @@
-res://game/characters/player/models/HunterModel.tscn
-res://core/trade/presets/merchant_preset_level_1.tres
-res://game/characters/player/models/MageModel.tscn
-res://game/characters/player/models/PaladinModel.tscn
-res://game/characters/player/models/PriestModel.tscn
-res://game/characters/player/models/ShamanModel.tscn
-res://game/characters/player/models/WarriorModel.tscn
-res://ui/game/hud/windows/CharacterHUD.tscn
