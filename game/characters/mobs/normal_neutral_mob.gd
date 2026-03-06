@@ -6,6 +6,7 @@ class_name NormalNeutralMob
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 
 signal died(corpse: Corpse)
 
@@ -21,6 +22,7 @@ signal died(corpse: Corpse)
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
+enum AttackMode { MELEE, RANGED }
 
 @export_group("Common")
 @export var base_xp: int = 3
@@ -32,6 +34,7 @@ enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 # размер тела выбирается спавнером
 var body_size: int = BodySize.MEDIUM
 var mob_level: int = 1
+var attack_mode: int = AttackMode.MELEE
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
 var skin_id: String = ""
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
@@ -302,6 +305,7 @@ func apply_spawn_init(
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	attack_mode_choice_in: int = AttackMode.MELEE,
 	abilities_in: Array[String] = [],
 	spell_preset_name_key_in: String = ""
 ) -> void:
@@ -317,6 +321,7 @@ func apply_spawn_init(
 	c_spell_caster.configure(abilities, mob_level)
 	body_size = body_size_in
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
+	attack_mode = AttackMode.RANGED if attack_mode_choice_in == AttackMode.RANGED else AttackMode.MELEE
 
 	if c_ai != null:
 		c_ai.behavior = behavior_in
@@ -402,6 +407,10 @@ func _apply_to_components() -> void:
 			)
 
 	c_combat.melee_stop_distance = 45.0
+	c_combat.attack_mode = attack_mode
+	c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
+	c_combat.ranged_cooldown = c_combat.melee_cooldown
+	c_combat.ranged_projectile_scene = DEFAULT_RANGED_PROJECTILE_SCENE
 
 	c_stats.recalculate_for_level(mob_level)
 

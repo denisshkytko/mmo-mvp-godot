@@ -31,6 +31,7 @@ const MERCHANT_BUYBACK_TTL_MSEC: int = 10 * 60 * 1000
 
 enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
+enum AttackMode { MELEE, RANGED }
 
 # -----------------------------
 # Identity / runtime state
@@ -248,6 +249,7 @@ func apply_spawn_init(
 	growth_profile_id_in: String = "",
 	merchant_preset_in: MerchantPreset = null,
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	attack_mode_choice_in: int = AttackMode.MELEE,
 	abilities_in: Array[String] = [],
 	spell_preset_name_key_in: String = ""
 ) -> void:
@@ -305,13 +307,18 @@ func apply_spawn_init(
 			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
 		FighterType.COMBATANT:
-			var role := Progression.get_attack_role_for_class(class_id_in)
 			var chosen_mode := FactionNPCCombat.AttackMode.MELEE
-			match role:
-				"ranged":
-					chosen_mode = FactionNPCCombat.AttackMode.RANGED
-				"hybrid":
-					chosen_mode = FactionNPCCombat.AttackMode.RANGED if randi() % 2 == 0 else FactionNPCCombat.AttackMode.MELEE
+			if attack_mode_choice_in == AttackMode.RANGED:
+				chosen_mode = FactionNPCCombat.AttackMode.RANGED
+			elif attack_mode_choice_in == AttackMode.MELEE:
+				chosen_mode = FactionNPCCombat.AttackMode.MELEE
+			else:
+				var role := Progression.get_attack_role_for_class(class_id_in)
+				match role:
+					"ranged":
+						chosen_mode = FactionNPCCombat.AttackMode.RANGED
+					"hybrid":
+						chosen_mode = FactionNPCCombat.AttackMode.RANGED if randi() % 2 == 0 else FactionNPCCombat.AttackMode.MELEE
 
 			var base_melee := Progression.get_base_melee_attack_interval_for_class(class_id_in)
 			var base_ranged := Progression.get_npc_base_ranged_attack_interval_for_class(class_id_in)

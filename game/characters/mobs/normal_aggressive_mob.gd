@@ -289,6 +289,7 @@ func apply_spawn_init(
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	attack_mode_choice_in: int = -1,
 	abilities_in: Array[String] = [],
 	spell_preset_name_key_in: String = ""
 ) -> void:
@@ -321,13 +322,18 @@ func apply_spawn_init(
 		c_stats.mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	_setup_resource_from_class(class_id_in)
 
-	var role := Progression.get_attack_role_for_class(class_id_in)
 	var chosen_mode := AttackMode.MELEE
-	match role:
-		"ranged":
-			chosen_mode = AttackMode.RANGED
-		"hybrid":
-			chosen_mode = AttackMode.RANGED if randi() % 2 == 0 else AttackMode.MELEE
+	if attack_mode_choice_in == AttackMode.RANGED:
+		chosen_mode = AttackMode.RANGED
+	elif attack_mode_choice_in == AttackMode.MELEE:
+		chosen_mode = AttackMode.MELEE
+	else:
+		var role := Progression.get_attack_role_for_class(class_id_in)
+		match role:
+			"ranged":
+				chosen_mode = AttackMode.RANGED
+			"hybrid":
+				chosen_mode = AttackMode.RANGED if randi() % 2 == 0 else AttackMode.MELEE
 
 	attack_mode = chosen_mode
 	if c_combat != null:

@@ -6,9 +6,16 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
+enum AttackMode { MELEE, RANGED }
+
+var attack_mode: int = AttackMode.MELEE
 var melee_stop_distance: float = 45.0
 var melee_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 var melee_cooldown: float = 1.2
+
+var ranged_attack_range: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
+var ranged_cooldown: float = 1.5
+var ranged_projectile_scene: PackedScene = null
 
 var _attack_timer: float = 0.0
 
@@ -21,12 +28,6 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	if target == null or not is_instance_valid(target):
 		return
 	if "is_dead" in target and bool(target.get("is_dead")):
-		return
-
-	var dist: float = _distance_between_body_hitboxes(actor, target)
-	if dist > melee_attack_range:
-		return
-	if _attack_timer > 0.0:
 		return
 
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
@@ -43,12 +44,21 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	if speed_mult < 0.1:
 		speed_mult = 0.1
 
-	DAMAGE_HELPER.apply_damage(actor, target, dmg)
+	var dist: float = _distance_between_body_hitboxes(actor, target)
+	if attack_mode == AttackMode.MELEE:
+		if dist > melee_attack_range or _attack_timer > 0.0:
+			return
+		DAMAGE_HELPER.apply_damage(actor, target, dmg)
+		_attack_timer = melee_cooldown / speed_mult
+		return
 
-	_attack_timer = melee_cooldown / speed_mult
+	if dist > ranged_attack_range or _attack_timer > 0.0:
+		return
+	_fire_ranged(actor, target, dmg)
+	_attack_timer = ranged_cooldown / speed_mult
 
 func get_stop_distance() -> float:
-	return melee_stop_distance
+	return melee_stop_distance if attack_mode == AttackMode.MELEE else ranged_attack_range
 
 func get_attack_damage() -> int:
 	var owner := get_parent()
@@ -70,3 +80,24 @@ func _distance_between_body_hitboxes(a: Node2D, b: Node2D) -> float:
 	if b.has_method("get_body_hitbox_center_global"):
 		b_pos = b.call("get_body_hitbox_center_global")
 	return a_pos.distance_to(b_pos)
+
+func _fire_ranged(actor: Node2D, target: Node2D, damage: int) -> void:
+	if ranged_projectile_scene == null:
+		DAMAGE_HELPER.apply_damage(actor, target, damage)
+		return
+
+	var inst: Node = ranged_projectile_scene.instantiate()
+	var proj: Node2D = inst as Node2D
+	if proj == null:
+		DAMAGE_HELPER.apply_damage(actor, target, damage)
+		return
+
+	var parent: Node = actor.get_parent()
+	if parent == null:
+		DAMAGE_HELPER.apply_damage(actor, target, damage)
+		return
+
+	parent.add_child(proj)
+	proj.global_position = actor.global_position
+	if proj.has_method("setup"):
+		proj.call("setup", target, damage, actor)

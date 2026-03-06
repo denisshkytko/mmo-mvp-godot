@@ -8,6 +8,7 @@ const MOB_SCENE: PackedScene = preload("res://game/characters/mobs/NormalAggress
 ## LootProfile is a global class (class_name). Avoid shadowing.
 
 enum Behavior { GUARD, PATROL }
+enum AttackRangeChoice { MELEE, RANGED }
 
 @export_group("Mob Setup")
 @export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_aggressive_default.tres") as LootProfile
@@ -19,6 +20,7 @@ var class_choice: int:
 		return _class_choice_internal
 	set(v):
 		_class_choice_internal = int(v)
+		attack_range_choice = _default_attack_range_for_class(_class_choice_internal)
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
 		notify_property_list_changed()
 @export var spell_preset_id: String = "none":
@@ -27,6 +29,7 @@ var class_choice: int:
 	set(v):
 		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
+@export_enum("Melee", "Ranged") var attack_range_choice: int = AttackRangeChoice.MELEE
 
 
 @export_group("Behavior After Spawn")
@@ -107,6 +110,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		class_id,
 		profile_id,
 		mob_variant,
+		attack_range_choice,
 		abilities_for_level,
 		preset_name_key
 	)
@@ -118,3 +122,10 @@ func _get_current_class_id() -> String:
 func _sanitize_spell_preset_for_class(value: String) -> String:
 	var class_id := _get_current_class_id()
 	return MobSpellPresetDB.get_allowed_preset_id(value, class_id)
+
+func _default_attack_range_for_class(choice: int) -> int:
+	match choice:
+		C_MAGE, C_PRIEST, C_HUNTER:
+			return AttackRangeChoice.RANGED
+		_:
+			return AttackRangeChoice.MELEE
