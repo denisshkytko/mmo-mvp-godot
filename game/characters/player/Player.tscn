@@ -13,14 +13,16 @@
 [ext_resource type="Script" uid="uid://cmfp07uiqwjw0" path="res://game/characters/player/interaction_detector.gd" id="10_8sru1"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="11_castbar"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5q5h1"]
-size = Vector2(24, 24)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_world"]
+radius = 20.0
+height = 200.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1f6e5"]
 radius = 80.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_target_hitbox"]
-size = Vector2(24, 24)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_target_hitbox"]
+radius = 90.0
+height = 250.0
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
@@ -34,7 +36,7 @@ attack_cooldown = null
 [node name="CastBar" parent="." instance=ExtResource("11_castbar")]
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_5q5h1")
+shape = SubResource("CapsuleShape2D_world")
 
 [node name="Camera" type="Camera2D" parent="."]
 process_callback = 0
@@ -52,7 +54,7 @@ collision_layer = 0
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]
-shape = SubResource("RectangleShape2D_target_hitbox")
+shape = SubResource("CapsuleShape2D_target_hitbox")
 
 [node name="InteractionDetector" type="Area2D" parent="."]
 script = ExtResource("10_8sru1")

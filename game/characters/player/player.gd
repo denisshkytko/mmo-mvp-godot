@@ -769,20 +769,18 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		return
 	var profile := profile_v as Dictionary
 
-	if world_collision != null and world_collision.shape is RectangleShape2D:
-		var world_shape := world_collision.shape as RectangleShape2D
-		var world_size_v: Variant = profile.get("world_collision_size", world_shape.size)
-		if world_size_v is Vector2:
-			world_shape.size = world_size_v
+	if world_collision != null:
+		var world_shape_v: Variant = profile.get("world_collision_shape", null)
+		if world_shape_v is Shape2D:
+			world_collision.shape = (world_shape_v as Shape2D).duplicate(true)
 		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
 		if world_offset_v is Vector2:
 			world_collision.position = world_offset_v
 
-	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
-		var body_shape := body_hitbox_shape.shape as RectangleShape2D
-		var body_size_v: Variant = profile.get("body_hitbox_size", body_shape.size)
-		if body_size_v is Vector2:
-			body_shape.size = body_size_v
+	if body_hitbox_shape != null:
+		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
+		if body_shape_v is Shape2D:
+			body_hitbox_shape.shape = (body_shape_v as Shape2D).duplicate(true)
 		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
 		if body_offset_v is Vector2:
 			body_hitbox_shape.position = body_offset_v

@@ -94,16 +94,16 @@ func play_idle() -> void:
 		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
 
 func get_collision_profile() -> Dictionary:
-	var world_size := Vector2(24, 24)
+	var world_shape: Shape2D = null
 	var world_offset := Vector2.ZERO
-	if world_collision_shape != null and world_collision_shape.shape is RectangleShape2D:
-		world_size = (world_collision_shape.shape as RectangleShape2D).size
+	if world_collision_shape != null:
+		world_shape = world_collision_shape.shape
 		world_offset = world_collision_shape.position
 
-	var body_size := world_size
+	var body_shape: Shape2D = null
 	var body_offset := world_offset
-	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
-		body_size = (body_hitbox_shape.shape as RectangleShape2D).size
+	if body_hitbox_shape != null:
+		body_shape = body_hitbox_shape.shape
 		body_offset = body_hitbox_shape.position
 
 	var interaction_radius := 80.0
@@ -111,9 +111,9 @@ func get_collision_profile() -> Dictionary:
 		interaction_radius = (interaction_radius_shape.shape as CircleShape2D).radius
 
 	return {
-		"world_collision_size": world_size,
+		"world_collision_shape": world_shape.duplicate(true) if world_shape != null else null,
 		"world_collision_offset": world_offset,
-		"body_hitbox_size": body_size,
+		"body_hitbox_shape": body_shape.duplicate(true) if body_shape != null else null,
 		"body_hitbox_offset": body_offset,
 		"interaction_radius": interaction_radius,
 	}
