@@ -371,6 +371,9 @@ func _start_cooldown(ability_id: String, duration: float) -> void:
 func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data: RankData, actual_target: Node) -> void:
 	if def == null or def.effect == null:
 		return
+	if p != null and ability_id == "dirty_strike" and p.has_method("play_model_combat_action"):
+		var is_moving_now := p.velocity.length() > 0.01
+		p.call("play_model_combat_action", "warrior_stun", is_moving_now)
 	var context := _build_context(ability_id, def, {})
 	if actual_target != null and actual_target.has_method("get_stats_snapshot"):
 		context["target_snapshot"] = actual_target.call("get_stats_snapshot") as Dictionary

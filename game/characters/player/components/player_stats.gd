@@ -447,6 +447,8 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 		if final <= 0:
 			return 0
 	p.current_hp = max(0, p.current_hp - final)
+	if final > 0 and p.has_method("play_model_hurt"):
+		p.call("play_model_hurt")
 
 	if final > 0 and attacker != null and p.c_buffs != null and p.c_buffs.has_method("try_apply_attacker_slow_from_stance"):
 		p.c_buffs.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
@@ -520,6 +522,8 @@ func take_damage(raw_damage: int) -> void:
 func _on_death() -> void:
 	# 1) помечаем игрока мёртвым (останавливаем движение/атаки)
 	p.is_dead = true
+	if p.has_method("play_model_death"):
+		p.call("play_model_death")
 	if p.c_ability_caster != null and p.c_ability_caster.has_method("interrupt_cast"):
 		p.c_ability_caster.call("interrupt_cast", "death")
 	if "cast_bar" in p and p.cast_bar != null:

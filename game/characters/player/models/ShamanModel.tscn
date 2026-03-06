@@ -13,12 +13,13 @@ size = Vector2(24, 24)
 radius = 80.0
 
 [node name="ShamanModel" type="Node2D"]
+scale = Vector2(0.25, 0.25)
 script = ExtResource("1_model")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
-autoplay = "Idle"
+autoplay = "Idle Blinking"
 
 [node name="CollisionProfile" type="Area2D" parent="."]
 monitorable = false

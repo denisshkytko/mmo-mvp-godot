@@ -13,10 +13,15 @@ var _source: Node2D = null
 var _hit: bool = false
 var _life: float = 0.0
 
-func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
+@onready var _sprite: Sprite2D = $Sprite2D as Sprite2D
+
+func setup(target: Node2D, damage: int, source: Node2D = null, texture_override: Texture2D = null) -> void:
 	_target = target
 	_damage = damage
 	_source = source
+	if texture_override != null and _sprite != null:
+		_sprite.texture = texture_override
+		_sprite.scale = Vector2(0.25, 0.25)
 
 func _physics_process(delta: float) -> void:
 	if _hit:

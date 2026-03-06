@@ -690,6 +690,24 @@ func _update_model_motion(dir: Vector2) -> void:
 	if _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
 
+func play_model_hurt() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_hurt"):
+		_character_model.call("play_hurt")
+
+func play_model_death() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_death"):
+		_character_model.call("play_death")
+
+func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_combat_action"):
+		_character_model.call("play_combat_action", action_kind, is_moving_now, class_id)
+
 func _apply_collision_profile_from_model(model: Node) -> void:
 	if model == null or not is_instance_valid(model):
 		return
