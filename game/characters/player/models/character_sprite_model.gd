@@ -30,7 +30,8 @@ var _queued_idle_after_one_shot: bool = false
 var _queued_locomotion_after_one_shot: bool = false
 var _one_shot_lock_active: bool = false
 var _death_pose_emitted: bool = false
-var _idle_liveliness_interval_sec: float = 5.0
+@export var idle_liveliness_delay_min_sec: float = 5.0
+@export var idle_liveliness_delay_max_sec: float = 7.0
 var _idle_liveliness_timer_sec: float = 5.0
 
 func _ready() -> void:
@@ -38,19 +39,19 @@ func _ready() -> void:
 	if animated_sprite != null and not animated_sprite.animation_finished.is_connected(_on_animation_finished):
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 	play_idle()
-	_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
+	_reset_idle_liveliness_timer()
 
 func _process(delta: float) -> void:
 	if animated_sprite == null:
 		return
 	if _is_dead or _is_moving or _one_shot_lock_active:
-		_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
+		_reset_idle_liveliness_timer()
 		return
 	_idle_liveliness_timer_sec = max(0.0, _idle_liveliness_timer_sec - delta)
 	if _idle_liveliness_timer_sec > 0.0:
 		return
 	animated_sprite.flip_h = not animated_sprite.flip_h
-	_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
+	_reset_idle_liveliness_timer()
 
 func set_move_direction(dir: Vector2) -> void:
 	if animated_sprite == null:
@@ -62,7 +63,7 @@ func set_move_direction(dir: Vector2) -> void:
 		return
 	_apply_facing_from_direction(dir)
 	if _is_moving:
-		_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
+		_reset_idle_liveliness_timer()
 
 	if _is_moving:
 		if _has_animation(run_animation):
@@ -79,7 +80,7 @@ func set_facing_to_world_position(world_position: Vector2) -> void:
 		return
 	var dir := world_position - global_position
 	_apply_facing_from_direction(dir)
-	_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
+	_reset_idle_liveliness_timer()
 
 func play_hurt() -> void:
 	if _is_dead:
@@ -299,3 +300,11 @@ func _apply_facing_from_direction(dir: Vector2) -> void:
 		animated_sprite.flip_h = true
 	elif dir.x > 0.01:
 		animated_sprite.flip_h = false
+
+func _reset_idle_liveliness_timer() -> void:
+	_idle_liveliness_timer_sec = _pick_idle_liveliness_delay()
+
+func _pick_idle_liveliness_delay() -> float:
+	var lo := max(0.1, min(idle_liveliness_delay_min_sec, idle_liveliness_delay_max_sec))
+	var hi := max(0.1, max(idle_liveliness_delay_min_sec, idle_liveliness_delay_max_sec))
+	return randf_range(lo, hi)

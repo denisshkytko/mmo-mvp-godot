@@ -309,7 +309,7 @@ func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
 	visual_root.z_as_relative = false
-	visual_root.z_index = Y_SORTING.z_index_from_world_collider(self, world_collision)
+	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
 
 func _process(delta: float) -> void:
