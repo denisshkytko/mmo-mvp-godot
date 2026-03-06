@@ -46,6 +46,8 @@ func tick(delta: float) -> void:
 		_t_r = 0.0
 		_t_l = 0.0
 		return
+	if not _can_attack_target(target):
+		return
 
 	_attack_mode = _get_attack_mode()
 	var dist: float = _distance_between_body_hitboxes(p, target)
