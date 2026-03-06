@@ -4,6 +4,7 @@ class_name Player
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -257,6 +258,7 @@ func get_danger_meter() -> DangerMeterComponent:
 
 
 func _physics_process(_delta: float) -> void:
+	_update_visual_render_order()
 	if is_dead:
 		velocity = Vector2.ZERO
 		_update_model_motion(Vector2.ZERO)
@@ -302,6 +304,12 @@ func _physics_process(_delta: float) -> void:
 	velocity = input_dir * move_speed * move_mult
 	_update_model_motion(input_dir)
 	move_and_slide()
+
+func _update_visual_render_order() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	visual_root.z_as_relative = false
+	visual_root.z_index = Y_SORTING.z_index_from_world_collider(self, world_collision)
 
 
 func _process(delta: float) -> void:

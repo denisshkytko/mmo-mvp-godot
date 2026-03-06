@@ -6,6 +6,7 @@ class_name FactionNPC
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/MerchantModel.tscn")
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 
@@ -390,6 +391,7 @@ func _draw() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		return
@@ -712,6 +714,12 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var body_rot_v: Variant = profile.get("body_hitbox_rotation", body_hitbox_shape.rotation)
 		if body_rot_v is float or body_rot_v is int:
 			body_hitbox_shape.rotation = float(body_rot_v)
+
+func _update_visual_render_order() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	visual_root.z_as_relative = false
+	visual_root.z_index = Y_SORTING.z_index_from_world_collider(self, world_collision)
 
 func _update_hp() -> void:
 	if hp_fill == null:
