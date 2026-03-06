@@ -33,9 +33,9 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 			continue
 
 		var other_anchor := _resolve_sort_anchor(other)
-		var dx := abs(self_anchor.x - other_anchor.x)
-		var dy := self_anchor.y - other_anchor.y
-		if dx > OVERLAP_X_THRESHOLD or abs(dy) > OVERLAP_Y_THRESHOLD:
+		var dx: float = absf(self_anchor.x - other_anchor.x)
+		var dy: float = self_anchor.y - other_anchor.y
+		if dx > OVERLAP_X_THRESHOLD or absf(dy) > OVERLAP_Y_THRESHOLD:
 			continue
 
 		has_overlap = true
