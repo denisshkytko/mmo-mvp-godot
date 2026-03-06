@@ -51,6 +51,10 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 static func _resolve_sort_anchor(actor: Node2D) -> Vector2:
 	if actor == null:
 		return Vector2.ZERO
+	if actor.has_method("get_sort_anchor_global"):
+		var a: Variant = actor.call("get_sort_anchor_global")
+		if a is Vector2:
+			return a as Vector2
 	if actor.has_method("get_body_hitbox_center_global"):
 		var v: Variant = actor.call("get_body_hitbox_center_global")
 		if v is Vector2:

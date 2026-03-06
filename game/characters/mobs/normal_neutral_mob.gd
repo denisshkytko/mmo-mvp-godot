@@ -7,13 +7,16 @@ const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 signal died(corpse: Corpse)
 
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
 @onready var cast_bar: CastBarWidget = $CastBar
+@onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
+@onready var visual_root: Node2D = get_node_or_null("Visual") as Node2D
 
 @onready var c_ai: NormalNeutralMobAI = $Components/AI as NormalNeutralMobAI
 @onready var c_combat: NormalNeutralMobCombat = $Components/Combat as NormalNeutralMobCombat
@@ -185,6 +188,9 @@ func get_body_hitbox_center_global() -> Vector2:
 		return body_hitbox_shape.global_position
 	return global_position
 
+func get_sort_anchor_global() -> Vector2:
+	return get_body_hitbox_center_global()
+
 
 func _draw() -> void:
 	if not OS.is_debug_build():
@@ -199,6 +205,7 @@ func _draw() -> void:
 		draw_arc(center_local, aggro_radius, 0.0, TAU, 96, Color(1.0, 0.2, 0.2, 0.85), 1.5, true)
 
 func _physics_process(delta: float) -> void:
+	_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		return
@@ -274,6 +281,12 @@ func _physics_process(delta: float) -> void:
 		cast_bar.set_cast_visible(show_cast)
 		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if show_cast else 0.0)
 		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if show_cast else null)
+
+func _update_visual_render_order() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	visual_root.z_as_relative = false
+	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"

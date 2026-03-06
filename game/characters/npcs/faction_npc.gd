@@ -376,6 +376,9 @@ func get_body_hitbox_center_global() -> Vector2:
 		return body_hitbox_shape.global_position
 	return global_position
 
+func get_sort_anchor_global() -> Vector2:
+	return get_body_hitbox_center_global()
+
 
 func _draw() -> void:
 	if not OS.is_debug_build():

@@ -305,6 +305,6 @@ func _reset_idle_liveliness_timer() -> void:
 	_idle_liveliness_timer_sec = _pick_idle_liveliness_delay()
 
 func _pick_idle_liveliness_delay() -> float:
-	var lo := max(0.1, min(idle_liveliness_delay_min_sec, idle_liveliness_delay_max_sec))
-	var hi := max(0.1, max(idle_liveliness_delay_min_sec, idle_liveliness_delay_max_sec))
+	var lo: float = float(max(0.1, min(idle_liveliness_delay_min_sec, idle_liveliness_delay_max_sec)))
+	var hi: float = float(max(0.1, max(idle_liveliness_delay_min_sec, idle_liveliness_delay_max_sec)))
 	return randf_range(lo, hi)
