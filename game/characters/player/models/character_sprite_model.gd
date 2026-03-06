@@ -20,9 +20,9 @@ func set_move_direction(dir: Vector2) -> void:
 
 	if dir.length() > 0.01:
 		if _has_animation(run_animation):
-			animated_sprite.play(run_animation)
+			_play_animation_if_needed(run_animation)
 		elif _has_animation(walk_animation):
-			animated_sprite.play(walk_animation)
+			_play_animation_if_needed(walk_animation)
 		else:
 			play_idle()
 	else:
@@ -32,9 +32,16 @@ func play_idle() -> void:
 	if animated_sprite == null:
 		return
 	if _has_animation(idle_animation):
-		animated_sprite.play(idle_animation)
+		_play_animation_if_needed(idle_animation)
 	elif animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.get_animation_names().size() > 0:
-		animated_sprite.play(animated_sprite.sprite_frames.get_animation_names()[0])
+		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
+
+func _play_animation_if_needed(name: String) -> void:
+	if animated_sprite == null or name == "":
+		return
+	if animated_sprite.animation == name and animated_sprite.is_playing():
+		return
+	animated_sprite.play(name)
 
 func _has_animation(name: String) -> bool:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
