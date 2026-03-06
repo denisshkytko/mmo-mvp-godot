@@ -4,6 +4,7 @@ class_name Corpse
 signal despawned
 
 @onready var visual: ColorRect = $Visual
+@onready var corpse_sprite: Sprite2D = $Sprite2D
 
 @export var interact_radius: float = 60.0
 @export var despawn_seconds: float = 30.0
@@ -44,6 +45,29 @@ func setup_owner_snapshot(owner: Node, owner_player_id: int = 0) -> void:
 	owner_max_resource = max(1, _resolve_owner_max_resource(owner))
 	if owner_player_id != 0:
 		loot_owner_player_id = owner_player_id
+	if owner != null and owner.has_method("get_corpse_pose_snapshot"):
+		var pose_v: Variant = owner.call("get_corpse_pose_snapshot")
+		if pose_v is Dictionary:
+			apply_pose_snapshot(pose_v as Dictionary)
+
+func apply_pose_snapshot(snapshot: Dictionary) -> void:
+	if corpse_sprite == null:
+		return
+	var tex_v: Variant = snapshot.get("texture", null)
+	if not (tex_v is Texture2D):
+		return
+	var tex := tex_v as Texture2D
+	corpse_sprite.texture = tex
+	corpse_sprite.visible = true
+	if visual != null:
+		visual.visible = false
+	corpse_sprite.flip_h = bool(snapshot.get("flip_h", false))
+	var scale_v: Variant = snapshot.get("scale", Vector2.ONE)
+	if scale_v is Vector2:
+		corpse_sprite.scale = scale_v as Vector2
+	var offset_v: Variant = snapshot.get("offset", Vector2.ZERO)
+	if offset_v is Vector2:
+		corpse_sprite.position = offset_v as Vector2
 
 func get_display_name() -> String:
 	if owner_display_name != "":

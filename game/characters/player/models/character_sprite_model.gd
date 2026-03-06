@@ -1,6 +1,8 @@
 extends Node2D
 class_name CharacterSpriteModel
 
+signal death_pose_ready(snapshot: Dictionary)
+
 @export var animation_fps: float = 24.0
 @export var idle_animation: String = "Idle Blinking"
 @export var walk_animation: String = "Walking"
@@ -26,6 +28,8 @@ var _is_moving: bool = false
 var _is_dead: bool = false
 var _queued_idle_after_one_shot: bool = false
 var _queued_locomotion_after_one_shot: bool = false
+var _one_shot_lock_active: bool = false
+var _death_pose_emitted: bool = false
 
 func _ready() -> void:
 	_apply_animation_speed_to_all()
@@ -43,6 +47,8 @@ func set_move_direction(dir: Vector2) -> void:
 
 	_is_moving = dir.length() > 0.01
 	if _is_dead:
+		return
+	if _one_shot_lock_active:
 		return
 
 	if _is_moving:
@@ -68,6 +74,7 @@ func play_death() -> void:
 	if _has_animation(death_animation):
 		if animated_sprite.sprite_frames != null:
 			animated_sprite.sprite_frames.set_animation_loop(death_animation, false)
+		_one_shot_lock_active = true
 		_play_animation_if_needed(death_animation)
 
 func play_combat_action(action_kind: String, is_moving_now: bool, class_id: String) -> void:
@@ -127,9 +134,42 @@ func _play_one_shot(name: String, back_to_locomotion: bool) -> void:
 		return
 	if animated_sprite.sprite_frames != null:
 		animated_sprite.sprite_frames.set_animation_loop(name, false)
+	_one_shot_lock_active = true
 	_queued_locomotion_after_one_shot = back_to_locomotion
 	_queued_idle_after_one_shot = not back_to_locomotion
 	_play_animation_if_needed(name)
+
+func reset_after_respawn() -> void:
+	_is_dead = false
+	_is_moving = false
+	_one_shot_lock_active = false
+	_queued_idle_after_one_shot = false
+	_queued_locomotion_after_one_shot = false
+	_death_pose_emitted = false
+	visible = true
+	play_idle()
+
+func hide_model_for_corpse() -> void:
+	visible = false
+
+func build_corpse_pose_snapshot() -> Dictionary:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return {}
+	var anim_name := death_animation
+	if not _has_animation(anim_name):
+		return {}
+	var frame_count := animated_sprite.sprite_frames.get_frame_count(anim_name)
+	if frame_count <= 0:
+		return {}
+	var tex := animated_sprite.sprite_frames.get_frame_texture(anim_name, frame_count - 1)
+	if tex == null:
+		return {}
+	return {
+		"texture": tex,
+		"flip_h": animated_sprite.flip_h,
+		"scale": scale,
+		"offset": animated_sprite.position,
+	}
 
 func _resolve_combat_animation(action_kind: String, is_moving_now: bool, class_id: String) -> String:
 	match action_kind:
@@ -168,7 +208,11 @@ func _on_animation_finished() -> void:
 		if frame_count > 0:
 			animated_sprite.stop()
 			animated_sprite.frame = frame_count - 1
+		if not _death_pose_emitted:
+			_death_pose_emitted = true
+			emit_signal("death_pose_ready", build_corpse_pose_snapshot())
 		return
+	_one_shot_lock_active = false
 	if _queued_locomotion_after_one_shot:
 		_queued_locomotion_after_one_shot = false
 		_refresh_locomotion_animation()
