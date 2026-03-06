@@ -776,6 +776,9 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
 		if world_offset_v is Vector2:
 			world_collision.position = world_offset_v
+		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
+		if world_rot_v is float or world_rot_v is int:
+			world_collision.rotation = float(world_rot_v)
 
 	if body_hitbox_shape != null:
 		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
@@ -784,6 +787,9 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
 		if body_offset_v is Vector2:
 			body_hitbox_shape.position = body_offset_v
+		var body_rot_v: Variant = profile.get("body_hitbox_rotation", body_hitbox_shape.rotation)
+		if body_rot_v is float or body_rot_v is int:
+			body_hitbox_shape.rotation = float(body_rot_v)
 
 	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
 		var interaction_circle := interaction_shape.shape as CircleShape2D
