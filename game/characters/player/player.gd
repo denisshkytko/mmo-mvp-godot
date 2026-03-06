@@ -7,6 +7,13 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 
+const WARRIOR_MODEL_SCENE := preload("res://game/characters/player/models/WarriorModel.tscn")
+const MAGE_MODEL_SCENE := preload("res://game/characters/player/models/MageModel.tscn")
+const PALADIN_MODEL_SCENE := preload("res://game/characters/player/models/PaladinModel.tscn")
+const PRIEST_MODEL_SCENE := preload("res://game/characters/player/models/PriestModel.tscn")
+const SHAMAN_MODEL_SCENE := preload("res://game/characters/player/models/ShamanModel.tscn")
+const HUNTER_MODEL_SCENE := preload("res://game/characters/player/models/HunterModel.tscn")
+
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
 # Auto-attack
@@ -183,6 +190,13 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 @onready var cast_bar: CastBarWidget = $CastBar
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
+@onready var world_collision: CollisionShape2D = $Collision as CollisionShape2D
+@onready var body_hitbox_shape: CollisionShape2D = $TargetHitbox/CollisionShape2D as CollisionShape2D
+@onready var interaction_shape: CollisionShape2D = $InteractionDetector/CollisionShape2D as CollisionShape2D
+
+@onready var visual_root: Node2D = $Visual as Node2D
+
+var _character_model: Node = null
 
 
 func _ready() -> void:
@@ -227,6 +241,7 @@ func _ready() -> void:
 			c_resource.set_empty()
 
 	_apply_spellbook_passives()
+	_apply_class_visual()
 	if cast_bar != null:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
@@ -239,6 +254,7 @@ func get_danger_meter() -> DangerMeterComponent:
 func _physics_process(_delta: float) -> void:
 	if is_dead:
 		velocity = Vector2.ZERO
+		_update_model_motion(Vector2.ZERO)
 		move_and_slide()
 		return
 	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
@@ -249,6 +265,7 @@ func _physics_process(_delta: float) -> void:
 			cast_bar.set_progress01(0.0)
 			cast_bar.set_icon_texture(null)
 		velocity = Vector2.ZERO
+		_update_model_motion(Vector2.ZERO)
 		move_and_slide()
 		return
 
@@ -265,6 +282,7 @@ func _physics_process(_delta: float) -> void:
 		c_ability_caster.interrupt_cast("movement")
 	if c_ability_caster != null and c_ability_caster.is_casting():
 		velocity = Vector2.ZERO
+		_update_model_motion(Vector2.ZERO)
 		move_and_slide()
 		return
 
@@ -277,6 +295,7 @@ func _physics_process(_delta: float) -> void:
 	if move_mult <= 0.0:
 		move_mult = 1.0
 	velocity = input_dir * move_speed * move_mult
+	_update_model_motion(input_dir)
 	move_and_slide()
 
 
@@ -397,6 +416,7 @@ func _request_save(kind: String) -> void:
 
 func _on_spellbook_changed() -> void:
 	_apply_spellbook_passives()
+	_apply_class_visual()
 	if cast_bar != null:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
@@ -583,6 +603,7 @@ func apply_character_data(d: Dictionary) -> void:
 	if c_stats != null:
 		c_stats.apply_primary_data(d)
 	faction_id = String(d.get("faction", faction_id))
+	_apply_class_visual()
 
 	# inventory snapshot
 	var inv_v: Variant = d.get("inventory", null)
@@ -627,6 +648,79 @@ func apply_character_data(d: Dictionary) -> void:
 
 	# защита от “вошёл мёртвым”
 	is_dead = false
+
+
+func _resolve_model_scene_for_class(id: String) -> PackedScene:
+	match id.strip_edges().to_lower():
+		"mage":
+			return MAGE_MODEL_SCENE
+		"paladin":
+			return PALADIN_MODEL_SCENE
+		"priest":
+			return PRIEST_MODEL_SCENE
+		"shaman":
+			return SHAMAN_MODEL_SCENE
+		"hunter":
+			return HUNTER_MODEL_SCENE
+		"warrior":
+			return WARRIOR_MODEL_SCENE
+		_:
+			return WARRIOR_MODEL_SCENE
+
+func _apply_class_visual() -> void:
+	if visual_root == null:
+		return
+	if _character_model != null and is_instance_valid(_character_model):
+		_character_model.queue_free()
+		_character_model = null
+	var model_scene := _resolve_model_scene_for_class(class_id)
+	if model_scene == null:
+		return
+	var inst := model_scene.instantiate()
+	if inst == null:
+		return
+	visual_root.add_child(inst)
+	_character_model = inst
+	_apply_collision_profile_from_model(inst)
+	_update_model_motion(Vector2.ZERO)
+
+func _update_model_motion(dir: Vector2) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_move_direction"):
+		_character_model.call("set_move_direction", dir)
+
+func _apply_collision_profile_from_model(model: Node) -> void:
+	if model == null or not is_instance_valid(model):
+		return
+	if not model.has_method("get_collision_profile"):
+		return
+	var profile_v: Variant = model.call("get_collision_profile")
+	if not (profile_v is Dictionary):
+		return
+	var profile := profile_v as Dictionary
+
+	if world_collision != null and world_collision.shape is RectangleShape2D:
+		var world_shape := world_collision.shape as RectangleShape2D
+		var world_size_v: Variant = profile.get("world_collision_size", world_shape.size)
+		if world_size_v is Vector2:
+			world_shape.size = world_size_v
+		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
+		if world_offset_v is Vector2:
+			world_collision.position = world_offset_v
+
+	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
+		var body_shape := body_hitbox_shape.shape as RectangleShape2D
+		var body_size_v: Variant = profile.get("body_hitbox_size", body_shape.size)
+		if body_size_v is Vector2:
+			body_shape.size = body_size_v
+		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
+		if body_offset_v is Vector2:
+			body_hitbox_shape.position = body_offset_v
+
+	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
+		var interaction_circle := interaction_shape.shape as CircleShape2D
+		interaction_circle.radius = max(1.0, float(profile.get("interaction_radius", interaction_circle.radius)))
 
 
 func _grant_starter_abilities() -> void:

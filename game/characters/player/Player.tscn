@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://rwedipw6jwwn"]
+[gd_scene load_steps=16 format=3 uid="uid://rwedipw6jwwn"]
 
 [ext_resource type="Script" uid="uid://bat5o7j41jp0r" path="res://game/characters/player/player.gd" id="1_p0vlq"]
 [ext_resource type="Script" uid="uid://chlq040cx6wia" path="res://game/characters/player/components/player_stats.gd" id="2_dcag1"]
@@ -19,6 +19,9 @@ size = Vector2(24, 24)
 [sub_resource type="CircleShape2D" id="CircleShape2D_1f6e5"]
 radius = 80.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_target_hitbox"]
+size = Vector2(24, 24)
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
 script = ExtResource("1_p0vlq")
@@ -26,13 +29,7 @@ move_speed = null
 attack_range = null
 attack_cooldown = null
 
-[node name="Visual" type="ColorRect" parent="."]
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-color = Color(0.14901961, 0.12941177, 1, 1)
-
+[node name="Visual" type="Node2D" parent="."]
 
 [node name="CastBar" parent="." instance=ExtResource("11_castbar")]
 
@@ -40,12 +37,22 @@ color = Color(0.14901961, 0.12941177, 1, 1)
 shape = SubResource("RectangleShape2D_5q5h1")
 
 [node name="Camera" type="Camera2D" parent="."]
+process_callback = 0
 limit_left = -2000
 limit_top = -1200
 limit_right = 2000
 limit_bottom = 1200
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
+
+[node name="TargetHitbox" type="Area2D" parent="."]
+monitoring = false
+monitorable = false
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]
+shape = SubResource("RectangleShape2D_target_hitbox")
 
 [node name="InteractionDetector" type="Area2D" parent="."]
 script = ExtResource("10_8sru1")
