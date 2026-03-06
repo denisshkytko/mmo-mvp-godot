@@ -34,6 +34,7 @@ attack_cooldown = null
 shape = SubResource("RectangleShape2D_5q5h1")
 
 [node name="Camera" type="Camera2D" parent="."]
+process_callback = 0
 limit_left = -2000
 limit_top = -1200
 limit_right = 2000
