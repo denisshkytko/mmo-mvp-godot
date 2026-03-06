@@ -190,6 +190,8 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 @onready var cast_bar: CastBarWidget = $CastBar
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
+@onready var body_collision: CollisionShape2D = $Collision as CollisionShape2D
+@onready var interaction_shape: CollisionShape2D = $InteractionDetector/CollisionShape2D as CollisionShape2D
 
 @onready var visual_root: Node2D = $Visual as Node2D
 
@@ -678,6 +680,7 @@ func _apply_class_visual() -> void:
 		return
 	visual_root.add_child(inst)
 	_character_model = inst
+	_apply_collision_profile_from_model(inst)
 	_update_model_motion(Vector2.ZERO)
 
 func _update_model_motion(dir: Vector2) -> void:
@@ -685,6 +688,29 @@ func _update_model_motion(dir: Vector2) -> void:
 		return
 	if _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
+
+func _apply_collision_profile_from_model(model: Node) -> void:
+	if model == null or not is_instance_valid(model):
+		return
+	if not model.has_method("get_collision_profile"):
+		return
+	var profile_v: Variant = model.call("get_collision_profile")
+	if not (profile_v is Dictionary):
+		return
+	var profile := profile_v as Dictionary
+
+	if body_collision != null and body_collision.shape is RectangleShape2D:
+		var body_shape := body_collision.shape as RectangleShape2D
+		var body_size_v: Variant = profile.get("body_collision_size", body_shape.size)
+		if body_size_v is Vector2:
+			body_shape.size = body_size_v
+		var body_offset_v: Variant = profile.get("body_collision_offset", body_collision.position)
+		if body_offset_v is Vector2:
+			body_collision.position = body_offset_v
+
+	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
+		var interaction_circle := interaction_shape.shape as CircleShape2D
+		interaction_circle.radius = max(1.0, float(profile.get("interaction_radius", interaction_circle.radius)))
 
 
 func _grant_starter_abilities() -> void:

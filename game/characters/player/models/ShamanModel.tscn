@@ -5,6 +5,9 @@
 
 [node name="ShamanModel" type="Node2D"]
 script = ExtResource("1_model")
+body_collision_size = Vector2(24, 24)
+body_collision_offset = Vector2(0, 0)
+interaction_radius = 80.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)

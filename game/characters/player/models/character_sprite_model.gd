@@ -5,6 +5,11 @@ class_name CharacterSpriteModel
 @export var walk_animation: String = "Walking"
 @export var run_animation: String = "Running"
 
+# Physics / hitbox tuning lives here so it can be edited per model scene in the editor.
+@export var body_collision_size: Vector2 = Vector2(24, 24)
+@export var body_collision_offset: Vector2 = Vector2.ZERO
+@export var interaction_radius: float = 80.0
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready() -> void:
@@ -35,6 +40,13 @@ func play_idle() -> void:
 		_play_animation_if_needed(idle_animation)
 	elif animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.get_animation_names().size() > 0:
 		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
+
+func get_collision_profile() -> Dictionary:
+	return {
+		"body_collision_size": body_collision_size,
+		"body_collision_offset": body_collision_offset,
+		"interaction_radius": interaction_radius,
+	}
 
 func _play_animation_if_needed(name: String) -> void:
 	if animated_sprite == null or name == "":
