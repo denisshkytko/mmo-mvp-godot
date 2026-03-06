@@ -39,10 +39,10 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 			continue
 
 		has_overlap = true
+		# Never push actor below base z-layer (can visually fall under ground/tile layer).
+		# Only lift lower-on-screen actor above the shared base layer.
 		if dy > Y_DEADZONE:
-			relative = max(relative, 1)
-		elif dy < -Y_DEADZONE:
-			relative = min(relative, -1)
+			relative = 1
 
 	if not has_overlap:
 		return default_z
