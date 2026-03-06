@@ -24,6 +24,12 @@ func on_targeted_by(attacker: Node) -> void:
 	if attacker == null:
 		return
 	_targeters[attacker.get_instance_id()] = true
+	var gm := _get_game_manager()
+	if gm == null or not gm.has_method("get_target") or not gm.has_method("set_target"):
+		return
+	var current: Node = gm.call("get_target") as Node
+	if current == null and is_instance_valid(attacker):
+		gm.call("set_target", attacker)
 
 func on_untargeted_by(attacker: Node) -> void:
 	if attacker == null:
@@ -358,8 +364,6 @@ func try_use_ability_slot(slot_index: int) -> void:
 	var gm := _get_game_manager()
 	if gm != null and gm.has_method("get_target"):
 		target = gm.call("get_target")
-	if target == null:
-		target = self
 	c_ability_caster.try_cast(ability_id, target)
 
 func try_interact() -> void:
@@ -775,6 +779,18 @@ func play_model_combat_action(action_kind: String, is_moving_now: bool = false) 
 		return
 	if _character_model.has_method("play_combat_action"):
 		_character_model.call("play_combat_action", action_kind, is_moving_now, class_id)
+
+func face_model_to_world_position(world_position: Vector2) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_facing_to_world_position"):
+		_character_model.call("set_facing_to_world_position", world_position)
+
+func restore_model_facing_to_movement() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_move_direction"):
+		_character_model.call("set_move_direction", velocity)
 
 func _apply_collision_profile_from_model(model: Node) -> void:
 	if model == null or not is_instance_valid(model):

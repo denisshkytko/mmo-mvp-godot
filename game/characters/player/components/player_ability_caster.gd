@@ -293,7 +293,7 @@ func _finish_cast(payload: Dictionary) -> void:
 
 	if _cast_target_lost_or_changed(payload, actual_target):
 		return
-	var target_result := _normalize_target(def, actual_target)
+	var target_result := _resolve_cast_target(def, actual_target)
 	if not bool(target_result.get("ok", false)):
 		return
 	actual_target = target_result.get("target") as Node
@@ -395,7 +395,17 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 	return context
 
 func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
-	var target_result := _normalize_target(def, target)
+	var pre_target: Node = target
+	if def != null and p != null and String(def.target_type) == "enemy" and pre_target == null and not _can_fallback_to_self(def):
+		var range: float = _resolve_range_by_mode(String(def.range_mode))
+		pre_target = _find_nearest_hostile_target_in_range(range)
+		if pre_target != null:
+			var gm: Node = null
+			if p.has_method("_get_game_manager"):
+				gm = p.call("_get_game_manager") as Node
+			if gm != null and gm.has_method("set_target"):
+				gm.call("set_target", pre_target)
+	var target_result := _normalize_target(def, pre_target)
 	if not bool(target_result.get("ok", false)):
 		return target_result
 	var actual_target: Node = target_result.get("target") as Node
@@ -410,6 +420,30 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 		return {"ok": false, "reason": "no_target"}
 
 	return {"ok": true, "target": actual_target}
+
+func _find_nearest_hostile_target_in_range(max_range: float) -> Node2D:
+	if p == null or not is_instance_valid(p):
+		return null
+	var units := p.get_tree().get_nodes_in_group("faction_units")
+	var best: Node2D = null
+	var best_d: float = INF
+	for u in units:
+		if not (u is Node2D):
+			continue
+		var n := u as Node2D
+		if n == p:
+			continue
+		if not is_instance_valid(n):
+			continue
+		if _is_invalid_living_target(n):
+			continue
+		if not _is_valid_enemy_target(n):
+			continue
+		var d := _distance_between_body_hitboxes(p, n)
+		if d <= max_range and d < best_d:
+			best_d = d
+			best = n
+	return best
 
 func _is_weapon_requirement_satisfied(ability_id: String) -> bool:
 	if not WEAPON_REQUIRED_ABILITY_IDS.has(ability_id):

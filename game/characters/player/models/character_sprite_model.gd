@@ -40,16 +40,12 @@ func _ready() -> void:
 func set_move_direction(dir: Vector2) -> void:
 	if animated_sprite == null:
 		return
-	if dir.x < -0.01:
-		animated_sprite.flip_h = true
-	elif dir.x > 0.01:
-		animated_sprite.flip_h = false
-
 	_is_moving = dir.length() > 0.01
 	if _is_dead:
 		return
 	if _one_shot_lock_active:
 		return
+	_apply_facing_from_direction(dir)
 
 	if _is_moving:
 		if _has_animation(run_animation):
@@ -60,6 +56,12 @@ func set_move_direction(dir: Vector2) -> void:
 			play_idle()
 	else:
 		play_idle()
+
+func set_facing_to_world_position(world_position: Vector2) -> void:
+	if animated_sprite == null:
+		return
+	var dir := world_position - global_position
+	_apply_facing_from_direction(dir)
 
 func play_hurt() -> void:
 	if _is_dead:
@@ -271,3 +273,11 @@ func _has_animation(name: String) -> bool:
 	if name == "":
 		return false
 	return animated_sprite.sprite_frames.has_animation(name)
+
+func _apply_facing_from_direction(dir: Vector2) -> void:
+	if animated_sprite == null:
+		return
+	if dir.x < -0.01:
+		animated_sprite.flip_h = true
+	elif dir.x > 0.01:
+		animated_sprite.flip_h = false
