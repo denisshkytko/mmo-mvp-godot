@@ -5,12 +5,9 @@ class_name CharacterSpriteModel
 @export var walk_animation: String = "Walking"
 @export var run_animation: String = "Running"
 
-# Physics / hitbox tuning lives here so it can be edited per model scene in the editor.
-@export var body_collision_size: Vector2 = Vector2(24, 24)
-@export var body_collision_offset: Vector2 = Vector2.ZERO
-@export var interaction_radius: float = 80.0
-
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var body_hitbox_shape: CollisionShape2D = $CollisionProfile/BodyHitbox as CollisionShape2D
+@onready var interaction_radius_shape: CollisionShape2D = $CollisionProfile/InteractionRadius as CollisionShape2D
 
 func _ready() -> void:
 	play_idle()
@@ -42,9 +39,19 @@ func play_idle() -> void:
 		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
 
 func get_collision_profile() -> Dictionary:
+	var body_size := Vector2(24, 24)
+	var body_offset := Vector2.ZERO
+	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
+		body_size = (body_hitbox_shape.shape as RectangleShape2D).size
+		body_offset = body_hitbox_shape.position
+
+	var interaction_radius := 80.0
+	if interaction_radius_shape != null and interaction_radius_shape.shape is CircleShape2D:
+		interaction_radius = (interaction_radius_shape.shape as CircleShape2D).radius
+
 	return {
-		"body_collision_size": body_collision_size,
-		"body_collision_offset": body_collision_offset,
+		"body_collision_size": body_size,
+		"body_collision_offset": body_offset,
 		"interaction_radius": interaction_radius,
 	}
 

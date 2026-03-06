@@ -1,15 +1,30 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
 [ext_resource type="SpriteFrames" path="res://game/characters/player/models/frames/WarriorSpriteFrames.tres" id="2_frames"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(24, 24)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_interaction"]
+radius = 80.0
+
 [node name="WarriorModel" type="Node2D"]
 script = ExtResource("1_model")
-body_collision_size = Vector2(24, 24)
-body_collision_offset = Vector2(0, 0)
-interaction_radius = 80.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
 autoplay = "Idle"
+
+[node name="CollisionProfile" type="Area2D" parent="."]
+monitorable = false
+monitoring = false
+collision_layer = 0
+collision_mask = 0
+
+[node name="BodyHitbox" type="CollisionShape2D" parent="CollisionProfile"]
+shape = SubResource("RectangleShape2D_body")
+
+[node name="InteractionRadius" type="CollisionShape2D" parent="CollisionProfile"]
+shape = SubResource("CircleShape2D_interaction")
