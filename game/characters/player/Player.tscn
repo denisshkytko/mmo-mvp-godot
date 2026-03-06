@@ -26,13 +26,7 @@ move_speed = null
 attack_range = null
 attack_cooldown = null
 
-[node name="Visual" type="ColorRect" parent="."]
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-color = Color(0.14901961, 0.12941177, 1, 1)
-
+[node name="Visual" type="Node2D" parent="."]
 
 [node name="CastBar" parent="." instance=ExtResource("11_castbar")]
 
