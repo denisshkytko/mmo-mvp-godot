@@ -8,6 +8,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
+const HUNTER_ARROW_TEXTURE := preload("res://assets/characters/Hunter/Vector Parts/Arrow.png")
 
 const MELEE_ATTACK_RANGE: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 const RANGED_ATTACK_RANGE: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
@@ -78,6 +79,7 @@ func tick(delta: float) -> void:
 
 	if hits.has("right") and _t_r <= 0.0:
 		var dmg_r: int = STAT_CALC.apply_crit_to_damage(int(hits.get("right", 0)), snap)
+		_play_attack_animation_for_mode()
 		if _attack_mode == AttackMode.RANGED:
 			_fire_ranged(target, dmg_r)
 		else:
@@ -86,6 +88,7 @@ func tick(delta: float) -> void:
 
 	if hits.has("left") and _t_l <= 0.0:
 		var dmg_l: int = STAT_CALC.apply_crit_to_damage(int(hits.get("left", 0)), snap)
+		_play_attack_animation_for_mode()
 		if _attack_mode == AttackMode.RANGED:
 			_fire_ranged(target, dmg_l)
 		else:
@@ -205,7 +208,27 @@ func _fire_ranged(target: Node2D, dmg: int) -> void:
 	parent.add_child(proj)
 	proj.global_position = p.global_position
 	if proj.has_method("setup"):
-		proj.call("setup", target, dmg, p)
+		var texture_override: Texture2D = null
+		if p != null and String(p.class_id).to_lower() == "hunter":
+			texture_override = HUNTER_ARROW_TEXTURE
+		proj.call("setup", target, dmg, p, texture_override)
+
+func _play_attack_animation_for_mode() -> void:
+	if p == null or not p.has_method("play_model_combat_action"):
+		return
+	var is_moving_now := p.velocity.length() > 0.01
+	if _attack_mode == AttackMode.RANGED:
+		p.call("play_model_combat_action", "ranged", is_moving_now)
+		return
+	if _is_unarmed_attack():
+		p.call("play_model_combat_action", "melee_unarmed", is_moving_now)
+		return
+	p.call("play_model_combat_action", "melee_weapon", is_moving_now)
+
+func _is_unarmed_attack() -> bool:
+	if p == null or p.c_equip == null:
+		return true
+	return p.c_equip.get_weapon_attack_interval_right() <= 0.0
 
 func _estimate_final_damage(target: Node2D, raw_damage: int, dmg_type: String) -> int:
 	if raw_damage <= 0:

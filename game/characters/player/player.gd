@@ -197,6 +197,8 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var visual_root: Node2D = $Visual as Node2D
 
 var _character_model: Node = null
+var _pending_corpse_pose_snapshot: Dictionary = {}
+var _corpse_spawned_for_current_death: bool = false
 
 
 func _ready() -> void:
@@ -546,6 +548,10 @@ func respawn_now() -> void:
 	_apply_spellbook_passives()
 
 	is_dead = false
+	_corpse_spawned_for_current_death = false
+	if _character_model != null and is_instance_valid(_character_model):
+		if _character_model.has_method("reset_after_respawn"):
+			_character_model.call("reset_after_respawn")
 	if c_buffs != null and c_buffs.has_method("_sync_spirits_aid_ready_state"):
 		c_buffs.call("_sync_spirits_aid_ready_state")
 
@@ -568,6 +574,10 @@ func use_spirits_aid_respawn() -> bool:
 		else:
 			c_resource.set_empty()
 	is_dead = false
+	_corpse_spawned_for_current_death = false
+	if _character_model != null and is_instance_valid(_character_model):
+		if _character_model.has_method("reset_after_respawn"):
+			_character_model.call("reset_after_respawn")
 	_apply_spellbook_passives()
 	if c_buffs.has_method("_sync_spirits_aid_ready_state"):
 		c_buffs.call("_sync_spirits_aid_ready_state")
@@ -681,6 +691,12 @@ func _apply_class_visual() -> void:
 		return
 	visual_root.add_child(inst)
 	_character_model = inst
+	_pending_corpse_pose_snapshot = {}
+	_corpse_spawned_for_current_death = false
+	if _character_model != null and _character_model.has_signal("death_pose_ready"):
+		var cb := Callable(self, "_on_model_death_pose_ready")
+		if not _character_model.is_connected("death_pose_ready", cb):
+			_character_model.connect("death_pose_ready", cb)
 	_apply_collision_profile_from_model(inst)
 	_update_model_motion(Vector2.ZERO)
 
@@ -689,6 +705,59 @@ func _update_model_motion(dir: Vector2) -> void:
 		return
 	if _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
+
+func play_model_hurt() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_hurt"):
+		_character_model.call("play_hurt")
+
+func play_model_death() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_death"):
+		_character_model.call("play_death")
+
+func begin_death_sequence() -> void:
+	if _corpse_spawned_for_current_death:
+		return
+	play_model_death()
+	var timer := get_tree().create_timer(0.9)
+	timer.timeout.connect(_spawn_player_corpse_after_death_animation, CONNECT_ONE_SHOT)
+
+func get_corpse_pose_snapshot() -> Dictionary:
+	if not _pending_corpse_pose_snapshot.is_empty():
+		return _pending_corpse_pose_snapshot
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("build_corpse_pose_snapshot"):
+		var v: Variant = _character_model.call("build_corpse_pose_snapshot")
+		if v is Dictionary:
+			return v as Dictionary
+	return {}
+
+func _on_model_death_pose_ready(snapshot: Dictionary) -> void:
+	_pending_corpse_pose_snapshot = snapshot.duplicate(true)
+	_spawn_player_corpse_after_death_animation()
+
+func _spawn_player_corpse_after_death_animation() -> void:
+	if _corpse_spawned_for_current_death:
+		return
+	if get_parent() != null:
+		var corpse: Corpse = DeathPipeline.spawn_corpse(get_parent(), global_position)
+		if corpse != null:
+			corpse.setup_owner_snapshot(self, get_instance_id())
+			corpse.owner_is_player = true
+			var pose := get_corpse_pose_snapshot()
+			if not pose.is_empty() and corpse.has_method("apply_pose_snapshot"):
+				corpse.call("apply_pose_snapshot", pose)
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("hide_model_for_corpse"):
+		_character_model.call("hide_model_for_corpse")
+	_corpse_spawned_for_current_death = true
+
+func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_combat_action"):
+		_character_model.call("play_combat_action", action_kind, is_moving_now, class_id)
 
 func _apply_collision_profile_from_model(model: Node) -> void:
 	if model == null or not is_instance_valid(model):

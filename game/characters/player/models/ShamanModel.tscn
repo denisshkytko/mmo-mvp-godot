@@ -3,22 +3,25 @@
 [ext_resource type="Script" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
 [ext_resource type="SpriteFrames" path="res://game/characters/player/models/frames/ShamanSpriteFrames.tres" id="2_frames"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_world"]
-size = Vector2(24, 24)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_world"]
+radius = 8.0
+height = 16.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(24, 24)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 8.0
+height = 16.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_interaction"]
 radius = 80.0
 
 [node name="ShamanModel" type="Node2D"]
+scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
-autoplay = "Idle"
+autoplay = "Idle Blinking"
 
 [node name="CollisionProfile" type="Area2D" parent="."]
 monitorable = false
@@ -27,10 +30,10 @@ collision_layer = 0
 collision_mask = 0
 
 [node name="WorldCollider" type="CollisionShape2D" parent="CollisionProfile"]
-shape = SubResource("RectangleShape2D_world")
+shape = SubResource("CapsuleShape2D_world")
 
 [node name="BodyHitbox" type="CollisionShape2D" parent="CollisionProfile"]
-shape = SubResource("RectangleShape2D_body")
+shape = SubResource("CapsuleShape2D_body")
 
 [node name="InteractionRadius" type="CollisionShape2D" parent="CollisionProfile"]
 shape = SubResource("CircleShape2D_interaction")

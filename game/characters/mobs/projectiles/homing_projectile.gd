@@ -6,6 +6,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 @export var speed: float = 420.0
 @export var hit_distance: float = 10.0
 @export var max_lifetime: float = 6.0
+@export var default_visual_scale: Vector2 = Vector2(0.2, 0.2)
 
 var _target: Node2D = null
 var _damage: int = 0
@@ -13,10 +14,16 @@ var _source: Node2D = null
 var _hit: bool = false
 var _life: float = 0.0
 
-func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
+@onready var _sprite: Sprite2D = $Sprite2D as Sprite2D
+
+func setup(target: Node2D, damage: int, source: Node2D = null, texture_override: Texture2D = null) -> void:
 	_target = target
 	_damage = damage
 	_source = source
+	if _sprite != null:
+		_sprite.scale = default_visual_scale
+	if texture_override != null and _sprite != null:
+		_sprite.texture = texture_override
 
 func _physics_process(delta: float) -> void:
 	if _hit:
@@ -52,6 +59,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var dir: Vector2 = to_target / dist
+	rotation = dir.angle()
 	global_position += dir * speed * delta
 
 func _apply_hit() -> void:

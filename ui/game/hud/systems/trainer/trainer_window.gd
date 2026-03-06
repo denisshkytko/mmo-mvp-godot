@@ -91,10 +91,12 @@ func open_for_trainer(trainer_node: Node, player: Player, spellbook: PlayerSpell
 	_trainer_class_id = trainer_class_id
 	if _player == null or _spellbook == null:
 		return
-	if _player.class_id != _trainer_class_id:
-		_notify_class_mismatch()
-		close()
-		return
+	# TEMP: class-lock is intentionally disabled; any trainer can teach the player's class spells.
+	# if _player.class_id != _trainer_class_id:
+	# 	_notify_class_mismatch()
+	# 	close()
+	# 	return
+	_trainer_class_id = _player.class_id
 	_is_open = true
 	panel.visible = true
 	emit_signal("hud_visibility_changed", true)
