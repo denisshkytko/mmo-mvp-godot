@@ -17,10 +17,6 @@ const HUNTER_MODEL_SCENE := preload("res://game/characters/player/models/HunterM
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
-# Auto-attack
-@export var attack_range: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
-@export var attack_cooldown: float = 0.8
-
 # Combat state (used for HP regen rule: HP regenerates only out of combat)
 var _targeters := {} # instance_id -> true
 

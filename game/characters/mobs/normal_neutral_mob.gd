@@ -192,8 +192,8 @@ func _draw() -> void:
 	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
 	draw_arc(center_local, c_combat.melee_attack_range, 0.0, TAU, 96, ring_color, 1.5, true)
 	draw_arc(center_local, COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE, 0.0, TAU, 96, ring_color, 1.5, true)
-	if c_ai != null and c_ai.aggro_radius > 0.0:
-		draw_arc(center_local, c_ai.aggro_radius, 0.0, TAU, 96, Color(1.0, 0.2, 0.2, 0.85), 1.5, true)
+	if aggro_radius > 0.0:
+		draw_arc(center_local, aggro_radius, 0.0, TAU, 96, Color(1.0, 0.2, 0.2, 0.85), 1.5, true)
 
 func _physics_process(delta: float) -> void:
 	if c_stats.is_dead or c_stats.current_hp <= 0:

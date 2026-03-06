@@ -27,9 +27,6 @@ height = 250.0
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
 script = ExtResource("1_p0vlq")
-move_speed = null
-attack_range = null
-attack_cooldown = null
 
 [node name="Visual" type="Node2D" parent="."]
 
