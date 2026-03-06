@@ -328,7 +328,7 @@ func _is_in_range(target: Node, range_mode: String) -> bool:
 		return true
 	if not (_owner is Node2D) or not (target is Node2D):
 		return false
-	var max_range := COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
+	var max_range := COMBAT_RANGES.RANGED_CAST_RANGE_BASE
 	var rm := range_mode.strip_edges().to_lower()
 	if rm == "melee":
 		max_range = COMBAT_RANGES.MELEE_ATTACK_RANGE

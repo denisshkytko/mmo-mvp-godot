@@ -94,29 +94,66 @@ func play_idle() -> void:
 		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
 
 func get_collision_profile() -> Dictionary:
-	var world_size := Vector2(24, 24)
-	var world_offset := Vector2.ZERO
-	if world_collision_shape != null and world_collision_shape.shape is RectangleShape2D:
-		world_size = (world_collision_shape.shape as RectangleShape2D).size
-		world_offset = world_collision_shape.position
+	var model_scale := Vector2(abs(scale.x), abs(scale.y))
+	if model_scale.x <= 0.0001:
+		model_scale.x = 1.0
+	if model_scale.y <= 0.0001:
+		model_scale.y = 1.0
 
-	var body_size := world_size
+	var world_shape: Shape2D = null
+	var world_offset := Vector2.ZERO
+	var world_rotation := 0.0
+	if world_collision_shape != null:
+		world_shape = _duplicate_scaled_shape(world_collision_shape.shape, model_scale)
+		world_offset = Vector2(
+			world_collision_shape.position.x * model_scale.x,
+			world_collision_shape.position.y * model_scale.y
+		)
+		world_rotation = world_collision_shape.rotation
+
+	var body_shape: Shape2D = null
 	var body_offset := world_offset
-	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
-		body_size = (body_hitbox_shape.shape as RectangleShape2D).size
-		body_offset = body_hitbox_shape.position
+	var body_rotation := 0.0
+	if body_hitbox_shape != null:
+		body_shape = _duplicate_scaled_shape(body_hitbox_shape.shape, model_scale)
+		body_offset = Vector2(
+			body_hitbox_shape.position.x * model_scale.x,
+			body_hitbox_shape.position.y * model_scale.y
+		)
+		body_rotation = body_hitbox_shape.rotation
 
 	var interaction_radius := 80.0
 	if interaction_radius_shape != null and interaction_radius_shape.shape is CircleShape2D:
-		interaction_radius = (interaction_radius_shape.shape as CircleShape2D).radius
+		interaction_radius = (interaction_radius_shape.shape as CircleShape2D).radius * model_scale.x
 
 	return {
-		"world_collision_size": world_size,
+		"world_collision_shape": world_shape.duplicate(true) if world_shape != null else null,
 		"world_collision_offset": world_offset,
-		"body_hitbox_size": body_size,
+		"world_collision_rotation": world_rotation,
+		"body_hitbox_shape": body_shape.duplicate(true) if body_shape != null else null,
 		"body_hitbox_offset": body_offset,
+		"body_hitbox_rotation": body_rotation,
 		"interaction_radius": interaction_radius,
 	}
+
+func _duplicate_scaled_shape(shape: Shape2D, model_scale: Vector2) -> Shape2D:
+	if shape == null:
+		return null
+	var dup := shape.duplicate(true)
+	if dup is CapsuleShape2D:
+		var cap := dup as CapsuleShape2D
+		cap.radius *= model_scale.x
+		cap.height *= model_scale.y
+		return cap
+	if dup is RectangleShape2D:
+		var rect := dup as RectangleShape2D
+		rect.size = Vector2(rect.size.x * model_scale.x, rect.size.y * model_scale.y)
+		return rect
+	if dup is CircleShape2D:
+		var circ := dup as CircleShape2D
+		circ.radius *= model_scale.x
+		return circ
+	return dup
 
 func _play_animation_if_needed(name: String) -> void:
 	if animated_sprite == null or name == "":

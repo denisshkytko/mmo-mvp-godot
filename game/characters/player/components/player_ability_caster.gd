@@ -1,6 +1,8 @@
 extends Node
 class_name PlayerAbilityCaster
 
+const PROG := preload("res://core/stats/progression.gd")
+
 const ARCANE_SHOT_ALLOWED_WEAPON_SUBTYPES: Array[String] = [
 	"bow",
 	"bow_2h",
@@ -401,7 +403,7 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	var range_mode := String(def.range_mode)
 	if range_mode != "self" and actual_target is Node2D:
 		var range: float = _resolve_range_by_mode(range_mode)
-		var dist: float = p.global_position.distance_to((actual_target as Node2D).global_position)
+		var dist: float = _distance_between_body_hitboxes(p, actual_target as Node2D)
 		if dist > range:
 			return {"ok": false, "reason": "out_of_range"}
 	elif range_mode != "self" and not (actual_target is Node2D):
@@ -421,19 +423,36 @@ func _is_weapon_requirement_satisfied(ability_id: String) -> bool:
 
 func _resolve_range_by_mode(range_mode: String) -> float:
 	var rm := range_mode.strip_edges().to_lower()
+	var class_id := ""
+	if p != null and "class_id" in p:
+		class_id = String(p.class_id)
+	var ranged_mult := PROG.get_ranged_auto_attack_range_multiplier_for_class(class_id)
+	var ranged_cast_base := PlayerCombat.RANGED_CAST_RANGE * ranged_mult
 	if rm == "melee":
 		return PlayerCombat.MELEE_ATTACK_RANGE
 	if rm == "ranged" or rm == "":
-		return PlayerCombat.RANGED_ATTACK_RANGE
+		return ranged_cast_base
 	if rm.begins_with("ranged"):
 		var cleaned := rm.replace(" ", "")
 		if cleaned == "ranged/2":
-			return PlayerCombat.RANGED_ATTACK_RANGE * 0.5
+			return ranged_cast_base * 0.5
 		if cleaned.begins_with("ranged+") and cleaned.ends_with("%"):
 			var pct_str := cleaned.substr(7, cleaned.length() - 8)
 			var pct := float(pct_str)
-			return PlayerCombat.RANGED_ATTACK_RANGE * (1.0 + pct / 100.0)
-	return PlayerCombat.RANGED_ATTACK_RANGE
+			return ranged_cast_base * (1.0 + pct / 100.0)
+	return ranged_cast_base
+
+
+func _distance_between_body_hitboxes(a: Node2D, b: Node2D) -> float:
+	if a == null or b == null:
+		return INF
+	var a_pos := a.global_position
+	var b_pos := b.global_position
+	if a.has_method("get_body_hitbox_center_global"):
+		a_pos = a.call("get_body_hitbox_center_global")
+	if b.has_method("get_body_hitbox_center_global"):
+		b_pos = b.call("get_body_hitbox_center_global")
+	return a_pos.distance_to(b_pos)
 
 func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	if def == null or p == null:

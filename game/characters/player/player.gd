@@ -3,6 +3,7 @@ class_name Player
 
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -15,10 +16,6 @@ const SHAMAN_MODEL_SCENE := preload("res://game/characters/player/models/ShamanM
 const HUNTER_MODEL_SCENE := preload("res://game/characters/player/models/HunterModel.tscn")
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
-
-# Auto-attack
-@export var attack_range: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
-@export var attack_cooldown: float = 0.8
 
 # Combat state (used for HP regen rule: HP regenerates only out of combat)
 var _targeters := {} # instance_id -> true
@@ -190,9 +187,9 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 @onready var cast_bar: CastBarWidget = $CastBar
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
-@onready var world_collision: CollisionShape2D = $Collision as CollisionShape2D
-@onready var body_hitbox_shape: CollisionShape2D = $TargetHitbox/CollisionShape2D as CollisionShape2D
-@onready var interaction_shape: CollisionShape2D = $InteractionDetector/CollisionShape2D as CollisionShape2D
+@onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
+@onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
+@onready var interaction_shape: CollisionShape2D = $InteractionDetector/InteractionRadius as CollisionShape2D
 
 @onready var visual_root: Node2D = $Visual as Node2D
 
@@ -319,6 +316,26 @@ func _process(delta: float) -> void:
 		cast_bar.set_cast_visible(casting)
 		cast_bar.set_progress01(c_ability_caster.get_cast_progress() if casting else 0.0)
 		cast_bar.set_icon_texture(c_ability_caster.get_cast_icon() if casting else null)
+
+	if OS.is_debug_build():
+		queue_redraw()
+
+
+func get_body_hitbox_center_global() -> Vector2:
+	if body_hitbox_shape != null:
+		return body_hitbox_shape.global_position
+	return global_position
+
+
+func _draw() -> void:
+	if not OS.is_debug_build():
+		return
+	var center_local := to_local(get_body_hitbox_center_global())
+	var melee_radius := COMBAT_RANGES.MELEE_ATTACK_RANGE
+	var ranged_radius := COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE * PROG.get_ranged_auto_attack_range_multiplier_for_class(class_id)
+	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
+	draw_arc(center_local, melee_radius, 0.0, TAU, 96, ring_color, 1.5, true)
+	draw_arc(center_local, ranged_radius, 0.0, TAU, 96, ring_color, 1.5, true)
 
 
 # -----------------------
@@ -769,23 +786,27 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		return
 	var profile := profile_v as Dictionary
 
-	if world_collision != null and world_collision.shape is RectangleShape2D:
-		var world_shape := world_collision.shape as RectangleShape2D
-		var world_size_v: Variant = profile.get("world_collision_size", world_shape.size)
-		if world_size_v is Vector2:
-			world_shape.size = world_size_v
+	if world_collision != null:
+		var world_shape_v: Variant = profile.get("world_collision_shape", null)
+		if world_shape_v is Shape2D:
+			world_collision.shape = (world_shape_v as Shape2D).duplicate(true)
 		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
 		if world_offset_v is Vector2:
 			world_collision.position = world_offset_v
+		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
+		if world_rot_v is float or world_rot_v is int:
+			world_collision.rotation = float(world_rot_v)
 
-	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
-		var body_shape := body_hitbox_shape.shape as RectangleShape2D
-		var body_size_v: Variant = profile.get("body_hitbox_size", body_shape.size)
-		if body_size_v is Vector2:
-			body_shape.size = body_size_v
+	if body_hitbox_shape != null:
+		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
+		if body_shape_v is Shape2D:
+			body_hitbox_shape.shape = (body_shape_v as Shape2D).duplicate(true)
 		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
 		if body_offset_v is Vector2:
 			body_hitbox_shape.position = body_offset_v
+		var body_rot_v: Variant = profile.get("body_hitbox_rotation", body_hitbox_shape.rotation)
+		if body_rot_v is float or body_rot_v is int:
+			body_hitbox_shape.rotation = float(body_rot_v)
 
 	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
 		var interaction_circle := interaction_shape.shape as CircleShape2D

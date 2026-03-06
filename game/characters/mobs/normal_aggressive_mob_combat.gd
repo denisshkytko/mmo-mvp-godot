@@ -35,7 +35,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	if "is_dead" in target and bool(target.get("is_dead")):
 		return
 
-	var dist: float = actor.global_position.distance_to(target.global_position)
+	var dist: float = _distance_between_body_hitboxes(actor, target)
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var ap: float = float(derived.get("attack_power", 0.0))
 	var raw: int = STAT_CALC.compute_mob_unarmed_hit(ap)
@@ -94,3 +94,15 @@ func get_attack_damage() -> int:
 		var ap: float = float(derived.get("attack_power", 0.0))
 		return max(1, STAT_CALC.compute_mob_unarmed_hit(ap))
 	return 1
+
+
+func _distance_between_body_hitboxes(a: Node2D, b: Node2D) -> float:
+	if a == null or b == null:
+		return INF
+	var a_pos := a.global_position
+	var b_pos := b.global_position
+	if a.has_method("get_body_hitbox_center_global"):
+		a_pos = a.call("get_body_hitbox_center_global")
+	if b.has_method("get_body_hitbox_center_global"):
+		b_pos = b.call("get_body_hitbox_center_global")
+	return a_pos.distance_to(b_pos)
