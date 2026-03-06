@@ -64,10 +64,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 22
-current_tab = 1
+current_tab = 0
 
 [node name="Персонаж" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -503,6 +502,7 @@ size_flags_vertical = 3
 fit_content = true
 
 [node name="Заклинания" type="Control" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

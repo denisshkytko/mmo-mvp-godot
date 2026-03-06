@@ -1,8 +1,8 @@
-res://game/characters/player/models/WarriorModel.tscn
+res://game/characters/player/models/HunterModel.tscn
 res://core/trade/presets/merchant_preset_level_1.tres
-res://game/characters/player/models/frames/WarriorSpriteFrames.tres
-res://game/characters/player/models/frames/MageSpriteFrames.tres
-res://game/characters/player/models/frames/PaladinSpriteFrames.tres
-res://game/characters/player/models/frames/PriestSpriteFrames.tres
-res://game/characters/player/models/frames/ShamanSpriteFrames.tres
-res://game/characters/player/models/frames/HunterSpriteFrames.tres
+res://game/characters/player/models/MageModel.tscn
+res://game/characters/player/models/PaladinModel.tscn
+res://game/characters/player/models/PriestModel.tscn
+res://game/characters/player/models/ShamanModel.tscn
+res://game/characters/player/models/WarriorModel.tscn
+res://ui/game/hud/windows/CharacterHUD.tscn
