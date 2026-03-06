@@ -3,6 +3,7 @@ class_name Player
 
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const PROG := preload("res://core/stats/progression.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -190,9 +191,9 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 @onready var cast_bar: CastBarWidget = $CastBar
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
-@onready var world_collision: CollisionShape2D = $Collision as CollisionShape2D
-@onready var body_hitbox_shape: CollisionShape2D = $TargetHitbox/CollisionShape2D as CollisionShape2D
-@onready var interaction_shape: CollisionShape2D = $InteractionDetector/CollisionShape2D as CollisionShape2D
+@onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
+@onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
+@onready var interaction_shape: CollisionShape2D = $InteractionDetector/InteractionRadius as CollisionShape2D
 
 @onready var visual_root: Node2D = $Visual as Node2D
 
@@ -319,6 +320,26 @@ func _process(delta: float) -> void:
 		cast_bar.set_cast_visible(casting)
 		cast_bar.set_progress01(c_ability_caster.get_cast_progress() if casting else 0.0)
 		cast_bar.set_icon_texture(c_ability_caster.get_cast_icon() if casting else null)
+
+	if OS.is_debug_build():
+		queue_redraw()
+
+
+func get_body_hitbox_center_global() -> Vector2:
+	if body_hitbox_shape != null:
+		return body_hitbox_shape.global_position
+	return global_position
+
+
+func _draw() -> void:
+	if not OS.is_debug_build():
+		return
+	var center_local := to_local(get_body_hitbox_center_global())
+	var melee_radius := COMBAT_RANGES.MELEE_ATTACK_RANGE
+	var ranged_radius := COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE * PROG.get_ranged_auto_attack_range_multiplier_for_class(class_id)
+	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
+	draw_arc(center_local, melee_radius, 0.0, TAU, 96, ring_color, 1.5, true)
+	draw_arc(center_local, ranged_radius, 0.0, TAU, 96, ring_color, 1.5, true)
 
 
 # -----------------------

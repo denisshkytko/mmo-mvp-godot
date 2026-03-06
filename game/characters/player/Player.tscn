@@ -35,7 +35,7 @@ attack_cooldown = null
 
 [node name="CastBar" parent="." instance=ExtResource("11_castbar")]
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="WorldCollider" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_world")
 
 [node name="Camera" type="Camera2D" parent="."]
@@ -47,19 +47,19 @@ limit_bottom = 1200
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 
-[node name="TargetHitbox" type="Area2D" parent="."]
+[node name="BodyHitboxArea" type="Area2D" parent="."]
 monitoring = false
 monitorable = false
 collision_layer = 0
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TargetHitbox"]
+[node name="BodyHitbox" type="CollisionShape2D" parent="BodyHitboxArea"]
 shape = SubResource("CapsuleShape2D_target_hitbox")
 
 [node name="InteractionDetector" type="Area2D" parent="."]
 script = ExtResource("10_8sru1")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionDetector"]
+[node name="InteractionRadius" type="CollisionShape2D" parent="InteractionDetector"]
 shape = SubResource("CircleShape2D_1f6e5")
 
 [node name="Components" type="Node" parent="."]

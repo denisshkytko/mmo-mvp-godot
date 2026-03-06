@@ -47,7 +47,7 @@ func tick(delta: float) -> void:
 		return
 
 	_attack_mode = _get_attack_mode()
-	var dist: float = p.global_position.distance_to(target.global_position)
+	var dist: float = _distance_between_body_hitboxes(p, target)
 	var attack_range := _get_attack_range()
 	if dist > attack_range:
 		return
@@ -339,3 +339,15 @@ func _get_attack_range() -> float:
 		class_id = String(p.class_id)
 	var mult := PROG.get_ranged_auto_attack_range_multiplier_for_class(class_id)
 	return RANGED_ATTACK_RANGE * mult
+
+
+func _distance_between_body_hitboxes(a: Node2D, b: Node2D) -> float:
+	if a == null or b == null:
+		return INF
+	var a_pos := a.global_position
+	var b_pos := b.global_position
+	if a.has_method("get_body_hitbox_center_global"):
+		a_pos = a.call("get_body_hitbox_center_global")
+	if b.has_method("get_body_hitbox_center_global"):
+		b_pos = b.call("get_body_hitbox_center_global")
+	return a_pos.distance_to(b_pos)

@@ -401,7 +401,7 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	var range_mode := String(def.range_mode)
 	if range_mode != "self" and actual_target is Node2D:
 		var range: float = _resolve_range_by_mode(range_mode)
-		var dist: float = p.global_position.distance_to((actual_target as Node2D).global_position)
+		var dist: float = _distance_between_body_hitboxes(p, actual_target as Node2D)
 		if dist > range:
 			return {"ok": false, "reason": "out_of_range"}
 	elif range_mode != "self" and not (actual_target is Node2D):
@@ -434,6 +434,18 @@ func _resolve_range_by_mode(range_mode: String) -> float:
 			var pct := float(pct_str)
 			return PlayerCombat.RANGED_ATTACK_RANGE * (1.0 + pct / 100.0)
 	return PlayerCombat.RANGED_ATTACK_RANGE
+
+
+func _distance_between_body_hitboxes(a: Node2D, b: Node2D) -> float:
+	if a == null or b == null:
+		return INF
+	var a_pos := a.global_position
+	var b_pos := b.global_position
+	if a.has_method("get_body_hitbox_center_global"):
+		a_pos = a.call("get_body_hitbox_center_global")
+	if b.has_method("get_body_hitbox_center_global"):
+		b_pos = b.call("get_body_hitbox_center_global")
+	return a_pos.distance_to(b_pos)
 
 func _normalize_target(def: AbilityDefinition, target: Node) -> Dictionary:
 	if def == null or p == null:

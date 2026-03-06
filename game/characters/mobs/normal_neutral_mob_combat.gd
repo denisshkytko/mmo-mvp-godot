@@ -4,9 +4,10 @@ class_name NormalNeutralMobCombat
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
+const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 var melee_stop_distance: float = 45.0
-var melee_attack_range: float = 55.0
+var melee_attack_range: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 var melee_cooldown: float = 1.2
 
 var _attack_timer: float = 0.0
@@ -22,7 +23,7 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	if "is_dead" in target and bool(target.get("is_dead")):
 		return
 
-	var dist: float = actor.global_position.distance_to(target.global_position)
+	var dist: float = _distance_between_body_hitboxes(actor, target)
 	if dist > melee_attack_range:
 		return
 	if _attack_timer > 0.0:
@@ -54,6 +55,18 @@ func get_attack_damage() -> int:
 	if owner != null and "c_stats" in owner and owner.c_stats != null and owner.c_stats.has_method("get_stats_snapshot"):
 		var snap: Dictionary = owner.c_stats.call("get_stats_snapshot") as Dictionary
 		var derived: Dictionary = snap.get("derived", {}) as Dictionary
-		var ap: float = float(derived.get("attack_power", 0.0))
-		return max(1, STAT_CALC.compute_mob_unarmed_hit(ap))
+			var ap: float = float(derived.get("attack_power", 0.0))
+			return max(1, STAT_CALC.compute_mob_unarmed_hit(ap))
 	return 1
+
+
+func _distance_between_body_hitboxes(a: Node2D, b: Node2D) -> float:
+	if a == null or b == null:
+		return INF
+	var a_pos := a.global_position
+	var b_pos := b.global_position
+	if a.has_method("get_body_hitbox_center_global"):
+		a_pos = a.call("get_body_hitbox_center_global")
+	if b.has_method("get_body_hitbox_center_global"):
+		b_pos = b.call("get_body_hitbox_center_global")
+	return a_pos.distance_to(b_pos)
