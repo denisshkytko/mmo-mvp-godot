@@ -30,12 +30,27 @@ var _queued_idle_after_one_shot: bool = false
 var _queued_locomotion_after_one_shot: bool = false
 var _one_shot_lock_active: bool = false
 var _death_pose_emitted: bool = false
+var _idle_liveliness_interval_sec: float = 5.0
+var _idle_liveliness_timer_sec: float = 5.0
 
 func _ready() -> void:
 	_apply_animation_speed_to_all()
 	if animated_sprite != null and not animated_sprite.animation_finished.is_connected(_on_animation_finished):
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 	play_idle()
+	_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
+
+func _process(delta: float) -> void:
+	if animated_sprite == null:
+		return
+	if _is_dead or _is_moving or _one_shot_lock_active:
+		_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
+		return
+	_idle_liveliness_timer_sec = max(0.0, _idle_liveliness_timer_sec - delta)
+	if _idle_liveliness_timer_sec > 0.0:
+		return
+	animated_sprite.flip_h = not animated_sprite.flip_h
+	_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
 
 func set_move_direction(dir: Vector2) -> void:
 	if animated_sprite == null:
@@ -46,6 +61,8 @@ func set_move_direction(dir: Vector2) -> void:
 	if _one_shot_lock_active:
 		return
 	_apply_facing_from_direction(dir)
+	if _is_moving:
+		_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
 
 	if _is_moving:
 		if _has_animation(run_animation):
@@ -62,6 +79,7 @@ func set_facing_to_world_position(world_position: Vector2) -> void:
 		return
 	var dir := world_position - global_position
 	_apply_facing_from_direction(dir)
+	_idle_liveliness_timer_sec = _idle_liveliness_interval_sec
 
 func play_hurt() -> void:
 	if _is_dead:

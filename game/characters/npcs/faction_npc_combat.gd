@@ -48,12 +48,26 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _t <= 0.0:
+			if actor != null and actor.has_method("play_model_combat_action"):
+				var moving_now := false
+				if "velocity" in actor:
+					var vv: Variant = actor.get("velocity")
+					if vv is Vector2:
+						moving_now = (vv as Vector2).length() > 0.01
+				actor.call("play_model_combat_action", "melee_unarmed", moving_now)
 			DAMAGE_HELPER.apply_damage(actor, target, dmg)
 			_t = melee_cooldown / speed_mult
 		return
 
 	# RANGED
 	if dist <= ranged_attack_range and _t <= 0.0:
+		if actor != null and actor.has_method("play_model_combat_action"):
+			var moving_now := false
+			if "velocity" in actor:
+				var vv: Variant = actor.get("velocity")
+				if vv is Vector2:
+					moving_now = (vv as Vector2).length() > 0.01
+			actor.call("play_model_combat_action", "ranged", moving_now)
 		if ranged_projectile_scene != null:
 			var inst: Node = ranged_projectile_scene.instantiate()
 			var proj: Node2D = inst as Node2D
