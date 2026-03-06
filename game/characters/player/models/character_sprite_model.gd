@@ -6,6 +6,7 @@ class_name CharacterSpriteModel
 @export var run_animation: String = "Running"
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var world_collision_shape: CollisionShape2D = $CollisionProfile/WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $CollisionProfile/BodyHitbox as CollisionShape2D
 @onready var interaction_radius_shape: CollisionShape2D = $CollisionProfile/InteractionRadius as CollisionShape2D
 
@@ -39,8 +40,14 @@ func play_idle() -> void:
 		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
 
 func get_collision_profile() -> Dictionary:
-	var body_size := Vector2(24, 24)
-	var body_offset := Vector2.ZERO
+	var world_size := Vector2(24, 24)
+	var world_offset := Vector2.ZERO
+	if world_collision_shape != null and world_collision_shape.shape is RectangleShape2D:
+		world_size = (world_collision_shape.shape as RectangleShape2D).size
+		world_offset = world_collision_shape.position
+
+	var body_size := world_size
+	var body_offset := world_offset
 	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
 		body_size = (body_hitbox_shape.shape as RectangleShape2D).size
 		body_offset = body_hitbox_shape.position
@@ -50,8 +57,10 @@ func get_collision_profile() -> Dictionary:
 		interaction_radius = (interaction_radius_shape.shape as CircleShape2D).radius
 
 	return {
-		"body_collision_size": body_size,
-		"body_collision_offset": body_offset,
+		"world_collision_size": world_size,
+		"world_collision_offset": world_offset,
+		"body_hitbox_size": body_size,
+		"body_hitbox_offset": body_offset,
 		"interaction_radius": interaction_radius,
 	}
 

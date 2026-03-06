@@ -190,7 +190,8 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 @onready var cast_bar: CastBarWidget = $CastBar
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
-@onready var body_collision: CollisionShape2D = $Collision as CollisionShape2D
+@onready var world_collision: CollisionShape2D = $Collision as CollisionShape2D
+@onready var body_hitbox_shape: CollisionShape2D = $TargetHitbox/CollisionShape2D as CollisionShape2D
 @onready var interaction_shape: CollisionShape2D = $InteractionDetector/CollisionShape2D as CollisionShape2D
 
 @onready var visual_root: Node2D = $Visual as Node2D
@@ -699,14 +700,23 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		return
 	var profile := profile_v as Dictionary
 
-	if body_collision != null and body_collision.shape is RectangleShape2D:
-		var body_shape := body_collision.shape as RectangleShape2D
-		var body_size_v: Variant = profile.get("body_collision_size", body_shape.size)
+	if world_collision != null and world_collision.shape is RectangleShape2D:
+		var world_shape := world_collision.shape as RectangleShape2D
+		var world_size_v: Variant = profile.get("world_collision_size", world_shape.size)
+		if world_size_v is Vector2:
+			world_shape.size = world_size_v
+		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
+		if world_offset_v is Vector2:
+			world_collision.position = world_offset_v
+
+	if body_hitbox_shape != null and body_hitbox_shape.shape is RectangleShape2D:
+		var body_shape := body_hitbox_shape.shape as RectangleShape2D
+		var body_size_v: Variant = profile.get("body_hitbox_size", body_shape.size)
 		if body_size_v is Vector2:
 			body_shape.size = body_size_v
-		var body_offset_v: Variant = profile.get("body_collision_offset", body_collision.position)
+		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
 		if body_offset_v is Vector2:
-			body_collision.position = body_offset_v
+			body_hitbox_shape.position = body_offset_v
 
 	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
 		var interaction_circle := interaction_shape.shape as CircleShape2D

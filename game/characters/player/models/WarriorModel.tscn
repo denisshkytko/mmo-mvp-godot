@@ -1,7 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
 [ext_resource type="SpriteFrames" path="res://game/characters/player/models/frames/WarriorSpriteFrames.tres" id="2_frames"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_world"]
+size = Vector2(24, 24)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(24, 24)
@@ -22,6 +25,9 @@ monitorable = false
 monitoring = false
 collision_layer = 0
 collision_mask = 0
+
+[node name="WorldCollider" type="CollisionShape2D" parent="CollisionProfile"]
+shape = SubResource("RectangleShape2D_world")
 
 [node name="BodyHitbox" type="CollisionShape2D" parent="CollisionProfile"]
 shape = SubResource("RectangleShape2D_body")
