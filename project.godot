@@ -31,11 +31,6 @@ window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
-[internationalization]
-
-locale/translations=PackedStringArray("res://locale/spells/ru_spells.po", "res://locale/ui_terms/ru_terms.po", "res://locale/ui_common/ru_common.po", "res://locale/ui_inventory/ru_inventory.po", "res://locale/ui_merchant/ru_merchant.po", "res://locale/ui_tooltips/ru_tooltips.po", "res://locale/ui_character/ru_character.po", "res://locale/ui_flow/ru_flow.po", "res://locale/ui_hud_core/ru_hud_core.po")
-locale/fallback="ru"
-
 [input]
 
 ui_left={
@@ -105,6 +100,11 @@ skill_3={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":50,"key_label":0,"unicode":50,"location":0,"echo":false,"script":null)
 ]
 }
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://locale/spells/ru_spells.po", "res://locale/ui_terms/ru_terms.po", "res://locale/ui_common/ru_common.po", "res://locale/ui_inventory/ru_inventory.po", "res://locale/ui_merchant/ru_merchant.po", "res://locale/ui_tooltips/ru_tooltips.po", "res://locale/ui_character/ru_character.po", "res://locale/ui_flow/ru_flow.po", "res://locale/ui_hud_core/ru_hud_core.po")
+locale/fallback="ru"
 
 [rendering]
 

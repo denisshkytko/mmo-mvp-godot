@@ -1,3 +1,8 @@
-res://ui/game/hud/trainer/trainer_spell_row.tscn
+res://game/characters/player/models/WarriorModel.tscn
 res://core/trade/presets/merchant_preset_level_1.tres
-res://ui/game/hud/trainer/trainer_window.tscn
+res://game/characters/player/models/frames/WarriorSpriteFrames.tres
+res://game/characters/player/models/frames/MageSpriteFrames.tres
+res://game/characters/player/models/frames/PaladinSpriteFrames.tres
+res://game/characters/player/models/frames/PriestSpriteFrames.tres
+res://game/characters/player/models/frames/ShamanSpriteFrames.tres
+res://game/characters/player/models/frames/HunterSpriteFrames.tres
