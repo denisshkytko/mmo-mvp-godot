@@ -12,6 +12,7 @@ const HUNTER_ARROW_TEXTURE := preload("res://assets/characters/Hunter/Vector Par
 
 const MELEE_ATTACK_RANGE: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 const RANGED_ATTACK_RANGE: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
+const RANGED_CAST_RANGE: float = COMBAT_RANGES.RANGED_CAST_RANGE_BASE
 const RANGED_WEAPON_SUBTYPES: Array[String] = [
 	"staff",
 	"staff_2h",

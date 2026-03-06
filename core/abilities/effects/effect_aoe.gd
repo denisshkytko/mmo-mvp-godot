@@ -33,9 +33,9 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 func _get_radius(def: AbilityDefinition) -> float:
 	match radius_mode:
 		"ranged":
-			return PLAYER_COMBAT.RANGED_ATTACK_RANGE
+			return PLAYER_COMBAT.RANGED_CAST_RANGE
 		"ranged_half":
-			return PLAYER_COMBAT.RANGED_ATTACK_RANGE * 0.5
+			return PLAYER_COMBAT.RANGED_CAST_RANGE * 0.5
 		"self":
 			return PLAYER_COMBAT.MELEE_ATTACK_RANGE
 		_:

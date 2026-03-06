@@ -101,21 +101,21 @@ func _collect_targets(caster: Node, primary_target: Node2D, cast_range: float, l
 func _resolve_cast_range(context: Dictionary) -> float:
 	var def: AbilityDefinition = context.get("ability_def") as AbilityDefinition
 	if def == null:
-		return PLAYER_COMBAT.RANGED_ATTACK_RANGE
+		return PLAYER_COMBAT.RANGED_CAST_RANGE
 	var rm := String(def.range_mode).strip_edges().to_lower()
 	if rm == "melee":
 		return PLAYER_COMBAT.MELEE_ATTACK_RANGE
 	if rm == "self":
 		return PLAYER_COMBAT.MELEE_ATTACK_RANGE
 	if rm == "ranged" or rm == "":
-		return PLAYER_COMBAT.RANGED_ATTACK_RANGE
+		return PLAYER_COMBAT.RANGED_CAST_RANGE
 	if rm.begins_with("ranged"):
 		var cleaned := rm.replace(" ", "")
 		if cleaned.begins_with("ranged+") and cleaned.ends_with("%"):
 			var pct_str := cleaned.substr(7, cleaned.length() - 8)
 			var pct := float(pct_str)
-			return PLAYER_COMBAT.RANGED_ATTACK_RANGE * (1.0 + pct / 100.0)
-	return PLAYER_COMBAT.RANGED_ATTACK_RANGE
+			return PLAYER_COMBAT.RANGED_CAST_RANGE * (1.0 + pct / 100.0)
+	return PLAYER_COMBAT.RANGED_CAST_RANGE
 
 func _is_valid_enemy_target(caster: Node, target: Node) -> bool:
 	if caster == null or target == null:

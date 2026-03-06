@@ -109,14 +109,14 @@ func _find_next_target(caster: Node, from_target: Node2D, hit_targets: Array[Nod
 func _get_cast_range(context: Dictionary) -> float:
 	var def: AbilityDefinition = context.get("ability_def") as AbilityDefinition
 	if def == null:
-		return PLAYER_COMBAT.RANGED_ATTACK_RANGE
+		return PLAYER_COMBAT.RANGED_CAST_RANGE
 	match def.range_mode:
 		"melee":
 			return PLAYER_COMBAT.MELEE_ATTACK_RANGE
 		"self":
 			return PLAYER_COMBAT.MELEE_ATTACK_RANGE
 		_:
-			return PLAYER_COMBAT.RANGED_ATTACK_RANGE
+			return PLAYER_COMBAT.RANGED_CAST_RANGE
 
 func _is_hostile_target(caster: Node, target: Node) -> bool:
 	if caster == null or target == null:
