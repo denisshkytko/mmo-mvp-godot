@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
-[ext_resource type="SpriteFrames" path="res://game/characters/mobs/models/frames/BanditMageSpriteFrames.tres" id="2_frames"]
+[ext_resource type="SpriteFrames" path="res://game/characters/mobs/models/frames/CinderbornHunterRareEliteSpriteFrames.tres" id="2_frames"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/HealthBarWidget.tscn" id="3_hpbar"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="4_castbar"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/TargetMarkerWidget.tscn" id="5_target"]
@@ -17,7 +17,7 @@ height = 250.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_interaction"]
 radius = 300.0
 
-[node name="BanditMageRareEliteModel" type="Node2D"]
+[node name="CinderbornHunterRareEliteModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
 

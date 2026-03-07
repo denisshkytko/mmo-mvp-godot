@@ -9,27 +9,26 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 const MODEL_SCENE_PATHS := {
-	"cinderborn": {
-		"warrior_1": "res://game/characters/mobs/models/CinderbornWarrior1Model.tscn",
-		"warrior_2": "res://game/characters/mobs/models/CinderbornWarrior2Model.tscn",
-		"mage_1": "res://game/characters/mobs/models/CinderbornMage1Model.tscn",
-		"mage_2": "res://game/characters/mobs/models/CinderbornMage2Model.tscn",
-		"priest_1": "res://game/characters/mobs/models/CinderbornPriest1Model.tscn",
-		"priest_2": "res://game/characters/mobs/models/CinderbornPriest2Model.tscn",
-		"hunter_1": "res://game/characters/mobs/models/CinderbornHunter1Model.tscn",
-		"hunter_2": "res://game/characters/mobs/models/CinderbornHunter2Model.tscn",
-	},
+		"cinderborn": {
+			"warrior_1": "res://game/characters/mobs/models/CinderbornWarrior1Model.tscn",
+			"warrior_2": "res://game/characters/mobs/models/CinderbornWarrior2Model.tscn",
+			"warrior_re": "res://game/characters/mobs/models/CinderbornWarriorRareEliteModel.tscn",
+			"mage_1": "res://game/characters/mobs/models/CinderbornMage1Model.tscn",
+			"mage_2": "res://game/characters/mobs/models/CinderbornMage2Model.tscn",
+			"mage_re": "res://game/characters/mobs/models/CinderbornMageRareEliteModel.tscn",
+			"priest_1": "res://game/characters/mobs/models/CinderbornPriest1Model.tscn",
+			"priest_2": "res://game/characters/mobs/models/CinderbornPriest2Model.tscn",
+			"priest_re": "res://game/characters/mobs/models/CinderbornPriestRareEliteModel.tscn",
+			"hunter_1": "res://game/characters/mobs/models/CinderbornHunter1Model.tscn",
+			"hunter_2": "res://game/characters/mobs/models/CinderbornHunter2Model.tscn",
+			"hunter_re": "res://game/characters/mobs/models/CinderbornHunterRareEliteModel.tscn",
+		},
 		"bandits": {
 			"warrior": "res://game/characters/mobs/models/BanditWarriorModel.tscn",
-			"warrior_re": "res://game/characters/mobs/models/BanditWarriorRareEliteModel.tscn",
 			"mage": "res://game/characters/mobs/models/BanditMageModel.tscn",
-			"mage_re": "res://game/characters/mobs/models/BanditMageRareEliteModel.tscn",
 			"priest": "res://game/characters/mobs/models/BanditPriestModel.tscn",
-			"priest_re": "res://game/characters/mobs/models/BanditPriestRareEliteModel.tscn",
 			"hunter_melee": "res://game/characters/mobs/models/BanditHunterMeleeModel.tscn",
-			"hunter_melee_re": "res://game/characters/mobs/models/BanditHunterMeleeRareEliteModel.tscn",
 			"hunter_ranged": "res://game/characters/mobs/models/BanditHunterRangedModel.tscn",
-			"hunter_ranged_re": "res://game/characters/mobs/models/BanditHunterRangedRareEliteModel.tscn",
 		},
 	}
 
