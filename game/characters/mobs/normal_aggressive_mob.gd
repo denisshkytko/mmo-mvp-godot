@@ -8,31 +8,31 @@ const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
-const MODEL_SCENES := {
+const MODEL_SCENE_PATHS := {
 	"cinderborn": {
-		"warrior_1": preload("res://game/characters/mobs/models/CinderbornWarrior1Model.tscn"),
-		"warrior_2": preload("res://game/characters/mobs/models/CinderbornWarrior2Model.tscn"),
-		"mage_1": preload("res://game/characters/mobs/models/CinderbornMage1Model.tscn"),
-		"mage_2": preload("res://game/characters/mobs/models/CinderbornMage2Model.tscn"),
-		"priest_1": preload("res://game/characters/mobs/models/CinderbornPriest1Model.tscn"),
-		"priest_2": preload("res://game/characters/mobs/models/CinderbornPriest2Model.tscn"),
-		"hunter_1": preload("res://game/characters/mobs/models/CinderbornHunter1Model.tscn"),
-		"hunter_2": preload("res://game/characters/mobs/models/CinderbornHunter2Model.tscn"),
+		"warrior_1": "res://game/characters/mobs/models/CinderbornWarrior1Model.tscn",
+		"warrior_2": "res://game/characters/mobs/models/CinderbornWarrior2Model.tscn",
+		"mage_1": "res://game/characters/mobs/models/CinderbornMage1Model.tscn",
+		"mage_2": "res://game/characters/mobs/models/CinderbornMage2Model.tscn",
+		"priest_1": "res://game/characters/mobs/models/CinderbornPriest1Model.tscn",
+		"priest_2": "res://game/characters/mobs/models/CinderbornPriest2Model.tscn",
+		"hunter_1": "res://game/characters/mobs/models/CinderbornHunter1Model.tscn",
+		"hunter_2": "res://game/characters/mobs/models/CinderbornHunter2Model.tscn",
 	},
 	"bandits": {
-		"warrior": preload("res://game/characters/mobs/models/BanditWarriorModel.tscn"),
-		"mage": preload("res://game/characters/mobs/models/BanditMageModel.tscn"),
-		"priest": preload("res://game/characters/mobs/models/BanditPriestModel.tscn"),
-		"hunter_melee": preload("res://game/characters/mobs/models/BanditHunterMeleeModel.tscn"),
-		"hunter_ranged": preload("res://game/characters/mobs/models/BanditHunterRangedModel.tscn"),
+		"warrior": "res://game/characters/mobs/models/BanditWarriorModel.tscn",
+		"mage": "res://game/characters/mobs/models/BanditMageModel.tscn",
+		"priest": "res://game/characters/mobs/models/BanditPriestModel.tscn",
+		"hunter_melee": "res://game/characters/mobs/models/BanditHunterMeleeModel.tscn",
+		"hunter_ranged": "res://game/characters/mobs/models/BanditHunterRangedModel.tscn",
 	},
 }
 
 signal died(corpse: Corpse)
 
-@onready var hp_bar: HealthBarWidget = $"UI/HealthBar" as HealthBarWidget
+var hp_bar: HealthBarWidget = null
 @onready var target_marker: CanvasItem = $TargetMarker
-@onready var cast_bar: CastBarWidget = $CastBar
+var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = get_node_or_null("Visual") as Node2D
@@ -40,6 +40,8 @@ signal died(corpse: Corpse)
 var model_group_id: String = "cinderborn"
 var model_id: String = "warrior_1"
 var _character_model: Node = null
+var _active_model_key: String = ""
+var _model_scene_cache: Dictionary = {}
 
 @onready var c_ai: NormalAggresiveMobAI = $Components/AI as NormalAggresiveMobAI
 @onready var c_combat: NormalAggresiveMobCombat = $Components/Combat as NormalAggresiveMobCombat
@@ -157,7 +159,8 @@ func _ready() -> void:
 	add_to_group("faction_units")
 	add_to_group("y_sort_entities")
 	player = NodeCache.get_player(get_tree()) as Node2D
-	_apply_model_visual()
+	if not _spawn_initialized:
+		_apply_model_visual()
 
 	if c_ai != null and c_ai.has_signal("leash_return_started"):
 		var cb := Callable(self, "_on_leash_return_started")
@@ -286,7 +289,6 @@ func _physics_process(delta: float) -> void:
 
 	if player == null or not is_instance_valid(player):
 		player = NodeCache.get_player(get_tree()) as Node2D
-	_apply_model_visual()
 
 	_apply_mode_to_components()
 
@@ -481,6 +483,8 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 	if final > 0 and attacker != null and is_instance_valid(attacker) and c_stats != null and c_stats.has_method("try_apply_attacker_slow_from_stance"):
 		c_stats.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
 	c_stats.update_hp_bar(hp_bar)
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("play_hurt"):
+		_character_model.call("play_hurt")
 	if c_resource != null:
 		c_resource.on_damage_taken()
 
@@ -634,6 +638,8 @@ func _die() -> void:
 	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("play_death"):
+		_character_model.call("play_death")
 	if current_target != null:
 		_notify_target_change(current_target, null)
 	current_target = null
@@ -740,6 +746,12 @@ func _clear_direct_attackers() -> void:
 		direct_attackers.clear()
 
 
+func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_combat_action"):
+		_character_model.call("play_combat_action", action_kind, is_moving_now, "")
+
 func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
 		return
@@ -751,14 +763,22 @@ func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 func _apply_model_visual() -> void:
 	if visual_root == null:
 		return
+	var model_key := "%s:%s" % [model_group_id, model_id]
+	if _character_model != null and is_instance_valid(_character_model) and _active_model_key == model_key:
+		return
 	if _character_model != null and is_instance_valid(_character_model):
 		_character_model.queue_free()
 		_character_model = null
+	_active_model_key = model_key
 	var scene := _resolve_model_scene(model_group_id, model_id)
 	if scene == null:
+		hp_bar = null
+		cast_bar = null
 		return
 	var inst := scene.instantiate()
 	if inst == null:
+		hp_bar = null
+		cast_bar = null
 		return
 	visual_root.add_child(inst)
 	_character_model = inst
@@ -766,12 +786,21 @@ func _apply_model_visual() -> void:
 	_apply_overlay_profile_from_model(inst)
 
 func _resolve_model_scene(group_id: String, id: String) -> PackedScene:
-	if not MODEL_SCENES.has(group_id):
+	if not MODEL_SCENE_PATHS.has(group_id):
 		return null
-	var group_map := MODEL_SCENES[group_id] as Dictionary
+	var group_map := MODEL_SCENE_PATHS[group_id] as Dictionary
 	if not group_map.has(id):
 		return null
-	return group_map[id] as PackedScene
+	var model_path := String(group_map[id])
+	if model_path == "":
+		return null
+	if _model_scene_cache.has(model_path):
+		return _model_scene_cache[model_path] as PackedScene
+	var loaded := load(model_path)
+	if loaded is PackedScene:
+		_model_scene_cache[model_path] = loaded
+		return loaded as PackedScene
+	return null
 
 func _apply_collision_profile_from_model(model: Node) -> void:
 	if model == null or not is_instance_valid(model) or not model.has_method("get_collision_profile"):
@@ -796,26 +825,22 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 			body_hitbox_shape.position = body_offset_v
 
 func _apply_overlay_profile_from_model(model: Node) -> void:
-	if model == null or not is_instance_valid(model) or not model.has_method("get_overlay_profile"):
+	_bind_overlay_widgets_from_model(model)
+
+func _bind_overlay_widgets_from_model(model: Node) -> void:
+	hp_bar = null
+	cast_bar = null
+	if model == null or not is_instance_valid(model):
 		return
-	var profile_v: Variant = model.call("get_overlay_profile")
-	if not (profile_v is Dictionary):
-		return
-	var profile := profile_v as Dictionary
-	if hp_bar != null and hp_bar.get_parent() != visual_root:
-		hp_bar.reparent(visual_root, false)
-	if cast_bar != null and cast_bar.get_parent() != visual_root:
-		cast_bar.reparent(visual_root, false)
-	var hp_profile_v: Variant = profile.get("hp_bar", {})
-	if hp_profile_v is Dictionary and hp_bar != null and hp_bar.has_method("apply_visual_profile"):
-		var hp_profile := hp_profile_v as Dictionary
-		var hp_offset_v: Variant = hp_profile.get("offset", profile.get("hp_bar_offset", Vector2.ZERO))
-		hp_bar.position = hp_offset_v as Vector2 if hp_offset_v is Vector2 else Vector2.ZERO
-		hp_bar.call("apply_visual_profile", hp_profile)
-	var cast_profile_v: Variant = profile.get("cast_bar", {})
-	if cast_profile_v is Dictionary and cast_bar != null:
-		var cast_profile := cast_profile_v as Dictionary
-		var cast_offset_v: Variant = cast_profile.get("offset", profile.get("cast_bar_offset", Vector2(0, -42)))
-		cast_bar.position = cast_offset_v as Vector2 if cast_offset_v is Vector2 else Vector2(0, -42)
-		if cast_bar.has_method("apply_visual_profile"):
-			cast_bar.call("apply_visual_profile", cast_profile)
+	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
+	if hp_node is HealthBarWidget:
+		hp_bar = hp_node as HealthBarWidget
+	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
+	if cast_node is CastBarWidget:
+		cast_bar = cast_node as CastBarWidget
+	if hp_bar != null:
+		c_stats.update_hp_bar(hp_bar)
+	if cast_bar != null and not c_spell_caster.is_casting():
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c8qhqey2vbhkc"]
+[gd_scene load_steps=10 format=3 uid="uid://c8qhqey2vbhkc"]
 
 [ext_resource type="Script" uid="uid://cvfcjvpmn6mum" path="res://game/characters/mobs/normal_aggressive_mob.gd" id="1_tamd3"]
 [ext_resource type="PackedScene" uid="uid://nas2p81wwe7r" path="res://game/characters/mobs/projectiles/HomingProjectile.tscn" id="2_8u31h"]
@@ -7,17 +7,12 @@
 [ext_resource type="Script" uid="uid://dgcctk2ufrluw" path="res://game/characters/mobs/normal_aggressive_mob_stats.gd" id="4_q1mdw"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_tdnly"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_1p0up"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="7_castbar"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/HealthBarWidget.tscn" id="8_hpbar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
 size = Vector2(24, 24)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ex06h"]
 size = Vector2(32, 32)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
-bg_color = Color(1, 0.02745098, 0.007843138, 1)
 
 [node name="NormalAggressiveMob" type="CharacterBody2D" groups=["mobs"]]
 motion_mode = 1
@@ -43,19 +38,10 @@ color = Color(0.7346365, 0.103573315, 0, 1)
 [node name="WorldCollider" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_k85i5")
 
-[node name="UI" type="Node2D" parent="."]
-
-[node name="HealthBar" parent="UI" instance=ExtResource("8_hpbar")]
-
-[node name="Progress" parent="UI/HealthBar"]
-theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
-
 [node name="BodyHitboxArea" type="Area2D" parent="."]
 
 [node name="BodyHitbox" type="CollisionShape2D" parent="BodyHitboxArea"]
 shape = SubResource("RectangleShape2D_ex06h")
-
-[node name="CastBar" parent="." instance=ExtResource("7_castbar")]
 
 [node name="Components" type="Node" parent="."]
 

@@ -32,11 +32,7 @@ var body_size: int:
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 @export_enum("Melee", "Ranged") var attack_range_choice: int = AttackRangeChoice.MELEE
 @export_enum("Golems") var mob_group_choice: int = 0
-@export var mob_model_choice: String = "earth":
-	get:
-		return _mob_model_choice_internal
-	set(v):
-		_mob_model_choice_internal = _sanitize_model_choice(v)
+@export_enum("Earth Golem", "Ice Golem", "Magma Golem") var mob_model_choice: int = 0
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
@@ -44,7 +40,6 @@ var body_size: int:
 @export var patrol_pause_seconds: float = 1.5
 var _spell_preset_id_internal: String = "none"
 var _body_size_internal: int = BodySize.MEDIUM
-var _mob_model_choice_internal: String = "earth"
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -53,7 +48,7 @@ func _validate_property(property: Dictionary) -> void:
 		property["hint_string"] = _build_spell_preset_hint()
 	if String(property.get("name", "")) == "mob_model_choice":
 		property["hint"] = PROPERTY_HINT_ENUM
-		property["hint_string"] = "earth:Earth Golem,ice:Ice Golem,magma:Magma Golem"
+		property["hint_string"] = "Earth Golem,Ice Golem,Magma Golem"
 
 func _build_spell_preset_hint() -> String:
 	if _get_current_class_id() == "hunter":
@@ -118,7 +113,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		abilities_for_level,
 		preset_name_key,
 		"golems",
-		mob_model_choice
+		_resolve_selected_model_id()
 	)
 	return true
 
@@ -131,8 +126,11 @@ func _sanitize_spell_preset_for_class(value: String) -> String:
 	var class_id := _get_current_class_id()
 	return MobSpellPresetDB.get_allowed_preset_id(value, class_id)
 
-func _sanitize_model_choice(value: String) -> String:
-	var v := value.strip_edges().to_lower()
-	if v in ["earth", "ice", "magma"]:
-		return v
-	return "earth"
+func _resolve_selected_model_id() -> String:
+	match clamp(mob_model_choice, 0, 2):
+		0:
+			return "earth"
+		1:
+			return "ice"
+		_:
+			return "magma"

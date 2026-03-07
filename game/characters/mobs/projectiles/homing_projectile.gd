@@ -42,8 +42,7 @@ func _physics_process(delta: float) -> void:
 	# Если источник нужен тебе как “контроль жизни снаряда” — оставляем.
 	# Если моб умер и его удалили — снаряд тоже исчезнет, чтобы не было мусора.
 	if _source != null and not is_instance_valid(_source):
-		queue_free()
-		return
+		_source = null
 
 	# Если игрок уже мёртв — не продолжаем
 	if "is_dead" in _target and bool(_target.get("is_dead")):
@@ -71,6 +70,7 @@ func _apply_hit() -> void:
 		if "is_dead" in _target and bool(_target.get("is_dead")):
 			queue_free()
 			return
-		DAMAGE_HELPER.apply_damage_typed(_source, _target, _damage, "physical")
+		var source_node: Node2D = _source if _source != null and is_instance_valid(_source) else null
+		DAMAGE_HELPER.apply_damage_typed(source_node, _target, _damage, "physical")
 
 	queue_free()

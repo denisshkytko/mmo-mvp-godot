@@ -13,10 +13,9 @@ const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerM
 signal died(corpse: Corpse)
 
 @onready var faction_rect: ColorRect = $"ColorRect"
-@onready var hp_bar: HealthBarWidget = $"UI/HealthBar" as HealthBarWidget
-@onready var ui_root: Node2D = $UI as Node2D
+var hp_bar: HealthBarWidget = null
 @onready var target_marker: CanvasItem = $TargetMarker
-@onready var cast_bar: CastBarWidget = $CastBar
+var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = $Visual as Node2D
@@ -736,67 +735,34 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 			body_hitbox_shape.rotation = float(body_rot_v)
 
 func _apply_overlay_profile_from_model(model: Node) -> void:
-	if visual_root == null or not is_instance_valid(visual_root):
+	_bind_overlay_widgets_from_model(model)
+
+func _bind_overlay_widgets_from_model(model: Node) -> void:
+	hp_bar = null
+	cast_bar = null
+	if model == null or not is_instance_valid(model):
 		return
-	if ui_root != null and ui_root.get_parent() != visual_root:
-		ui_root.reparent(visual_root, false)
-	if cast_bar != null and cast_bar.get_parent() != visual_root:
-		cast_bar.reparent(visual_root, false)
-
-	if model == null or not is_instance_valid(model) or not model.has_method("get_overlay_profile"):
-		_apply_hp_overlay_defaults()
-		if cast_bar != null:
-			cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-			if cast_bar.has_method("restore_default_visual_profile"):
-				cast_bar.call("restore_default_visual_profile")
-		return
-
-	var profile_v: Variant = model.call("get_overlay_profile")
-	if not (profile_v is Dictionary):
-		_apply_hp_overlay_defaults()
-		if cast_bar != null:
-			cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-			if cast_bar.has_method("restore_default_visual_profile"):
-				cast_bar.call("restore_default_visual_profile")
-		return
-
-	var profile := profile_v as Dictionary
-	var hp_profile_v: Variant = profile.get("hp_bar", {})
-	var hp_profile: Dictionary = hp_profile_v as Dictionary if hp_profile_v is Dictionary else {}
-	var hp_offset_v: Variant = hp_profile.get("offset", profile.get("hp_bar_offset", DEFAULT_HP_UI_OFFSET))
-	if ui_root != null:
-		ui_root.position = hp_offset_v as Vector2 if hp_offset_v is Vector2 else DEFAULT_HP_UI_OFFSET
-	_apply_hp_overlay_style(hp_profile)
-
-	var cast_profile_v: Variant = profile.get("cast_bar", {})
-	var cast_profile: Dictionary = cast_profile_v as Dictionary if cast_profile_v is Dictionary else {}
-	if cast_bar != null:
-		var cast_offset_v: Variant = cast_profile.get("offset", profile.get("cast_bar_offset", DEFAULT_CAST_BAR_OFFSET))
-		cast_bar.position = cast_offset_v as Vector2 if cast_offset_v is Vector2 else DEFAULT_CAST_BAR_OFFSET
-		if cast_bar.has_method("apply_visual_profile"):
-			cast_bar.call("apply_visual_profile", cast_profile)
+	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
+	if hp_node is HealthBarWidget:
+		hp_bar = hp_node as HealthBarWidget
+	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
+	if cast_node is CastBarWidget:
+		cast_bar = cast_node as CastBarWidget
 	_update_hp()
+	if cast_bar != null and not c_spell_caster.is_casting():
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 
 func _restore_default_overlay_mount() -> void:
-	if ui_root != null and ui_root.get_parent() != self:
-		ui_root.reparent(self, false)
-	if cast_bar != null and cast_bar.get_parent() != self:
-		cast_bar.reparent(self, false)
-	if ui_root != null:
-		ui_root.position = DEFAULT_HP_UI_OFFSET
-	_apply_hp_overlay_defaults()
-	if cast_bar != null:
-		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-		if cast_bar.has_method("restore_default_visual_profile"):
-			cast_bar.call("restore_default_visual_profile")
+	hp_bar = null
+	cast_bar = null
 
 func _apply_hp_overlay_defaults() -> void:
-	if hp_bar != null and hp_bar.has_method("restore_default_visual_profile"):
-		hp_bar.call("restore_default_visual_profile")
+	pass
 
-func _apply_hp_overlay_style(hp_profile: Dictionary) -> void:
-	if hp_bar != null and hp_bar.has_method("apply_visual_profile"):
-		hp_bar.call("apply_visual_profile", hp_profile)
+func _apply_hp_overlay_style(_hp_profile: Dictionary) -> void:
+	pass
 
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):

@@ -192,7 +192,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_spellbook: PlayerSpellbook = $Components/Spellbook as PlayerSpellbook
 @onready var c_resource: ResourceComponent = $Components/Resource as ResourceComponent
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
-@onready var cast_bar: CastBarWidget = $CastBar
+var cast_bar: CastBarWidget = null
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
@@ -844,28 +844,16 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		interaction_circle.radius = max(1.0, float(profile.get("interaction_radius", interaction_circle.radius)))
 
 func _apply_overlay_profile_from_model(model: Node) -> void:
-	if cast_bar == null or visual_root == null or not is_instance_valid(visual_root):
+	cast_bar = null
+	if model == null or not is_instance_valid(model):
 		return
-	if cast_bar.get_parent() != visual_root:
-		cast_bar.reparent(visual_root, false)
-	if model == null or not is_instance_valid(model) or not model.has_method("get_overlay_profile"):
-		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-		if cast_bar.has_method("restore_default_visual_profile"):
-			cast_bar.call("restore_default_visual_profile")
-		return
-	var profile_v: Variant = model.call("get_overlay_profile")
-	if not (profile_v is Dictionary):
-		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-		if cast_bar.has_method("restore_default_visual_profile"):
-			cast_bar.call("restore_default_visual_profile")
-		return
-	var profile := profile_v as Dictionary
-	var cast_profile_v: Variant = profile.get("cast_bar", {})
-	var cast_profile: Dictionary = cast_profile_v as Dictionary if cast_profile_v is Dictionary else {}
-	var cast_offset_v: Variant = cast_profile.get("offset", profile.get("cast_bar_offset", DEFAULT_CAST_BAR_OFFSET))
-	cast_bar.position = cast_offset_v as Vector2 if cast_offset_v is Vector2 else DEFAULT_CAST_BAR_OFFSET
-	if cast_bar.has_method("apply_visual_profile"):
-		cast_bar.call("apply_visual_profile", cast_profile)
+	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
+	if cast_node is CastBarWidget:
+		cast_bar = cast_node as CastBarWidget
+	if cast_bar != null and not c_ability_caster.is_casting():
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 
 
 func _grant_starter_abilities() -> void:

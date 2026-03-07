@@ -36,13 +36,9 @@ var mob_group_choice: int:
 		return _mob_group_choice_internal
 	set(v):
 		_mob_group_choice_internal = int(v)
-		mob_model_choice = _sanitize_model_choice(mob_model_choice)
+		mob_model_choice = 0
 		notify_property_list_changed()
-@export var mob_model_choice: String = "warrior_1":
-	get:
-		return _mob_model_choice_internal
-	set(v):
-		_mob_model_choice_internal = _sanitize_model_choice(v)
+@export var mob_model_choice: int = 0
 
 
 @export_group("Behavior After Spawn")
@@ -59,10 +55,12 @@ const C_MAGE := 3
 const C_PRIEST := 4
 const C_HUNTER := 5
 
+const CINDERBORN_MODEL_IDS := ["warrior_1", "warrior_2", "mage_1", "mage_2", "priest_1", "priest_2", "hunter_1", "hunter_2"]
+const BANDIT_MODEL_IDS := ["warrior", "mage", "priest", "hunter_melee", "hunter_ranged"]
+
 var _class_choice_internal: int = C_PALADIN
 var _spell_preset_id_internal: String = "none"
 var _mob_group_choice_internal: int = 0
-var _mob_model_choice_internal: String = "warrior_1"
 
 # BaseSpawnerGroup уже содержит respawn_seconds
 
@@ -132,7 +130,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		abilities_for_level,
 		preset_name_key,
 		"bandits" if _mob_group_choice_internal == 1 else "cinderborn",
-		mob_model_choice
+		_resolve_selected_model_id()
 	)
 	return true
 
@@ -153,15 +151,12 @@ func _default_attack_range_for_class(choice: int) -> int:
 
 func _build_mob_model_hint() -> String:
 	if _mob_group_choice_internal == 1:
-		return "warrior:Warrior,mage:Mage,priest:Priest,hunter_melee:Hunter Melee,hunter_ranged:Hunter Ranged"
-	return "warrior_1:Warrior 1,warrior_2:Warrior 2,mage_1:Mage 1,mage_2:Mage 2,priest_1:Priest 1,priest_2:Priest 2,hunter_1:Hunter 1,hunter_2:Hunter 2"
+		return "Warrior,Mage,Priest,Hunter Melee,Hunter Ranged"
+	return "Warrior 1,Warrior 2,Mage 1,Mage 2,Priest 1,Priest 2,Hunter 1,Hunter 2"
 
-func _sanitize_model_choice(value: String) -> String:
-	var v := value.strip_edges().to_lower()
+func _resolve_selected_model_id() -> String:
 	if _mob_group_choice_internal == 1:
-		if v in ["warrior", "mage", "priest", "hunter_melee", "hunter_ranged"]:
-			return v
-		return "warrior"
-	if v in ["warrior_1", "warrior_2", "mage_1", "mage_2", "priest_1", "priest_2", "hunter_1", "hunter_2"]:
-		return v
-	return "warrior_1"
+		var idx := clamp(mob_model_choice, 0, BANDIT_MODEL_IDS.size() - 1)
+		return BANDIT_MODEL_IDS[idx]
+	var idx2 := clamp(mob_model_choice, 0, CINDERBORN_MODEL_IDS.size() - 1)
+	return CINDERBORN_MODEL_IDS[idx2]
