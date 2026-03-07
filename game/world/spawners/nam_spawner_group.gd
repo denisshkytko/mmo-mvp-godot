@@ -14,6 +14,15 @@ enum AttackRangeChoice { MELEE, RANGED }
 @export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_aggressive_default.tres") as LootProfile
 @export var level_min: int = 1
 @export var level_max: int = 1
+@export_enum(
+	"None:",
+	"Ashen 1:ashen_1",
+	"Ashen 2:ashen_2",
+	"Ashen 3:ashen_3",
+	"Bandit Hunter 1:bandit_hunter_1",
+	"Bandit Hunter 2:bandit_hunter_2",
+	"Bandit Brute 1:bandit_brute_1"
+) var mob_id: String = ""
 @export_enum("Paladin", "Warrior", "Shaman", "Mage", "Priest", "Hunter")
 var class_choice: int:
 	get:
@@ -105,7 +114,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		patrol_pause_seconds,
 		-1.0, # move_speed is defined on the mob itself
 		level,
-		"",              # mob_id больше не используется
+		mob_id,
 		loot_profile,
 		class_id,
 		profile_id,

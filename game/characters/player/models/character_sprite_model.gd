@@ -47,6 +47,10 @@ var _death_pose_emitted: bool = false
 var _idle_liveliness_timer_sec: float = 5.0
 
 func _ready() -> void:
+	if overlay_hp_bar != null:
+		overlay_hp_bar.visible = false
+	if overlay_cast_bar != null:
+		overlay_cast_bar.visible = false
 	_apply_animation_speed_to_all()
 	if animated_sprite != null and not animated_sprite.animation_finished.is_connected(_on_animation_finished):
 		animated_sprite.animation_finished.connect(_on_animation_finished)

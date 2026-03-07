@@ -29,7 +29,9 @@ offset_right = 22.0
 offset_bottom = 19.0
 color = Color(1, 0, 0, 0.5411765)
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="Visual"]
 offset_left = -16.0
 offset_top = -16.0
 offset_right = 16.0

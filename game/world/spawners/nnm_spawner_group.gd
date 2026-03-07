@@ -23,7 +23,12 @@ var body_size: int:
 		_body_size_internal = int(v)
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
 		notify_property_list_changed()
-@export var skin_id: String = ""
+@export_enum(
+	"None:",
+	"Golem 1:golem_1",
+	"Golem 2:golem_2",
+	"Golem 3:golem_3"
+) var skin_id: String = ""
 @export var spell_preset_id: String = "none":
 	get:
 		return _spell_preset_id_internal

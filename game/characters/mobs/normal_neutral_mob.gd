@@ -8,6 +8,9 @@ const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const GOLEM_1_MODEL_SCENE := preload("res://game/characters/mobs/models/Golem1Model.tscn")
+const GOLEM_2_MODEL_SCENE := preload("res://game/characters/mobs/models/Golem2Model.tscn")
+const GOLEM_3_MODEL_SCENE := preload("res://game/characters/mobs/models/Golem3Model.tscn")
 
 signal died(corpse: Corpse)
 
@@ -64,6 +67,7 @@ var loot_owner_player_id: int = 0
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
 var _spawn_initialized: bool = false
+var _character_model: Node = null
 
 # ---------------------------
 # ПРЕСЕТЫ СТАТОВ ПО BODY SIZE
@@ -173,6 +177,7 @@ func _ready() -> void:
 		_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 		c_stats.recalculate_for_level(mob_level)
 		c_stats.update_hp_bar(hp_bar)
+	_apply_skin_visual()
 
 func _process(_delta: float) -> void:
 	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
@@ -359,12 +364,42 @@ func apply_spawn_init(
 	c_stats.recalculate_for_level(mob_level)
 	c_stats.current_hp = c_stats.max_hp
 	c_stats.update_hp_bar(hp_bar)
+	_apply_skin_visual()
 	_spawn_initialized = true
 
 	is_aggressive = false
 	aggressor = null
 	regen_active = false
 	c_combat.reset_combat()
+
+func _apply_skin_visual() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	if _character_model != null and is_instance_valid(_character_model):
+		_character_model.queue_free()
+		_character_model = null
+	var scene := _resolve_model_scene_for_skin(skin_id)
+	var fallback_rect := visual_root.get_node_or_null("ColorRect") as CanvasItem
+	if fallback_rect != null:
+		fallback_rect.visible = scene == null
+	if scene == null:
+		return
+	var inst := scene.instantiate()
+	if inst == null:
+		return
+	visual_root.add_child(inst)
+	_character_model = inst
+
+func _resolve_model_scene_for_skin(value: String) -> PackedScene:
+	match value:
+		"golem_1":
+			return GOLEM_1_MODEL_SCENE
+		"golem_2":
+			return GOLEM_2_MODEL_SCENE
+		"golem_3":
+			return GOLEM_3_MODEL_SCENE
+		_:
+			return null
 
 func _apply_to_components() -> void:
 	if c_ai != null:

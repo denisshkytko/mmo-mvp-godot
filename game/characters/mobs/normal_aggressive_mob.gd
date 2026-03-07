@@ -7,6 +7,12 @@ const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const ASHEN_1_MODEL_SCENE := preload("res://game/characters/mobs/models/Ashen1Model.tscn")
+const ASHEN_2_MODEL_SCENE := preload("res://game/characters/mobs/models/Ashen2Model.tscn")
+const ASHEN_3_MODEL_SCENE := preload("res://game/characters/mobs/models/Ashen3Model.tscn")
+const BANDIT_HUNTER_1_MODEL_SCENE := preload("res://game/characters/mobs/models/BanditHunter1Model.tscn")
+const BANDIT_HUNTER_2_MODEL_SCENE := preload("res://game/characters/mobs/models/BanditHunter2Model.tscn")
+const BANDIT_BRUTE_1_MODEL_SCENE := preload("res://game/characters/mobs/models/BanditBrute1Model.tscn")
 
 signal died(corpse: Corpse)
 
@@ -57,6 +63,7 @@ var xp_reward: int = 0
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
 var _spawn_initialized: bool = false
+var _character_model: Node = null
 # ------------------------------------------------------------
 # Параметры двух состояний (без dropdown-скрытия)
 # ------------------------------------------------------------
@@ -157,6 +164,7 @@ func _ready() -> void:
 		_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 		c_stats.recalculate_for_level(mob_level)
 		c_stats.update_hp_bar(hp_bar)
+	_apply_mob_visual()
 
 func _process(_delta: float) -> void:
 	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
@@ -314,6 +322,7 @@ func apply_spawn_init(
 	# поэтому НЕ затираем mob_id, если пришло пустое значение
 	if mob_id_in != "":
 		mob_id = mob_id_in
+	_apply_mob_visual()
 
 	if loot_profile_in != null:
 		loot_profile = loot_profile_in
@@ -364,6 +373,41 @@ func apply_spawn_init(
 	set_level(level_in)
 	c_spell_caster.configure(abilities, mob_level)
 	_spawn_initialized = true
+
+func _apply_mob_visual() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	if _character_model != null and is_instance_valid(_character_model):
+		_character_model.queue_free()
+		_character_model = null
+	var scene := _resolve_model_scene_for_mob_id(mob_id)
+	var fallback_rect := visual_root.get_node_or_null("ColorRect") as CanvasItem
+	if fallback_rect != null:
+		fallback_rect.visible = scene == null
+	if scene == null:
+		return
+	var inst := scene.instantiate()
+	if inst == null:
+		return
+	visual_root.add_child(inst)
+	_character_model = inst
+
+func _resolve_model_scene_for_mob_id(value: String) -> PackedScene:
+	match value:
+		"ashen_1":
+			return ASHEN_1_MODEL_SCENE
+		"ashen_2":
+			return ASHEN_2_MODEL_SCENE
+		"ashen_3":
+			return ASHEN_3_MODEL_SCENE
+		"bandit_hunter_1":
+			return BANDIT_HUNTER_1_MODEL_SCENE
+		"bandit_hunter_2":
+			return BANDIT_HUNTER_2_MODEL_SCENE
+		"bandit_brute_1":
+			return BANDIT_BRUTE_1_MODEL_SCENE
+		_:
+			return null
 
 
 func _mark_spawned() -> void:
