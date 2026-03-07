@@ -13,10 +13,9 @@ const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerM
 signal died(corpse: Corpse)
 
 @onready var faction_rect: ColorRect = $"ColorRect"
-@onready var hp_bar: HealthBarWidget = $"UI/HealthBar" as HealthBarWidget
-@onready var ui_root: Node2D = $UI as Node2D
+var hp_bar: HealthBarWidget = null
 @onready var target_marker: CanvasItem = $TargetMarker
-@onready var cast_bar: CastBarWidget = $CastBar
+var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = $Visual as Node2D
@@ -173,6 +172,7 @@ func _ready() -> void:
 	c_ai.aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	c_ai.speed = move_speed
+	c_ai.patrol_speed = move_speed * MOVE_SPEED.PATROL_MULTIPLIER
 	c_ai.reset_to_idle()
 
 	var cb := Callable(self, "_on_leash_return_started")
@@ -245,7 +245,6 @@ func apply_spawn_init(
 	behavior_in: int,
 	_aggro_radius_in: float,
 	_leash_in: float,
-	patrol_radius_in: float,
 	patrol_pause_in: float,
 	_speed_in: float,
 	level_in: int,
@@ -287,6 +286,7 @@ func apply_spawn_init(
 	c_ai.patrol_radius = COMBAT_RANGES.PATROL_RADIUS
 	c_ai.patrol_pause_seconds = patrol_pause_in
 	c_ai.speed = move_speed
+	c_ai.patrol_speed = move_speed * MOVE_SPEED.PATROL_MULTIPLIER
 	c_ai.home_position = home_position
 	c_ai.reset_to_idle()
 
@@ -664,6 +664,14 @@ func _update_model_motion(dir: Vector2) -> void:
 	if _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
 
+func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_move_direction_mode"):
+		_character_model.call("set_move_direction_mode", dir, prefer_walk)
+	elif _character_model.has_method("set_move_direction"):
+		_character_model.call("set_move_direction", dir)
+
 func _apply_interaction_visual() -> void:
 	if visual_root == null:
 		return
@@ -726,67 +734,35 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 			body_hitbox_shape.rotation = float(body_rot_v)
 
 func _apply_overlay_profile_from_model(model: Node) -> void:
-	if visual_root == null or not is_instance_valid(visual_root):
+	_bind_overlay_widgets_from_model(model)
+
+func _bind_overlay_widgets_from_model(model: Node) -> void:
+	hp_bar = null
+	cast_bar = null
+	if model == null or not is_instance_valid(model):
 		return
-	if ui_root != null and ui_root.get_parent() != visual_root:
-		ui_root.reparent(visual_root, false)
-	if cast_bar != null and cast_bar.get_parent() != visual_root:
-		cast_bar.reparent(visual_root, false)
-
-	if model == null or not is_instance_valid(model) or not model.has_method("get_overlay_profile"):
-		_apply_hp_overlay_defaults()
-		if cast_bar != null:
-			cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-			if cast_bar.has_method("restore_default_visual_profile"):
-				cast_bar.call("restore_default_visual_profile")
-		return
-
-	var profile_v: Variant = model.call("get_overlay_profile")
-	if not (profile_v is Dictionary):
-		_apply_hp_overlay_defaults()
-		if cast_bar != null:
-			cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-			if cast_bar.has_method("restore_default_visual_profile"):
-				cast_bar.call("restore_default_visual_profile")
-		return
-
-	var profile := profile_v as Dictionary
-	var hp_profile_v: Variant = profile.get("hp_bar", {})
-	var hp_profile: Dictionary = hp_profile_v as Dictionary if hp_profile_v is Dictionary else {}
-	var hp_offset_v: Variant = hp_profile.get("offset", profile.get("hp_bar_offset", DEFAULT_HP_UI_OFFSET))
-	if ui_root != null:
-		ui_root.position = hp_offset_v as Vector2 if hp_offset_v is Vector2 else DEFAULT_HP_UI_OFFSET
-	_apply_hp_overlay_style(hp_profile)
-
-	var cast_profile_v: Variant = profile.get("cast_bar", {})
-	var cast_profile: Dictionary = cast_profile_v as Dictionary if cast_profile_v is Dictionary else {}
-	if cast_bar != null:
-		var cast_offset_v: Variant = cast_profile.get("offset", profile.get("cast_bar_offset", DEFAULT_CAST_BAR_OFFSET))
-		cast_bar.position = cast_offset_v as Vector2 if cast_offset_v is Vector2 else DEFAULT_CAST_BAR_OFFSET
-		if cast_bar.has_method("apply_visual_profile"):
-			cast_bar.call("apply_visual_profile", cast_profile)
+	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
+	if hp_node is HealthBarWidget:
+		hp_bar = hp_node as HealthBarWidget
+		hp_bar.set_fill_color(Color(0.38720772, 0.18201989, 0.97702104, 1.0))
+	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
+	if cast_node is CastBarWidget:
+		cast_bar = cast_node as CastBarWidget
 	_update_hp()
+	if cast_bar != null and not c_spell_caster.is_casting():
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
 
 func _restore_default_overlay_mount() -> void:
-	if ui_root != null and ui_root.get_parent() != self:
-		ui_root.reparent(self, false)
-	if cast_bar != null and cast_bar.get_parent() != self:
-		cast_bar.reparent(self, false)
-	if ui_root != null:
-		ui_root.position = DEFAULT_HP_UI_OFFSET
-	_apply_hp_overlay_defaults()
-	if cast_bar != null:
-		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
-		if cast_bar.has_method("restore_default_visual_profile"):
-			cast_bar.call("restore_default_visual_profile")
+	hp_bar = null
+	cast_bar = null
 
 func _apply_hp_overlay_defaults() -> void:
-	if hp_bar != null and hp_bar.has_method("restore_default_visual_profile"):
-		hp_bar.call("restore_default_visual_profile")
+	pass
 
-func _apply_hp_overlay_style(hp_profile: Dictionary) -> void:
-	if hp_bar != null and hp_bar.has_method("apply_visual_profile"):
-		hp_bar.call("apply_visual_profile", hp_profile)
+func _apply_hp_overlay_style(_hp_profile: Dictionary) -> void:
+	pass
 
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):

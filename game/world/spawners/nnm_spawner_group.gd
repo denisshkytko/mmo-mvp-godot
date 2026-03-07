@@ -31,10 +31,11 @@ var body_size: int:
 		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 @export_enum("Melee", "Ranged") var attack_range_choice: int = AttackRangeChoice.MELEE
+@export_enum("Golems") var mob_group_choice: int = 0
+@export_enum("Earth Golem", "Ice Golem", "Magma Golem") var mob_model_choice: int = 0
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
-@export var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
 @export var patrol_pause_seconds: float = 1.5
 var _spell_preset_id_internal: String = "none"
 var _body_size_internal: int = BodySize.MEDIUM
@@ -44,6 +45,9 @@ func _validate_property(property: Dictionary) -> void:
 	if String(property.get("name", "")) == "spell_preset_id":
 		property["hint"] = PROPERTY_HINT_ENUM
 		property["hint_string"] = _build_spell_preset_hint()
+	if String(property.get("name", "")) == "mob_model_choice":
+		property["hint"] = PROPERTY_HINT_ENUM
+		property["hint_string"] = "Earth Golem,Ice Golem,Magma Golem"
 
 func _build_spell_preset_hint() -> String:
 	if _get_current_class_id() == "hunter":
@@ -94,7 +98,6 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		point.global_position,
 		behavior,
 		-1.0, # leash_distance is defined on the mob itself
-		COMBAT_RANGES.PATROL_RADIUS,
 		patrol_pause_seconds,
 		-1.0, # move_speed is defined on the mob itself
 		level,
@@ -106,7 +109,9 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		mob_variant,
 		attack_range_choice,
 		abilities_for_level,
-		preset_name_key
+		preset_name_key,
+		"golems",
+		_resolve_selected_model_id()
 	)
 	return true
 
@@ -118,3 +123,12 @@ func _get_current_class_id() -> String:
 func _sanitize_spell_preset_for_class(value: String) -> String:
 	var class_id := _get_current_class_id()
 	return MobSpellPresetDB.get_allowed_preset_id(value, class_id)
+
+func _resolve_selected_model_id() -> String:
+	match clamp(mob_model_choice, 0, 2):
+		0:
+			return "earth"
+		1:
+			return "ice"
+		_:
+			return "magma"

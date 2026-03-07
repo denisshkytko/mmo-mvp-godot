@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
-[ext_resource type="SpriteFrames" path="res://game/characters/npcs/models/frames/TrainerSpriteFrames.tres" id="2_frames"]
+[ext_resource type="SpriteFrames" path="res://game/characters/mobs/models/frames/BanditHunterMeleeSpriteFrames.tres" id="2_frames"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/HealthBarWidget.tscn" id="3_hpbar"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="4_castbar"]
 
@@ -14,20 +14,25 @@ radius = 90.0
 height = 250.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_interaction"]
-radius = 220.0
+radius = 300.0
 
-[node name="TrainerModel" type="Node2D"]
+[node name="BanditHunterMeleeModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
-idle_animation = "Idle Blinking"
-walk_animation = "Running"
+walk_animation = "Walking"
 run_animation = "Running"
+idle_animation = "Walking"
+melee_stand_animation = "Slashing"
+melee_run_animation = "Run Slashing"
+ranged_stand_animation = "Slashing"
+ranged_run_animation = "Run Slashing"
+hunter_ranged_stand_animation = "Slashing"
+hunter_ranged_run_animation = "Run Slashing"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 
 [node name="HealthBar" parent="OverlayProfile" instance=ExtResource("3_hpbar")]
 position = Vector2(0, -30)
-
 
 [node name="CastBar" parent="OverlayProfile" instance=ExtResource("4_castbar")]
 position = Vector2(0, -42)
@@ -35,7 +40,8 @@ position = Vector2(0, -42)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
-autoplay = "Idle Blinking"
+animation = &"Walking"
+autoplay = "Walking"
 
 [node name="CollisionProfile" type="Area2D" parent="."]
 collision_layer = 0

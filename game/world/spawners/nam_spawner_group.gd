@@ -30,11 +30,19 @@ var class_choice: int:
 		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 @export_enum("Melee", "Ranged") var attack_range_choice: int = AttackRangeChoice.MELEE
+@export_enum("Cinderborn", "Bandits")
+var mob_group_choice: int:
+	get:
+		return _mob_group_choice_internal
+	set(v):
+		_mob_group_choice_internal = int(v)
+		mob_model_choice = 0
+		notify_property_list_changed()
+@export var mob_model_choice: int = 0
 
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
-@export var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
 @export var patrol_pause_seconds: float = 1.5
 
 # Class selection config
@@ -46,8 +54,12 @@ const C_MAGE := 3
 const C_PRIEST := 4
 const C_HUNTER := 5
 
+const CINDERBORN_MODEL_IDS := ["warrior_1", "warrior_2", "mage_1", "mage_2", "priest_1", "priest_2", "hunter_1", "hunter_2"]
+const BANDIT_MODEL_IDS := ["warrior", "mage", "priest", "hunter_melee", "hunter_ranged"]
+
 var _class_choice_internal: int = C_PALADIN
 var _spell_preset_id_internal: String = "none"
+var _mob_group_choice_internal: int = 0
 
 # BaseSpawnerGroup уже содержит respawn_seconds
 
@@ -56,6 +68,9 @@ func _validate_property(property: Dictionary) -> void:
 	if String(property.get("name", "")) == "spell_preset_id":
 		property["hint"] = PROPERTY_HINT_ENUM
 		property["hint_string"] = _build_spell_preset_hint()
+	if String(property.get("name", "")) == "mob_model_choice":
+		property["hint"] = PROPERTY_HINT_ENUM
+		property["hint_string"] = _build_mob_model_hint()
 
 func _build_spell_preset_hint() -> String:
 	var cls := _get_current_class_id()
@@ -95,13 +110,18 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var profile_id := "humanoid_hostile"
 	var abilities_for_level := MobSpellPresetDB.resolve_ability_ids_for_level(spell_preset_id, class_id, level)
 	var preset_name_key := MobSpellPresetDB.get_preset_name_key(spell_preset_id)
+	var selected_model_id: String = _resolve_selected_model_id()
+	var effective_attack_choice: int = attack_range_choice
+	if selected_model_id == "hunter_melee":
+		effective_attack_choice = AttackRangeChoice.MELEE
+	elif selected_model_id == "hunter_ranged":
+		effective_attack_choice = AttackRangeChoice.RANGED
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
 		behavior,
 		-1.0, # aggro_radius не задаём
 		-1.0, # leash_distance is defined on the mob itself
-		COMBAT_RANGES.PATROL_RADIUS,
 		patrol_pause_seconds,
 		-1.0, # move_speed is defined on the mob itself
 		level,
@@ -110,9 +130,11 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		class_id,
 		profile_id,
 		mob_variant,
-		attack_range_choice,
+		effective_attack_choice,
 		abilities_for_level,
-		preset_name_key
+		preset_name_key,
+		"bandits" if _mob_group_choice_internal == 1 else "cinderborn",
+		selected_model_id
 	)
 	return true
 
@@ -129,3 +151,16 @@ func _default_attack_range_for_class(choice: int) -> int:
 			return AttackRangeChoice.RANGED
 		_:
 			return AttackRangeChoice.MELEE
+
+
+func _build_mob_model_hint() -> String:
+	if _mob_group_choice_internal == 1:
+		return "Warrior,Mage,Priest,Hunter Melee,Hunter Ranged"
+	return "Warrior 1,Warrior 2,Mage 1,Mage 2,Priest 1,Priest 2,Hunter 1,Hunter 2"
+
+func _resolve_selected_model_id() -> String:
+	if _mob_group_choice_internal == 1:
+		var idx: int = int(clamp(mob_model_choice, 0, BANDIT_MODEL_IDS.size() - 1))
+		return BANDIT_MODEL_IDS[idx]
+	var idx2: int = int(clamp(mob_model_choice, 0, CINDERBORN_MODEL_IDS.size() - 1))
+	return CINDERBORN_MODEL_IDS[idx2]

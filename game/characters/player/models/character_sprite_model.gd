@@ -37,6 +37,7 @@ signal death_pose_ready(snapshot: Dictionary)
 @onready var overlay_cast_bar: Node2D = get_node_or_null("OverlayProfile/CastBar") as Node2D
 
 var _is_moving: bool = false
+var _prefer_walk_mode: bool = false
 var _is_dead: bool = false
 var _queued_idle_after_one_shot: bool = false
 var _queued_locomotion_after_one_shot: bool = false
@@ -66,9 +67,13 @@ func _process(delta: float) -> void:
 	_reset_idle_liveliness_timer()
 
 func set_move_direction(dir: Vector2) -> void:
+	set_move_direction_mode(dir, false)
+
+func set_move_direction_mode(dir: Vector2, prefer_walk: bool) -> void:
 	if animated_sprite == null:
 		return
-	_is_moving = dir.length() > 0.01
+	_is_moving = dir.length() > 0.05
+	_prefer_walk_mode = prefer_walk
 	if _is_dead:
 		return
 	if _one_shot_lock_active:
@@ -78,7 +83,9 @@ func set_move_direction(dir: Vector2) -> void:
 		_reset_idle_liveliness_timer()
 
 	if _is_moving:
-		if _has_animation(run_animation):
+		if prefer_walk and _has_animation(walk_animation):
+			_play_animation_if_needed(walk_animation)
+		elif _has_animation(run_animation):
 			_play_animation_if_needed(run_animation)
 		elif _has_animation(walk_animation):
 			_play_animation_if_needed(walk_animation)
@@ -123,6 +130,12 @@ func play_idle() -> void:
 		return
 	if _has_animation(idle_animation):
 		_play_animation_if_needed(idle_animation)
+	elif _has_animation("Idle"):
+		_play_animation_if_needed("Idle")
+	elif _has_animation(walk_animation):
+		_play_animation_if_needed(walk_animation)
+	elif _has_animation(run_animation):
+		_play_animation_if_needed(run_animation)
 	elif animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.get_animation_names().size() > 0:
 		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
 
@@ -304,7 +317,7 @@ func _resolve_combat_animation(action_kind: String, is_moving_now: bool, class_i
 			if class_id == "hunter":
 				return hunter_ranged_run_animation if is_moving_now else hunter_ranged_stand_animation
 			return ranged_run_animation if is_moving_now else ranged_stand_animation
-		"melee_weapon":
+		"melee", "melee_weapon":
 			return melee_run_animation if is_moving_now else melee_stand_animation
 		"melee_unarmed":
 			return unarmed_run_animation if is_moving_now else unarmed_stand_animation
@@ -319,6 +332,9 @@ func _refresh_locomotion_animation() -> void:
 	if _is_dead:
 		return
 	if _is_moving:
+		if _prefer_walk_mode and _has_animation(walk_animation):
+			_play_animation_if_needed(walk_animation)
+			return
 		if _has_animation(run_animation):
 			_play_animation_if_needed(run_animation)
 			return

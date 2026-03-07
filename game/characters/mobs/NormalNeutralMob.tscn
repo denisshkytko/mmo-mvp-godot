@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://biceypmivcovo"]
+[gd_scene load_steps=9 format=3 uid="uid://biceypmivcovo"]
 
 [ext_resource type="Script" uid="uid://cysusd121yqgp" path="res://game/characters/mobs/normal_neutral_mob.gd" id="1_m8kl5"]
 [ext_resource type="Script" uid="uid://c8r5alfj31s1o" path="res://game/characters/mobs/normal_neutral_mob_ai.gd" id="2_hfa2t"]
@@ -6,17 +6,12 @@
 [ext_resource type="Script" uid="uid://b5xkj4n64em43" path="res://game/characters/mobs/normal_neutral_mob_stats.gd" id="4_rl5hl"]
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_4go75"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_tqhi1"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="7_castbar"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/HealthBarWidget.tscn" id="8_hpbar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
 size = Vector2(24, 24)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ex06h"]
 size = Vector2(32, 32)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
-bg_color = Color(1, 1, 0, 1)
 
 [node name="NormalNeutralMob" type="CharacterBody2D" groups=["mobs"]]
 motion_mode = 1
@@ -36,22 +31,15 @@ offset_right = 16.0
 offset_bottom = 16.0
 color = Color(1, 1, 0, 1)
 
+[node name="Visual" type="Node2D" parent="."]
+
 [node name="WorldCollider" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_k85i5")
-
-[node name="UI" type="Node2D" parent="."]
-
-[node name="HealthBar" parent="UI" instance=ExtResource("8_hpbar")]
-
-[node name="Progress" parent="UI/HealthBar"]
-theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
 
 [node name="BodyHitboxArea" type="Area2D" parent="."]
 
 [node name="BodyHitbox" type="CollisionShape2D" parent="BodyHitboxArea"]
 shape = SubResource("RectangleShape2D_ex06h")
-
-[node name="CastBar" parent="." instance=ExtResource("7_castbar")]
 
 [node name="Components" type="Node" parent="."]
 

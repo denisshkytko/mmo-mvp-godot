@@ -69,3 +69,10 @@ func _set_rect_size_keep_center(rect: Control, size: Vector2) -> void:
 
 func _rect_size(rect: Control) -> Vector2:
 	return Vector2(rect.offset_right - rect.offset_left, rect.offset_bottom - rect.offset_top)
+
+func set_fill_color(color: Color) -> void:
+	if progress == null:
+		return
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = color
+	progress.add_theme_stylebox_override("fill", fill)

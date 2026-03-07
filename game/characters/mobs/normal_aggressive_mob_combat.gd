@@ -53,12 +53,16 @@ func tick(delta: float, actor: Node2D, target: Node2D, snap: Dictionary) -> void
 	if attack_mode == AttackMode.MELEE:
 		if dist <= melee_attack_range and _attack_timer <= 0.0:
 			DAMAGE_HELPER.apply_damage(actor, target, dmg)
+			if actor != null and actor.has_method("play_model_combat_action"):
+				actor.call("play_model_combat_action", "melee", false)
 			_attack_timer = melee_cooldown / speed_mult
 		return
 
 	# RANGED
 	if dist <= ranged_attack_range and _attack_timer <= 0.0:
 		_fire_ranged(actor, target, dmg)
+		if actor != null and actor.has_method("play_model_combat_action"):
+			actor.call("play_model_combat_action", "ranged", false)
 		_attack_timer = ranged_cooldown / speed_mult
 
 func _fire_ranged(actor: Node2D, target: Node2D, damage: int) -> void:

@@ -9,14 +9,28 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
+const MODEL_SCENE_PATHS := {
+	"golems": {
+		"earth": "res://game/characters/mobs/models/GolemEarthModel.tscn",
+		"ice": "res://game/characters/mobs/models/GolemIceModel.tscn",
+		"magma": "res://game/characters/mobs/models/GolemMagmaModel.tscn",
+	},
+}
+
 signal died(corpse: Corpse)
 
-@onready var hp_bar: HealthBarWidget = $"UI/HealthBar" as HealthBarWidget
+var hp_bar: HealthBarWidget = null
 @onready var target_marker: CanvasItem = $TargetMarker
-@onready var cast_bar: CastBarWidget = $CastBar
+var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = get_node_or_null("Visual") as Node2D
+
+var model_group_id: String = "golems"
+var model_id: String = "earth"
+var _character_model: Node = null
+var _active_model_key: String = ""
+var _model_scene_cache: Dictionary = {}
 
 @onready var c_ai: NormalNeutralMobAI = $Components/AI as NormalNeutralMobAI
 @onready var c_combat: NormalNeutralMobCombat = $Components/Combat as NormalNeutralMobCombat
@@ -159,6 +173,8 @@ func _ready() -> void:
 	humanoid_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	if home_position == Vector2.ZERO:
 		home_position = global_position
+	if not _spawn_initialized:
+		_apply_model_visual()
 
 	# связь с AI: начало RETURN по leash → сброс агрессии + старт регена
 	if c_ai != null:
@@ -207,6 +223,7 @@ func _draw() -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_visual_render_order()
+	update_movement_animation(velocity, false)
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		return
@@ -309,7 +326,6 @@ func apply_spawn_init(
 	spawn_pos: Vector2,
 	behavior_in: int,
 	_leash_distance_in: float,
-	patrol_radius_in: float,
 	patrol_pause_in: float,
 	_speed_in: float,
 	level_in: int,
@@ -321,7 +337,9 @@ func apply_spawn_init(
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
 	attack_mode_choice_in: int = AttackMode.MELEE,
 	abilities_in: Array[String] = [],
-	spell_preset_name_key_in: String = ""
+	spell_preset_name_key_in: String = "",
+	model_group_id_in: String = "golems",
+	model_id_in: String = "earth"
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -330,6 +348,9 @@ func apply_spawn_init(
 		loot_profile = loot_profile_in
 	abilities = abilities_in.duplicate()
 	spell_preset_name_key = spell_preset_name_key_in
+	model_group_id = String(model_group_id_in).to_lower()
+	model_id = String(model_id_in).to_lower()
+	_apply_model_visual()
 	# Common params (speed/leash/aggro) are configured on the mob itself.
 	mob_level = max(1, level_in)
 	c_spell_caster.configure(abilities, mob_level)
@@ -343,6 +364,7 @@ func apply_spawn_init(
 		c_ai.patrol_radius = COMBAT_RANGES.PATROL_RADIUS
 		c_ai.patrol_pause_seconds = patrol_pause_in
 		c_ai.speed = move_speed
+		c_ai.patrol_speed = move_speed * MOVE_SPEED.PATROL_MULTIPLIER
 		c_ai.home_position = home_position
 		c_ai.reset_to_idle()
 
@@ -370,6 +392,7 @@ func _apply_to_components() -> void:
 	if c_ai != null:
 		c_ai.home_position = home_position
 		c_ai.speed = move_speed
+		c_ai.patrol_speed = move_speed * MOVE_SPEED.PATROL_MULTIPLIER
 		c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 
 	# melee параметры + пресет статов по размеру
@@ -486,6 +509,8 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 	if final > 0 and attacker != null and is_instance_valid(attacker) and c_stats != null and c_stats.has_method("try_apply_attacker_slow_from_stance"):
 		c_stats.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
 	c_stats.update_hp_bar(hp_bar)
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("play_hurt"):
+		_character_model.call("play_hurt")
 	if c_resource != null:
 		c_resource.on_damage_taken()
 
@@ -610,6 +635,8 @@ func _die() -> void:
 	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("play_death"):
+		_character_model.call("play_death")
 	if _prev_aggressor != null:
 		_notify_target_change(_prev_aggressor, null)
 	_prev_aggressor = null
@@ -667,3 +694,110 @@ func _now_sec() -> float:
 func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:
 		direct_attackers.clear()
+
+func get_corpse_pose_snapshot() -> Dictionary:
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("build_corpse_pose_snapshot"):
+		var v: Variant = _character_model.call("build_corpse_pose_snapshot")
+		if v is Dictionary:
+			return v as Dictionary
+	return {}
+
+func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_combat_action"):
+		_character_model.call("play_combat_action", action_kind, is_moving_now, c_stats.class_id if c_stats != null else "")
+
+func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_move_direction_mode"):
+		_character_model.call("set_move_direction_mode", dir, prefer_walk)
+	elif _character_model.has_method("set_move_direction"):
+		_character_model.call("set_move_direction", dir)
+
+func _apply_model_visual() -> void:
+	if visual_root == null:
+		return
+	var model_key := "%s:%s" % [model_group_id, model_id]
+	if _character_model != null and is_instance_valid(_character_model) and _active_model_key == model_key:
+		return
+	if _character_model != null and is_instance_valid(_character_model):
+		_character_model.queue_free()
+		_character_model = null
+	_active_model_key = model_key
+	var scene := _resolve_model_scene(model_group_id, model_id)
+	if scene == null:
+		hp_bar = null
+		cast_bar = null
+		return
+	var inst := scene.instantiate()
+	if inst == null:
+		hp_bar = null
+		cast_bar = null
+		return
+	visual_root.add_child(inst)
+	_character_model = inst
+	_apply_collision_profile_from_model(inst)
+	_apply_overlay_profile_from_model(inst)
+
+func _resolve_model_scene(group_id: String, id: String) -> PackedScene:
+	if not MODEL_SCENE_PATHS.has(group_id):
+		return null
+	var group_map := MODEL_SCENE_PATHS[group_id] as Dictionary
+	if not group_map.has(id):
+		return null
+	var model_path := String(group_map[id])
+	if model_path == "":
+		return null
+	if _model_scene_cache.has(model_path):
+		return _model_scene_cache[model_path] as PackedScene
+	var loaded := load(model_path)
+	if loaded is PackedScene:
+		_model_scene_cache[model_path] = loaded
+		return loaded as PackedScene
+	return null
+
+func _apply_collision_profile_from_model(model: Node) -> void:
+	if model == null or not is_instance_valid(model) or not model.has_method("get_collision_profile"):
+		return
+	var profile_v: Variant = model.call("get_collision_profile")
+	if not (profile_v is Dictionary):
+		return
+	var profile := profile_v as Dictionary
+	if world_collision != null:
+		var world_shape_v: Variant = profile.get("world_collision_shape", null)
+		if world_shape_v is Shape2D:
+			world_collision.shape = (world_shape_v as Shape2D).duplicate(true)
+		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
+		if world_offset_v is Vector2:
+			world_collision.position = world_offset_v
+	if body_hitbox_shape != null:
+		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
+		if body_shape_v is Shape2D:
+			body_hitbox_shape.shape = (body_shape_v as Shape2D).duplicate(true)
+		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
+		if body_offset_v is Vector2:
+			body_hitbox_shape.position = body_offset_v
+
+func _apply_overlay_profile_from_model(model: Node) -> void:
+	_bind_overlay_widgets_from_model(model)
+
+func _bind_overlay_widgets_from_model(model: Node) -> void:
+	hp_bar = null
+	cast_bar = null
+	if model == null or not is_instance_valid(model):
+		return
+	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
+	if hp_node is HealthBarWidget:
+		hp_bar = hp_node as HealthBarWidget
+	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
+	if cast_node is CastBarWidget:
+		cast_bar = cast_node as CastBarWidget
+	if hp_bar != null:
+		hp_bar.set_fill_color(Color(1.0, 1.0, 0.0, 1.0))
+		c_stats.update_hp_bar(hp_bar)
+	if cast_bar != null and not c_spell_caster.is_casting():
+		cast_bar.set_cast_visible(false)
+		cast_bar.set_progress01(0.0)
+		cast_bar.set_icon_texture(null)
