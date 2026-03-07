@@ -348,10 +348,11 @@ func heal_percent_per_second(delta: float, percent_per_sec: float) -> void:
 		heal_amount = 1
 	current_hp = min(max_hp, current_hp + heal_amount)
 
-func update_hp_bar(hp_fill: ColorRect) -> void:
-	if hp_fill == null:
+func update_hp_bar(hp_bar: Node) -> void:
+	if hp_bar == null:
 		return
 	if max_hp <= 0:
 		return
 	var ratio: float = clamp(float(current_hp) / float(max_hp), 0.0, 1.0)
-	hp_fill.size.x = 36.0 * ratio
+	if hp_bar.has_method("set_progress01"):
+		hp_bar.call("set_progress01", ratio)

@@ -326,11 +326,12 @@ func apply_damage(raw_physical_damage: int) -> bool:
 	current_hp = max(0, current_hp - dmg)
 	return current_hp <= 0
 
-func update_hp_bar(hp_fill: ColorRect) -> void:
-	if hp_fill == null:
+func update_hp_bar(hp_bar: Node) -> void:
+	if hp_bar == null:
 		return
 	if max_hp <= 0:
 		return
 
 	var ratio: float = clamp(float(current_hp) / float(max_hp), 0.0, 1.0)
-	hp_fill.size.x = 36.0 * ratio
+	if hp_bar.has_method("set_progress01"):
+		hp_bar.call("set_progress01", ratio)

@@ -200,6 +200,8 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 
 @onready var visual_root: Node2D = $Visual as Node2D
 
+const DEFAULT_CAST_BAR_OFFSET: Vector2 = Vector2(0.0, -42.0)
+
 var _character_model: Node = null
 var _pending_corpse_pose_snapshot: Dictionary = {}
 var _corpse_spawned_for_current_death: bool = false
@@ -207,6 +209,7 @@ var _corpse_spawned_for_current_death: bool = false
 
 func _ready() -> void:
 	add_to_group("faction_units")
+	add_to_group("y_sort_entities")
 	# setup components
 	# push primary tuning from Player root into Stats component
 	c_stats.base_str = base_str
@@ -730,6 +733,7 @@ func _apply_class_visual() -> void:
 		if not _character_model.is_connected("death_pose_ready", cb):
 			_character_model.connect("death_pose_ready", cb)
 	_apply_collision_profile_from_model(inst)
+	_apply_overlay_profile_from_model(inst)
 	_update_model_motion(Vector2.ZERO)
 
 func _update_model_motion(dir: Vector2) -> void:
@@ -838,6 +842,30 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
 		var interaction_circle := interaction_shape.shape as CircleShape2D
 		interaction_circle.radius = max(1.0, float(profile.get("interaction_radius", interaction_circle.radius)))
+
+func _apply_overlay_profile_from_model(model: Node) -> void:
+	if cast_bar == null or visual_root == null or not is_instance_valid(visual_root):
+		return
+	if cast_bar.get_parent() != visual_root:
+		cast_bar.reparent(visual_root, false)
+	if model == null or not is_instance_valid(model) or not model.has_method("get_overlay_profile"):
+		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
+		if cast_bar.has_method("restore_default_visual_profile"):
+			cast_bar.call("restore_default_visual_profile")
+		return
+	var profile_v: Variant = model.call("get_overlay_profile")
+	if not (profile_v is Dictionary):
+		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
+		if cast_bar.has_method("restore_default_visual_profile"):
+			cast_bar.call("restore_default_visual_profile")
+		return
+	var profile := profile_v as Dictionary
+	var cast_profile_v: Variant = profile.get("cast_bar", {})
+	var cast_profile: Dictionary = cast_profile_v as Dictionary if cast_profile_v is Dictionary else {}
+	var cast_offset_v: Variant = cast_profile.get("offset", profile.get("cast_bar_offset", DEFAULT_CAST_BAR_OFFSET))
+	cast_bar.position = cast_offset_v as Vector2 if cast_offset_v is Vector2 else DEFAULT_CAST_BAR_OFFSET
+	if cast_bar.has_method("apply_visual_profile"):
+		cast_bar.call("apply_visual_profile", cast_profile)
 
 
 func _grant_starter_abilities() -> void:
