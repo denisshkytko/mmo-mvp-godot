@@ -14,7 +14,7 @@ signal died(corpse: Corpse)
 
 @onready var faction_rect: ColorRect = $"ColorRect"
 var hp_bar: HealthBarWidget = null
-@onready var target_marker: CanvasItem = $TargetMarker
+var target_marker: CanvasItem = null
 var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
@@ -50,6 +50,7 @@ var retaliation_active: bool = false
 var npc_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
+var attack_mode: int = AttackMode.MELEE
 var abilities: Array[String] = []
 var spell_preset_name_key: String = ""
 var c_spell_caster: MobSpellCaster = MobSpellCaster.new()
@@ -309,6 +310,7 @@ func apply_spawn_init(
 				civilian_magic_resist_per_level
 			)
 			c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
+			attack_mode = AttackMode.MELEE
 			c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
@@ -340,6 +342,7 @@ func apply_spawn_init(
 					mage_magic_resist_per_level
 				)
 				c_combat.attack_mode = FactionNPCCombat.AttackMode.RANGED
+				attack_mode = AttackMode.RANGED
 				c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 				c_combat.ranged_cooldown = base_ranged
 
@@ -357,6 +360,7 @@ func apply_spawn_init(
 					fighter_magic_resist_per_level
 				)
 				c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
+				attack_mode = AttackMode.MELEE
 				c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 				c_combat.melee_cooldown = base_melee
 
@@ -656,7 +660,7 @@ func play_model_combat_action(action_kind: String, is_moving_now: bool = false) 
 	if _character_model == null or not is_instance_valid(_character_model):
 		return
 	if _character_model.has_method("play_combat_action"):
-		_character_model.call("play_combat_action", action_kind, is_moving_now, "")
+		_character_model.call("play_combat_action", action_kind, is_moving_now, c_stats.class_id if c_stats != null else "")
 
 func _update_model_motion(dir: Vector2) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
@@ -739,6 +743,7 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 func _bind_overlay_widgets_from_model(model: Node) -> void:
 	hp_bar = null
 	cast_bar = null
+	target_marker = null
 	if model == null or not is_instance_valid(model):
 		return
 	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
@@ -748,6 +753,9 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
 	if cast_node is CastBarWidget:
 		cast_bar = cast_node as CastBarWidget
+	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
+	if marker_node is CanvasItem:
+		target_marker = marker_node as CanvasItem
 	_update_hp()
 	if cast_bar != null and not c_spell_caster.is_casting():
 		cast_bar.set_cast_visible(false)
@@ -757,6 +765,7 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 func _restore_default_overlay_mount() -> void:
 	hp_bar = null
 	cast_bar = null
+	target_marker = null
 
 func _apply_hp_overlay_defaults() -> void:
 	pass

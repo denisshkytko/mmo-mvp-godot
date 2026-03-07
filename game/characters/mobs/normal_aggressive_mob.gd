@@ -9,29 +9,33 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 const MODEL_SCENE_PATHS := {
-	"cinderborn": {
-		"warrior_1": "res://game/characters/mobs/models/CinderbornWarrior1Model.tscn",
-		"warrior_2": "res://game/characters/mobs/models/CinderbornWarrior2Model.tscn",
-		"mage_1": "res://game/characters/mobs/models/CinderbornMage1Model.tscn",
-		"mage_2": "res://game/characters/mobs/models/CinderbornMage2Model.tscn",
-		"priest_1": "res://game/characters/mobs/models/CinderbornPriest1Model.tscn",
-		"priest_2": "res://game/characters/mobs/models/CinderbornPriest2Model.tscn",
-		"hunter_1": "res://game/characters/mobs/models/CinderbornHunter1Model.tscn",
-		"hunter_2": "res://game/characters/mobs/models/CinderbornHunter2Model.tscn",
-	},
-	"bandits": {
-		"warrior": "res://game/characters/mobs/models/BanditWarriorModel.tscn",
-		"mage": "res://game/characters/mobs/models/BanditMageModel.tscn",
-		"priest": "res://game/characters/mobs/models/BanditPriestModel.tscn",
-		"hunter_melee": "res://game/characters/mobs/models/BanditHunterMeleeModel.tscn",
-		"hunter_ranged": "res://game/characters/mobs/models/BanditHunterRangedModel.tscn",
-	},
-}
+		"cinderborn": {
+			"warrior_1": "res://game/characters/mobs/models/CinderbornWarrior1Model.tscn",
+			"warrior_2": "res://game/characters/mobs/models/CinderbornWarrior2Model.tscn",
+			"warrior_re": "res://game/characters/mobs/models/CinderbornWarriorRareEliteModel.tscn",
+			"mage_1": "res://game/characters/mobs/models/CinderbornMage1Model.tscn",
+			"mage_2": "res://game/characters/mobs/models/CinderbornMage2Model.tscn",
+			"mage_re": "res://game/characters/mobs/models/CinderbornMageRareEliteModel.tscn",
+			"priest_1": "res://game/characters/mobs/models/CinderbornPriest1Model.tscn",
+			"priest_2": "res://game/characters/mobs/models/CinderbornPriest2Model.tscn",
+			"priest_re": "res://game/characters/mobs/models/CinderbornPriestRareEliteModel.tscn",
+			"hunter_1": "res://game/characters/mobs/models/CinderbornHunter1Model.tscn",
+			"hunter_2": "res://game/characters/mobs/models/CinderbornHunter2Model.tscn",
+			"hunter_re": "res://game/characters/mobs/models/CinderbornHunterRareEliteModel.tscn",
+		},
+		"bandits": {
+			"warrior": "res://game/characters/mobs/models/BanditWarriorModel.tscn",
+			"mage": "res://game/characters/mobs/models/BanditMageModel.tscn",
+			"priest": "res://game/characters/mobs/models/BanditPriestModel.tscn",
+			"hunter_melee": "res://game/characters/mobs/models/BanditHunterMeleeModel.tscn",
+			"hunter_ranged": "res://game/characters/mobs/models/BanditHunterRangedModel.tscn",
+		},
+	}
 
 signal died(corpse: Corpse)
 
 var hp_bar: HealthBarWidget = null
-@onready var target_marker: CanvasItem = $TargetMarker
+var target_marker: CanvasItem = null
 var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
@@ -833,6 +837,7 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 func _bind_overlay_widgets_from_model(model: Node) -> void:
 	hp_bar = null
 	cast_bar = null
+	target_marker = null
 	if model == null or not is_instance_valid(model):
 		return
 	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
@@ -841,6 +846,9 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
 	if cast_node is CastBarWidget:
 		cast_bar = cast_node as CastBarWidget
+	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
+	if marker_node is CanvasItem:
+		target_marker = marker_node as CanvasItem
 	if hp_bar != null:
 		hp_bar.set_fill_color(Color(1.0, 0.05, 0.02, 1.0))
 		c_stats.update_hp_bar(hp_bar)
