@@ -4,6 +4,7 @@ class_name NormalNeutralMobAI
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const COMBAT_SPACING_BUFFER: float = 20.0
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -126,17 +127,16 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: NormalNeutralMobC
 	var to_target: Vector2 = target.global_position - actor.global_position
 	var dist: float = to_target.length()
 
-	var stop_distance: float = combat.get_stop_distance()
+	var stop_distance: float = max(0.0, combat.get_stop_distance())
+	var spacing_distance: float = max(0.0, stop_distance - COMBAT_SPACING_BUFFER)
 	if dist > stop_distance:
 		actor.velocity = to_target.normalized() * speed
+	elif dist < spacing_distance:
+		actor.velocity = (-to_target).normalized() * (speed * 0.5)
+	else:
+		actor.velocity = Vector2.ZERO
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, false)
-		actor.move_and_slide()
-		return
-
-	actor.velocity = Vector2.ZERO
-	if actor.has_method("update_movement_animation"):
-		actor.call("update_movement_animation", Vector2.ZERO, false)
 	actor.move_and_slide()
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:

@@ -7,6 +7,7 @@ enum State { IDLE, CHASE, RETURN }
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const COMBAT_SPACING_BUFFER: float = 20.0
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
@@ -111,18 +112,18 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat)
 
 	var to: Vector2 = target.global_position - actor.global_position
 	var dist: float = to.length()
-	var stop: float = combat.stop_distance()
+	var stop: float = max(0.0, combat.stop_distance())
+	var spacing_distance: float = max(0.0, stop - COMBAT_SPACING_BUFFER)
 
 	if dist > stop:
 		actor.velocity = to.normalized() * speed
-	if actor.has_method("update_movement_animation"):
-		actor.call("update_movement_animation", actor.velocity, false)
-		actor.move_and_slide()
+	elif dist < spacing_distance:
+		actor.velocity = (-to).normalized() * (speed * 0.5)
 	else:
 		actor.velocity = Vector2.ZERO
-		if actor.has_method("update_movement_animation"):
-			actor.call("update_movement_animation", Vector2.ZERO, false)
-		actor.move_and_slide()
+	if actor.has_method("update_movement_animation"):
+		actor.call("update_movement_animation", actor.velocity, false)
+	actor.move_and_slide()
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 	var to: Vector2 = home_position - actor.global_position

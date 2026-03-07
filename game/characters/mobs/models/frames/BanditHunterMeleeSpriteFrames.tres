@@ -219,4 +219,45 @@ animations = [
 "name": &"Throwing",
 "speed": 12.0
 }
+,
+{
+"frames": [
+{"duration": 1.0, "texture": ExtResource("64_tex")},
+{"duration": 1.0, "texture": ExtResource("65_tex")},
+{"duration": 1.0, "texture": ExtResource("66_tex")},
+{"duration": 1.0, "texture": ExtResource("67_tex")},
+{"duration": 1.0, "texture": ExtResource("68_tex")},
+{"duration": 1.0, "texture": ExtResource("69_tex")},
+{"duration": 1.0, "texture": ExtResource("70_tex")},
+{"duration": 1.0, "texture": ExtResource("71_tex")},
+{"duration": 1.0, "texture": ExtResource("72_tex")},
+{"duration": 1.0, "texture": ExtResource("73_tex")},
+{"duration": 1.0, "texture": ExtResource("74_tex")},
+{"duration": 1.0, "texture": ExtResource("75_tex")}
+],
+"loop": true,
+"name": &"Run Slashing",
+"speed": 12.0
+}
+,
+{
+"frames": [
+{"duration": 1.0, "texture": ExtResource("76_tex")},
+{"duration": 1.0, "texture": ExtResource("77_tex")},
+{"duration": 1.0, "texture": ExtResource("78_tex")},
+{"duration": 1.0, "texture": ExtResource("79_tex")},
+{"duration": 1.0, "texture": ExtResource("80_tex")},
+{"duration": 1.0, "texture": ExtResource("81_tex")},
+{"duration": 1.0, "texture": ExtResource("82_tex")},
+{"duration": 1.0, "texture": ExtResource("83_tex")},
+{"duration": 1.0, "texture": ExtResource("84_tex")},
+{"duration": 1.0, "texture": ExtResource("85_tex")},
+{"duration": 1.0, "texture": ExtResource("86_tex")},
+{"duration": 1.0, "texture": ExtResource("87_tex")}
+],
+"loop": true,
+"name": &"Slashing",
+"speed": 12.0
+}
+
 ]

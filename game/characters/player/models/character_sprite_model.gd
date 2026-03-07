@@ -72,7 +72,7 @@ func set_move_direction(dir: Vector2) -> void:
 func set_move_direction_mode(dir: Vector2, prefer_walk: bool) -> void:
 	if animated_sprite == null:
 		return
-	_is_moving = dir.length() > 2.0
+	_is_moving = dir.length() > 0.05
 	_prefer_walk_mode = prefer_walk
 	if _is_dead:
 		return
