@@ -324,7 +324,6 @@ func apply_spawn_init(
 	behavior_in: int,
 	aggro_radius_in: float,
 	leash_distance_in: float,
-	patrol_radius_in: float,
 	patrol_pause_in: float,
 	speed_in: float,
 	level_in: int,
@@ -360,7 +359,6 @@ func apply_spawn_init(
 		behavior_in,
 		aggro_radius_in,
 		leash_distance_in,
-		patrol_radius_in,
 		patrol_pause_in,
 		speed_in
 	)
@@ -410,7 +408,6 @@ func apply_spawn_settings(
 	behavior_in: int,
 	_aggro_radius_in: float,
 	_leash_distance_in: float,
-	patrol_radius_in: float,
 	patrol_pause_in: float,
 	_speed_in: float
 ) -> void:

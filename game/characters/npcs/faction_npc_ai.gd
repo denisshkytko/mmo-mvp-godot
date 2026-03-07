@@ -24,11 +24,16 @@ var home_position: Vector2 = Vector2.ZERO
 var _patrol_target: Vector2 = Vector2.ZERO
 var _has_patrol_target: bool = false
 var _wait: float = 0.0
+var _patrol_last_position: Vector2 = Vector2.ZERO
+var _patrol_has_last_position: bool = false
+var _patrol_stuck_time: float = 0.0
 
 func reset_to_idle() -> void:
 	state = State.IDLE
 	_has_patrol_target = false
 	_wait = 0.0
+	_patrol_has_last_position = false
+	_patrol_stuck_time = 0.0
 
 func on_took_damage(attacker: Node2D) -> void:
 	if attacker == null or not is_instance_valid(attacker):
@@ -81,6 +86,8 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	if _wait > 0.0:
 		_wait -= delta
 		actor.velocity = Vector2.ZERO
+		_patrol_has_last_position = false
+		_patrol_stuck_time = 0.0
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
@@ -93,7 +100,22 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	if d <= 6.0:
 		_wait = patrol_pause_seconds
 		_pick_patrol_target()
+		_patrol_has_last_position = false
+		_patrol_stuck_time = 0.0
 		return
+
+	if _patrol_has_last_position:
+		var patrol_progress: float = actor.global_position.distance_to(_patrol_last_position)
+		if patrol_progress < 0.5 and d > 12.0:
+			_patrol_stuck_time += delta
+			if _patrol_stuck_time >= 0.8:
+				_pick_patrol_target()
+				_patrol_stuck_time = 0.0
+				_patrol_has_last_position = false
+		else:
+			_patrol_stuck_time = 0.0
+	_patrol_last_position = actor.global_position
+	_patrol_has_last_position = true
 
 	actor.velocity = (_patrol_target - actor.global_position).normalized() * patrol_speed
 	if actor.has_method("update_movement_animation"):
@@ -105,6 +127,8 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat)
 		state = State.RETURN
 		emit_signal("leash_return_started")
 		actor.velocity = Vector2.ZERO
+		_patrol_has_last_position = false
+		_patrol_stuck_time = 0.0
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
@@ -132,6 +156,8 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 		_has_patrol_target = false
 		_wait = patrol_pause_seconds
 		actor.velocity = Vector2.ZERO
+		_patrol_has_last_position = false
+		_patrol_stuck_time = 0.0
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()

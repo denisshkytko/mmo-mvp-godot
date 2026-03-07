@@ -245,7 +245,6 @@ func apply_spawn_init(
 	behavior_in: int,
 	_aggro_radius_in: float,
 	_leash_in: float,
-	patrol_radius_in: float,
 	patrol_pause_in: float,
 	_speed_in: float,
 	level_in: int,

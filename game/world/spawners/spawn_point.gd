@@ -23,8 +23,6 @@ func _draw() -> void:
 	if parent == null:
 		return
 	var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
-	if "patrol_radius" in parent:
-		patrol_radius = float(parent.get("patrol_radius"))
 	if patrol_radius <= 0.0:
 		return
 	draw_arc(Vector2.ZERO, patrol_radius, 0.0, TAU, 96, Color(0.2, 0.6, 1.0, 0.85), 1.5, true)

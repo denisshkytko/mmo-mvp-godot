@@ -43,7 +43,6 @@ var mob_group_choice: int:
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
-@export var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
 @export var patrol_pause_seconds: float = 1.5
 
 # Class selection config
@@ -123,7 +122,6 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		behavior,
 		-1.0, # aggro_radius не задаём
 		-1.0, # leash_distance is defined on the mob itself
-		COMBAT_RANGES.PATROL_RADIUS,
 		patrol_pause_seconds,
 		-1.0, # move_speed is defined on the mob itself
 		level,

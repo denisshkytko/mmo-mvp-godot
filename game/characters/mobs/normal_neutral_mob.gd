@@ -326,7 +326,6 @@ func apply_spawn_init(
 	spawn_pos: Vector2,
 	behavior_in: int,
 	_leash_distance_in: float,
-	patrol_radius_in: float,
 	patrol_pause_in: float,
 	_speed_in: float,
 	level_in: int,
