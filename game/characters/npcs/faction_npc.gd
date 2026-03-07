@@ -370,11 +370,7 @@ func apply_spawn_init(
 
 
 func _process(_delta: float) -> void:
-	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
-	var is_aggro_on_player: bool = false
-	if current_target != null and is_instance_valid(current_target):
-		is_aggro_on_player = current_target.is_in_group("player")
-	TargetMarkerHelper.set_marker_visible(target_marker, is_aggro_on_player)
+	TargetMarkerHelper.set_marker_visible(target_marker, self)
 	if OS.is_debug_build():
 		queue_redraw()
 	_update_interaction()
