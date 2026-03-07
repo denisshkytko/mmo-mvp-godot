@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/characters/shared/target_marker_widget.gd" id="1"]
+
+[node name="TargetMarkerWidget" type="Node2D"]
+visible = false
+script = ExtResource("1")

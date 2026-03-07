@@ -20,7 +20,7 @@ const MODEL_SCENE_PATHS := {
 signal died(corpse: Corpse)
 
 var hp_bar: HealthBarWidget = null
-@onready var target_marker: CanvasItem = $TargetMarker
+var target_marker: CanvasItem = null
 var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
@@ -786,6 +786,7 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 func _bind_overlay_widgets_from_model(model: Node) -> void:
 	hp_bar = null
 	cast_bar = null
+	target_marker = null
 	if model == null or not is_instance_valid(model):
 		return
 	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
@@ -794,6 +795,9 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
 	if cast_node is CastBarWidget:
 		cast_bar = cast_node as CastBarWidget
+	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
+	if marker_node is CanvasItem:
+		target_marker = marker_node as CanvasItem
 	if hp_bar != null:
 		hp_bar.set_fill_color(Color(1.0, 1.0, 0.0, 1.0))
 		c_stats.update_hp_bar(hp_bar)

@@ -14,7 +14,7 @@ signal died(corpse: Corpse)
 
 @onready var faction_rect: ColorRect = $"ColorRect"
 var hp_bar: HealthBarWidget = null
-@onready var target_marker: CanvasItem = $TargetMarker
+var target_marker: CanvasItem = null
 var cast_bar: CastBarWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
@@ -743,6 +743,7 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 func _bind_overlay_widgets_from_model(model: Node) -> void:
 	hp_bar = null
 	cast_bar = null
+	target_marker = null
 	if model == null or not is_instance_valid(model):
 		return
 	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
@@ -752,6 +753,9 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
 	if cast_node is CastBarWidget:
 		cast_bar = cast_node as CastBarWidget
+	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
+	if marker_node is CanvasItem:
+		target_marker = marker_node as CanvasItem
 	_update_hp()
 	if cast_bar != null and not c_spell_caster.is_casting():
 		cast_bar.set_cast_visible(false)
@@ -761,6 +765,7 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 func _restore_default_overlay_mount() -> void:
 	hp_bar = null
 	cast_bar = null
+	target_marker = null
 
 func _apply_hp_overlay_defaults() -> void:
 	pass

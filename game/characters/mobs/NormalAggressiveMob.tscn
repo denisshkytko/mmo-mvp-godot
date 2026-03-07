@@ -19,13 +19,6 @@ motion_mode = 1
 script = ExtResource("1_tamd3")
 ranged_projectile_scene = ExtResource("2_8u31h")
 
-[node name="TargetMarker" type="ColorRect" parent="."]
-offset_left = -22.0
-offset_top = 13.0
-offset_right = 22.0
-offset_bottom = 19.0
-color = Color(1, 0, 0, 0.5411765)
-
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_left = -16.0
 offset_top = -16.0

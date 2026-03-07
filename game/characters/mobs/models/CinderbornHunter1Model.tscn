@@ -4,6 +4,7 @@
 [ext_resource type="SpriteFrames" path="res://game/characters/mobs/models/frames/CinderbornHunter1SpriteFrames.tres" id="2_frames"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/HealthBarWidget.tscn" id="3_hpbar"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="4_castbar"]
+[ext_resource type="PackedScene" path="res://game/characters/shared/TargetMarkerWidget.tscn" id="5_target"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_world"]
 radius = 20.0
@@ -28,6 +29,8 @@ position = Vector2(0, -30)
 [node name="CastBar" parent="OverlayProfile" instance=ExtResource("4_castbar")]
 position = Vector2(0, -42)
 
+
+[node name="TargetMarker" parent="OverlayProfile" instance=ExtResource("5_target")]
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
