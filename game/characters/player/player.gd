@@ -194,6 +194,7 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 var cast_bar: CastBarWidget = null
 var hp_bar: HealthBarWidget = null
+var target_marker: CanvasItem = null
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
@@ -335,6 +336,7 @@ func _process(delta: float) -> void:
 		cast_bar.set_progress01(c_ability_caster.get_cast_progress() if casting else 0.0)
 		cast_bar.set_icon_texture(c_ability_caster.get_cast_icon() if casting else null)
 	_update_model_hp_bar()
+	TargetMarkerHelper.set_marker_visible(target_marker, self)
 
 	if OS.is_debug_build():
 		queue_redraw()
@@ -848,6 +850,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 func _apply_overlay_profile_from_model(model: Node) -> void:
 	cast_bar = null
 	hp_bar = null
+	target_marker = null
 	if model == null or not is_instance_valid(model):
 		return
 	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
@@ -856,6 +859,9 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
 	if hp_node is HealthBarWidget:
 		hp_bar = hp_node as HealthBarWidget
+	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
+	if marker_node is CanvasItem:
+		target_marker = marker_node as CanvasItem
 	_update_model_hp_bar()
 	if cast_bar != null and not c_ability_caster.is_casting():
 		cast_bar.set_cast_visible(false)
