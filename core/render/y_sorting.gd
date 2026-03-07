@@ -2,8 +2,7 @@ extends RefCounted
 class_name YSorting
 
 const OVERLAP_X_THRESHOLD: float = 120.0
-const OVERLAP_Y_DOWN_THRESHOLD: float = 80.0
-const OVERLAP_Y_UP_THRESHOLD: float = 280.0
+const OVERLAP_Y_DOWN_THRESHOLD: float = 120.0
 const Y_DEADZONE: float = 6.0
 
 # Keeps a shared base layer for all actors and changes order only when they are
@@ -16,7 +15,6 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 		return default_z
 
 	var self_anchor := _resolve_sort_anchor(owner)
-	var has_overlap := false
 	var relative: int = 0
 	var seen_ids := {}
 
@@ -36,18 +34,19 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 		var other_anchor := _resolve_sort_anchor(other)
 		var dx: float = absf(self_anchor.x - other_anchor.x)
 		var dy: float = self_anchor.y - other_anchor.y
-		var y_threshold: float = OVERLAP_Y_DOWN_THRESHOLD if dy >= 0.0 else OVERLAP_Y_UP_THRESHOLD
-		if dx > OVERLAP_X_THRESHOLD or absf(dy) > y_threshold:
+		# We only care about actors above the owner (dy > 0), because only then
+		# this owner should be lifted in front.
+		if dy <= Y_DEADZONE:
+			continue
+		if dx > OVERLAP_X_THRESHOLD or dy > OVERLAP_Y_DOWN_THRESHOLD:
 			continue
 
-		has_overlap = true
 		# Never push actor below base z-layer (can visually fall under ground/tile layer).
 		# Increase local z-index by overlap rank for stronger ordering with multiple
 		# simultaneously intersecting actors.
-		if dy > Y_DEADZONE:
-			relative += 1
+		relative += 1
 
-	if not has_overlap:
+	if relative <= 0:
 		return default_z
 	return default_z + relative
 
