@@ -5,10 +5,3 @@
 [node name="TargetMarkerWidget" type="Node2D"]
 visible = false
 script = ExtResource("1")
-
-[node name="MarkerPolygon" type="Polygon2D" parent="."]
-unique_name_in_owner = true
-
-[node name="MarkerLine" type="Line2D" parent="."]
-unique_name_in_owner = true
-visible = false
