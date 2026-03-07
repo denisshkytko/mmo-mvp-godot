@@ -207,6 +207,7 @@ var _corpse_spawned_for_current_death: bool = false
 
 func _ready() -> void:
 	add_to_group("faction_units")
+	add_to_group("y_sort_entities")
 	# setup components
 	# push primary tuning from Player root into Stats component
 	c_stats.base_str = base_str

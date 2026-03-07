@@ -154,6 +154,7 @@ var _threat_recheck_timer: float = 0.0
 
 func _ready() -> void:
 	add_to_group("faction_units")
+	add_to_group("y_sort_entities")
 	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	mage_base_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE

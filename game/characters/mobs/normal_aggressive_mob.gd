@@ -131,6 +131,7 @@ func _ready() -> void:
 	ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 	melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	add_to_group("faction_units")
+	add_to_group("y_sort_entities")
 	player = NodeCache.get_player(get_tree()) as Node2D
 
 	if c_ai != null and c_ai.has_signal("leash_return_started"):

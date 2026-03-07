@@ -152,6 +152,7 @@ var _spawn_initialized: bool = false
 func _ready() -> void:
 	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
+	add_to_group("y_sort_entities")
 	small_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	medium_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	large_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
