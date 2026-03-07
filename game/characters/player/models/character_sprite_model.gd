@@ -33,6 +33,8 @@ signal death_pose_ready(snapshot: Dictionary)
 @onready var world_collision_shape: CollisionShape2D = $CollisionProfile/WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $CollisionProfile/BodyHitbox as CollisionShape2D
 @onready var interaction_radius_shape: CollisionShape2D = $CollisionProfile/InteractionRadius as CollisionShape2D
+@onready var overlay_hp_bar: Node2D = get_node_or_null("OverlayProfile/HealthBar") as Node2D
+@onready var overlay_cast_bar: Node2D = get_node_or_null("OverlayProfile/CastBar") as Node2D
 
 var _is_moving: bool = false
 var _is_dead: bool = false
@@ -168,22 +170,59 @@ func get_collision_profile() -> Dictionary:
 	}
 
 func get_overlay_profile() -> Dictionary:
+	var model_scale := Vector2(abs(scale.x), abs(scale.y))
+	if model_scale.x <= 0.0001:
+		model_scale.x = 1.0
+	if model_scale.y <= 0.0001:
+		model_scale.y = 1.0
+
+	var hp_offset := hp_bar_offset
+	if overlay_hp_bar != null:
+		hp_offset = Vector2(overlay_hp_bar.position.x * model_scale.x, overlay_hp_bar.position.y * model_scale.y)
+	var hp_size := hp_bar_size
+	if overlay_hp_bar != null and overlay_hp_bar.has_method("get_visual_size"):
+		var hp_size_v: Variant = overlay_hp_bar.call("get_visual_size")
+		if hp_size_v is Vector2:
+			var raw_hp_size := hp_size_v as Vector2
+			hp_size = Vector2(raw_hp_size.x * model_scale.x, raw_hp_size.y * model_scale.y)
+
+	var cast_offset := cast_bar_offset
+	if overlay_cast_bar != null:
+		cast_offset = Vector2(overlay_cast_bar.position.x * model_scale.x, overlay_cast_bar.position.y * model_scale.y)
+	var cast_size := cast_bar_size
+	if overlay_cast_bar != null and overlay_cast_bar.has_method("get_visual_size"):
+		var cast_size_v: Variant = overlay_cast_bar.call("get_visual_size")
+		if cast_size_v is Vector2:
+			var raw_cast_size := cast_size_v as Vector2
+			cast_size = Vector2(raw_cast_size.x * model_scale.x, raw_cast_size.y * model_scale.y)
+	var cast_icon_size := cast_bar_icon_size
+	if overlay_cast_bar != null and overlay_cast_bar.has_method("get_icon_visual_size"):
+		var cast_icon_size_v: Variant = overlay_cast_bar.call("get_icon_visual_size")
+		if cast_icon_size_v is Vector2:
+			var raw_icon_size := cast_icon_size_v as Vector2
+			cast_icon_size = Vector2(raw_icon_size.x * model_scale.x, raw_icon_size.y * model_scale.y)
+	var cast_icon_visible := cast_bar_icon_visible
+	if overlay_cast_bar != null and overlay_cast_bar.has_method("is_icon_visual_visible"):
+		var icon_visible_v: Variant = overlay_cast_bar.call("is_icon_visual_visible")
+		if icon_visible_v is bool:
+			cast_icon_visible = icon_visible_v
+
 	return {
-		"hp_bar_offset": hp_bar_offset,
-		"cast_bar_offset": cast_bar_offset,
+		"hp_bar_offset": hp_offset,
+		"cast_bar_offset": cast_offset,
 		"hp_bar": {
-			"offset": hp_bar_offset,
-			"size": hp_bar_size,
+			"offset": hp_offset,
+			"size": hp_size,
 			"back_color": hp_bar_back_color,
 			"fill_color": hp_bar_fill_color,
 		},
 		"cast_bar": {
-			"offset": cast_bar_offset,
-			"size": cast_bar_size,
-			"icon_size": cast_bar_icon_size,
+			"offset": cast_offset,
+			"size": cast_size,
+			"icon_size": cast_icon_size,
 			"back_color": cast_bar_back_color,
 			"fill_color": cast_bar_fill_color,
-			"icon_visible": cast_bar_icon_visible,
+			"icon_visible": cast_icon_visible,
 		},
 	}
 
