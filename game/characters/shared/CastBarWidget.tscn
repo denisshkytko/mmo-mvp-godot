@@ -1,34 +1,45 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://bqrjc01gju82q"]
 
-[ext_resource type="Script" path="res://game/characters/shared/cast_bar_widget.gd" id="1"]
+[ext_resource type="Script" uid="uid://cqkuoxxjlwlty" path="res://game/characters/shared/cast_bar_widget.gd" id="1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back"]
 bg_color = Color(0, 0, 0, 0.8)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
-bg_color = Color(0.2, 0.8, 1.0, 0.9)
+bg_color = Color(0.2, 0.8, 1, 0.9)
 
 [node name="CastBarWidget" type="Node2D"]
 visible = false
-position = Vector2(0, -42)
 script = ExtResource("1")
 
-[node name="Icon" type="TextureRect" parent="."]
-offset_left = -28.0
-offset_top = -8.0
-offset_right = -12.0
-offset_bottom = 8.0
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -244.0
+offset_top = -480.0
+offset_right = 244.0
+offset_bottom = -416.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
-mouse_filter = 2
 
-[node name="Progress" type="ProgressBar" parent="."]
-offset_left = -10.0
-offset_top = -6.0
-offset_right = 28.0
-offset_bottom = 6.0
+[node name="Progress" type="ProgressBar" parent="HBoxContainer"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_back")
 theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
 show_percentage = false
-value = 0.0
-mouse_filter = 2

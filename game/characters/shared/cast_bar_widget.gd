@@ -1,8 +1,8 @@
 extends Node2D
 class_name CastBarWidget
 
-@onready var icon: TextureRect = $Icon
-@onready var progress: ProgressBar = $Progress
+@onready var icon: TextureRect = $HBoxContainer/Icon
+@onready var progress: ProgressBar = $HBoxContainer/Progress
 
 var _default_profile: Dictionary = {}
 

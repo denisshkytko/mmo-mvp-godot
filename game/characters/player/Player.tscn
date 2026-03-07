@@ -4,25 +4,25 @@
 [ext_resource type="Script" uid="uid://chlq040cx6wia" path="res://game/characters/player/components/player_stats.gd" id="2_dcag1"]
 [ext_resource type="Script" uid="uid://4ojiq7pms004" path="res://game/characters/player/components/player_buffs.gd" id="3_w0lke"]
 [ext_resource type="Script" uid="uid://c6a1aiarg3hly" path="res://game/characters/player/components/player_combat.gd" id="4_cmlqd"]
-[ext_resource type="Script" uid="uid://dnw5nu3ldvcap" path="res://game/characters/player/components/player_ability_caster.gd" id="5_rp046"]
+[ext_resource type="Script" uid="uid://c3m8rf5j07h12" path="res://game/characters/player/components/player_ability_caster.gd" id="5_rp046"]
 [ext_resource type="Script" uid="uid://ytmhmr63eges" path="res://game/characters/player/components/player_inventory_component.gd" id="6_bvo31"]
-[ext_resource type="Script" uid="uid://dkfplh5q5mr6t" path="res://game/characters/player/components/player_equipment_component.gd" id="7_21vdf"]
-[ext_resource type="Script" uid="uid://cgncjs4h0h1j" path="res://game/characters/player/components/player_spellbook.gd" id="8_6r5p8"]
-[ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="8_3yo6h"]
+[ext_resource type="Script" uid="uid://dybspdqh8jt0o" path="res://game/characters/player/components/player_equipment_component.gd" id="7_21vdf"]
+[ext_resource type="Script" uid="uid://c065k2w8n6k7t" path="res://game/characters/shared/resource_component.gd" id="8_3yo6h"]
+[ext_resource type="Script" uid="uid://y1kan6uweu6e" path="res://game/characters/player/components/player_spellbook.gd" id="8_6r5p8"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="9_uox5w"]
-[ext_resource type="Script" uid="uid://cmfp07uiqwjw0" path="res://game/characters/player/interaction_detector.gd" id="10_8sru1"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="11_castbar"]
+[ext_resource type="Script" uid="uid://phafr73d80jj" path="res://game/characters/player/interaction_detector.gd" id="10_8sru1"]
+[ext_resource type="PackedScene" uid="uid://bqrjc01gju82q" path="res://game/characters/shared/CastBarWidget.tscn" id="11_castbar"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_world"]
 radius = 20.0
 height = 200.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_1f6e5"]
-radius = 80.0
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_target_hitbox"]
 radius = 90.0
 height = 250.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1f6e5"]
+radius = 80.0
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
@@ -45,10 +45,10 @@ position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 
 [node name="BodyHitboxArea" type="Area2D" parent="."]
-monitoring = false
-monitorable = false
 collision_layer = 0
 collision_mask = 0
+monitoring = false
+monitorable = false
 
 [node name="BodyHitbox" type="CollisionShape2D" parent="BodyHitboxArea"]
 shape = SubResource("CapsuleShape2D_target_hitbox")
