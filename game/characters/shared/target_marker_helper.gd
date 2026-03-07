@@ -14,11 +14,26 @@ static func set_marker_visible(marker: CanvasItem, owner: Node) -> void:
 		marker.visible = false
 		return
 
-	var gm: Node = Engine.get_main_loop().root.get_node_or_null("Game/GameManager")
+	var tree := owner.get_tree()
+	if tree == null:
+		marker.visible = false
+		return
+
+	var gm: Node = NodeCache.get_game_manager(tree)
+	if gm == null:
+		# Fallback for non-standard scene trees.
+		gm = tree.root.get_node_or_null("Game/GameManager")
 	if gm == null or not gm.has_method("get_target"):
 		marker.visible = false
 		return
 
 	var target_v: Variant = gm.call("get_target")
-	var is_player_target: bool = target_v is Node and is_instance_valid(target_v) and (target_v as Node) == owner
-	marker.visible = is_player_target
+	if not (target_v is Node):
+		marker.visible = false
+		return
+	var target := target_v as Node
+	if not is_instance_valid(target):
+		marker.visible = false
+		return
+
+	marker.visible = target == owner
