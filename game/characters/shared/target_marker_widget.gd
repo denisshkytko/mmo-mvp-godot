@@ -1,45 +1,48 @@
 extends Node2D
 class_name TargetMarkerWidget
 
-@export var marker_size: Vector2 = Vector2(44.0, 10.0):
+const ELLIPSE_SEGMENTS := 64
+
+@export_range(1.0, 512.0, 0.5) var radius_x: float = 22.0:
 	set(v):
-		marker_size = Vector2(max(2.0, v.x), max(2.0, v.y))
+		radius_x = max(1.0, v)
 		queue_redraw()
+
+@export_range(1.0, 512.0, 0.5) var radius_y: float = 5.0:
+	set(v):
+		radius_y = max(1.0, v)
+		queue_redraw()
+
+@export_range(-512.0, 512.0, 0.5) var y_offset: float = 0.0:
+	set(v):
+		y_offset = v
+		queue_redraw()
+
 @export var marker_color: Color = Color(1.0, 0.0, 0.0, 0.54):
 	set(v):
 		marker_color = v
 		queue_redraw()
-@export var filled: bool = true:
-	set(v):
-		filled = v
-		queue_redraw()
-@export_range(1.0, 12.0, 0.5) var line_width: float = 2.0:
-	set(v):
-		line_width = max(1.0, v)
-		queue_redraw()
-@export var antialiased: bool = true:
-	set(v):
-		antialiased = v
-		queue_redraw()
 
 func _draw() -> void:
-	var radius := marker_size * 0.5
-	if filled:
-		draw_ellipse(Vector2.ZERO, radius, marker_color)
-	else:
-		var points: PackedVector2Array = []
-		var segments := 64
-		for i in range(segments + 1):
-			var t := float(i) / float(segments)
-			var a := t * TAU
-			points.append(Vector2(cos(a) * radius.x, sin(a) * radius.y))
-		draw_polyline(points, marker_color, line_width, antialiased)
+	var points := _build_ellipse_points()
+	if points.size() >= 3:
+		draw_colored_polygon(points, marker_color)
+
+func _build_ellipse_points() -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for i in range(ELLIPSE_SEGMENTS):
+		var t := float(i) / float(ELLIPSE_SEGMENTS)
+		var angle := t * TAU
+		points.append(Vector2(cos(angle) * radius_x, sin(angle) * radius_y + y_offset))
+	return points
 
 func get_visual_size() -> Vector2:
-	return marker_size
+	return Vector2(radius_x * 2.0, radius_y * 2.0)
 
 func set_marker_color(color: Color) -> void:
 	marker_color = color
 
 func set_marker_size(size: Vector2) -> void:
-	marker_size = size
+	radius_x = max(1.0, size.x * 0.5)
+	radius_y = max(1.0, size.y * 0.5)
+	queue_redraw()

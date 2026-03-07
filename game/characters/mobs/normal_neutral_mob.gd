@@ -191,11 +191,7 @@ func _ready() -> void:
 		c_stats.update_hp_bar(hp_bar)
 
 func _process(_delta: float) -> void:
-	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
-	var is_aggro_on_player: bool = false
-	if is_aggressive and aggressor != null and is_instance_valid(aggressor):
-		is_aggro_on_player = aggressor.is_in_group("player")
-	TargetMarkerHelper.set_marker_visible(target_marker, is_aggro_on_player)
+	TargetMarkerHelper.set_marker_visible(target_marker, self)
 	if OS.is_debug_build():
 		queue_redraw()
 
