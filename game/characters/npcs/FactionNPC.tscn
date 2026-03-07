@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dpwtpikwhfl2f"]
+[gd_scene load_steps=11 format=3 uid="uid://dpwtpikwhfl2f"]
 
 [ext_resource type="Script" uid="uid://bqkvq7otwihom" path="res://game/characters/npcs/faction_npc.gd" id="1_h35rw"]
 [ext_resource type="Script" uid="uid://cpjigvttt30kj" path="res://game/characters/npcs/faction_npc_ai.gd" id="2_vdddp"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_w36hx"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_lgduo"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="7_castbar"]
+[ext_resource type="PackedScene" path="res://game/characters/shared/HealthBarWidget.tscn" id="8_hpbar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]
 size = Vector2(24, 24)
@@ -39,18 +40,9 @@ shape = SubResource("RectangleShape2D_k85i5")
 
 [node name="UI" type="Node2D" parent="."]
 
-[node name="HpBack" type="ColorRect" parent="UI"]
-offset_left = -18.0
-offset_top = -30.0
-offset_right = 18.0
-offset_bottom = -24.0
-color = Color(0, 0, 0, 0.88235295)
+[node name="HealthBar" parent="UI" instance=ExtResource("8_hpbar")]
 
-[node name="HpFill" type="ColorRect" parent="UI"]
-offset_left = -18.0
-offset_top = -30.0
-offset_right = 18.0
-offset_bottom = -24.0
+[node name="HpFill" parent="UI/HealthBar"]
 color = Color(0.38720772, 0.18201989, 0.97702104, 1)
 
 [node name="BodyHitboxArea" type="Area2D" parent="."]

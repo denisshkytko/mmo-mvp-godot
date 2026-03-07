@@ -11,7 +11,7 @@ const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 signal died(corpse: Corpse)
 
-@onready var hp_fill: ColorRect = $"UI/HpFill"
+@onready var hp_bar: HealthBarWidget = $"UI/HealthBar" as HealthBarWidget
 @onready var target_marker: CanvasItem = $TargetMarker
 @onready var cast_bar: CastBarWidget = $CastBar
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
@@ -172,7 +172,7 @@ func _ready() -> void:
 		_apply_to_components()
 		_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 		c_stats.recalculate_for_level(mob_level)
-		c_stats.update_hp_bar(hp_fill)
+		c_stats.update_hp_bar(hp_bar)
 
 func _process(_delta: float) -> void:
 	# TargetMarker показывает тех, кто сейчас агрессирует на игрока.
@@ -258,7 +258,7 @@ func _physics_process(delta: float) -> void:
 	# реген идёт только когда regen_active=true, и прекращается только когда HP=100%
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
 		c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
-		c_stats.update_hp_bar(hp_fill)
+		c_stats.update_hp_bar(hp_bar)
 		if c_stats.current_hp >= c_stats.max_hp:
 			regen_active = false
 
@@ -358,7 +358,7 @@ func apply_spawn_init(
 	_apply_to_components()
 	c_stats.recalculate_for_level(mob_level)
 	c_stats.current_hp = c_stats.max_hp
-	c_stats.update_hp_bar(hp_fill)
+	c_stats.update_hp_bar(hp_bar)
 	_spawn_initialized = true
 
 	is_aggressive = false
@@ -485,7 +485,7 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 	var died_now: bool = c_stats.current_hp <= 0
 	if final > 0 and attacker != null and is_instance_valid(attacker) and c_stats != null and c_stats.has_method("try_apply_attacker_slow_from_stance"):
 		c_stats.call("try_apply_attacker_slow_from_stance", attacker, dmg_type)
-	c_stats.update_hp_bar(hp_fill)
+	c_stats.update_hp_bar(hp_bar)
 	if c_resource != null:
 		c_resource.on_damage_taken()
 

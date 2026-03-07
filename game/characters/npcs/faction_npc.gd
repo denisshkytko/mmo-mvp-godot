@@ -13,8 +13,7 @@ const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerM
 signal died(corpse: Corpse)
 
 @onready var faction_rect: ColorRect = $"ColorRect"
-@onready var hp_back: ColorRect = $"UI/HpBack"
-@onready var hp_fill: ColorRect = $"UI/HpFill"
+@onready var hp_bar: HealthBarWidget = $"UI/HealthBar" as HealthBarWidget
 @onready var ui_root: Node2D = $UI as Node2D
 @onready var target_marker: CanvasItem = $TargetMarker
 @onready var cast_bar: CastBarWidget = $CastBar
@@ -24,11 +23,6 @@ signal died(corpse: Corpse)
 
 const DEFAULT_HP_UI_OFFSET: Vector2 = Vector2.ZERO
 const DEFAULT_CAST_BAR_OFFSET: Vector2 = Vector2(0.0, -42.0)
-
-var _default_hp_back_size: Vector2 = Vector2(36.0, 6.0)
-var _default_hp_fill_size: Vector2 = Vector2(36.0, 6.0)
-var _default_hp_back_color: Color = Color(0.0, 0.0, 0.0, 0.88)
-var _default_hp_fill_color: Color = Color(0.38720772, 0.18201989, 0.97702104, 1.0)
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -165,12 +159,6 @@ var _threat_recheck_timer: float = 0.0
 func _ready() -> void:
 	add_to_group("faction_units")
 	add_to_group("y_sort_entities")
-	if hp_back != null:
-		_default_hp_back_size = _rect_size(hp_back)
-		_default_hp_back_color = hp_back.color
-	if hp_fill != null:
-		_default_hp_fill_size = _rect_size(hp_fill)
-		_default_hp_fill_color = hp_fill.color
 	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	mage_base_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
@@ -793,44 +781,12 @@ func _restore_default_overlay_mount() -> void:
 			cast_bar.call("restore_default_visual_profile")
 
 func _apply_hp_overlay_defaults() -> void:
-	if hp_back != null:
-		hp_back.color = _default_hp_back_color
-		_set_rect_size_keep_center(hp_back, _default_hp_back_size)
-	if hp_fill != null:
-		hp_fill.color = _default_hp_fill_color
-		_set_rect_size_keep_center(hp_fill, _default_hp_fill_size)
+	if hp_bar != null and hp_bar.has_method("restore_default_visual_profile"):
+		hp_bar.call("restore_default_visual_profile")
 
 func _apply_hp_overlay_style(hp_profile: Dictionary) -> void:
-	if hp_profile.is_empty():
-		_apply_hp_overlay_defaults()
-		return
-	if hp_back != null:
-		var hp_back_size_v: Variant = hp_profile.get("size", _default_hp_back_size)
-		if hp_back_size_v is Vector2:
-			_set_rect_size_keep_center(hp_back, hp_back_size_v as Vector2)
-		var hp_back_color_v: Variant = hp_profile.get("back_color", _default_hp_back_color)
-		if hp_back_color_v is Color:
-			hp_back.color = hp_back_color_v as Color
-	if hp_fill != null:
-		var hp_fill_size_v: Variant = hp_profile.get("size", _default_hp_fill_size)
-		if hp_fill_size_v is Vector2:
-			_set_rect_size_keep_center(hp_fill, hp_fill_size_v as Vector2)
-		var hp_fill_color_v: Variant = hp_profile.get("fill_color", _default_hp_fill_color)
-		if hp_fill_color_v is Color:
-			hp_fill.color = hp_fill_color_v as Color
-
-func _set_rect_size_keep_center(rect: ColorRect, size: Vector2) -> void:
-	var w: float = max(1.0, size.x)
-	var h: float = max(1.0, size.y)
-	var cx: float = (rect.offset_left + rect.offset_right) * 0.5
-	var cy: float = (rect.offset_top + rect.offset_bottom) * 0.5
-	rect.offset_left = cx - (w * 0.5)
-	rect.offset_right = cx + (w * 0.5)
-	rect.offset_top = cy - (h * 0.5)
-	rect.offset_bottom = cy + (h * 0.5)
-
-func _rect_size(rect: ColorRect) -> Vector2:
-	return Vector2(rect.offset_right - rect.offset_left, rect.offset_bottom - rect.offset_top)
+	if hp_bar != null and hp_bar.has_method("apply_visual_profile"):
+		hp_bar.call("apply_visual_profile", hp_profile)
 
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
@@ -839,19 +795,12 @@ func _update_visual_render_order() -> void:
 	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
 func _update_hp() -> void:
-	if hp_fill == null:
+	if hp_bar == null:
 		return
 	if c_stats.max_hp <= 0:
 		return
 	var r: float = clamp(float(c_stats.current_hp) / float(c_stats.max_hp), 0.0, 1.0)
-	if hp_back != null:
-		hp_fill.offset_left = hp_back.offset_left
-		hp_fill.offset_top = hp_back.offset_top
-		hp_fill.offset_bottom = hp_back.offset_bottom
-		var full_w: float = hp_back.offset_right - hp_back.offset_left
-		hp_fill.offset_right = hp_fill.offset_left + (full_w * r)
-	else:
-		hp_fill.size.x = max(1.0, hp_fill.size.x) * r
+	hp_bar.set_progress01(r)
 
 func _setup_resource_from_class(class_id_value: String) -> void:
 	if c_resource == null:
