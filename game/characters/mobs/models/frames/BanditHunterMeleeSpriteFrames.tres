@@ -89,8 +89,7 @@
 [ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_011.png" id="87_tex"]
 
 [resource]
-animations = [
-{
+animations = [{
 "frames": [
 {"duration": 1.0, "texture": ExtResource("1_tex")},
 {"duration": 1.0, "texture": ExtResource("2_tex")},
@@ -111,8 +110,8 @@ animations = [
 "loop": true,
 "name": &"Dying",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("16_tex")},
 {"duration": 1.0, "texture": ExtResource("17_tex")},
@@ -130,8 +129,8 @@ animations = [
 "loop": true,
 "name": &"Hurt",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("28_tex")},
 {"duration": 1.0, "texture": ExtResource("29_tex")},
@@ -149,8 +148,8 @@ animations = [
 "loop": true,
 "name": &"Running",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("40_tex")},
 {"duration": 1.0, "texture": ExtResource("41_tex")},
@@ -180,8 +179,8 @@ animations = [
 "loop": true,
 "name": &"Walking",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("64_tex")},
 {"duration": 1.0, "texture": ExtResource("65_tex")},
@@ -199,8 +198,8 @@ animations = [
 "loop": true,
 "name": &"Run Throwing",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("76_tex")},
 {"duration": 1.0, "texture": ExtResource("77_tex")},
@@ -219,8 +218,7 @@ animations = [
 "name": &"Throwing",
 "speed": 12.0
 }
-,
-{
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("64_tex")},
 {"duration": 1.0, "texture": ExtResource("65_tex")},
@@ -239,8 +237,7 @@ animations = [
 "name": &"Run Slashing",
 "speed": 12.0
 }
-,
-{
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("76_tex")},
 {"duration": 1.0, "texture": ExtResource("77_tex")},
@@ -259,5 +256,41 @@ animations = [
 "name": &"Slashing",
 "speed": 12.0
 }
-
-]
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("28_tex")},
+{"duration": 1.0, "texture": ExtResource("29_tex")},
+{"duration": 1.0, "texture": ExtResource("30_tex")},
+{"duration": 1.0, "texture": ExtResource("31_tex")},
+{"duration": 1.0, "texture": ExtResource("32_tex")},
+{"duration": 1.0, "texture": ExtResource("33_tex")},
+{"duration": 1.0, "texture": ExtResource("34_tex")},
+{"duration": 1.0, "texture": ExtResource("35_tex")},
+{"duration": 1.0, "texture": ExtResource("36_tex")},
+{"duration": 1.0, "texture": ExtResource("37_tex")},
+{"duration": 1.0, "texture": ExtResource("38_tex")},
+{"duration": 1.0, "texture": ExtResource("39_tex")}
+],
+"loop": true,
+"name": &"Idle Blinking",
+"speed": 12.0
+}
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("16_tex")},
+{"duration": 1.0, "texture": ExtResource("17_tex")},
+{"duration": 1.0, "texture": ExtResource("18_tex")},
+{"duration": 1.0, "texture": ExtResource("19_tex")},
+{"duration": 1.0, "texture": ExtResource("20_tex")},
+{"duration": 1.0, "texture": ExtResource("21_tex")},
+{"duration": 1.0, "texture": ExtResource("22_tex")},
+{"duration": 1.0, "texture": ExtResource("23_tex")},
+{"duration": 1.0, "texture": ExtResource("24_tex")},
+{"duration": 1.0, "texture": ExtResource("25_tex")},
+{"duration": 1.0, "texture": ExtResource("26_tex")},
+{"duration": 1.0, "texture": ExtResource("27_tex")}
+],
+"loop": true,
+"name": &"Kicking",
+"speed": 12.0
+}]

@@ -107,8 +107,7 @@
 [ext_resource type="Texture2D" path="res://assets/mobs/Golems/Ice Golem/PNG Sequences/Walking/0_Golem_Walking_023.png" id="105_tex"]
 
 [resource]
-animations = [
-{
+animations = [{
 "frames": [
 {"duration": 1.0, "texture": ExtResource("1_tex")},
 {"duration": 1.0, "texture": ExtResource("2_tex")},
@@ -129,8 +128,8 @@ animations = [
 "loop": true,
 "name": &"Dying",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("16_tex")},
 {"duration": 1.0, "texture": ExtResource("17_tex")},
@@ -148,8 +147,8 @@ animations = [
 "loop": true,
 "name": &"Hurt",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("28_tex")},
 {"duration": 1.0, "texture": ExtResource("29_tex")},
@@ -173,8 +172,8 @@ animations = [
 "loop": true,
 "name": &"Idle Blinking",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("46_tex")},
 {"duration": 1.0, "texture": ExtResource("47_tex")},
@@ -192,8 +191,8 @@ animations = [
 "loop": true,
 "name": &"Run Throwing",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("58_tex")},
 {"duration": 1.0, "texture": ExtResource("59_tex")},
@@ -211,8 +210,8 @@ animations = [
 "loop": true,
 "name": &"Throwing",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("70_tex")},
 {"duration": 1.0, "texture": ExtResource("71_tex")},
@@ -230,8 +229,8 @@ animations = [
 "loop": true,
 "name": &"Running",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("82_tex")},
 {"duration": 1.0, "texture": ExtResource("83_tex")},
@@ -262,4 +261,60 @@ animations = [
 "name": &"Walking",
 "speed": 12.0
 }
-]
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("16_tex")},
+{"duration": 1.0, "texture": ExtResource("17_tex")},
+{"duration": 1.0, "texture": ExtResource("18_tex")},
+{"duration": 1.0, "texture": ExtResource("19_tex")},
+{"duration": 1.0, "texture": ExtResource("20_tex")},
+{"duration": 1.0, "texture": ExtResource("21_tex")},
+{"duration": 1.0, "texture": ExtResource("22_tex")},
+{"duration": 1.0, "texture": ExtResource("23_tex")},
+{"duration": 1.0, "texture": ExtResource("24_tex")},
+{"duration": 1.0, "texture": ExtResource("25_tex")},
+{"duration": 1.0, "texture": ExtResource("26_tex")},
+{"duration": 1.0, "texture": ExtResource("27_tex")}
+],
+"loop": true,
+"name": &"Kicking",
+"speed": 12.0
+}
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("46_tex")},
+{"duration": 1.0, "texture": ExtResource("47_tex")},
+{"duration": 1.0, "texture": ExtResource("48_tex")},
+{"duration": 1.0, "texture": ExtResource("49_tex")},
+{"duration": 1.0, "texture": ExtResource("50_tex")},
+{"duration": 1.0, "texture": ExtResource("51_tex")},
+{"duration": 1.0, "texture": ExtResource("52_tex")},
+{"duration": 1.0, "texture": ExtResource("53_tex")},
+{"duration": 1.0, "texture": ExtResource("54_tex")},
+{"duration": 1.0, "texture": ExtResource("55_tex")},
+{"duration": 1.0, "texture": ExtResource("56_tex")},
+{"duration": 1.0, "texture": ExtResource("57_tex")}
+],
+"loop": true,
+"name": &"Run Slashing",
+"speed": 12.0
+}
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("58_tex")},
+{"duration": 1.0, "texture": ExtResource("59_tex")},
+{"duration": 1.0, "texture": ExtResource("60_tex")},
+{"duration": 1.0, "texture": ExtResource("61_tex")},
+{"duration": 1.0, "texture": ExtResource("62_tex")},
+{"duration": 1.0, "texture": ExtResource("63_tex")},
+{"duration": 1.0, "texture": ExtResource("64_tex")},
+{"duration": 1.0, "texture": ExtResource("65_tex")},
+{"duration": 1.0, "texture": ExtResource("66_tex")},
+{"duration": 1.0, "texture": ExtResource("67_tex")},
+{"duration": 1.0, "texture": ExtResource("68_tex")},
+{"duration": 1.0, "texture": ExtResource("69_tex")}
+],
+"loop": true,
+"name": &"Slashing",
+"speed": 12.0
+}]

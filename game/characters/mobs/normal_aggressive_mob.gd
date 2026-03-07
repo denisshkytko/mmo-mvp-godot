@@ -19,14 +19,19 @@ const MODEL_SCENE_PATHS := {
 		"hunter_1": "res://game/characters/mobs/models/CinderbornHunter1Model.tscn",
 		"hunter_2": "res://game/characters/mobs/models/CinderbornHunter2Model.tscn",
 	},
-	"bandits": {
-		"warrior": "res://game/characters/mobs/models/BanditWarriorModel.tscn",
-		"mage": "res://game/characters/mobs/models/BanditMageModel.tscn",
-		"priest": "res://game/characters/mobs/models/BanditPriestModel.tscn",
-		"hunter_melee": "res://game/characters/mobs/models/BanditHunterMeleeModel.tscn",
-		"hunter_ranged": "res://game/characters/mobs/models/BanditHunterRangedModel.tscn",
-	},
-}
+		"bandits": {
+			"warrior": "res://game/characters/mobs/models/BanditWarriorModel.tscn",
+			"warrior_re": "res://game/characters/mobs/models/BanditWarriorRareEliteModel.tscn",
+			"mage": "res://game/characters/mobs/models/BanditMageModel.tscn",
+			"mage_re": "res://game/characters/mobs/models/BanditMageRareEliteModel.tscn",
+			"priest": "res://game/characters/mobs/models/BanditPriestModel.tscn",
+			"priest_re": "res://game/characters/mobs/models/BanditPriestRareEliteModel.tscn",
+			"hunter_melee": "res://game/characters/mobs/models/BanditHunterMeleeModel.tscn",
+			"hunter_melee_re": "res://game/characters/mobs/models/BanditHunterMeleeRareEliteModel.tscn",
+			"hunter_ranged": "res://game/characters/mobs/models/BanditHunterRangedModel.tscn",
+			"hunter_ranged_re": "res://game/characters/mobs/models/BanditHunterRangedRareEliteModel.tscn",
+		},
+	}
 
 signal died(corpse: Corpse)
 

@@ -1,23 +1,22 @@
+@tool
 extends Node2D
 class_name CharacterSpriteModel
 
 signal death_pose_ready(snapshot: Dictionary)
 
 @export var animation_fps: float = 24.0
-@export var idle_animation: String = "Idle Blinking"
-@export var walk_animation: String = "Walking"
-@export var run_animation: String = "Running"
-@export var hurt_animation: String = "Hurt"
-@export var death_animation: String = "Dying"
-@export var melee_stand_animation: String = "Slashing"
-@export var melee_run_animation: String = "Run Slashing"
-@export var unarmed_stand_animation: String = "Throwing"
-@export var unarmed_run_animation: String = "Run Throwing"
-@export var ranged_stand_animation: String = "Throwing"
-@export var ranged_run_animation: String = "Run Throwing"
-@export var hunter_ranged_stand_animation: String = "Shooting"
-@export var hunter_ranged_run_animation: String = "Run Shooting"
-@export var warrior_stun_ability_animation: String = "Kicking"
+@export var idle_animation: String = "none"
+@export var walk_animation: String = "none"
+@export var run_animation: String = "none"
+@export var hurt_animation: String = "none"
+@export var death_animation: String = "none"
+@export var melee_stand_animation: String = "none"
+@export var melee_run_animation: String = "none"
+@export var unarmed_stand_animation: String = "none"
+@export var unarmed_run_animation: String = "none"
+@export var ranged_stand_animation: String = "none"
+@export var ranged_run_animation: String = "none"
+@export var warrior_stun_ability_animation: String = "none"
 @export var hp_bar_offset: Vector2 = Vector2(0.0, -30.0)
 @export var cast_bar_offset: Vector2 = Vector2(0.0, -42.0)
 @export var hp_bar_size: Vector2 = Vector2(36.0, 6.0)
@@ -46,6 +45,43 @@ var _death_pose_emitted: bool = false
 @export var idle_liveliness_delay_min_sec: float = 5.0
 @export var idle_liveliness_delay_max_sec: float = 7.0
 var _idle_liveliness_timer_sec: float = 5.0
+
+const ANIMATION_SELECT_PROPERTIES := [
+	"idle_animation",
+	"walk_animation",
+	"run_animation",
+	"hurt_animation",
+	"death_animation",
+	"melee_stand_animation",
+	"melee_run_animation",
+	"unarmed_stand_animation",
+	"unarmed_run_animation",
+	"ranged_stand_animation",
+	"ranged_run_animation",
+	"warrior_stun_ability_animation",
+]
+
+func _validate_property(property: Dictionary) -> void:
+	var property_name := String(property.get("name", ""))
+	if not ANIMATION_SELECT_PROPERTIES.has(property_name):
+		return
+	property["hint"] = PROPERTY_HINT_ENUM
+	property["hint_string"] = _build_animation_hint_string()
+
+func _build_animation_hint_string() -> String:
+	var options: Array[String] = ["none:None"]
+	var sprite: AnimatedSprite2D = animated_sprite
+	if sprite == null:
+		sprite = get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if sprite != null and sprite.sprite_frames != null:
+		for anim_name in sprite.sprite_frames.get_animation_names():
+			var clean_name := String(anim_name).strip_edges()
+			if clean_name == "" or clean_name == "none":
+				continue
+			if options.has(clean_name):
+				continue
+			options.append(clean_name)
+	return ",".join(options)
 
 func _ready() -> void:
 	_apply_animation_speed_to_all()
@@ -314,8 +350,6 @@ func build_corpse_pose_snapshot() -> Dictionary:
 func _resolve_combat_animation(action_kind: String, is_moving_now: bool, class_id: String) -> String:
 	match action_kind:
 		"ranged":
-			if class_id == "hunter":
-				return hunter_ranged_run_animation if is_moving_now else hunter_ranged_stand_animation
 			return ranged_run_animation if is_moving_now else ranged_stand_animation
 		"melee", "melee_weapon":
 			return melee_run_animation if is_moving_now else melee_stand_animation

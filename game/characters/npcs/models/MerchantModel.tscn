@@ -19,9 +19,6 @@ radius = 220.0
 [node name="MerchantModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
-idle_animation = "Idle Blinking"
-walk_animation = "Running"
-run_animation = "Running"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 

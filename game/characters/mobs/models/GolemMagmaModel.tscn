@@ -19,7 +19,6 @@ radius = 300.0
 [node name="GolemMagmaModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
-idle_animation = "Idle Blinking"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 

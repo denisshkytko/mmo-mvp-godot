@@ -50,6 +50,7 @@ var retaliation_active: bool = false
 var npc_level: int = 1
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
+var attack_mode: int = AttackMode.MELEE
 var abilities: Array[String] = []
 var spell_preset_name_key: String = ""
 var c_spell_caster: MobSpellCaster = MobSpellCaster.new()
@@ -309,6 +310,7 @@ func apply_spawn_init(
 				civilian_magic_resist_per_level
 			)
 			c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
+			attack_mode = AttackMode.MELEE
 			c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
@@ -340,6 +342,7 @@ func apply_spawn_init(
 					mage_magic_resist_per_level
 				)
 				c_combat.attack_mode = FactionNPCCombat.AttackMode.RANGED
+				attack_mode = AttackMode.RANGED
 				c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 				c_combat.ranged_cooldown = base_ranged
 
@@ -357,6 +360,7 @@ func apply_spawn_init(
 					fighter_magic_resist_per_level
 				)
 				c_combat.attack_mode = FactionNPCCombat.AttackMode.MELEE
+				attack_mode = AttackMode.MELEE
 				c_combat.melee_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 				c_combat.melee_cooldown = base_melee
 
@@ -656,7 +660,7 @@ func play_model_combat_action(action_kind: String, is_moving_now: bool = false) 
 	if _character_model == null or not is_instance_valid(_character_model):
 		return
 	if _character_model.has_method("play_combat_action"):
-		_character_model.call("play_combat_action", action_kind, is_moving_now, "")
+		_character_model.call("play_combat_action", action_kind, is_moving_now, c_stats.class_id if c_stats != null else "")
 
 func _update_model_motion(dir: Vector2) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):

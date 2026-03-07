@@ -166,7 +166,8 @@ animations = [{
 "loop": true,
 "name": &"Dying",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("22_tex")
@@ -207,7 +208,8 @@ animations = [{
 "loop": true,
 "name": &"Hurt",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("52_tex")
@@ -266,7 +268,8 @@ animations = [{
 "loop": true,
 "name": &"Idle Blinking",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("82_tex")
@@ -307,7 +310,8 @@ animations = [{
 "loop": true,
 "name": &"Kicking",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("94_tex")
@@ -348,7 +352,8 @@ animations = [{
 "loop": true,
 "name": &"Run Shooting",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("106_tex")
@@ -389,7 +394,8 @@ animations = [{
 "loop": true,
 "name": &"Run Throwing",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("118_tex")
@@ -430,7 +436,8 @@ animations = [{
 "loop": true,
 "name": &"Running",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("130_tex")
@@ -462,7 +469,8 @@ animations = [{
 "loop": true,
 "name": &"Shooting",
 "speed": 12.0
-}, {
+}
+, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("154_tex")
@@ -502,5 +510,47 @@ animations = [{
 }],
 "loop": true,
 "name": &"Throwing",
+"speed": 12.0
+}
+, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("118_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("119_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("120_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("121_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("122_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("123_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("124_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("125_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("126_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("127_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("128_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("129_tex")
+}],
+"loop": true,
+"name": &"Walking",
 "speed": 12.0
 }]

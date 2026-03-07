@@ -107,8 +107,7 @@
 [ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Priest 2/PNG Sequences/Throwing/0_Reaper_Man_Throwing_011.png" id="105_tex"]
 
 [resource]
-animations = [
-{
+animations = [{
 "frames": [
 {"duration": 1.0, "texture": ExtResource("1_tex")},
 {"duration": 1.0, "texture": ExtResource("2_tex")},
@@ -129,8 +128,8 @@ animations = [
 "loop": true,
 "name": &"Dying",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("16_tex")},
 {"duration": 1.0, "texture": ExtResource("17_tex")},
@@ -148,8 +147,8 @@ animations = [
 "loop": true,
 "name": &"Hurt",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("28_tex")},
 {"duration": 1.0, "texture": ExtResource("29_tex")},
@@ -173,8 +172,8 @@ animations = [
 "loop": true,
 "name": &"Idle Blinking",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("46_tex")},
 {"duration": 1.0, "texture": ExtResource("47_tex")},
@@ -192,8 +191,8 @@ animations = [
 "loop": true,
 "name": &"Running",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("58_tex")},
 {"duration": 1.0, "texture": ExtResource("59_tex")},
@@ -223,8 +222,8 @@ animations = [
 "loop": true,
 "name": &"Walking",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("82_tex")},
 {"duration": 1.0, "texture": ExtResource("83_tex")},
@@ -242,8 +241,8 @@ animations = [
 "loop": true,
 "name": &"Run Throwing",
 "speed": 12.0
-},
-{
+}
+, {
 "frames": [
 {"duration": 1.0, "texture": ExtResource("94_tex")},
 {"duration": 1.0, "texture": ExtResource("95_tex")},
@@ -262,4 +261,60 @@ animations = [
 "name": &"Throwing",
 "speed": 12.0
 }
-]
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("16_tex")},
+{"duration": 1.0, "texture": ExtResource("17_tex")},
+{"duration": 1.0, "texture": ExtResource("18_tex")},
+{"duration": 1.0, "texture": ExtResource("19_tex")},
+{"duration": 1.0, "texture": ExtResource("20_tex")},
+{"duration": 1.0, "texture": ExtResource("21_tex")},
+{"duration": 1.0, "texture": ExtResource("22_tex")},
+{"duration": 1.0, "texture": ExtResource("23_tex")},
+{"duration": 1.0, "texture": ExtResource("24_tex")},
+{"duration": 1.0, "texture": ExtResource("25_tex")},
+{"duration": 1.0, "texture": ExtResource("26_tex")},
+{"duration": 1.0, "texture": ExtResource("27_tex")}
+],
+"loop": true,
+"name": &"Kicking",
+"speed": 12.0
+}
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("82_tex")},
+{"duration": 1.0, "texture": ExtResource("83_tex")},
+{"duration": 1.0, "texture": ExtResource("84_tex")},
+{"duration": 1.0, "texture": ExtResource("85_tex")},
+{"duration": 1.0, "texture": ExtResource("86_tex")},
+{"duration": 1.0, "texture": ExtResource("87_tex")},
+{"duration": 1.0, "texture": ExtResource("88_tex")},
+{"duration": 1.0, "texture": ExtResource("89_tex")},
+{"duration": 1.0, "texture": ExtResource("90_tex")},
+{"duration": 1.0, "texture": ExtResource("91_tex")},
+{"duration": 1.0, "texture": ExtResource("92_tex")},
+{"duration": 1.0, "texture": ExtResource("93_tex")}
+],
+"loop": true,
+"name": &"Run Slashing",
+"speed": 12.0
+}
+, {
+"frames": [
+{"duration": 1.0, "texture": ExtResource("94_tex")},
+{"duration": 1.0, "texture": ExtResource("95_tex")},
+{"duration": 1.0, "texture": ExtResource("96_tex")},
+{"duration": 1.0, "texture": ExtResource("97_tex")},
+{"duration": 1.0, "texture": ExtResource("98_tex")},
+{"duration": 1.0, "texture": ExtResource("99_tex")},
+{"duration": 1.0, "texture": ExtResource("100_tex")},
+{"duration": 1.0, "texture": ExtResource("101_tex")},
+{"duration": 1.0, "texture": ExtResource("102_tex")},
+{"duration": 1.0, "texture": ExtResource("103_tex")},
+{"duration": 1.0, "texture": ExtResource("104_tex")},
+{"duration": 1.0, "texture": ExtResource("105_tex")}
+],
+"loop": true,
+"name": &"Slashing",
+"speed": 12.0
+}]

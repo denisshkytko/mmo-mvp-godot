@@ -19,15 +19,6 @@ radius = 300.0
 [node name="BanditHunterMeleeModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
-walk_animation = "Walking"
-run_animation = "Running"
-idle_animation = "Walking"
-melee_stand_animation = "Slashing"
-melee_run_animation = "Run Slashing"
-ranged_stand_animation = "Slashing"
-ranged_run_animation = "Run Slashing"
-hunter_ranged_stand_animation = "Slashing"
-hunter_ranged_run_animation = "Run Slashing"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 

@@ -16,7 +16,7 @@ height = 250.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_interaction"]
 radius = 300.0
 
-[node name="BanditWarriorModel" type="Node2D"]
+[node name="BanditWarriorRareEliteModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
 
