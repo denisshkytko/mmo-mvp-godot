@@ -696,12 +696,18 @@ func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:
 		direct_attackers.clear()
 
+func get_corpse_pose_snapshot() -> Dictionary:
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("build_corpse_pose_snapshot"):
+		var v: Variant = _character_model.call("build_corpse_pose_snapshot")
+		if v is Dictionary:
+			return v as Dictionary
+	return {}
 
 func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
 		return
 	if _character_model.has_method("play_combat_action"):
-		_character_model.call("play_combat_action", action_kind, is_moving_now, "")
+		_character_model.call("play_combat_action", action_kind, is_moving_now, c_stats.class_id if c_stats != null else "")
 
 func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
@@ -790,6 +796,7 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	if cast_node is CastBarWidget:
 		cast_bar = cast_node as CastBarWidget
 	if hp_bar != null:
+		hp_bar.set_fill_color(Color(1.0, 1.0, 0.0, 1.0))
 		c_stats.update_hp_bar(hp_bar)
 	if cast_bar != null and not c_spell_caster.is_casting():
 		cast_bar.set_cast_visible(false)

@@ -111,6 +111,12 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var profile_id := "humanoid_hostile"
 	var abilities_for_level := MobSpellPresetDB.resolve_ability_ids_for_level(spell_preset_id, class_id, level)
 	var preset_name_key := MobSpellPresetDB.get_preset_name_key(spell_preset_id)
+	var selected_model_id: String = _resolve_selected_model_id()
+	var effective_attack_choice: int = attack_range_choice
+	if selected_model_id == "hunter_melee":
+		effective_attack_choice = AttackRangeChoice.MELEE
+	elif selected_model_id == "hunter_ranged":
+		effective_attack_choice = AttackRangeChoice.RANGED
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
@@ -126,11 +132,11 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		class_id,
 		profile_id,
 		mob_variant,
-		attack_range_choice,
+		effective_attack_choice,
 		abilities_for_level,
 		preset_name_key,
 		"bandits" if _mob_group_choice_internal == 1 else "cinderborn",
-		_resolve_selected_model_id()
+		selected_model_id
 	)
 	return true
 

@@ -745,6 +745,7 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
 	if hp_node is HealthBarWidget:
 		hp_bar = hp_node as HealthBarWidget
+		hp_bar.set_fill_color(Color(0.38720772, 0.18201989, 0.97702104, 1.0))
 	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
 	if cast_node is CastBarWidget:
 		cast_bar = cast_node as CastBarWidget
