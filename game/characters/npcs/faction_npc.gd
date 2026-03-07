@@ -14,11 +14,15 @@ signal died(corpse: Corpse)
 
 @onready var faction_rect: ColorRect = $"ColorRect"
 @onready var hp_fill: ColorRect = $"UI/HpFill"
+@onready var ui_root: Node2D = $UI as Node2D
 @onready var target_marker: CanvasItem = $TargetMarker
 @onready var cast_bar: CastBarWidget = $CastBar
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = $Visual as Node2D
+
+const DEFAULT_HP_UI_OFFSET: Vector2 = Vector2.ZERO
+const DEFAULT_CAST_BAR_OFFSET: Vector2 = Vector2(0.0, -42.0)
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -670,6 +674,7 @@ func _apply_interaction_visual() -> void:
 	if scene == null:
 		if faction_rect != null:
 			faction_rect.visible = true
+		_restore_default_overlay_mount()
 		return
 	var inst := scene.instantiate()
 	if inst == null:
@@ -679,6 +684,7 @@ func _apply_interaction_visual() -> void:
 	if faction_rect != null:
 		faction_rect.visible = false
 	_apply_collision_profile_from_model(inst)
+	_apply_overlay_profile_from_model(inst)
 
 func _resolve_model_scene_for_interaction(value: int) -> PackedScene:
 	if value == InteractionType.MERCHANT:
@@ -718,6 +724,47 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var body_rot_v: Variant = profile.get("body_hitbox_rotation", body_hitbox_shape.rotation)
 		if body_rot_v is float or body_rot_v is int:
 			body_hitbox_shape.rotation = float(body_rot_v)
+
+func _apply_overlay_profile_from_model(model: Node) -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	if ui_root != null and ui_root.get_parent() != visual_root:
+		ui_root.reparent(visual_root, false)
+	if cast_bar != null and cast_bar.get_parent() != visual_root:
+		cast_bar.reparent(visual_root, false)
+
+	if model == null or not is_instance_valid(model) or not model.has_method("get_overlay_profile"):
+		if ui_root != null:
+			ui_root.position = DEFAULT_HP_UI_OFFSET
+		if cast_bar != null:
+			cast_bar.position = DEFAULT_CAST_BAR_OFFSET
+		return
+
+	var profile_v: Variant = model.call("get_overlay_profile")
+	if not (profile_v is Dictionary):
+		if ui_root != null:
+			ui_root.position = DEFAULT_HP_UI_OFFSET
+		if cast_bar != null:
+			cast_bar.position = DEFAULT_CAST_BAR_OFFSET
+		return
+
+	var profile := profile_v as Dictionary
+	if ui_root != null:
+		var hp_offset_v: Variant = profile.get("hp_bar_offset", DEFAULT_HP_UI_OFFSET)
+		ui_root.position = hp_offset_v as Vector2 if hp_offset_v is Vector2 else DEFAULT_HP_UI_OFFSET
+	if cast_bar != null:
+		var cast_offset_v: Variant = profile.get("cast_bar_offset", DEFAULT_CAST_BAR_OFFSET)
+		cast_bar.position = cast_offset_v as Vector2 if cast_offset_v is Vector2 else DEFAULT_CAST_BAR_OFFSET
+
+func _restore_default_overlay_mount() -> void:
+	if ui_root != null and ui_root.get_parent() != self:
+		ui_root.reparent(self, false)
+	if cast_bar != null and cast_bar.get_parent() != self:
+		cast_bar.reparent(self, false)
+	if ui_root != null:
+		ui_root.position = DEFAULT_HP_UI_OFFSET
+	if cast_bar != null:
+		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
 
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):

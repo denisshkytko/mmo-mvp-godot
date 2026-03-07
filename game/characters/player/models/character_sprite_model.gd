@@ -18,6 +18,8 @@ signal death_pose_ready(snapshot: Dictionary)
 @export var hunter_ranged_stand_animation: String = "Shooting"
 @export var hunter_ranged_run_animation: String = "Run Shooting"
 @export var warrior_stun_ability_animation: String = "Kicking"
+@export var hp_bar_offset: Vector2 = Vector2(0.0, -30.0)
+@export var cast_bar_offset: Vector2 = Vector2(0.0, -42.0)
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var world_collision_shape: CollisionShape2D = $CollisionProfile/WorldCollider as CollisionShape2D
@@ -155,6 +157,12 @@ func get_collision_profile() -> Dictionary:
 		"body_hitbox_offset": body_offset,
 		"body_hitbox_rotation": body_rotation,
 		"interaction_radius": interaction_radius,
+	}
+
+func get_overlay_profile() -> Dictionary:
+	return {
+		"hp_bar_offset": hp_bar_offset,
+		"cast_bar_offset": cast_bar_offset,
 	}
 
 func _duplicate_scaled_shape(shape: Shape2D, model_scale: Vector2) -> Shape2D:
