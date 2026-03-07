@@ -173,6 +173,7 @@ func _ready() -> void:
 	c_ai.aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	c_ai.leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	c_ai.speed = move_speed
+	c_ai.patrol_speed = move_speed * MOVE_SPEED.PATROL_MULTIPLIER
 	c_ai.reset_to_idle()
 
 	var cb := Callable(self, "_on_leash_return_started")
@@ -287,6 +288,7 @@ func apply_spawn_init(
 	c_ai.patrol_radius = COMBAT_RANGES.PATROL_RADIUS
 	c_ai.patrol_pause_seconds = patrol_pause_in
 	c_ai.speed = move_speed
+	c_ai.patrol_speed = move_speed * MOVE_SPEED.PATROL_MULTIPLIER
 	c_ai.home_position = home_position
 	c_ai.reset_to_idle()
 
@@ -662,6 +664,14 @@ func _update_model_motion(dir: Vector2) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
 		return
 	if _character_model.has_method("set_move_direction"):
+		_character_model.call("set_move_direction", dir)
+
+func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_move_direction_mode"):
+		_character_model.call("set_move_direction_mode", dir, prefer_walk)
+	elif _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
 
 func _apply_interaction_visual() -> void:

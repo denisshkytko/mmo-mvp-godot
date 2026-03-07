@@ -66,6 +66,9 @@ func _process(delta: float) -> void:
 	_reset_idle_liveliness_timer()
 
 func set_move_direction(dir: Vector2) -> void:
+	set_move_direction_mode(dir, false)
+
+func set_move_direction_mode(dir: Vector2, prefer_walk: bool) -> void:
 	if animated_sprite == null:
 		return
 	_is_moving = dir.length() > 0.01
@@ -78,7 +81,9 @@ func set_move_direction(dir: Vector2) -> void:
 		_reset_idle_liveliness_timer()
 
 	if _is_moving:
-		if _has_animation(run_animation):
+		if prefer_walk and _has_animation(walk_animation):
+			_play_animation_if_needed(walk_animation)
+		elif _has_animation(run_animation):
 			_play_animation_if_needed(run_animation)
 		elif _has_animation(walk_animation):
 			_play_animation_if_needed(walk_animation)

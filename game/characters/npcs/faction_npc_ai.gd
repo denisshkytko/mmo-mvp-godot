@@ -12,6 +12,7 @@ var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
 
 var speed: float = MOVE_SPEED.MOB_BASE
+var patrol_speed: float = MOVE_SPEED.MOB_PATROL
 var aggro_radius: float = COMBAT_RANGES.AGGRO_RADIUS
 var leash_distance: float = COMBAT_RANGES.LEASH_DISTANCE
 var patrol_radius: float = COMBAT_RANGES.PATROL_RADIUS
@@ -65,6 +66,8 @@ func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 		_do_patrol(delta, actor)
 	else:
 		actor.velocity = Vector2.ZERO
+		if actor.has_method("update_movement_animation"):
+			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
 
 func _pick_patrol_target() -> void:
@@ -77,6 +80,8 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	if _wait > 0.0:
 		_wait -= delta
 		actor.velocity = Vector2.ZERO
+		if actor.has_method("update_movement_animation"):
+			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
 		return
 
@@ -89,7 +94,9 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		_pick_patrol_target()
 		return
 
-	actor.velocity = (_patrol_target - actor.global_position).normalized() * speed
+	actor.velocity = (_patrol_target - actor.global_position).normalized() * patrol_speed
+	if actor.has_method("update_movement_animation"):
+		actor.call("update_movement_animation", actor.velocity, true)
 	actor.move_and_slide()
 
 func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat) -> void:
@@ -97,6 +104,8 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat)
 		state = State.RETURN
 		emit_signal("leash_return_started")
 		actor.velocity = Vector2.ZERO
+		if actor.has_method("update_movement_animation"):
+			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
 		return
 
@@ -106,9 +115,13 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat)
 
 	if dist > stop:
 		actor.velocity = to.normalized() * speed
+	if actor.has_method("update_movement_animation"):
+		actor.call("update_movement_animation", actor.velocity, false)
 		actor.move_and_slide()
 	else:
 		actor.velocity = Vector2.ZERO
+		if actor.has_method("update_movement_animation"):
+			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
@@ -118,8 +131,12 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 		_has_patrol_target = false
 		_wait = patrol_pause_seconds
 		actor.velocity = Vector2.ZERO
+		if actor.has_method("update_movement_animation"):
+			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
 		return
 
 	actor.velocity = to.normalized() * speed
+	if actor.has_method("update_movement_animation"):
+		actor.call("update_movement_animation", actor.velocity, false)
 	actor.move_and_slide()

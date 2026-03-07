@@ -30,6 +30,19 @@ var class_choice: int:
 		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
 @export_enum("Melee", "Ranged") var attack_range_choice: int = AttackRangeChoice.MELEE
+@export_enum("Cinderborn", "Bandits")
+var mob_group_choice: int:
+	get:
+		return _mob_group_choice_internal
+	set(v):
+		_mob_group_choice_internal = int(v)
+		mob_model_choice = _sanitize_model_choice(mob_model_choice)
+		notify_property_list_changed()
+@export var mob_model_choice: String = "warrior_1":
+	get:
+		return _mob_model_choice_internal
+	set(v):
+		_mob_model_choice_internal = _sanitize_model_choice(v)
 
 
 @export_group("Behavior After Spawn")
@@ -48,6 +61,8 @@ const C_HUNTER := 5
 
 var _class_choice_internal: int = C_PALADIN
 var _spell_preset_id_internal: String = "none"
+var _mob_group_choice_internal: int = 0
+var _mob_model_choice_internal: String = "warrior_1"
 
 # BaseSpawnerGroup уже содержит respawn_seconds
 
@@ -56,6 +71,9 @@ func _validate_property(property: Dictionary) -> void:
 	if String(property.get("name", "")) == "spell_preset_id":
 		property["hint"] = PROPERTY_HINT_ENUM
 		property["hint_string"] = _build_spell_preset_hint()
+	if String(property.get("name", "")) == "mob_model_choice":
+		property["hint"] = PROPERTY_HINT_ENUM
+		property["hint_string"] = _build_mob_model_hint()
 
 func _build_spell_preset_hint() -> String:
 	var cls := _get_current_class_id()
@@ -112,7 +130,9 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		mob_variant,
 		attack_range_choice,
 		abilities_for_level,
-		preset_name_key
+		preset_name_key,
+		"bandits" if _mob_group_choice_internal == 1 else "cinderborn",
+		mob_model_choice
 	)
 	return true
 
@@ -129,3 +149,19 @@ func _default_attack_range_for_class(choice: int) -> int:
 			return AttackRangeChoice.RANGED
 		_:
 			return AttackRangeChoice.MELEE
+
+
+func _build_mob_model_hint() -> String:
+	if _mob_group_choice_internal == 1:
+		return "warrior:Warrior,mage:Mage,priest:Priest,hunter_melee:Hunter Melee,hunter_ranged:Hunter Ranged"
+	return "warrior_1:Warrior 1,warrior_2:Warrior 2,mage_1:Mage 1,mage_2:Mage 2,priest_1:Priest 1,priest_2:Priest 2,hunter_1:Hunter 1,hunter_2:Hunter 2"
+
+func _sanitize_model_choice(value: String) -> String:
+	var v := value.strip_edges().to_lower()
+	if _mob_group_choice_internal == 1:
+		if v in ["warrior", "mage", "priest", "hunter_melee", "hunter_ranged"]:
+			return v
+		return "warrior"
+	if v in ["warrior_1", "warrior_2", "mage_1", "mage_2", "priest_1", "priest_2", "hunter_1", "hunter_2"]:
+		return v
+	return "warrior_1"
