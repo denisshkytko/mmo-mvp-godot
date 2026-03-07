@@ -10,6 +10,7 @@ const DEFAULT_PROJECTILE: PackedScene = preload("res://game/characters/mobs/proj
 enum Behavior { GUARD, PATROL }
 enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
+enum AttackRangeChoice { MELEE, RANGED }
 
 @export_group("Faction NPC Setup")
 @export_enum("blue", "red", "yellow", "green") var faction_id: String = "blue"
@@ -26,14 +27,16 @@ var class_choice: int:
 		return _class_choice_internal
 	set(v):
 		_class_choice_internal = int(v)
+		attack_range_choice = _default_attack_range_for_class(_class_choice_internal)
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
 		notify_property_list_changed()
-var spell_preset_id: String = "none":
+@export var spell_preset_id: String = "none":
 	get:
 		return _spell_preset_id_internal
 	set(v):
 		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
+@export_enum("Melee", "Ranged") var attack_range_choice: int = AttackRangeChoice.MELEE
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
@@ -51,27 +54,10 @@ const C_HUNTER := 5
 var _class_choice_internal: int = C_PALADIN
 var _spell_preset_id_internal: String = "none"
 
-func _get_property_list() -> Array[Dictionary]:
-	var props: Array[Dictionary] = []
-	props.append({
-		"name": "Faction NPC Setup/spell_preset_id",
-		"type": TYPE_STRING,
-		"hint": PROPERTY_HINT_ENUM,
-		"hint_string": _build_spell_preset_hint(),
-		"usage": PROPERTY_USAGE_DEFAULT,
-	})
-	return props
-
-func _set(property: StringName, value: Variant) -> bool:
-	if String(property) == "Faction NPC Setup/spell_preset_id":
-		spell_preset_id = String(value)
-		return true
-	return false
-
-func _get(property: StringName) -> Variant:
-	if String(property) == "Faction NPC Setup/spell_preset_id":
-		return spell_preset_id
-	return null
+func _validate_property(property: Dictionary) -> void:
+	if String(property.get("name", "")) == "spell_preset_id":
+		property["hint"] = PROPERTY_HINT_ENUM
+		property["hint_string"] = _build_spell_preset_hint()
 
 func _build_spell_preset_hint() -> String:
 	var cls := _get_current_class_id()
@@ -138,6 +124,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		profile_id,
 		merchant_preset,
 		mob_variant,
+		attack_range_choice,
 		abilities_for_level,
 		preset_name_key
 	)
@@ -149,3 +136,10 @@ func _get_current_class_id() -> String:
 func _sanitize_spell_preset_for_class(value: String) -> String:
 	var class_id := _get_current_class_id()
 	return MobSpellPresetDB.get_allowed_preset_id(value, class_id)
+
+func _default_attack_range_for_class(choice: int) -> int:
+	match choice:
+		C_MAGE, C_PRIEST, C_HUNTER:
+			return AttackRangeChoice.RANGED
+		_:
+			return AttackRangeChoice.MELEE

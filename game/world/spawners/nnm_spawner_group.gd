@@ -8,6 +8,7 @@ const MOB_SCENE: PackedScene = preload("res://game/characters/mobs/NormalNeutral
 
 enum Behavior { GUARD, PATROL }
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
+enum AttackRangeChoice { MELEE, RANGED }
 
 @export_group("Neutral Setup")
 @export var loot_profile_animals: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
@@ -23,12 +24,13 @@ var body_size: int:
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
 		notify_property_list_changed()
 @export var skin_id: String = ""
-var spell_preset_id: String = "none":
+@export var spell_preset_id: String = "none":
 	get:
 		return _spell_preset_id_internal
 	set(v):
 		_spell_preset_id_internal = _sanitize_spell_preset_for_class(v)
 @export_enum("Normal", "Rare", "Elite") var mob_variant: int = 0
+@export_enum("Melee", "Ranged") var attack_range_choice: int = AttackRangeChoice.MELEE
 
 @export_group("Behavior After Spawn")
 @export_enum("Guard", "Patrol") var behavior: int = Behavior.GUARD
@@ -38,27 +40,10 @@ var _spell_preset_id_internal: String = "none"
 var _body_size_internal: int = BodySize.MEDIUM
 
 
-func _get_property_list() -> Array[Dictionary]:
-	var props: Array[Dictionary] = []
-	props.append({
-		"name": "Neutral Setup/spell_preset_id",
-		"type": TYPE_STRING,
-		"hint": PROPERTY_HINT_ENUM,
-		"hint_string": _build_spell_preset_hint(),
-		"usage": PROPERTY_USAGE_DEFAULT,
-	})
-	return props
-
-func _set(property: StringName, value: Variant) -> bool:
-	if String(property) == "Neutral Setup/spell_preset_id":
-		spell_preset_id = String(value)
-		return true
-	return false
-
-func _get(property: StringName) -> Variant:
-	if String(property) == "Neutral Setup/spell_preset_id":
-		return spell_preset_id
-	return null
+func _validate_property(property: Dictionary) -> void:
+	if String(property.get("name", "")) == "spell_preset_id":
+		property["hint"] = PROPERTY_HINT_ENUM
+		property["hint_string"] = _build_spell_preset_hint()
 
 func _build_spell_preset_hint() -> String:
 	if _get_current_class_id() == "hunter":
@@ -119,6 +104,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		class_id,
 		profile_id,
 		mob_variant,
+		attack_range_choice,
 		abilities_for_level,
 		preset_name_key
 	)

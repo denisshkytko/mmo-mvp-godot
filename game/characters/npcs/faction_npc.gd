@@ -6,6 +6,9 @@ class_name FactionNPC
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/MerchantModel.tscn")
+const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 
 signal died(corpse: Corpse)
 
@@ -13,7 +16,9 @@ signal died(corpse: Corpse)
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
 @onready var cast_bar: CastBarWidget = $CastBar
+@onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
+@onready var visual_root: Node2D = $Visual as Node2D
 
 @onready var c_ai: FactionNPCAI = $Components/AI as FactionNPCAI
 @onready var c_combat: FactionNPCCombat = $Components/Combat as FactionNPCCombat
@@ -27,6 +32,7 @@ const MERCHANT_BUYBACK_TTL_MSEC: int = 10 * 60 * 1000
 
 enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
+enum AttackMode { MELEE, RANGED }
 
 # -----------------------------
 # Identity / runtime state
@@ -57,6 +63,8 @@ var loot_owner_player_id: int = 0
 # Merchant buyback storage (per player)
 var _merchant_sales: Dictionary = {}
 var _merchant_sale_seq: int = 0
+var _character_model: Node = null
+var _death_sequence_started: bool = false
 
 # Реген после сброса боя
 var regen_active: bool = false
@@ -167,6 +175,7 @@ func _ready() -> void:
 		c_ai.leash_return_started.connect(cb)
 
 	_update_faction_color()
+	_apply_interaction_visual()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 	c_spell_caster.setup(self)
 
@@ -241,6 +250,7 @@ func apply_spawn_init(
 	growth_profile_id_in: String = "",
 	merchant_preset_in: MerchantPreset = null,
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	attack_mode_choice_in: int = AttackMode.MELEE,
 	abilities_in: Array[String] = [],
 	spell_preset_name_key_in: String = ""
 ) -> void:
@@ -251,6 +261,7 @@ func apply_spawn_init(
 	_update_faction_color()
 	fighter_type = fighter_in
 	interaction_type = interaction_in
+	_apply_interaction_visual()
 	npc_level = max(1, level_in)
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
@@ -297,13 +308,18 @@ func apply_spawn_init(
 			c_combat.melee_cooldown = civilian_base_attack_cooldown
 
 		FighterType.COMBATANT:
-			var role := Progression.get_attack_role_for_class(class_id_in)
 			var chosen_mode := FactionNPCCombat.AttackMode.MELEE
-			match role:
-				"ranged":
-					chosen_mode = FactionNPCCombat.AttackMode.RANGED
-				"hybrid":
-					chosen_mode = FactionNPCCombat.AttackMode.RANGED if randi() % 2 == 0 else FactionNPCCombat.AttackMode.MELEE
+			if attack_mode_choice_in == AttackMode.RANGED:
+				chosen_mode = FactionNPCCombat.AttackMode.RANGED
+			elif attack_mode_choice_in == AttackMode.MELEE:
+				chosen_mode = FactionNPCCombat.AttackMode.MELEE
+			else:
+				var role := Progression.get_attack_role_for_class(class_id_in)
+				match role:
+					"ranged":
+						chosen_mode = FactionNPCCombat.AttackMode.RANGED
+					"hybrid":
+						chosen_mode = FactionNPCCombat.AttackMode.RANGED if randi() % 2 == 0 else FactionNPCCombat.AttackMode.MELEE
 
 			var base_melee := Progression.get_base_melee_attack_interval_for_class(class_id_in)
 			var base_ranged := Progression.get_npc_base_ranged_attack_interval_for_class(class_id_in)
@@ -360,6 +376,9 @@ func get_body_hitbox_center_global() -> Vector2:
 		return body_hitbox_shape.global_position
 	return global_position
 
+func get_sort_anchor_global() -> Vector2:
+	return get_body_hitbox_center_global()
+
 
 func _draw() -> void:
 	if not OS.is_debug_build():
@@ -375,6 +394,7 @@ func _draw() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		return
@@ -469,6 +489,7 @@ func _physics_process(delta: float) -> void:
 
 	# AI tick
 	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
+	_update_model_motion(velocity.normalized() if velocity.length() > 0.01 else Vector2.ZERO)
 
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
@@ -529,6 +550,7 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 	final = _apply_shield_block_if_any(final, snap)
 	if final <= 0:
 		return 0
+	play_model_hurt()
 	c_stats.current_hp = max(0, c_stats.current_hp - final)
 	var died_now: bool = c_stats.current_hp <= 0
 	if final > 0 and attacker != null and is_instance_valid(attacker) and c_stats != null and c_stats.has_method("try_apply_attacker_slow_from_stance"):
@@ -567,12 +589,16 @@ func is_in_combat() -> bool:
 	return true
 
 func _die() -> void:
+	if _death_sequence_started:
+		return
+	_death_sequence_started = true
 	if c_spell_caster != null:
 		c_spell_caster.interrupt_cast("death")
 	if cast_bar != null:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
 		cast_bar.set_icon_texture(null)
+	play_model_death()
 	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
@@ -581,6 +607,10 @@ func _die() -> void:
 	current_target = null
 	_prev_target = null
 
+	var timer := get_tree().create_timer(0.9)
+	timer.timeout.connect(Callable(self, "_finalize_death"), CONNECT_ONE_SHOT)
+
+func _finalize_death() -> void:
 	var p: LootProfile = loot_profile
 	if p == null:
 		p = default_loot_profile
@@ -604,6 +634,95 @@ func _die() -> void:
 
 	emit_signal("died", corpse)
 	queue_free()
+
+func play_model_hurt() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_hurt"):
+		_character_model.call("play_hurt")
+
+func play_model_death() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_death"):
+		_character_model.call("play_death")
+
+func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("play_combat_action"):
+		_character_model.call("play_combat_action", action_kind, is_moving_now, "")
+
+func _update_model_motion(dir: Vector2) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_move_direction"):
+		_character_model.call("set_move_direction", dir)
+
+func _apply_interaction_visual() -> void:
+	if visual_root == null:
+		return
+	if _character_model != null and is_instance_valid(_character_model):
+		_character_model.queue_free()
+		_character_model = null
+	var scene := _resolve_model_scene_for_interaction(interaction_type)
+	if scene == null:
+		if faction_rect != null:
+			faction_rect.visible = true
+		return
+	var inst := scene.instantiate()
+	if inst == null:
+		return
+	visual_root.add_child(inst)
+	_character_model = inst
+	if faction_rect != null:
+		faction_rect.visible = false
+	_apply_collision_profile_from_model(inst)
+
+func _resolve_model_scene_for_interaction(value: int) -> PackedScene:
+	if value == InteractionType.MERCHANT:
+		return MERCHANT_MODEL_SCENE
+	if value == InteractionType.TRAINER:
+		return TRAINER_MODEL_SCENE
+	return null
+
+func _apply_collision_profile_from_model(model: Node) -> void:
+	if model == null or not is_instance_valid(model):
+		return
+	if not model.has_method("get_collision_profile"):
+		return
+	var profile_v: Variant = model.call("get_collision_profile")
+	if not (profile_v is Dictionary):
+		return
+	var profile := profile_v as Dictionary
+
+	if world_collision != null:
+		var world_shape_v: Variant = profile.get("world_collision_shape", null)
+		if world_shape_v is Shape2D:
+			world_collision.shape = (world_shape_v as Shape2D).duplicate(true)
+		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
+		if world_offset_v is Vector2:
+			world_collision.position = world_offset_v
+		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
+		if world_rot_v is float or world_rot_v is int:
+			world_collision.rotation = float(world_rot_v)
+
+	if body_hitbox_shape != null:
+		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
+		if body_shape_v is Shape2D:
+			body_hitbox_shape.shape = (body_shape_v as Shape2D).duplicate(true)
+		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
+		if body_offset_v is Vector2:
+			body_hitbox_shape.position = body_offset_v
+		var body_rot_v: Variant = profile.get("body_hitbox_rotation", body_hitbox_shape.rotation)
+		if body_rot_v is float or body_rot_v is int:
+			body_hitbox_shape.rotation = float(body_rot_v)
+
+func _update_visual_render_order() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	visual_root.z_as_relative = false
+	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
 func _update_hp() -> void:
 	if hp_fill == null:

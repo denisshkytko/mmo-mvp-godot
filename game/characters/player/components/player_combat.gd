@@ -219,14 +219,18 @@ func _fire_ranged(target: Node2D, dmg: int) -> void:
 func _play_attack_animation_for_mode() -> void:
 	if p == null or not p.has_method("play_model_combat_action"):
 		return
+	var target := _get_current_target()
+	if target != null and p.has_method("face_model_to_world_position"):
+		p.call("face_model_to_world_position", target.global_position)
 	var is_moving_now := p.velocity.length() > 0.01
 	if _attack_mode == AttackMode.RANGED:
 		p.call("play_model_combat_action", "ranged", is_moving_now)
-		return
-	if _is_unarmed_attack():
+	elif _is_unarmed_attack():
 		p.call("play_model_combat_action", "melee_unarmed", is_moving_now)
-		return
-	p.call("play_model_combat_action", "melee_weapon", is_moving_now)
+	else:
+		p.call("play_model_combat_action", "melee_weapon", is_moving_now)
+	if is_moving_now and p.has_method("restore_model_facing_to_movement"):
+		p.call("restore_model_facing_to_movement")
 
 func _is_unarmed_attack() -> bool:
 	if p == null or p.c_equip == null:

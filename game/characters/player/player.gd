@@ -4,6 +4,7 @@ class_name Player
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -24,6 +25,12 @@ func on_targeted_by(attacker: Node) -> void:
 	if attacker == null:
 		return
 	_targeters[attacker.get_instance_id()] = true
+	var gm := _get_game_manager()
+	if gm == null or not gm.has_method("get_target") or not gm.has_method("set_target"):
+		return
+	var current: Node = gm.call("get_target") as Node
+	if current == null and is_instance_valid(attacker):
+		gm.call("set_target", attacker)
 
 func on_untargeted_by(attacker: Node) -> void:
 	if attacker == null:
@@ -251,6 +258,7 @@ func get_danger_meter() -> DangerMeterComponent:
 
 
 func _physics_process(_delta: float) -> void:
+	_update_visual_render_order()
 	if is_dead:
 		velocity = Vector2.ZERO
 		_update_model_motion(Vector2.ZERO)
@@ -297,6 +305,12 @@ func _physics_process(_delta: float) -> void:
 	_update_model_motion(input_dir)
 	move_and_slide()
 
+func _update_visual_render_order() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	visual_root.z_as_relative = false
+	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+
 
 func _process(delta: float) -> void:
 	if is_dead:
@@ -325,6 +339,9 @@ func get_body_hitbox_center_global() -> Vector2:
 	if body_hitbox_shape != null:
 		return body_hitbox_shape.global_position
 	return global_position
+
+func get_sort_anchor_global() -> Vector2:
+	return get_body_hitbox_center_global()
 
 
 func _draw() -> void:
@@ -358,8 +375,6 @@ func try_use_ability_slot(slot_index: int) -> void:
 	var gm := _get_game_manager()
 	if gm != null and gm.has_method("get_target"):
 		target = gm.call("get_target")
-	if target == null:
-		target = self
 	c_ability_caster.try_cast(ability_id, target)
 
 func try_interact() -> void:
@@ -775,6 +790,18 @@ func play_model_combat_action(action_kind: String, is_moving_now: bool = false) 
 		return
 	if _character_model.has_method("play_combat_action"):
 		_character_model.call("play_combat_action", action_kind, is_moving_now, class_id)
+
+func face_model_to_world_position(world_position: Vector2) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_facing_to_world_position"):
+		_character_model.call("set_facing_to_world_position", world_position)
+
+func restore_model_facing_to_movement() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_move_direction"):
+		_character_model.call("set_move_direction", velocity)
 
 func _apply_collision_profile_from_model(model: Node) -> void:
 	if model == null or not is_instance_valid(model):

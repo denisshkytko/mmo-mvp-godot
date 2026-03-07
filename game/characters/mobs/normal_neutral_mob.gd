@@ -6,13 +6,17 @@ class_name NormalNeutralMob
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 signal died(corpse: Corpse)
 
 @onready var hp_fill: ColorRect = $"UI/HpFill"
 @onready var target_marker: CanvasItem = $TargetMarker
 @onready var cast_bar: CastBarWidget = $CastBar
+@onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
+@onready var visual_root: Node2D = get_node_or_null("Visual") as Node2D
 
 @onready var c_ai: NormalNeutralMobAI = $Components/AI as NormalNeutralMobAI
 @onready var c_combat: NormalNeutralMobCombat = $Components/Combat as NormalNeutralMobCombat
@@ -21,6 +25,7 @@ signal died(corpse: Corpse)
 @onready var c_danger: DangerMeterComponent = $Components/Danger as DangerMeterComponent
 
 enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
+enum AttackMode { MELEE, RANGED }
 
 @export_group("Common")
 @export var base_xp: int = 3
@@ -32,6 +37,7 @@ enum BodySize { SMALL, MEDIUM, LARGE, HUMANOID }
 # размер тела выбирается спавнером
 var body_size: int = BodySize.MEDIUM
 var mob_level: int = 1
+var attack_mode: int = AttackMode.MELEE
 var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_neutral_animal_default.tres") as LootProfile
 var skin_id: String = ""
 var mob_variant: int = MOB_VARIANT.MobVariant.NORMAL
@@ -182,6 +188,9 @@ func get_body_hitbox_center_global() -> Vector2:
 		return body_hitbox_shape.global_position
 	return global_position
 
+func get_sort_anchor_global() -> Vector2:
+	return get_body_hitbox_center_global()
+
 
 func _draw() -> void:
 	if not OS.is_debug_build():
@@ -196,6 +205,7 @@ func _draw() -> void:
 		draw_arc(center_local, aggro_radius, 0.0, TAU, 96, Color(1.0, 0.2, 0.2, 0.85), 1.5, true)
 
 func _physics_process(delta: float) -> void:
+	_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		return
@@ -272,6 +282,12 @@ func _physics_process(delta: float) -> void:
 		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if show_cast else 0.0)
 		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if show_cast else null)
 
+func _update_visual_render_order() -> void:
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	visual_root.z_as_relative = false
+	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"
 	is_aggressive = false
@@ -302,6 +318,7 @@ func apply_spawn_init(
 	class_id_in: String = "",
 	growth_profile_id_in: String = "",
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
+	attack_mode_choice_in: int = AttackMode.MELEE,
 	abilities_in: Array[String] = [],
 	spell_preset_name_key_in: String = ""
 ) -> void:
@@ -317,6 +334,7 @@ func apply_spawn_init(
 	c_spell_caster.configure(abilities, mob_level)
 	body_size = body_size_in
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
+	attack_mode = AttackMode.RANGED if attack_mode_choice_in == AttackMode.RANGED else AttackMode.MELEE
 
 	if c_ai != null:
 		c_ai.behavior = behavior_in
@@ -402,6 +420,10 @@ func _apply_to_components() -> void:
 			)
 
 	c_combat.melee_stop_distance = 45.0
+	c_combat.attack_mode = attack_mode
+	c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
+	c_combat.ranged_cooldown = c_combat.melee_cooldown
+	c_combat.ranged_projectile_scene = DEFAULT_RANGED_PROJECTILE_SCENE
 
 	c_stats.recalculate_for_level(mob_level)
 
