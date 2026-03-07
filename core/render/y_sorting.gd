@@ -3,7 +3,7 @@ class_name YSorting
 
 const OVERLAP_X_THRESHOLD: float = 120.0
 const OVERLAP_Y_DOWN_THRESHOLD: float = 80.0
-const OVERLAP_Y_UP_THRESHOLD: float = 170.0
+const OVERLAP_Y_UP_THRESHOLD: float = 280.0
 const Y_DEADZONE: float = 6.0
 
 # Keeps a shared base layer for all actors and changes order only when they are
