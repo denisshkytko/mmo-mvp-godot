@@ -1,6 +1,8 @@
 extends Node2D
 class_name TargetMarkerWidget
 
+const ELLIPSE_SEGMENTS := 64
+
 @export_range(1.0, 512.0, 0.5) var radius_x: float = 22.0:
 	set(v):
 		radius_x = max(1.0, v)
@@ -22,7 +24,17 @@ class_name TargetMarkerWidget
 		queue_redraw()
 
 func _draw() -> void:
-	draw_ellipse(Vector2(0.0, y_offset), Vector2(radius_x, radius_y), marker_color)
+	var points := _build_ellipse_points()
+	if points.size() >= 3:
+		draw_colored_polygon(points, marker_color)
+
+func _build_ellipse_points() -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for i in range(ELLIPSE_SEGMENTS):
+		var t := float(i) / float(ELLIPSE_SEGMENTS)
+		var angle := t * TAU
+		points.append(Vector2(cos(angle) * radius_x, sin(angle) * radius_y + y_offset))
+	return points
 
 func get_visual_size() -> Vector2:
 	return Vector2(radius_x * 2.0, radius_y * 2.0)
