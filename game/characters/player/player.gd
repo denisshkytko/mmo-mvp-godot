@@ -850,14 +850,22 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 		cast_bar.reparent(visual_root, false)
 	if model == null or not is_instance_valid(model) or not model.has_method("get_overlay_profile"):
 		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
+		if cast_bar.has_method("restore_default_visual_profile"):
+			cast_bar.call("restore_default_visual_profile")
 		return
 	var profile_v: Variant = model.call("get_overlay_profile")
 	if not (profile_v is Dictionary):
 		cast_bar.position = DEFAULT_CAST_BAR_OFFSET
+		if cast_bar.has_method("restore_default_visual_profile"):
+			cast_bar.call("restore_default_visual_profile")
 		return
 	var profile := profile_v as Dictionary
-	var cast_offset_v: Variant = profile.get("cast_bar_offset", DEFAULT_CAST_BAR_OFFSET)
+	var cast_profile_v: Variant = profile.get("cast_bar", {})
+	var cast_profile: Dictionary = cast_profile_v as Dictionary if cast_profile_v is Dictionary else {}
+	var cast_offset_v: Variant = cast_profile.get("offset", profile.get("cast_bar_offset", DEFAULT_CAST_BAR_OFFSET))
 	cast_bar.position = cast_offset_v as Vector2 if cast_offset_v is Vector2 else DEFAULT_CAST_BAR_OFFSET
+	if cast_bar.has_method("apply_visual_profile"):
+		cast_bar.call("apply_visual_profile", cast_profile)
 
 
 func _grant_starter_abilities() -> void:

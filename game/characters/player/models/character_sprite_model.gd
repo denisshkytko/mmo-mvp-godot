@@ -20,6 +20,14 @@ signal death_pose_ready(snapshot: Dictionary)
 @export var warrior_stun_ability_animation: String = "Kicking"
 @export var hp_bar_offset: Vector2 = Vector2(0.0, -30.0)
 @export var cast_bar_offset: Vector2 = Vector2(0.0, -42.0)
+@export var hp_bar_size: Vector2 = Vector2(36.0, 6.0)
+@export var hp_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.88235295)
+@export var hp_bar_fill_color: Color = Color(0.38720772, 0.18201989, 0.97702104, 1.0)
+@export var cast_bar_size: Vector2 = Vector2(38.0, 12.0)
+@export var cast_bar_icon_size: Vector2 = Vector2(16.0, 16.0)
+@export var cast_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.8)
+@export var cast_bar_fill_color: Color = Color(0.2, 0.8, 1.0, 0.9)
+@export var cast_bar_icon_visible: bool = true
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var world_collision_shape: CollisionShape2D = $CollisionProfile/WorldCollider as CollisionShape2D
@@ -163,6 +171,20 @@ func get_overlay_profile() -> Dictionary:
 	return {
 		"hp_bar_offset": hp_bar_offset,
 		"cast_bar_offset": cast_bar_offset,
+		"hp_bar": {
+			"offset": hp_bar_offset,
+			"size": hp_bar_size,
+			"back_color": hp_bar_back_color,
+			"fill_color": hp_bar_fill_color,
+		},
+		"cast_bar": {
+			"offset": cast_bar_offset,
+			"size": cast_bar_size,
+			"icon_size": cast_bar_icon_size,
+			"back_color": cast_bar_back_color,
+			"fill_color": cast_bar_fill_color,
+			"icon_visible": cast_bar_icon_visible,
+		},
 	}
 
 func _duplicate_scaled_shape(shape: Shape2D, model_scale: Vector2) -> Shape2D:
