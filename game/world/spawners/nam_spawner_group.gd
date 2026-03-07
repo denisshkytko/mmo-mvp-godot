@@ -156,7 +156,7 @@ func _build_mob_model_hint() -> String:
 
 func _resolve_selected_model_id() -> String:
 	if _mob_group_choice_internal == 1:
-		var idx := clamp(mob_model_choice, 0, BANDIT_MODEL_IDS.size() - 1)
+		var idx: int = int(clamp(mob_model_choice, 0, BANDIT_MODEL_IDS.size() - 1))
 		return BANDIT_MODEL_IDS[idx]
-	var idx2 := clamp(mob_model_choice, 0, CINDERBORN_MODEL_IDS.size() - 1)
+	var idx2: int = int(clamp(mob_model_choice, 0, CINDERBORN_MODEL_IDS.size() - 1))
 	return CINDERBORN_MODEL_IDS[idx2]
