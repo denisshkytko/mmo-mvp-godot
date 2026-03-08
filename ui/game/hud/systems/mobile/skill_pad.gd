@@ -144,7 +144,7 @@ func _compute_ring_thickness(btn: TextureButton) -> float:
 	var px_gap: float = min(min(margin_left, margin_top), min(margin_right, margin_bottom))
 	if px_gap <= 0.0:
 		return 0.08
-	var min_side := max(1.0, min(btn.size.x, btn.size.y))
+	var min_side: float = max(1.0, min(btn.size.x, btn.size.y))
 	return clamp(px_gap / min_side, 0.01, 0.25)
 
 func _ensure_range_ring(btn: TextureButton) -> ColorRect:
