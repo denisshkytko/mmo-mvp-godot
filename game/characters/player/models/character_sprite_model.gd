@@ -35,13 +35,21 @@ signal death_pose_ready(snapshot: Dictionary)
 @export_range(0, 32, 1) var cast_bar_outline_width: int = 0
 @export var cast_bar_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export var cast_bar_icon_visible: bool = true
+@export var overlay_name_text_color: Color = Color(1.0, 1.0, 1.0, 1.0)
+@export var overlay_name_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
+@export_range(0, 8, 1) var overlay_name_outline_size: int = 3
+@export_range(1.0, 512.0, 1.0) var model_highlight_radius: float = 200.0
+@export var model_highlight_center_color: Color = Color(0.2, 0.6, 1.0, 0.28)
+@export var model_highlight_edge_color: Color = Color(0.2, 0.6, 1.0, 0.0)
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var world_collision_shape: CollisionShape2D = $CollisionProfile/WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $CollisionProfile/BodyHitbox as CollisionShape2D
 @onready var interaction_radius_shape: CollisionShape2D = $CollisionProfile/InteractionRadius as CollisionShape2D
-@onready var overlay_hp_bar: Node2D = get_node_or_null("OverlayProfile/HealthBar") as Node2D
-@onready var overlay_cast_bar: Node2D = get_node_or_null("OverlayProfile/CastBar") as Node2D
+@onready var overlay_hp_bar: Node2D = _resolve_overlay_node("HealthBar")
+@onready var overlay_cast_bar: Node2D = _resolve_overlay_node("CastBar")
+@onready var overlay_bars_widget: Node = get_node_or_null("OverlayProfile/Bars")
+@onready var model_highlight_widget: Node2D = _resolve_overlay_node("ModelHighlight")
 
 var _is_moving: bool = false
 var _prefer_walk_mode: bool = false
@@ -97,6 +105,8 @@ func _ready() -> void:
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 	play_idle()
 	_reset_idle_liveliness_timer()
+	_apply_overlay_name_profile()
+	_sync_model_highlight_profile()
 
 func _process(delta: float) -> void:
 	if animated_sprite == null:
@@ -289,7 +299,44 @@ func get_overlay_profile() -> Dictionary:
 			"outline_color": cast_bar_outline_color,
 			"icon_visible": cast_icon_visible,
 		},
+		"name": {
+			"text_color": overlay_name_text_color,
+			"outline_color": overlay_name_outline_color,
+			"outline_size": overlay_name_outline_size,
+		},
+		"model_highlight": {
+			"radius": model_highlight_radius,
+			"center_color": model_highlight_center_color,
+			"edge_color": model_highlight_edge_color,
+		},
 	}
+
+
+func _apply_overlay_name_profile() -> void:
+	if overlay_bars_widget == null or not is_instance_valid(overlay_bars_widget):
+		return
+	if overlay_bars_widget.has_method("set_name_visual"):
+		overlay_bars_widget.call("set_name_visual", overlay_name_text_color, overlay_name_outline_color, overlay_name_outline_size)
+
+func _sync_model_highlight_profile() -> void:
+	if model_highlight_widget == null or not is_instance_valid(model_highlight_widget):
+		return
+	if model_highlight_widget.has_method("set_radius"):
+		var scale_factor := max(0.0001, abs(scale.x))
+		model_highlight_widget.call("set_radius", model_highlight_radius / scale_factor)
+	if model_highlight_widget.has_method("set_colors"):
+		model_highlight_widget.call("set_colors", model_highlight_center_color, model_highlight_edge_color)
+	if body_hitbox_shape != null:
+		model_highlight_widget.position = body_hitbox_shape.position
+
+func _resolve_overlay_node(node_name: String) -> Node2D:
+	var direct := get_node_or_null("OverlayProfile/%s" % node_name)
+	if direct is Node2D:
+		return direct as Node2D
+	var nested := get_node_or_null("OverlayProfile/Bars/%s" % node_name)
+	if nested is Node2D:
+		return nested as Node2D
+	return null
 
 func _duplicate_scaled_shape(shape: Shape2D, model_scale: Vector2) -> Shape2D:
 	if shape == null:

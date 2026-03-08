@@ -5,6 +5,7 @@ signal despawned
 
 @onready var visual: ColorRect = $Visual
 @onready var corpse_sprite: Sprite2D = $Sprite2D
+@onready var model_highlight: CanvasItem = $ModelHighlight
 
 @export var interact_radius: float = 60.0
 @export var despawn_seconds: float = 30.0
@@ -253,6 +254,8 @@ func _process(delta: float) -> void:
 	if can_loot_now and Input.is_action_just_pressed("loot"):
 		_try_open_loot()
 
+	_update_model_highlight()
+
 	# 4) blink (только если игрок реально может лутать)
 	if _player_cached != null and has_loot() and _can_be_looted_by(_player_cached) and _is_visible_by_camera():
 		_blink_t += delta
@@ -260,6 +263,11 @@ func _process(delta: float) -> void:
 		visual.modulate.a = lerp(0.35, 1.0, k)
 	else:
 		visual.modulate.a = 1.0
+
+func _update_model_highlight() -> void:
+	if model_highlight == null or not is_instance_valid(model_highlight):
+		return
+	model_highlight.visible = (_player_cached != null and is_instance_valid(_player_cached) and has_loot() and _can_be_looted_by(_player_cached))
 
 func _on_enter(body: Node) -> void:
 	if not (body != null and body.is_in_group("player")):
@@ -365,3 +373,5 @@ func mark_looted() -> void:
 	loot_owner_player_id = 0
 	_player_in_range = null
 	visual.modulate.a = 1.0
+	if model_highlight != null:
+		model_highlight.visible = false

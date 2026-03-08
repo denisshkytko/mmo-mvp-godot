@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://batbkni3sgfgo" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
 [ext_resource type="SpriteFrames" uid="uid://bfsqx74qfmkwg" path="res://game/characters/mobs/models/frames/BanditHunterMeleeSpriteFrames.tres" id="2_frames"]
-[ext_resource type="PackedScene" uid="uid://c746ykha3j66g" path="res://game/characters/shared/HealthBarWidget.tscn" id="3_hpbar"]
-[ext_resource type="PackedScene" uid="uid://bqrjc01gju82q" path="res://game/characters/shared/CastBarWidget.tscn" id="4_castbar"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/TargetMarkerWidget.tscn" id="5_target"]
+[ext_resource type="PackedScene" path="res://game/characters/shared/OverlayBarsWidget.tscn" id="6_bars"]
+[ext_resource type="PackedScene" path="res://game/characters/shared/ModelHighlightWidget.tscn" id="7_highlight"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_world"]
 radius = 20.0
@@ -30,13 +30,11 @@ melee_run_animation = "Run Slashing"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 
-[node name="HealthBar" parent="OverlayProfile" instance=ExtResource("3_hpbar")]
-position = Vector2(0, -30)
-
-[node name="CastBar" parent="OverlayProfile" instance=ExtResource("4_castbar")]
-position = Vector2(0, -42)
+[node name="Bars" parent="OverlayProfile" instance=ExtResource("6_bars")]
 
 [node name="TargetMarker" parent="OverlayProfile" instance=ExtResource("5_target")]
+
+[node name="ModelHighlight" parent="OverlayProfile" instance=ExtResource("7_highlight")]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
