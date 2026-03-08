@@ -103,6 +103,14 @@ func start_consumable_cooldown(kind: String, seconds: float) -> void:
 		return
 	_consumable_cd_end_sec[kind] = _now_sec() + seconds
 
+func get_consumable_cooldown_left(kind: String) -> float:
+	if kind == "":
+		return 0.0
+	var end_sec: float = float(_consumable_cd_end_sec.get(kind, 0.0))
+	if end_sec <= 0.0:
+		return 0.0
+	return max(0.0, end_sec - _now_sec())
+
 func try_apply_consumable(item_id: String) -> Dictionary:
 	# Applies the consumable's effect (instant or over-time) WITHOUT removing the item from inventory.
 	# Returns {"ok": bool, "reason": String, "kind": String}

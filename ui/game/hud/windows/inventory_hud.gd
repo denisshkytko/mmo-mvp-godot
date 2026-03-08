@@ -36,6 +36,7 @@ signal hud_visibility_changed(is_open: bool)
 @onready var tooltip_sell_btn_scene: Button = $Root/InvTooltip/Margin/VBox/SellButton
 @onready var tooltip_quick_btn_scene: Button = $Root/InvTooltip/Margin/VBox/QuickSlotButton
 @onready var tooltip_bag_btn_scene: Button = $Root/InvTooltip/Margin/VBox/BagButton
+@onready var tooltip_drop_btn_scene: Button = $Root/InvTooltip/Margin/VBox/DropButton
 @onready var tooltip_close_btn_scene: Button = $Root/InvTooltip/CloseButton
 
 var player: Node = null
@@ -59,9 +60,13 @@ var _tooltip_equip_btn: Button = null
 var _tooltip_sell_btn: Button = null
 var _tooltip_quick_btn: Button = null
 var _tooltip_bag_btn: Button = null
+var _tooltip_drop_btn: Button = null
 var _tooltip_close_btn: Button = null
 var _tooltip_for_slot: int = -1
 var _tooltip_for_bag_slot: int = -1
+
+@onready var drop_confirm_dialog: ConfirmationDialog = $Root/DropConfirmDialog
+var _drop_confirm_slot: int = -1
 
 # Small center toast ("hp full" / "mana full")
 var _toast_label: Label = null
@@ -708,6 +713,9 @@ func _show_tooltip_for_slot(slot_index: int, global_pos: Vector2) -> void:
 		_tooltip_bag_btn.visible = is_bag
 		_tooltip_bag_btn.text = tr("ui.inventory.bag.equip")
 		_tooltip_bag_btn.disabled = false
+	if _tooltip_drop_btn != null:
+		_tooltip_drop_btn.visible = true
+		_tooltip_drop_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = slot_index
@@ -752,6 +760,8 @@ func _show_tooltip_for_bag_slot(bag_index: int, global_pos: Vector2) -> void:
 		_tooltip_bag_btn.visible = true
 		_tooltip_bag_btn.text = tr("ui.inventory.quick_slot.remove")
 		_tooltip_bag_btn.disabled = false
+	if _tooltip_drop_btn != null:
+		_tooltip_drop_btn.visible = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = -1
@@ -1294,6 +1304,32 @@ func _on_tooltip_bag_pressed() -> void:
 	else:
 		show_center_toast(tr("ui.inventory.no_free_slots"))
 
+func _on_tooltip_drop_pressed() -> void:
+	if _tooltip_for_slot < 0 or _tooltip_for_bag_slot != -1:
+		return
+	_drop_confirm_slot = _tooltip_for_slot
+	if drop_confirm_dialog != null:
+		drop_confirm_dialog.dialog_text = "Выбросить выбранный предмет из инвентаря?"
+		drop_confirm_dialog.popup_centered()
+
+func _on_drop_confirmed() -> void:
+	if player == null or not is_instance_valid(player):
+		_drop_confirm_slot = -1
+		return
+	if _drop_confirm_slot < 0:
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if _drop_confirm_slot < 0 or _drop_confirm_slot >= slots.size() or not (slots[_drop_confirm_slot] is Dictionary):
+		_drop_confirm_slot = -1
+		return
+	slots[_drop_confirm_slot] = null
+	snap["slots"] = slots
+	player.apply_inventory_snapshot(snap)
+	_hide_tooltip()
+	_drop_confirm_slot = -1
+	await _refresh()
+
 
 func _show_consumable_fail_toast(reason: String, _item_id: String) -> void:
 	_ensure_support_ui()
@@ -1393,6 +1429,8 @@ func _show_tooltip_for_item_dict(d: Dictionary) -> void:
 		_tooltip_quick_btn.visible = false
 	if _tooltip_bag_btn != null:
 		_tooltip_bag_btn.visible = false
+	if _tooltip_drop_btn != null:
+		_tooltip_drop_btn.visible = false
 	await get_tree().process_frame
 	if String(text).strip_edges() == "" or float(_tooltip_label.get_content_height()) <= 1.0:
 		await get_tree().process_frame
@@ -1841,6 +1879,7 @@ func _ensure_support_ui() -> void:
 		_tooltip_sell_btn = tooltip_sell_btn_scene
 		_tooltip_quick_btn = tooltip_quick_btn_scene
 		_tooltip_bag_btn = tooltip_bag_btn_scene
+		_tooltip_drop_btn = tooltip_drop_btn_scene
 		_tooltip_close_btn = tooltip_close_btn_scene
 		if _tooltip_panel != null:
 			_tooltip_panel.visible = false
@@ -1878,8 +1917,13 @@ func _ensure_support_ui() -> void:
 			_tooltip_quick_btn.pressed.connect(_on_tooltip_quick_pressed)
 		if _tooltip_bag_btn != null and not _tooltip_bag_btn.pressed.is_connected(_on_tooltip_bag_pressed):
 			_tooltip_bag_btn.pressed.connect(_on_tooltip_bag_pressed)
+		if _tooltip_drop_btn != null and not _tooltip_drop_btn.pressed.is_connected(_on_tooltip_drop_pressed):
+			_tooltip_drop_btn.pressed.connect(_on_tooltip_drop_pressed)
 		if _tooltip_close_btn != null and not _tooltip_close_btn.pressed.is_connected(_hide_tooltip):
 			_tooltip_close_btn.pressed.connect(_hide_tooltip)
+
+	if drop_confirm_dialog != null and not drop_confirm_dialog.confirmed.is_connected(_on_drop_confirmed):
+		drop_confirm_dialog.confirmed.connect(_on_drop_confirmed)
 
 	if split_dialog != null:
 		var sb2 := StyleBoxFlat.new()
