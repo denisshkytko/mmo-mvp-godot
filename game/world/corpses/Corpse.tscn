@@ -16,11 +16,11 @@ offset_right = 16.0
 offset_bottom = 16.0
 color = Color(0.3779188, 0.37791887, 0.37791884, 1)
 
+[node name="ModelHighlight" parent="." instance=ExtResource("2_highlight")]
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false
 centered = true
-
-[node name="ModelHighlight" parent="." instance=ExtResource("2_highlight")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_7sxr2")

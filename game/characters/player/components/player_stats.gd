@@ -45,13 +45,21 @@ func add_xp(amount: int) -> void:
 		return
 	if amount <= 0:
 		return
+	if p.has_method("is_level_capped") and bool(p.call("is_level_capped")):
+		if p.has_method("_enforce_level_cap_state"):
+			p.call("_enforce_level_cap_state")
+		return
 
 	p.xp += amount
-	while p.xp >= p.xp_to_next:
+	while p.xp_to_next > 0 and p.xp >= p.xp_to_next:
 		p.xp -= p.xp_to_next
 		p.level += 1
 		p.xp_to_next = _calc_xp_to_next(p.level)
 		recalculate_for_level(true)
+		if p.has_method("is_level_capped") and bool(p.call("is_level_capped")):
+			if p.has_method("_enforce_level_cap_state"):
+				p.call("_enforce_level_cap_state")
+			break
 
 func _calc_xp_to_next(new_level: int) -> int:
 	return XP_SYSTEM.xp_to_next(new_level)
@@ -85,6 +93,10 @@ func recalculate_for_level(full_restore: bool) -> void:
 	else:
 		p.current_hp = clamp(p.current_hp, 0, p.max_hp)
 		p.mana = clamp(p.mana, 0, p.max_mana)
+
+	if p.has_method("is_level_capped") and bool(p.call("is_level_capped")):
+		if p.has_method("_enforce_level_cap_state"):
+			p.call("_enforce_level_cap_state")
 
 	emit_signal("stats_changed", _snapshot)
 

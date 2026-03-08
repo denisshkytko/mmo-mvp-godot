@@ -482,3 +482,8 @@ text = "Отменить"
 oversampling_override = 1.0
 title = "Инвентарь"
 dialog_text = "Сумка полна"
+
+[node name="DropConfirmDialog" type="ConfirmationDialog" parent="Root"]
+title = "Подтверждение"
+ok_button_text = "Выбросить"
+dialog_text = "Выбросить предмет?"

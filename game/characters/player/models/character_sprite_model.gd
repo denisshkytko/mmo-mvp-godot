@@ -20,16 +20,16 @@ signal death_pose_ready(snapshot: Dictionary)
 @export var hp_bar_offset: Vector2 = Vector2(0.0, -30.0)
 @export var cast_bar_offset: Vector2 = Vector2(0.0, -42.0)
 @export var hp_bar_size: Vector2 = Vector2(36.0, 6.0)
-@export var hp_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.88235295)
-@export var hp_bar_fill_color: Color = Color(0.38720772, 0.18201989, 0.97702104, 1.0)
+@export var hp_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.3)
+@export var hp_bar_fill_color: Color = Color(1.0, 1.0, 1.0, 1.0)
 @export_range(0.0, 128.0, 1.0) var hp_bar_corner_radius: float = 0.0
 @export var hp_bar_outline_enabled: bool = false
 @export_range(0, 32, 1) var hp_bar_outline_width: int = 0
 @export var hp_bar_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export var cast_bar_size: Vector2 = Vector2(38.0, 12.0)
 @export var cast_bar_icon_size: Vector2 = Vector2(16.0, 16.0)
-@export var cast_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.8)
-@export var cast_bar_fill_color: Color = Color(0.2, 0.8, 1.0, 0.9)
+@export var cast_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.3)
+@export var cast_bar_fill_color: Color = Color(0.5, 0.0, 0.5, 1.0)
 @export_range(0.0, 128.0, 1.0) var cast_bar_corner_radius: float = 0.0
 @export var cast_bar_outline_enabled: bool = false
 @export_range(0, 32, 1) var cast_bar_outline_width: int = 0
@@ -38,7 +38,6 @@ signal death_pose_ready(snapshot: Dictionary)
 @export var overlay_name_text_color: Color = Color(1.0, 1.0, 1.0, 1.0)
 @export var overlay_name_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export_range(0, 8, 1) var overlay_name_outline_size: int = 3
-@export_range(1.0, 512.0, 1.0) var model_highlight_radius: float = 200.0
 @export var model_highlight_override_widget_colors: bool = false
 @export var model_highlight_center_color: Color = Color(0.2, 0.6, 1.0, 0.28)
 @export var model_highlight_edge_color: Color = Color(0.2, 0.6, 1.0, 0.0)
@@ -306,7 +305,6 @@ func get_overlay_profile() -> Dictionary:
 			"outline_size": overlay_name_outline_size,
 		},
 		"model_highlight": {
-			"radius": model_highlight_radius,
 			"override_widget_colors": model_highlight_override_widget_colors,
 			"center_color": model_highlight_center_color,
 			"edge_color": model_highlight_edge_color,
@@ -323,13 +321,12 @@ func _apply_overlay_name_profile() -> void:
 func _sync_model_highlight_profile() -> void:
 	if model_highlight_widget == null or not is_instance_valid(model_highlight_widget):
 		return
-	if model_highlight_widget.has_method("set_radius"):
-		var scale_factor: float = max(0.0001, abs(scale.x))
-		model_highlight_widget.call("set_radius", model_highlight_radius / scale_factor)
 	if model_highlight_override_widget_colors and model_highlight_widget.has_method("set_colors"):
 		model_highlight_widget.call("set_colors", model_highlight_center_color, model_highlight_edge_color)
 	if body_hitbox_shape != null:
-		model_highlight_widget.position = body_hitbox_shape.position
+		model_highlight_widget.position = Vector2(body_hitbox_shape.position.x, 0.0)
+	else:
+		model_highlight_widget.position = Vector2.ZERO
 
 func _resolve_overlay_node(node_name: String) -> Node2D:
 	var direct := get_node_or_null("OverlayProfile/%s" % node_name)

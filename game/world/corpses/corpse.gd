@@ -2,6 +2,7 @@ extends Area2D
 class_name Corpse
 
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 signal despawned
 
@@ -36,20 +37,20 @@ var loot_owner_player_id: int = 0
 var loot_gold: int = 0
 var loot_slots: Array = []
 
-func setup_owner_snapshot(owner: Node, owner_player_id: int = 0) -> void:
-	if owner == null or not is_instance_valid(owner):
+func setup_owner_snapshot(entity_owner: Node, owner_player_id: int = 0) -> void:
+	if entity_owner == null or not is_instance_valid(entity_owner):
 		return
 
-	owner_entity_id = owner.get_instance_id()
-	owner_display_name = _resolve_owner_display_name(owner)
-	owner_level = _resolve_owner_level(owner)
-	owner_max_hp = max(1, _resolve_owner_max_hp(owner))
-	owner_resource_type = _resolve_owner_resource_type(owner)
-	owner_max_resource = max(1, _resolve_owner_max_resource(owner))
+	owner_entity_id = entity_owner.get_instance_id()
+	owner_display_name = _resolve_owner_display_name(entity_owner)
+	owner_level = _resolve_owner_level(entity_owner)
+	owner_max_hp = max(1, _resolve_owner_max_hp(entity_owner))
+	owner_resource_type = _resolve_owner_resource_type(entity_owner)
+	owner_max_resource = max(1, _resolve_owner_max_resource(entity_owner))
 	if owner_player_id != 0:
 		loot_owner_player_id = owner_player_id
-	if owner != null and owner.has_method("get_corpse_pose_snapshot"):
-		var pose_v: Variant = owner.call("get_corpse_pose_snapshot")
+	if entity_owner != null and entity_owner.has_method("get_corpse_pose_snapshot"):
+		var pose_v: Variant = entity_owner.call("get_corpse_pose_snapshot")
 		if pose_v is Dictionary:
 			apply_pose_snapshot(pose_v as Dictionary)
 
@@ -68,6 +69,15 @@ func apply_pose_snapshot(snapshot: Dictionary) -> void:
 	var scale_v: Variant = snapshot.get("scale", Vector2.ONE)
 	if scale_v is Vector2:
 		corpse_sprite.scale = scale_v as Vector2
+	if model_highlight != null and is_instance_valid(model_highlight) and model_highlight is Node2D:
+		var hs := corpse_sprite.scale
+		if abs(hs.x) <= 0.0001:
+			hs.x = 1.0
+		if abs(hs.y) <= 0.0001:
+			hs.y = 1.0
+		var h2 := model_highlight as Node2D
+		h2.scale = hs
+		h2.position = Vector2.ZERO
 	var offset_v: Variant = snapshot.get("offset", Vector2.ZERO)
 	if offset_v is Vector2:
 		corpse_sprite.position = offset_v as Vector2
@@ -95,64 +105,64 @@ func get_current_resource() -> int:
 func get_max_resource() -> int:
 	return max(1, owner_max_resource)
 
-func _resolve_owner_display_name(owner: Node) -> String:
-	if owner.has_method("get_display_name"):
-		var v: String = String(owner.call("get_display_name"))
+func _resolve_owner_display_name(entity_owner: Node) -> String:
+	if entity_owner.has_method("get_display_name"):
+		var v: String = String(entity_owner.call("get_display_name"))
 		if v != "":
 			return v
-	if owner.has_method("get_mob_name"):
-		var mob_name: String = String(owner.call("get_mob_name"))
+	if entity_owner.has_method("get_mob_name"):
+		var mob_name: String = String(entity_owner.call("get_mob_name"))
 		if mob_name != "":
 			return mob_name
-	if owner.has_method("get_npc_name"):
-		var npc_name: String = String(owner.call("get_npc_name"))
+	if entity_owner.has_method("get_npc_name"):
+		var npc_name: String = String(entity_owner.call("get_npc_name"))
 		if npc_name != "":
 			return npc_name
-	return String(owner.name)
+	return String(entity_owner.name)
 
-func _resolve_owner_level(owner: Node) -> int:
-	if owner.has_method("get_level"):
-		return int(owner.call("get_level"))
-	var mob_level: Variant = owner.get("mob_level")
+func _resolve_owner_level(entity_owner: Node) -> int:
+	if entity_owner.has_method("get_level"):
+		return int(entity_owner.call("get_level"))
+	var mob_level: Variant = entity_owner.get("mob_level")
 	if mob_level != null:
 		return int(mob_level)
-	var npc_level: Variant = owner.get("npc_level")
+	var npc_level: Variant = entity_owner.get("npc_level")
 	if npc_level != null:
 		return int(npc_level)
 	return 0
 
-func _resolve_owner_max_hp(owner: Node) -> int:
-	if owner.has_method("get_max_hp"):
-		return int(owner.call("get_max_hp"))
-	if owner.has_node("Components/Stats"):
-		var stats: Node = owner.get_node("Components/Stats")
+func _resolve_owner_max_hp(entity_owner: Node) -> int:
+	if entity_owner.has_method("get_max_hp"):
+		return int(entity_owner.call("get_max_hp"))
+	if entity_owner.has_node("Components/Stats"):
+		var stats: Node = entity_owner.get_node("Components/Stats")
 		if stats != null:
 			var max_hp_v: Variant = stats.get("max_hp")
 			if max_hp_v != null:
 				return int(max_hp_v)
-	var owner_max_hp_v: Variant = owner.get("max_hp")
+	var owner_max_hp_v: Variant = entity_owner.get("max_hp")
 	if owner_max_hp_v != null:
 		return int(owner_max_hp_v)
 	return 1
 
-func _resolve_owner_resource_type(owner: Node) -> String:
-	if owner.has_method("get_resource_type"):
-		var rt: String = String(owner.call("get_resource_type"))
+func _resolve_owner_resource_type(entity_owner: Node) -> String:
+	if entity_owner.has_method("get_resource_type"):
+		var rt: String = String(entity_owner.call("get_resource_type"))
 		if rt != "":
 			return rt
-	if owner.has_node("Components/Resource"):
-		var r: Node = owner.get_node("Components/Resource")
+	if entity_owner.has_node("Components/Resource"):
+		var r: Node = entity_owner.get_node("Components/Resource")
 		if r != null:
 			var rv: Variant = r.get("resource_type")
 			if rv != null and String(rv) != "":
 				return String(rv)
 	return "mana"
 
-func _resolve_owner_max_resource(owner: Node) -> int:
-	if owner.has_method("get_max_resource"):
-		return int(owner.call("get_max_resource"))
-	if owner.has_node("Components/Resource"):
-		var r: Node = owner.get_node("Components/Resource")
+func _resolve_owner_max_resource(entity_owner: Node) -> int:
+	if entity_owner.has_method("get_max_resource"):
+		return int(entity_owner.call("get_max_resource"))
+	if entity_owner.has_node("Components/Resource"):
+		var r: Node = entity_owner.get_node("Components/Resource")
 		if r != null:
 			var mv: Variant = r.get("max_resource")
 			if mv != null:
@@ -161,12 +171,19 @@ func _resolve_owner_max_resource(owner: Node) -> int:
 
 func _ready() -> void:
 	_life_timer = despawn_seconds
+	add_to_group("y_sort_entities")
+	refresh_local_overlap_sorting()
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 	var p: Node = get_tree().get_first_node_in_group("player")
 	_player_cached = p as Node2D
 
 	body_entered.connect(_on_enter)
 	body_exited.connect(_on_exit)
+
+func refresh_local_overlap_sorting() -> void:
+	z_as_relative = false
+	z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
 func set_loot_owner_player(player_node: Node) -> void:
 	if player_node == null:
@@ -251,11 +268,7 @@ func _process(delta: float) -> void:
 		else:
 			_player_in_range = null
 
-	# 3) interaction (строго по праву на лут)
-	var can_loot_now: bool = (_player_in_range != null and has_loot() and _can_be_looted_by(_player_in_range))
-	if can_loot_now and Input.is_action_just_pressed("loot"):
-		_try_open_loot()
-
+	# 3) interaction выполняется через Player/InteractionDetector (берётся только ближайший источник)
 	_update_model_highlight()
 
 	# 4) blink (только если игрок реально может лутать)

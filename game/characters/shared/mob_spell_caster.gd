@@ -17,8 +17,8 @@ var _heal_lock: bool = false
 var _mana_lock: bool = false
 var _stationary_cooldown_left: float = 0.0
 
-func setup(owner: Node) -> void:
-	_owner = owner
+func setup(entity_owner: Node) -> void:
+	_owner = entity_owner
 
 func configure(ability_ids: Array[String], actor_level: int) -> void:
 	_ability_ids.clear()

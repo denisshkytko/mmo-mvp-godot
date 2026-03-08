@@ -131,6 +131,10 @@ func open_for_merchant(merchant_node: Node) -> void:
 	_refresh_buy_grid()
 	_refresh_sell_grid()
 	_sync_inventory_trade_state(true)
+	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
+	if inv_ui != null and inv_ui.has_method("is_open") and inv_ui.has_method("ensure_open"):
+		if not bool(inv_ui.call("is_open")):
+			inv_ui.call("ensure_open")
 
 func close() -> void:
 	_is_open = false
@@ -327,8 +331,8 @@ func _format_action_bbcode(action_text: String, item_id: String, count: int, is_
 
 func _format_money_short(bronze_total: int) -> String:
 	var total: int = max(0, int(bronze_total))
-	var gold: int = int(total / 10000)
-	var silver: int = int((total % 10000) / 100)
+	var gold: int = int(float(total) / 10000.0)
+	var silver: int = int(float(total % 10000) / 100.0)
 	var bronze: int = int(total % 100)
 	var parts: Array[String] = []
 	if gold > 0:
@@ -358,12 +362,12 @@ func _ensure_dialog_layer() -> void:
 
 func _format_item_label(item_id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
-	var name: String = item_id
+	var item_name: String = item_id
 	if db != null and db.is_ready and db.has_method("get_item_name"):
-		name = String(db.call("get_item_name", item_id))
+		item_name = String(db.call("get_item_name", item_id))
 	if count > 1:
-		return UI_TEXT.item_with_stack(name, count)
-	return name
+		return UI_TEXT.item_with_stack(item_name, count)
+	return item_name
 
 func _on_item_tooltip_input(event: InputEvent, item_id: String, count: int) -> void:
 	if event is InputEventMouseButton:
@@ -409,7 +413,7 @@ func _toggle_tooltip(item_id: String, count: int, global_pos: Vector2) -> void:
 		return
 	_show_tooltip(item_id, count, global_pos)
 
-func _on_buy_button_pressed(item_id: String, count: int) -> void:
+func _on_buy_button_pressed(item_id: String, _count: int) -> void:
 	var stack_max := _get_stack_max(item_id)
 	if stack_max <= 1:
 		_try_buy_item(item_id, 1)

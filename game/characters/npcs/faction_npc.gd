@@ -71,6 +71,7 @@ var loot_owner_player_id: int = 0
 var _merchant_sales: Dictionary = {}
 var _merchant_sale_seq: int = 0
 var _character_model: Node = null
+var _model_scene_override: PackedScene = null
 var _death_sequence_started: bool = false
 
 # Реген после сброса боя
@@ -187,6 +188,7 @@ func _ready() -> void:
 	_apply_interaction_visual()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 	c_spell_caster.setup(self)
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 
 func _roll_evade(snap: Dictionary) -> bool:
@@ -260,7 +262,8 @@ func apply_spawn_init(
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
 	attack_mode_choice_in: int = AttackMode.MELEE,
 	abilities_in: Array[String] = [],
-	spell_preset_name_key_in: String = ""
+	spell_preset_name_key_in: String = "",
+	model_scene_override_in: PackedScene = null
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -269,6 +272,7 @@ func apply_spawn_init(
 	_update_faction_color()
 	fighter_type = fighter_in
 	interaction_type = interaction_in
+	_model_scene_override = model_scene_override_in
 	_apply_interaction_visual()
 	npc_level = max(1, level_in)
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
@@ -375,8 +379,6 @@ func apply_spawn_init(
 func _process(_delta: float) -> void:
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
 	_refresh_model_highlight_visual()
-	if OS.is_debug_build():
-		queue_redraw()
 	_update_interaction()
 
 func _refresh_model_highlight_visual() -> void:
@@ -400,19 +402,6 @@ func get_body_hitbox_center_global() -> Vector2:
 
 func get_sort_anchor_global() -> Vector2:
 	return get_body_hitbox_center_global()
-
-
-func _draw() -> void:
-	if not OS.is_debug_build():
-		return
-	if c_combat == null:
-		return
-	var center_local := to_local(get_body_hitbox_center_global())
-	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
-	draw_arc(center_local, c_combat.melee_attack_range, 0.0, TAU, 96, ring_color, 1.5, true)
-	draw_arc(center_local, c_combat.ranged_attack_range, 0.0, TAU, 96, ring_color, 1.5, true)
-	if c_ai != null and c_ai.aggro_radius > 0.0:
-		draw_arc(center_local, c_ai.aggro_radius, 0.0, TAU, 96, Color(1.0, 0.2, 0.2, 0.85), 1.5, true)
 
 
 func _physics_process(delta: float) -> void:
@@ -511,7 +500,6 @@ func _physics_process(delta: float) -> void:
 
 	# AI tick
 	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
-	_update_model_motion(velocity.normalized() if velocity.length() > 0.01 else Vector2.ZERO)
 
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
@@ -669,17 +657,18 @@ func play_model_death() -> void:
 	if _character_model.has_method("play_death"):
 		_character_model.call("play_death")
 
+func get_corpse_pose_snapshot() -> Dictionary:
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("build_corpse_pose_snapshot"):
+		var v: Variant = _character_model.call("build_corpse_pose_snapshot")
+		if v is Dictionary:
+			return v as Dictionary
+	return {}
+
 func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
 		return
 	if _character_model.has_method("play_combat_action"):
 		_character_model.call("play_combat_action", action_kind, is_moving_now, c_stats.class_id if c_stats != null else "")
-
-func _update_model_motion(dir: Vector2) -> void:
-	if _character_model == null or not is_instance_valid(_character_model):
-		return
-	if _character_model.has_method("set_move_direction"):
-		_character_model.call("set_move_direction", dir)
 
 func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
@@ -712,6 +701,8 @@ func _apply_interaction_visual() -> void:
 	_apply_overlay_profile_from_model(inst)
 
 func _resolve_model_scene_for_interaction(value: int) -> PackedScene:
+	if _model_scene_override != null:
+		return _model_scene_override
 	if value == InteractionType.MERCHANT:
 		return MERCHANT_MODEL_SCENE
 	if value == InteractionType.TRAINER:
@@ -805,6 +796,9 @@ func _update_visual_render_order() -> void:
 	visual_root.z_as_relative = false
 	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
+func refresh_local_overlap_sorting() -> void:
+	_update_visual_render_order()
+
 func _update_hp() -> void:
 	if hp_bar == null:
 		return
@@ -817,7 +811,10 @@ func _setup_resource_from_class(class_id_value: String) -> void:
 	if c_resource == null:
 		return
 	c_resource.setup(self)
-	c_resource.configure_from_class_id(class_id_value)
+	var safe_class_id := class_id_value.strip_edges().to_lower()
+	if safe_class_id == "":
+		safe_class_id = "warrior"
+	c_resource.configure_from_class_id(safe_class_id)
 	if c_resource.resource_type == "rage":
 		c_resource.set_empty()
 	else:
@@ -880,23 +877,9 @@ func _clear_direct_attackers() -> void:
 		direct_attackers.clear()
 
 func _update_interaction() -> void:
-	if interaction_type != InteractionType.MERCHANT and interaction_type != InteractionType.TRAINER:
-		return
-	var p: Node = NodeCache.get_player(get_tree())
-	if p == null or not is_instance_valid(p):
-		return
-	var dist: float = global_position.distance_to(p.global_position)
-	var can_interact: bool = false
-	if interaction_type == InteractionType.MERCHANT:
-		can_interact = _can_trade_with(p)
-	else:
-		can_interact = _can_train_with(p)
-	var can_open: bool = can_interact and dist <= merchant_interact_radius
-	if can_open and Input.is_action_just_pressed("loot"):
-		if interaction_type == InteractionType.MERCHANT:
-			_try_open_merchant(p)
-		else:
-			_try_open_trainer(p)
+	# Взаимодействие по кнопке обрабатывается централизованно через Player/InteractionDetector
+	# (открывается только ближайший источник), здесь ничего не триггерим.
+	return
 
 func _can_trade_with(player_node: Node) -> bool:
 	if player_node == null or c_stats == null or c_stats.is_dead:
@@ -1013,8 +996,8 @@ func _prune_merchant_sales(player_id: int) -> void:
 	var filtered: Array = []
 	for entry in list:
 		if entry is Dictionary:
-			var exp: int = int((entry as Dictionary).get("expires_at", 0))
-			if exp == 0 or exp > now:
+			var expires_at_msec: int = int((entry as Dictionary).get("expires_at", 0))
+			if expires_at_msec == 0 or expires_at_msec > now:
 				filtered.append(entry)
 	if filtered.is_empty():
 		_merchant_sales.erase(player_id)

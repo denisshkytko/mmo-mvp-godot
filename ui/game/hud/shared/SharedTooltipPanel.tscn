@@ -48,6 +48,11 @@ visible = false
 layout_mode = 2
 text = "Экипировать"
 
+[node name="DropButton" type="Button" parent="Margin/VBox"]
+visible = false
+layout_mode = 2
+text = "Выбросить"
+
 [node name="UnequipButton" type="Button" parent="Margin/VBox"]
 visible = false
 layout_mode = 2

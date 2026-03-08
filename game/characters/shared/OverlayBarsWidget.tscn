@@ -5,10 +5,10 @@
 [ext_resource type="Script" uid="uid://ccm2upj2qm6f7" path="res://game/characters/shared/health_bar_widget.gd" id="3_hp_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cast_back"]
-bg_color = Color(0, 0, 0, 0.8)
+bg_color = Color(0, 0, 0, 0.3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cast_fill"]
-bg_color = Color(0.2, 0.8, 1, 0.9)
+bg_color = Color(0.5, 0, 0.5, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_name"]
 font_size = 124
@@ -16,7 +16,7 @@ outline_size = 40
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_back"]
-bg_color = Color(0, 0, 0, 0.88235295)
+bg_color = Color(0, 0, 0, 0.3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
 bg_color = Color(1, 1, 1, 1)

@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
+const COOLDOWN_FILL_SHADER_CODE := "shader_type canvas_item;\n\nuniform float fill_pct : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tif (UV.y < (1.0 - fill_pct)) {\n\t\tdiscard;\n\t}\n\tCOLOR = vec4(0.0, 0.0, 0.0, 0.65);\n}\n"
 signal hud_visibility_changed(is_open: bool)
 @onready var panel: Control = $Root/Panel
 @onready var gold_label: RichTextLabel = $Root/Panel/GoldLabel
@@ -36,6 +37,7 @@ signal hud_visibility_changed(is_open: bool)
 @onready var tooltip_sell_btn_scene: Button = $Root/InvTooltip/Margin/VBox/SellButton
 @onready var tooltip_quick_btn_scene: Button = $Root/InvTooltip/Margin/VBox/QuickSlotButton
 @onready var tooltip_bag_btn_scene: Button = $Root/InvTooltip/Margin/VBox/BagButton
+@onready var tooltip_drop_btn_scene: Button = $Root/InvTooltip/Margin/VBox/DropButton
 @onready var tooltip_close_btn_scene: Button = $Root/InvTooltip/CloseButton
 
 var player: Node = null
@@ -59,9 +61,13 @@ var _tooltip_equip_btn: Button = null
 var _tooltip_sell_btn: Button = null
 var _tooltip_quick_btn: Button = null
 var _tooltip_bag_btn: Button = null
+var _tooltip_drop_btn: Button = null
 var _tooltip_close_btn: Button = null
 var _tooltip_for_slot: int = -1
 var _tooltip_for_bag_slot: int = -1
+
+@onready var drop_confirm_dialog: ConfirmationDialog = $Root/DropConfirmDialog
+var _drop_confirm_slot: int = -1
 
 # Small center toast ("hp full" / "mana full")
 var _toast_label: Label = null
@@ -154,7 +160,6 @@ func _ready() -> void:
 	if bag_button != null:
 		bag_button.pressed.connect(_on_bag_button_pressed)
 	if grid_scroll_wrapper != null:
-		grid_scroll_wrapper.layout_mode = 2
 		grid_scroll_wrapper.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		grid_scroll_wrapper.anchor_left = 0
 		grid_scroll_wrapper.anchor_top = 0
@@ -164,7 +169,6 @@ func _ready() -> void:
 		grid_scroll_wrapper.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 		grid_scroll_wrapper.size_flags_stretch_ratio = 0.0
 	if grid_scroll != null:
-		grid_scroll.layout_mode = 2
 		grid_scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 		grid_scroll.anchor_left = 0
 		grid_scroll.anchor_top = 0
@@ -287,14 +291,14 @@ func _get_total_slots_from_player_fallback() -> int:
 func _deferred_force_initial_layout() -> void:
 	await _force_initial_layout()
 
-func _set_grid_cells_visible(is_visible: bool) -> void:
+func _set_grid_cells_visible(visible_state: bool) -> void:
 	if grid == null:
 		return
 	for i in range(grid.get_child_count()):
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		slot_panel.visible = is_visible
+		slot_panel.visible = visible_state
 
 func _process(_delta: float) -> void:
 	if _is_open and not _is_player_ready():
@@ -347,6 +351,11 @@ func _on_bag_button_pressed() -> void:
 
 func toggle_inventory() -> void:
 	_toggle_inventory()
+
+func ensure_open() -> void:
+	if _is_open:
+		return
+	_set_open(true)
 
 # --- Bag slots ---
 
@@ -470,7 +479,7 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 	if cd == null:
 		cd = ColorRect.new()
 		cd.name = "Cooldown"
-		cd.color = Color(0, 0, 0, 0.65)
+		cd.color = Color.WHITE
 		cd.visible = false
 		cd.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot_panel.add_child(cd)
@@ -479,6 +488,12 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 		cd.offset_top = 0
 		cd.offset_right = 0
 		cd.offset_bottom = 0
+		var sh := Shader.new()
+		sh.code = COOLDOWN_FILL_SHADER_CODE
+		var sm := ShaderMaterial.new()
+		sm.shader = sh
+		sm.set_shader_parameter("fill_pct", 0.0)
+		cd.material = sm
 		var cd_lbl := Label.new()
 		cd_lbl.name = "CooldownText"
 		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -705,6 +720,9 @@ func _show_tooltip_for_slot(slot_index: int, global_pos: Vector2) -> void:
 		_tooltip_bag_btn.visible = is_bag
 		_tooltip_bag_btn.text = tr("ui.inventory.bag.equip")
 		_tooltip_bag_btn.disabled = false
+	if _tooltip_drop_btn != null:
+		_tooltip_drop_btn.visible = true
+		_tooltip_drop_btn.disabled = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = slot_index
@@ -749,6 +767,8 @@ func _show_tooltip_for_bag_slot(bag_index: int, global_pos: Vector2) -> void:
 		_tooltip_bag_btn.visible = true
 		_tooltip_bag_btn.text = tr("ui.inventory.quick_slot.remove")
 		_tooltip_bag_btn.disabled = false
+	if _tooltip_drop_btn != null:
+		_tooltip_drop_btn.visible = false
 	await _resize_tooltip_to_content()
 	_tooltip_panel.visible = true
 	_tooltip_for_slot = -1
@@ -804,6 +824,8 @@ func _resize_tooltip_to_content() -> void:
 		btn_h += max(32.0, _tooltip_quick_btn.get_combined_minimum_size().y)
 	if _tooltip_bag_btn != null and _tooltip_bag_btn.visible:
 		btn_h += max(32.0, _tooltip_bag_btn.get_combined_minimum_size().y)
+	if _tooltip_drop_btn != null and _tooltip_drop_btn.visible:
+		btn_h += max(32.0, _tooltip_drop_btn.get_combined_minimum_size().y)
 	# label + optional button + small spacing
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
@@ -1279,8 +1301,8 @@ func _on_tooltip_bag_pressed() -> void:
 	var id: String = String((v as Dictionary).get("id", ""))
 	if not _is_bag_item(id):
 		return
-	var bag_slots: Array = snap.get("bag_slots", [])
-	var bag_index := _find_first_free_bag_slot(bag_slots)
+	var bag_slot_items: Array = snap.get("bag_slots", [])
+	var bag_index := _find_first_free_bag_slot(bag_slot_items)
 	if bag_index == -1:
 		show_center_toast(tr("ui.inventory.no_free_slots"))
 		return
@@ -1291,8 +1313,34 @@ func _on_tooltip_bag_pressed() -> void:
 	else:
 		show_center_toast(tr("ui.inventory.no_free_slots"))
 
+func _on_tooltip_drop_pressed() -> void:
+	if _tooltip_for_slot < 0 or _tooltip_for_bag_slot != -1:
+		return
+	_drop_confirm_slot = _tooltip_for_slot
+	if drop_confirm_dialog != null:
+		drop_confirm_dialog.dialog_text = "Выбросить выбранный предмет из инвентаря?"
+		drop_confirm_dialog.popup_centered()
 
-func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
+func _on_drop_confirmed() -> void:
+	if player == null or not is_instance_valid(player):
+		_drop_confirm_slot = -1
+		return
+	if _drop_confirm_slot < 0:
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if _drop_confirm_slot < 0 or _drop_confirm_slot >= slots.size() or not (slots[_drop_confirm_slot] is Dictionary):
+		_drop_confirm_slot = -1
+		return
+	slots[_drop_confirm_slot] = null
+	snap["slots"] = slots
+	player.apply_inventory_snapshot(snap)
+	_hide_tooltip()
+	_drop_confirm_slot = -1
+	await _refresh()
+
+
+func _show_consumable_fail_toast(reason: String, _item_id: String) -> void:
 	_ensure_support_ui()
 	if _toast_label == null:
 		return
@@ -1390,6 +1438,8 @@ func _show_tooltip_for_item_dict(d: Dictionary) -> void:
 		_tooltip_quick_btn.visible = false
 	if _tooltip_bag_btn != null:
 		_tooltip_bag_btn.visible = false
+	if _tooltip_drop_btn != null:
+		_tooltip_drop_btn.visible = false
 	await get_tree().process_frame
 	if String(text).strip_edges() == "" or float(_tooltip_label.get_content_height()) <= 1.0:
 		await get_tree().process_frame
@@ -1417,11 +1467,11 @@ func _refresh() -> void:
 	var snap: Dictionary = player.get_inventory_snapshot()
 	_sync_quick_slots_from_snapshot(snap)
 	var slots: Array = snap.get("slots", [])
-	var bag_slots: Array = snap.get("bag_slots", [])
+	var bag_slot_items: Array = snap.get("bag_slots", [])
 	var total_slots: int = slots.size()
 	if total_slots == 0:
 		total_slots = _get_total_slots_from_player_fallback()
-	var bag_hash: int = str(bag_slots).hash()
+	var bag_hash: int = str(bag_slot_items).hash()
 
 	# Mark layout dirty only when geometry changes.
 	if total_slots != _last_total_slots:
@@ -1461,7 +1511,7 @@ func _refresh() -> void:
 			continue
 		_render_slot(slot_panel, i, slots)
 
-	_update_bag_buttons(bag_slots)
+	_update_bag_buttons(bag_slot_items)
 	_refresh_quick_bar()
 	if _is_open:
 		grid.visible = true
@@ -1549,7 +1599,12 @@ func _update_slot_cooldown(slot_panel: Panel, item_id: String) -> void:
 	if left <= 0.01:
 		cd.visible = false
 		return
+	var total := _get_consumable_cd_total_for_kind(kind)
+	var pct: float = clamp(left / max(0.01, total), 0.0, 1.0)
 	cd.visible = true
+	var mat := cd.material as ShaderMaterial
+	if mat != null:
+		mat.set_shader_parameter("fill_pct", pct)
 	var lbl: Label = cd.get_node_or_null("CooldownText") as Label
 	if lbl != null:
 		lbl.text = str(int(ceil(left)))
@@ -1571,7 +1626,12 @@ func _update_quick_cooldown(btn: Button, item_id: String) -> void:
 	if left <= 0.01:
 		cd.visible = false
 		return
+	var total := _get_consumable_cd_total_for_kind(kind)
+	var pct: float = clamp(left / max(0.01, total), 0.0, 1.0)
 	cd.visible = true
+	var mat := cd.material as ShaderMaterial
+	if mat != null:
+		mat.set_shader_parameter("fill_pct", pct)
 	var lbl: Label = cd.get_node_or_null("CooldownText") as Label
 	if lbl != null:
 		lbl.text = str(int(ceil(left)))
@@ -1593,13 +1653,13 @@ func _update_visible_cooldowns(snap: Dictionary) -> void:
 		var b := _quick_buttons[qi]
 		_update_quick_cooldown(b, _quick_refs[qi])
 
-func _update_bag_buttons(bag_slots: Array) -> void:
+func _update_bag_buttons(bag_slot_items: Array) -> void:
 	# bag slots array is logical [0..3] (near base -> outward)
 	for bi in range(4):
 		var btn: Button = _get_bag_button_for_logical(bi)
 		if btn == null:
 			continue
-		var v: Variant = bag_slots[bi] if bi < bag_slots.size() else null
+		var v: Variant = bag_slot_items[bi] if bi < bag_slot_items.size() else null
 		if v != null and v is Dictionary:
 			var id: String = String((v as Dictionary).get("id", ""))
 			var slots_count: int = 0
@@ -1633,9 +1693,9 @@ func _find_first_free_slot(slots: Array) -> int:
 			return i
 	return -1
 
-func _find_first_free_bag_slot(bag_slots: Array) -> int:
-	for i in range(min(4, bag_slots.size())):
-		if bag_slots[i] == null:
+func _find_first_free_bag_slot(bag_slot_items: Array) -> int:
+	for i in range(min(4, bag_slot_items.size())):
+		if bag_slot_items[i] == null:
 			return i
 	return -1
 
@@ -1838,6 +1898,7 @@ func _ensure_support_ui() -> void:
 		_tooltip_sell_btn = tooltip_sell_btn_scene
 		_tooltip_quick_btn = tooltip_quick_btn_scene
 		_tooltip_bag_btn = tooltip_bag_btn_scene
+		_tooltip_drop_btn = tooltip_drop_btn_scene
 		_tooltip_close_btn = tooltip_close_btn_scene
 		if _tooltip_panel != null:
 			_tooltip_panel.visible = false
@@ -1875,8 +1936,13 @@ func _ensure_support_ui() -> void:
 			_tooltip_quick_btn.pressed.connect(_on_tooltip_quick_pressed)
 		if _tooltip_bag_btn != null and not _tooltip_bag_btn.pressed.is_connected(_on_tooltip_bag_pressed):
 			_tooltip_bag_btn.pressed.connect(_on_tooltip_bag_pressed)
+		if _tooltip_drop_btn != null and not _tooltip_drop_btn.pressed.is_connected(_on_tooltip_drop_pressed):
+			_tooltip_drop_btn.pressed.connect(_on_tooltip_drop_pressed)
 		if _tooltip_close_btn != null and not _tooltip_close_btn.pressed.is_connected(_hide_tooltip):
 			_tooltip_close_btn.pressed.connect(_hide_tooltip)
+
+	if drop_confirm_dialog != null and not drop_confirm_dialog.confirmed.is_connected(_on_drop_confirmed):
+		drop_confirm_dialog.confirmed.connect(_on_drop_confirmed)
 
 	if split_dialog != null:
 		var sb2 := StyleBoxFlat.new()
@@ -2039,7 +2105,7 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 	if cd == null:
 		cd = ColorRect.new()
 		cd.name = "Cooldown"
-		cd.color = Color(0, 0, 0, 0.65)
+		cd.color = Color.WHITE
 		cd.visible = false
 		cd.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(cd)
@@ -2048,6 +2114,12 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 		cd.offset_top = 0
 		cd.offset_right = 0
 		cd.offset_bottom = 0
+		var sh := Shader.new()
+		sh.code = COOLDOWN_FILL_SHADER_CODE
+		var sm := ShaderMaterial.new()
+		sm.shader = sh
+		sm.set_shader_parameter("fill_pct", 0.0)
+		cd.material = sm
 		var cd_lbl := Label.new()
 		cd_lbl.name = "CooldownText"
 		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -2142,7 +2214,7 @@ func _refresh_quick_bar() -> void:
 	if quick_changed:
 		_persist_quick_slots()
 
-func _rebuild_layout(reason: String) -> void:
+func _rebuild_layout(_reason: String) -> void:
 	if _rebuild_in_progress:
 		_rebuild_requested = true
 		return

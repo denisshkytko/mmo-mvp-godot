@@ -4,7 +4,14 @@ class_name NormalAggresiveMobAI
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
-const COMBAT_SPACING_BUFFER: float = 20.0
+const COMBAT_SPACING_BUFFER: float = 32.0
+const PATROL_SEPARATION_DISTANCE: float = 28.0
+const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
+const OBSTACLE_AVOID_LOOKAHEAD: float = 18.0
+const OBSTACLE_AVOID_ANGLES := [0.35, -0.35, 0.7, -0.7, 1.2, -1.2]
+const PATROL_SOFT_STUCK_SEC: float = 0.8
+const PATROL_HARD_STUCK_SEC: float = 1.6
+const PATROL_UNSTUCK_STEP_OPTIONS := [16.0, 24.0, 32.0]
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -26,6 +33,8 @@ var _patrol_wait: float = 0.0
 var _patrol_last_position: Vector2 = Vector2.ZERO
 var _patrol_has_last_position: bool = false
 var _patrol_stuck_time: float = 0.0
+var _patrol_separation_refresh: float = 0.0
+var _patrol_separation_vector: Vector2 = Vector2.ZERO
 
 func reset_to_idle() -> void:
 	_state = AIState.IDLE
@@ -33,6 +42,8 @@ func reset_to_idle() -> void:
 	_patrol_wait = 0.0
 	_patrol_has_last_position = false
 	_patrol_stuck_time = 0.0
+	_patrol_separation_refresh = 0.0
+	_patrol_separation_vector = Vector2.ZERO
 
 func force_return() -> void:
 	_state = AIState.RETURN
@@ -123,19 +134,110 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		var patrol_progress: float = actor.global_position.distance_to(_patrol_last_position)
 		if patrol_progress < 0.5 and d > 12.0:
 			_patrol_stuck_time += delta
-			if _patrol_stuck_time >= 0.8:
+			if _patrol_stuck_time >= PATROL_HARD_STUCK_SEC:
+				_force_unstuck_position(actor)
 				_pick_new_patrol_target()
 				_patrol_stuck_time = 0.0
+				_patrol_has_last_position = false
+			elif _patrol_stuck_time >= PATROL_SOFT_STUCK_SEC:
+				_pick_new_patrol_target()
+				_patrol_stuck_time = PATROL_SOFT_STUCK_SEC
 				_patrol_has_last_position = false
 		else:
 			_patrol_stuck_time = 0.0
 	_patrol_last_position = actor.global_position
 	_patrol_has_last_position = true
 
-	actor.velocity = (_patrol_target - actor.global_position).normalized() * patrol_speed
+	var patrol_dir: Vector2 = (_patrol_target - actor.global_position).normalized()
+	var separation_dir: Vector2 = _get_patrol_separation_vector(delta, actor)
+	var final_dir: Vector2 = patrol_dir + separation_dir
+	if final_dir.length_squared() > 0.0001:
+		final_dir = final_dir.normalized()
+	else:
+		final_dir = patrol_dir
+	final_dir = _steer_around_obstacles(actor, final_dir)
+	if final_dir.length_squared() <= 0.0001:
+		actor.velocity = Vector2.ZERO
+	else:
+		actor.velocity = final_dir * patrol_speed
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, true)
 	actor.move_and_slide()
+
+func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vector2:
+	_patrol_separation_refresh -= delta
+	if _patrol_separation_refresh > 0.0:
+		return _patrol_separation_vector
+	_patrol_separation_refresh = PATROL_SEPARATION_REFRESH_SEC
+	_patrol_separation_vector = _compute_patrol_separation(actor)
+	return _patrol_separation_vector
+
+func _compute_patrol_separation(actor: CharacterBody2D) -> Vector2:
+	if actor == null or not is_instance_valid(actor):
+		return Vector2.ZERO
+	var tree := actor.get_tree()
+	if tree == null:
+		return Vector2.ZERO
+	var repel := Vector2.ZERO
+	var nearby_count: int = 0
+	for n in tree.get_nodes_in_group("mobs"):
+		if not (n is Node2D):
+			continue
+		var other := n as Node2D
+		if other == actor or not is_instance_valid(other):
+			continue
+		if not _is_patrol_friendly(actor, other):
+			continue
+		var offset: Vector2 = actor.global_position - other.global_position
+		var dist: float = offset.length()
+		if dist <= 0.001 or dist >= PATROL_SEPARATION_DISTANCE:
+			continue
+		var strength: float = (PATROL_SEPARATION_DISTANCE - dist) / PATROL_SEPARATION_DISTANCE
+		repel += (offset / dist) * strength
+		nearby_count += 1
+		if nearby_count >= 6:
+			break
+	if repel.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	return repel.normalized() * min(1.0, repel.length())
+
+func _is_patrol_friendly(actor: CharacterBody2D, other: Node2D) -> bool:
+	if actor.has_method("get_faction_id") and other.has_method("get_faction_id"):
+		return String(actor.call("get_faction_id")) == String(other.call("get_faction_id"))
+	return true
+
+func _steer_around_obstacles(actor: CharacterBody2D, desired_dir: Vector2) -> Vector2:
+	if actor == null or not is_instance_valid(actor):
+		return Vector2.ZERO
+	if desired_dir.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	var base_dir: Vector2 = desired_dir.normalized()
+	if not _is_motion_blocked(actor, base_dir):
+		return base_dir
+	for angle in OBSTACLE_AVOID_ANGLES:
+		var candidate := base_dir.rotated(float(angle))
+		if not _is_motion_blocked(actor, candidate):
+			return candidate
+	return Vector2.ZERO
+
+func _is_motion_blocked(actor: CharacterBody2D, direction: Vector2) -> bool:
+	if direction.length_squared() <= 0.0001:
+		return false
+	var motion: Vector2 = direction.normalized() * OBSTACLE_AVOID_LOOKAHEAD
+	return actor.test_move(actor.global_transform, motion)
+
+func _force_unstuck_position(actor: CharacterBody2D) -> void:
+	if actor == null or not is_instance_valid(actor):
+		return
+	for step_v in PATROL_UNSTUCK_STEP_OPTIONS:
+		var step_len := float(step_v)
+		for angle in OBSTACLE_AVOID_ANGLES:
+			var dir := Vector2.RIGHT.rotated(float(angle))
+			var motion := dir * step_len
+			if actor.test_move(actor.global_transform, motion):
+				continue
+			actor.global_position += motion
+			return
 
 func _do_chase(actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	if target == null or not is_instance_valid(target):
@@ -154,13 +256,18 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMo
 	var stop_distance: float = max(0.0, combat.get_stop_distance())
 	var spacing_distance: float = max(0.0, stop_distance - COMBAT_SPACING_BUFFER)
 	if dist > stop_distance:
-		actor.velocity = to_target.normalized() * speed
+		var chase_dir := _steer_around_obstacles(actor, to_target.normalized())
+		actor.velocity = chase_dir * speed if chase_dir.length_squared() > 0.0001 else Vector2.ZERO
 	elif dist < spacing_distance:
-		actor.velocity = (-to_target).normalized() * (speed * 0.5)
+		var backstep_dir := _steer_around_obstacles(actor, (-to_target).normalized())
+		actor.velocity = backstep_dir * (speed * 0.5) if backstep_dir.length_squared() > 0.0001 else Vector2.ZERO
 	else:
 		actor.velocity = Vector2.ZERO
 	if actor.has_method("update_movement_animation"):
-		actor.call("update_movement_animation", actor.velocity, false)
+		var anim_dir: Vector2 = actor.velocity
+		if anim_dir.length_squared() <= 0.0001 and dist > 0.001:
+			anim_dir = to_target.normalized() * 0.02
+		actor.call("update_movement_animation", anim_dir, false)
 	actor.move_and_slide()
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
@@ -179,7 +286,11 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 		actor.move_and_slide()
 		return
 
-	actor.velocity = to_home.normalized() * speed
+	var return_dir := _steer_around_obstacles(actor, to_home.normalized())
+	actor.velocity = return_dir * speed if return_dir.length_squared() > 0.0001 else Vector2.ZERO
 	if actor.has_method("update_movement_animation"):
-		actor.call("update_movement_animation", actor.velocity, false)
+		var anim_dir: Vector2 = actor.velocity
+		if anim_dir.length_squared() <= 0.0001 and dist > 0.001:
+			anim_dir = to_home.normalized() * 0.02
+		actor.call("update_movement_animation", anim_dir, false)
 	actor.move_and_slide()

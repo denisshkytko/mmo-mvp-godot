@@ -16,6 +16,7 @@ const PALADIN_MODEL_SCENE := preload("res://game/characters/player/models/Paladi
 const PRIEST_MODEL_SCENE := preload("res://game/characters/player/models/PriestModel.tscn")
 const SHAMAN_MODEL_SCENE := preload("res://game/characters/player/models/ShamanModel.tscn")
 const HUNTER_MODEL_SCENE := preload("res://game/characters/player/models/HunterModel.tscn")
+const MAX_LEVEL: int = 60
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
@@ -101,6 +102,14 @@ func start_consumable_cooldown(kind: String, seconds: float) -> void:
 	if kind == "" or seconds <= 0.0:
 		return
 	_consumable_cd_end_sec[kind] = _now_sec() + seconds
+
+func get_consumable_cooldown_left(kind: String) -> float:
+	if kind == "":
+		return 0.0
+	var end_sec: float = float(_consumable_cd_end_sec.get(kind, 0.0))
+	if end_sec <= 0.0:
+		return 0.0
+	return max(0.0, end_sec - _now_sec())
 
 func try_apply_consumable(item_id: String) -> Dictionary:
 	# Applies the consumable's effect (instant or over-time) WITHOUT removing the item from inventory.
@@ -245,6 +254,7 @@ func _ready() -> void:
 
 	# init stats
 	c_stats.recalculate_for_level(true)
+	_enforce_level_cap_state()
 
 	if c_resource != null:
 		c_resource.setup(self)
@@ -256,6 +266,7 @@ func _ready() -> void:
 
 	_apply_spellbook_passives()
 	_apply_class_visual()
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 	if cast_bar != null:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
@@ -293,6 +304,9 @@ func _physics_process(_delta: float) -> void:
 			Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		)
 
+	if Input.is_action_just_pressed("loot"):
+		try_interact()
+
 	if c_ability_caster != null and c_ability_caster.is_casting() and input_dir.length() > 0.0:
 		c_ability_caster.interrupt_cast("movement")
 	if c_ability_caster != null and c_ability_caster.is_casting():
@@ -319,6 +333,9 @@ func _update_visual_render_order() -> void:
 	visual_root.z_as_relative = false
 	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
+func refresh_local_overlap_sorting() -> void:
+	_update_visual_render_order()
+
 
 func _process(delta: float) -> void:
 	if is_dead:
@@ -341,8 +358,6 @@ func _process(delta: float) -> void:
 	_update_model_hp_bar()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
 
-	if OS.is_debug_build():
-		queue_redraw()
 
 
 func get_body_hitbox_center_global() -> Vector2:
@@ -354,20 +369,6 @@ func get_sort_anchor_global() -> Vector2:
 	return get_body_hitbox_center_global()
 
 
-func _draw() -> void:
-	if not OS.is_debug_build():
-		return
-	var center_local := to_local(get_body_hitbox_center_global())
-	var melee_radius := COMBAT_RANGES.MELEE_ATTACK_RANGE
-	var ranged_radius := COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE * PROG.get_ranged_auto_attack_range_multiplier_for_class(class_id)
-	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
-	draw_arc(center_local, melee_radius, 0.0, TAU, 96, ring_color, 1.5, true)
-	draw_arc(center_local, ranged_radius, 0.0, TAU, 96, ring_color, 1.5, true)
-
-
-# -----------------------
-# Compatibility API (как было раньше)
-# -----------------------
 func get_attack_damage() -> int:
 	return c_combat.get_attack_damage()
 
@@ -500,8 +501,23 @@ func consume_item(item_id: String, amount: int = 1) -> int:
 
 
 func add_xp(amount: int) -> void:
+	if amount <= 0:
+		return
+	if is_level_capped():
+		return
 	c_stats.add_xp(amount)
+	_enforce_level_cap_state()
 	_request_save("xp")
+
+func is_level_capped() -> bool:
+	return level >= MAX_LEVEL
+
+func _enforce_level_cap_state() -> void:
+	if level < MAX_LEVEL:
+		return
+	level = MAX_LEVEL
+	xp = 0
+	xp_to_next = 0
 
 
 func get_inventory_snapshot() -> Dictionary:
@@ -629,9 +645,10 @@ func use_spirits_aid_respawn() -> bool:
 
 func apply_character_data(d: Dictionary) -> void:
 	# имя/класс здесь не трогаем (они живут в сейве и UI), но статы/прогресс применяем
-	level = int(d.get("level", level))
+	level = clamp(int(d.get("level", level)), 1, MAX_LEVEL)
 	xp = int(d.get("xp", xp))
 	xp_to_next = int(d.get("xp_to_next", xp_to_next))
+	_enforce_level_cap_state()
 	class_id = String(d.get("class_id", d.get("class", class_id)))
 
 	max_hp = int(d.get("max_hp", max_hp))
@@ -697,6 +714,7 @@ func apply_character_data(d: Dictionary) -> void:
 	# Derived stats must be recalculated after primaries + buffs are in place
 	if c_stats != null:
 		c_stats.recalculate_for_level(false)
+	_enforce_level_cap_state()
 
 	# защита от “вошёл мёртвым”
 	is_dead = false

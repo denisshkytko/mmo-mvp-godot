@@ -5,3 +5,5 @@
 [node name="ModelHighlightWidget" type="Node2D"]
 visible = false
 script = ExtResource("1")
+radius = 200.0
+y_offset = 100.0

@@ -1,7 +1,7 @@
 extends AbilityEffect
 class_name EffectRevivePlayer
 
-func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
+func apply(_caster: Node, target: Node, rank_data: RankData, _context: Dictionary) -> void:
 	if target == null or rank_data == null:
 		return
 	if not target is Corpse:

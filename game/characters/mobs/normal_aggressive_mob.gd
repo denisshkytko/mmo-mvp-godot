@@ -43,6 +43,7 @@ var overlay_bars_widget: OverlayBarsWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = get_node_or_null("Visual") as Node2D
+@onready var fallback_rect: ColorRect = get_node_or_null("ColorRect") as ColorRect
 
 var model_group_id: String = "cinderborn"
 var model_id: String = "warrior_1"
@@ -168,6 +169,7 @@ func _ready() -> void:
 	player = NodeCache.get_player(get_tree()) as Node2D
 	if not _spawn_initialized:
 		_apply_model_visual()
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 	if c_ai != null and c_ai.has_signal("leash_return_started"):
 		var cb := Callable(self, "_on_leash_return_started")
@@ -196,8 +198,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
-	if OS.is_debug_build():
-		queue_redraw()
 
 
 func get_body_hitbox_center_global() -> Vector2:
@@ -209,21 +209,8 @@ func get_sort_anchor_global() -> Vector2:
 	return get_body_hitbox_center_global()
 
 
-func _draw() -> void:
-	if not OS.is_debug_build():
-		return
-	if c_combat == null:
-		return
-	var center_local := to_local(get_body_hitbox_center_global())
-	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
-	draw_arc(center_local, c_combat.melee_attack_range, 0.0, TAU, 96, ring_color, 1.5, true)
-	draw_arc(center_local, c_combat.ranged_attack_range, 0.0, TAU, 96, ring_color, 1.5, true)
-	if c_ai != null and c_ai.aggro_radius > 0.0:
-		draw_arc(center_local, c_ai.aggro_radius, 0.0, TAU, 96, Color(1.0, 0.2, 0.2, 0.85), 1.5, true)
-
 func _physics_process(delta: float) -> void:
 	_update_visual_render_order()
-	update_movement_animation(velocity, false)
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		return
@@ -318,6 +305,9 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = false
 	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+
+func refresh_local_overlap_sorting() -> void:
+	_update_visual_render_order()
 
 # ------------------------------------------------------------
 # Called by Spawner
@@ -778,16 +768,22 @@ func _apply_model_visual() -> void:
 	_active_model_key = model_key
 	var scene := _resolve_model_scene(model_group_id, model_id)
 	if scene == null:
+		if fallback_rect != null:
+			fallback_rect.visible = true
 		hp_bar = null
 		cast_bar = null
 		return
 	var inst := scene.instantiate()
 	if inst == null:
+		if fallback_rect != null:
+			fallback_rect.visible = true
 		hp_bar = null
 		cast_bar = null
 		return
 	visual_root.add_child(inst)
 	_character_model = inst
+	if fallback_rect != null:
+		fallback_rect.visible = false
 	_apply_collision_profile_from_model(inst)
 	_apply_overlay_profile_from_model(inst)
 

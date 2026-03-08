@@ -155,9 +155,6 @@ func _update_center() -> void:
 	_center = size * 0.5
 	if _active_touch_id == -1 and not _mouse_active:
 		_input_origin = _center
-	if base != null:
-		base.position = Vector2.ZERO
-		base.size = size
 	if knob != null:
 		knob.position = _center - knob.size * 0.5
 
@@ -170,6 +167,6 @@ func _is_within_bounds(local_pos: Vector2) -> bool:
 	return local_pos.distance_to(_center) <= _get_radius()
 
 
-func _set_knob_visible(is_visible: bool) -> void:
+func _set_knob_visible(visible_state: bool) -> void:
 	if knob != null:
-		knob.visible = is_visible
+		knob.visible = visible_state

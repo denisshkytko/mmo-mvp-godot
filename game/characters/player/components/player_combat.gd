@@ -209,12 +209,21 @@ func _fire_ranged(target: Node2D, dmg: int) -> void:
 		return
 
 	parent.add_child(proj)
-	proj.global_position = p.global_position
+	proj.global_position = _projectile_spawn_origin(p)
 	if proj.has_method("setup"):
 		var texture_override: Texture2D = null
 		if p != null and String(p.class_id).to_lower() == "hunter":
 			texture_override = HUNTER_ARROW_TEXTURE
 		proj.call("setup", target, dmg, p, texture_override)
+
+func _projectile_spawn_origin(actor: Node2D) -> Vector2:
+	if actor == null:
+		return Vector2.ZERO
+	if actor.has_method("get_body_hitbox_center_global"):
+		var v: Variant = actor.call("get_body_hitbox_center_global")
+		if v is Vector2:
+			return v as Vector2
+	return actor.global_position
 
 func _play_attack_animation_for_mode() -> void:
 	if p == null or not p.has_method("play_model_combat_action"):
@@ -255,7 +264,7 @@ func _estimate_final_damage(target: Node2D, raw_damage: int, dmg_type: String) -
 	var final := int(ceil(float(raw_damage) * (1.0 - reduction_pct / 100.0)))
 	return max(1, final)
 
-func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, spell_power: float) -> void:
+func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, _spell_power: float) -> void:
 	if p == null or p.c_buffs == null:
 		return
 	var stance_data: Dictionary = p.c_buffs.get_active_stance_data()

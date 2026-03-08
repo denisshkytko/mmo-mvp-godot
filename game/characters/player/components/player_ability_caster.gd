@@ -21,6 +21,7 @@ const WEAPON_REQUIRED_ABILITY_IDS: Array[String] = [
 
 var p: Player = null
 var _cooldowns: Dictionary = {} # ability_id -> time_left
+var _cooldown_totals: Dictionary = {} # ability_id -> initial duration
 var _cast_time_left: float = 0.0
 var _cast_total_time: float = 0.0
 var _cast_payload: Dictionary = {}
@@ -43,6 +44,7 @@ func tick(delta: float) -> void:
 		var left: float = max(0.0, float(_cooldowns.get(ability_id, 0.0)) - delta)
 		if left <= 0.0:
 			_cooldowns.erase(ability_id)
+			_cooldown_totals.erase(ability_id)
 		else:
 			_cooldowns[ability_id] = left
 
@@ -83,7 +85,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if get_cooldown_left(ability_id) > 0.0:
 		return {"ok": false, "reason": "cooldown"}
 
-	var target_result := _resolve_cast_target(def, target)
+	var target_result := _resolve_cast_target(def, target, true)
 	if not bool(target_result.get("ok", false)):
 		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
 	var actual_target: Node = target_result.get("target") as Node
@@ -149,7 +151,7 @@ func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
 	if not _is_weapon_requirement_satisfied(ability_id):
 		return {"ok": false, "reason": "weapon_required"}
 
-	var target_result := _resolve_cast_target(def, target)
+	var target_result := _resolve_cast_target(def, target, false)
 	if not bool(target_result.get("ok", false)):
 		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
 	return {"ok": true, "target": target_result.get("target")}
@@ -186,16 +188,20 @@ func get_cooldown_pct(ability_id: String) -> float:
 	var left := get_cooldown_left(ability_id)
 	if left <= 0.0:
 		return 0.0
+	var fallback_total: float = float(_cooldown_totals.get(ability_id, 0.0))
 	var db := get_node_or_null("/root/AbilityDB")
 	if db == null or not db.has_method("get_rank_data") or p == null or p.c_spellbook == null:
-		return 0.0
+		return clamp(left / max(0.01, fallback_total), 0.0, 1.0)
 	var rank := int(p.c_spellbook.learned_ranks.get(ability_id, 0))
 	var rank_data: RankData = db.call("get_rank_data", ability_id, rank)
 	if rank_data == null:
+		return clamp(left / max(0.01, fallback_total), 0.0, 1.0)
+	var total: float = rank_data.cooldown_sec
+	if total <= 0.0:
+		total = fallback_total
+	if total <= 0.0:
 		return 0.0
-	if rank_data.cooldown_sec <= 0.0:
-		return 0.0
-	return clamp(left / rank_data.cooldown_sec, 0.0, 1.0)
+	return clamp(left / total, 0.0, 1.0)
 
 func apply_active_aura(ability_id: String) -> void:
 	if p == null or p.c_buffs == null:
@@ -369,6 +375,7 @@ func _start_cooldown(ability_id: String, duration: float) -> void:
 	if ability_id == "" or duration <= 0.0:
 		return
 	_cooldowns[ability_id] = duration
+	_cooldown_totals[ability_id] = duration
 
 func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data: RankData, actual_target: Node) -> void:
 	if def == null or def.effect == null:
@@ -394,16 +401,16 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 		context[k] = extra[k]
 	return context
 
-func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
+func _resolve_cast_target(def: AbilityDefinition, target: Node, allow_target_assignment: bool = true) -> Dictionary:
 	var pre_target: Node = target
 	if def != null and p != null and String(def.target_type) == "enemy" and pre_target == null and not _can_fallback_to_self(def):
-		var range: float = _resolve_range_by_mode(String(def.range_mode))
-		pre_target = _find_nearest_hostile_target_in_range(range)
+		var cast_range: float = _resolve_range_by_mode(String(def.range_mode))
+		pre_target = _find_nearest_hostile_target_in_range(cast_range)
 		if pre_target != null:
 			var gm: Node = null
 			if p.has_method("_get_game_manager"):
 				gm = p.call("_get_game_manager") as Node
-			if gm != null and gm.has_method("set_target"):
+			if allow_target_assignment and gm != null and gm.has_method("set_target"):
 				gm.call("set_target", pre_target)
 	var target_result := _normalize_target(def, pre_target)
 	if not bool(target_result.get("ok", false)):
@@ -412,9 +419,9 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 
 	var range_mode := String(def.range_mode)
 	if range_mode != "self" and actual_target is Node2D:
-		var range: float = _resolve_range_by_mode(range_mode)
+		var cast_range: float = _resolve_range_by_mode(range_mode)
 		var dist: float = _distance_between_body_hitboxes(p, actual_target as Node2D)
-		if dist > range:
+		if dist > cast_range:
 			return {"ok": false, "reason": "out_of_range"}
 	elif range_mode != "self" and not (actual_target is Node2D):
 		return {"ok": false, "reason": "no_target"}

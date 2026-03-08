@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b8eicj3o0nddy"]
 
-[ext_resource type="Script" uid="uid://c7m3xg0v1p3fw" path="res://ui/game/hud/auras/buffs_aura/buff_aura_flyout.gd" id="1_4d4h2"]
+[ext_resource type="Script" path="res://ui/game/hud/auras/buffs_aura/buff_aura_flyout.gd" id="1_4d4h2"]
 
 [node name="BuffAuraFlyout" type="Control"]
 script = ExtResource("1_4d4h2")

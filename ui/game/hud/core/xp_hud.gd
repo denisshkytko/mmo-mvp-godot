@@ -15,7 +15,13 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player")
+		visible = false
 		return
+
+	if player.has_method("is_level_capped") and bool(player.call("is_level_capped")):
+		visible = false
+		return
+	visible = true
 
 	var cur_v: Variant = player.get("xp")
 	var need_v: Variant = player.get("xp_to_next")

@@ -95,8 +95,8 @@ func _set_cost_visible(visible_value: bool) -> void:
 
 func _set_cost_value(bronze_total: int) -> void:
 	var total: int = max(0, bronze_total)
-	var gold: int = int(total / 10000)
-	var silver: int = int((total % 10000) / 100)
+	var gold: int = int(float(total) / 10000.0)
+	var silver: int = int(float(total % 10000) / 100.0)
 	var bronze: int = int(total % 100)
 
 	if cost_gold_label != null:
@@ -172,7 +172,7 @@ func _apply_name_truncation(target_width: float) -> void:
 	var high := _full_name_text.length()
 	var best := ellipsis
 	while low <= high:
-		var mid := int((low + high) / 2)
+		var mid := int((float(low + high)) / 2.0)
 		var candidate := _full_name_text.substr(0, mid) + ellipsis
 		var candidate_w := font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
 		if candidate_w <= target_width:
