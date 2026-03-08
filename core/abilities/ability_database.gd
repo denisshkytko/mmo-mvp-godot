@@ -177,18 +177,18 @@ func _load_abilities_from_dir(path: String) -> void:
 		push_warning("[AbilityDB] DirAccess.open failed: " + path)
 		return
 	dir.list_dir_begin()
-	var name := dir.get_next()
-	while name != "":
-		if name.begins_with("."):
-			name = dir.get_next()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if file_name.begins_with("."):
+			file_name = dir.get_next()
 			continue
-		var full_path := path.path_join(name)
+		var full_path := path.path_join(file_name)
 		if dir.current_is_dir():
 			_load_abilities_from_dir(full_path)
 		else:
-			var ext := name.get_extension().to_lower()
+			var ext := file_name.get_extension().to_lower()
 			if ext == "import" or ext == "remap":
-				name = dir.get_next()
+				file_name = dir.get_next()
 				continue
 			if ext == "tres" or ext == "res":
 				if OS.is_debug_build():
@@ -209,7 +209,7 @@ func _load_abilities_from_dir(path: String) -> void:
 					push_warning("[AbilityDB] NOT AbilityDefinition: %s class=%s script=%s script_class=%s" % [full_path, res.get_class(), str(res.get_script()), str(res.get("script_class"))])
 				else:
 					_register_def(res, full_path)
-		name = dir.get_next()
+		file_name = dir.get_next()
 	dir.list_dir_end()
 
 

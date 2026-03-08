@@ -3,7 +3,7 @@ class_name EffectApplyBuff
 
 const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
 
-const BuffData := preload("res://core/buffs/buff_data.gd")
+const BuffDataScript := preload("res://core/buffs/buff_data.gd")
 
 @export var buff_id: String = ""
 @export var secondary_add: Dictionary = {}
@@ -24,7 +24,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	if entry_id == "":
 		entry_id = "buff:%s" % ability_id if ability_id != "" else "buff:"
 
-	var data_res: BuffData = BuffData.new()
+	var data_res: BuffData = BuffDataScript.new()
 	data_res.id = entry_id
 	data_res.duration_sec = float(rank_data.duration_sec)
 	data_res.secondary_add = _resolve_dict(secondary_add, rank_data, false, context)

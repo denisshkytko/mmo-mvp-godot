@@ -203,8 +203,8 @@ static func get_primary_multiplier(profile_id: String, level: int) -> float:
 			if level <= 10:
 				return 1.0
 			var t: float = float(level - 10) / float(MAX_LEVEL - 10)
-			var ease: float = t * t * (3.0 - 2.0 * t)
-			var mult: float = 1.0 + (HOSTILE_TARGET_MULT - 1.0) * ease
+			var smooth_t: float = t * t * (3.0 - 2.0 * t)
+			var mult: float = 1.0 + (HOSTILE_TARGET_MULT - 1.0) * smooth_t
 			if DEBUG_LOGS and (level == 10 or level == 60):
 				print("Progression hostile mult lvl=%d -> %.3f" % [level, mult])
 			return mult
