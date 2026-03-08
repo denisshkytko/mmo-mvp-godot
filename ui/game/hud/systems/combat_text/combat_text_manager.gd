@@ -10,7 +10,7 @@ const HEAL_COLOR := Color(0.42, 1.0, 0.45, 1.0)
 const DEFAULT_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 const BASE_Y_OFFSET := -30.0
 const SIDE_OFFSET_STEP := 22.0
-const DUAL_HIT_SIDE_OFFSET_STEP := 88.0
+const DUAL_HIT_SIDE_OFFSET_STEP := 36.0
 const BURST_WINDOW_MS := 160
 const FLOAT_TEXT_Z_INDEX := 4096
 const FLOAT_TEXT_GAP_ABOVE_CASTBAR := 8.0
@@ -40,7 +40,7 @@ func _show_value(source: Node2D, target: Node2D, value: int, value_type: String)
 
 	var burst_index: int = _next_burst_index(target)
 	var start: Vector2 = _resolve_start_position(target, burst_index)
-	var drift_dir: Vector2 = _resolve_float_direction(target, burst_index)
+	var drift_dir: Vector2 = _resolve_float_direction(target)
 	instance.position = start
 	instance.z_as_relative = false
 	instance.z_index = FLOAT_TEXT_Z_INDEX
@@ -101,16 +101,11 @@ func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
 				y_anchor = cast_bar.global_position.y - (cast_size.y * 0.5) - FLOAT_TEXT_GAP_ABOVE_CASTBAR
 	return Vector2(target.global_position.x + x_offset, y_anchor)
 
-func _resolve_float_direction(target: Node2D, burst_index: int = 0) -> Vector2:
+func _resolve_float_direction(target: Node2D) -> Vector2:
 	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
 	if sprite != null and is_instance_valid(sprite):
 		# Opposite to look direction + upward drift.
-		var side_offset: float = _burst_side_offset(burst_index)
-		var inward: bool = (side_offset < 0.0) if sprite.flip_h else (side_offset > 0.0)
-		# Inward number (closer to face / inside model) flies a bit steeper up,
-		# creating visible split between simultaneous white/yellow hits.
-		var y_component: float = -1.25 if inward else -1.0
-		return Vector2(1.0, y_component).normalized() if sprite.flip_h else Vector2(-1.0, y_component).normalized()
+		return Vector2(1.0, -1.0).normalized() if sprite.flip_h else Vector2(-1.0, -1.0).normalized()
 	return Vector2(0.0, -1.0)
 
 func _resolve_target_sprite(target: Node2D) -> AnimatedSprite2D:

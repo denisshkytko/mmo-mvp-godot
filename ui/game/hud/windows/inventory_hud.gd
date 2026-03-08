@@ -488,6 +488,9 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 			slot_panel.add_child(count_label)
 	if count_label != null:
 		count_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# Keep stack count visible above Icon while preserving scene-authored style.
+		if count_label.get_parent() == slot_panel:
+			slot_panel.move_child(count_label, slot_panel.get_child_count() - 1)
 
 	# Cooldown overlay (for consumables), similar to ability cooldown visuals.
 	var cd := slot_panel.get_node_or_null("Cooldown") as ColorRect
