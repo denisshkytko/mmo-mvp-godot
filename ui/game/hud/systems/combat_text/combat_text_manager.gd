@@ -13,6 +13,7 @@ const SIDE_OFFSET_STEP := 22.0
 const BURST_WINDOW_MS := 160
 const FLOAT_TEXT_Z_INDEX := 4096
 const FLOAT_TEXT_GAP_ABOVE_CASTBAR := 8.0
+const FLOAT_TEXT_GAP_ABOVE_SPRITE := 6.0
 
 var _burst_state: Dictionary = {}
 
@@ -38,11 +39,12 @@ func _show_value(source: Node2D, target: Node2D, value: int, value_type: String)
 
 	var burst_index: int = _next_burst_index(target)
 	var start: Vector2 = _resolve_start_position(target, burst_index)
+	var drift_dir: Vector2 = _resolve_float_direction(target)
 	instance.position = start
 	instance.z_as_relative = false
 	instance.z_index = FLOAT_TEXT_Z_INDEX
 	add_child(instance)
-	instance.show_value(value, _color_for_value_type(value_type))
+	instance.show_value(value, _color_for_value_type(value_type), drift_dir)
 
 func _is_player_involved(source: Node2D, target: Node2D) -> bool:
 	var tree := get_tree()
@@ -76,7 +78,17 @@ func _node_has_player_engagement(node: Node, player: Node) -> bool:
 	return false
 
 func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
-	var x_offset: float = _burst_side_offset(burst_index)
+	var side_offset: float = _burst_side_offset(burst_index)
+	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
+	if sprite != null and is_instance_valid(sprite):
+		var sprite_rect: Rect2 = sprite.get_rect()
+		var top_left: Vector2 = sprite.to_global(sprite_rect.position)
+		var top_right: Vector2 = sprite.to_global(sprite_rect.position + Vector2(sprite_rect.size.x, 0.0))
+		var spawn_from_right: bool = sprite.flip_h
+		var corner: Vector2 = top_right if spawn_from_right else top_left
+		return corner + Vector2(side_offset, -FLOAT_TEXT_GAP_ABOVE_SPRITE)
+
+	var x_offset: float = side_offset
 	var y_anchor: float = target.global_position.y + BASE_Y_OFFSET
 	var overlay_v: Variant = target.get("overlay_bars_widget") if target.has_method("get") else null
 	if overlay_v is OverlayBarsWidget:
@@ -87,6 +99,31 @@ func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
 				var cast_size: Vector2 = cast_bar.get_visual_size()
 				y_anchor = cast_bar.global_position.y - (cast_size.y * 0.5) - FLOAT_TEXT_GAP_ABOVE_CASTBAR
 	return Vector2(target.global_position.x + x_offset, y_anchor)
+
+func _resolve_float_direction(target: Node2D) -> Vector2:
+	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
+	if sprite != null and is_instance_valid(sprite):
+		# Opposite to look direction + upward drift.
+		return Vector2(1.0, -1.0).normalized() if sprite.flip_h else Vector2(-1.0, -1.0).normalized()
+	return Vector2(0.0, -1.0)
+
+func _resolve_target_sprite(target: Node2D) -> AnimatedSprite2D:
+	if target == null or not is_instance_valid(target):
+		return null
+	var visual_v: Variant = target.get("visual_root") if target.has_method("get") else null
+	if visual_v is Node:
+		var visual_node: Node = visual_v as Node
+		if visual_node != null and is_instance_valid(visual_node):
+			var direct: AnimatedSprite2D = visual_node.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+			if direct != null:
+				return direct
+			var deep: AnimatedSprite2D = visual_node.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
+			if deep != null:
+				return deep
+	var own: AnimatedSprite2D = target.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if own != null:
+		return own
+	return target.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
 
 func _burst_side_offset(index: int) -> float:
 	if index == 0:
