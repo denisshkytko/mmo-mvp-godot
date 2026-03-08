@@ -16,6 +16,7 @@ const PALADIN_MODEL_SCENE := preload("res://game/characters/player/models/Paladi
 const PRIEST_MODEL_SCENE := preload("res://game/characters/player/models/PriestModel.tscn")
 const SHAMAN_MODEL_SCENE := preload("res://game/characters/player/models/ShamanModel.tscn")
 const HUNTER_MODEL_SCENE := preload("res://game/characters/player/models/HunterModel.tscn")
+const MAX_LEVEL: int = 60
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
@@ -245,6 +246,7 @@ func _ready() -> void:
 
 	# init stats
 	c_stats.recalculate_for_level(true)
+	_enforce_level_cap_state()
 
 	if c_resource != null:
 		c_resource.setup(self)
@@ -487,8 +489,23 @@ func consume_item(item_id: String, amount: int = 1) -> int:
 
 
 func add_xp(amount: int) -> void:
+	if amount <= 0:
+		return
+	if is_level_capped():
+		return
 	c_stats.add_xp(amount)
+	_enforce_level_cap_state()
 	_request_save("xp")
+
+func is_level_capped() -> bool:
+	return level >= MAX_LEVEL
+
+func _enforce_level_cap_state() -> void:
+	if level < MAX_LEVEL:
+		return
+	level = MAX_LEVEL
+	xp = 0
+	xp_to_next = 0
 
 
 func get_inventory_snapshot() -> Dictionary:
@@ -616,9 +633,10 @@ func use_spirits_aid_respawn() -> bool:
 
 func apply_character_data(d: Dictionary) -> void:
 	# имя/класс здесь не трогаем (они живут в сейве и UI), но статы/прогресс применяем
-	level = int(d.get("level", level))
+	level = clamp(int(d.get("level", level)), 1, MAX_LEVEL)
 	xp = int(d.get("xp", xp))
 	xp_to_next = int(d.get("xp_to_next", xp_to_next))
+	_enforce_level_cap_state()
 	class_id = String(d.get("class_id", d.get("class", class_id)))
 
 	max_hp = int(d.get("max_hp", max_hp))
@@ -684,6 +702,7 @@ func apply_character_data(d: Dictionary) -> void:
 	# Derived stats must be recalculated after primaries + buffs are in place
 	if c_stats != null:
 		c_stats.recalculate_for_level(false)
+	_enforce_level_cap_state()
 
 	# защита от “вошёл мёртвым”
 	is_dead = false
