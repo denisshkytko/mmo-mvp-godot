@@ -258,6 +258,7 @@ func _ready() -> void:
 
 	_apply_spellbook_passives()
 	_apply_class_visual()
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 	if cast_bar != null:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
@@ -323,6 +324,9 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = false
 	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+
+func refresh_local_overlap_sorting() -> void:
+	_update_visual_render_order()
 
 
 func _process(delta: float) -> void:

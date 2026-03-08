@@ -28,6 +28,7 @@ var overlay_bars_widget: OverlayBarsWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = get_node_or_null("Visual") as Node2D
+@onready var fallback_rect: ColorRect = get_node_or_null("ColorRect") as ColorRect
 
 var model_group_id: String = "golems"
 var model_id: String = "earth"
@@ -178,6 +179,7 @@ func _ready() -> void:
 		home_position = global_position
 	if not _spawn_initialized:
 		_apply_model_visual()
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 	# связь с AI: начало RETURN по leash → сброс агрессии + старт регена
 	if c_ai != null:
@@ -289,6 +291,9 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = false
 	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+
+func refresh_local_overlap_sorting() -> void:
+	_update_visual_render_order()
 
 func _on_leash_return_started() -> void:
 	# как ты просил: агрессия сбрасывается сразу при "позвал домой"
@@ -712,16 +717,22 @@ func _apply_model_visual() -> void:
 	_active_model_key = model_key
 	var scene := _resolve_model_scene(model_group_id, model_id)
 	if scene == null:
+		if fallback_rect != null:
+			fallback_rect.visible = true
 		hp_bar = null
 		cast_bar = null
 		return
 	var inst := scene.instantiate()
 	if inst == null:
+		if fallback_rect != null:
+			fallback_rect.visible = true
 		hp_bar = null
 		cast_bar = null
 		return
 	visual_root.add_child(inst)
 	_character_model = inst
+	if fallback_rect != null:
+		fallback_rect.visible = false
 	_apply_collision_profile_from_model(inst)
 	_apply_overlay_profile_from_model(inst)
 

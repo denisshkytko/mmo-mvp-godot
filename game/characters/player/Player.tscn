@@ -33,7 +33,7 @@ script = ExtResource("1_p0vlq")
 shape = SubResource("CapsuleShape2D_world")
 
 [node name="Camera" type="Camera2D" parent="."]
-process_callback = 0
+process_callback = 1
 limit_left = -2000
 limit_top = -1200
 limit_right = 2000

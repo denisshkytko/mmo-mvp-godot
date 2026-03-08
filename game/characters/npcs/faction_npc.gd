@@ -188,6 +188,7 @@ func _ready() -> void:
 	_apply_interaction_visual()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 	c_spell_caster.setup(self)
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 
 func _roll_evade(snap: Dictionary) -> bool:
@@ -794,6 +795,9 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = false
 	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+
+func refresh_local_overlap_sorting() -> void:
+	_update_visual_render_order()
 
 func _update_hp() -> void:
 	if hp_bar == null:

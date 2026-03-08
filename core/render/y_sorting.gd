@@ -108,3 +108,29 @@ static func _resolve_sort_anchor(actor: Node2D) -> Vector2:
 		if v is Vector2:
 			return v as Vector2
 	return actor.global_position
+
+static func refresh_local_overlap_around(owner: Node2D, default_z: int = 0) -> void:
+	if owner == null or not is_instance_valid(owner):
+		return
+	var tree := owner.get_tree()
+	if tree == null:
+		return
+
+	# Refresh owner first so newly spawned/appeared entities are correctly placed.
+	z_index_for_local_overlap(owner, default_z)
+
+	var self_anchor := _resolve_sort_anchor(owner)
+	for n in _get_sort_candidates(tree):
+		if not (n is Node2D):
+			continue
+		var other := n as Node2D
+		if other == owner or not is_instance_valid(other):
+			continue
+		if not other.has_method("refresh_local_overlap_sorting"):
+			continue
+		var other_anchor := _resolve_sort_anchor(other)
+		var dx: float = absf(self_anchor.x - other_anchor.x)
+		var dy: float = absf(self_anchor.y - other_anchor.y)
+		if dx > OVERLAP_X_THRESHOLD or dy > OVERLAP_Y_DOWN_THRESHOLD:
+			continue
+		other.call("refresh_local_overlap_sorting")

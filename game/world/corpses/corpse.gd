@@ -2,6 +2,7 @@ extends Area2D
 class_name Corpse
 
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 signal despawned
 
@@ -170,12 +171,19 @@ func _resolve_owner_max_resource(entity_owner: Node) -> int:
 
 func _ready() -> void:
 	_life_timer = despawn_seconds
+	add_to_group("y_sort_entities")
+	refresh_local_overlap_sorting()
+	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 	var p: Node = get_tree().get_first_node_in_group("player")
 	_player_cached = p as Node2D
 
 	body_entered.connect(_on_enter)
 	body_exited.connect(_on_exit)
+
+func refresh_local_overlap_sorting() -> void:
+	z_as_relative = false
+	z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
 
 func set_loot_owner_player(player_node: Node) -> void:
 	if player_node == null:
