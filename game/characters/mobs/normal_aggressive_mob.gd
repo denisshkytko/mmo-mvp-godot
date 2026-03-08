@@ -223,7 +223,6 @@ func _draw() -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_visual_render_order()
-	update_movement_animation(velocity, false)
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		return

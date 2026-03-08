@@ -5,6 +5,8 @@ signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const COMBAT_SPACING_BUFFER: float = 20.0
+const PATROL_SEPARATION_DISTANCE: float = 28.0
+const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -25,6 +27,8 @@ var _patrol_wait: float = 0.0
 var _patrol_last_position: Vector2 = Vector2.ZERO
 var _patrol_has_last_position: bool = false
 var _patrol_stuck_time: float = 0.0
+var _patrol_separation_refresh: float = 0.0
+var _patrol_separation_vector: Vector2 = Vector2.ZERO
 
 func reset_to_idle() -> void:
 	_state = AIState.IDLE
@@ -32,6 +36,8 @@ func reset_to_idle() -> void:
 	_patrol_wait = 0.0
 	_patrol_has_last_position = false
 	_patrol_stuck_time = 0.0
+	_patrol_separation_refresh = 0.0
+	_patrol_separation_vector = Vector2.ZERO
 
 func is_chasing() -> bool:
 	return _state == AIState.CHASE
@@ -131,10 +137,59 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	_patrol_last_position = actor.global_position
 	_patrol_has_last_position = true
 
-	actor.velocity = (_patrol_target - actor.global_position).normalized() * patrol_speed
+	var patrol_dir: Vector2 = (_patrol_target - actor.global_position).normalized()
+	var separation_dir: Vector2 = _get_patrol_separation_vector(delta, actor)
+	var final_dir: Vector2 = patrol_dir + separation_dir
+	if final_dir.length_squared() > 0.0001:
+		final_dir = final_dir.normalized()
+	else:
+		final_dir = patrol_dir
+	actor.velocity = final_dir * patrol_speed
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, true)
 	actor.move_and_slide()
+
+func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vector2:
+	_patrol_separation_refresh -= delta
+	if _patrol_separation_refresh > 0.0:
+		return _patrol_separation_vector
+	_patrol_separation_refresh = PATROL_SEPARATION_REFRESH_SEC
+	_patrol_separation_vector = _compute_patrol_separation(actor)
+	return _patrol_separation_vector
+
+func _compute_patrol_separation(actor: CharacterBody2D) -> Vector2:
+	if actor == null or not is_instance_valid(actor):
+		return Vector2.ZERO
+	var tree := actor.get_tree()
+	if tree == null:
+		return Vector2.ZERO
+	var repel := Vector2.ZERO
+	var nearby_count: int = 0
+	for n in tree.get_nodes_in_group("mobs"):
+		if not (n is Node2D):
+			continue
+		var other := n as Node2D
+		if other == actor or not is_instance_valid(other):
+			continue
+		if not _is_patrol_friendly(actor, other):
+			continue
+		var offset: Vector2 = actor.global_position - other.global_position
+		var dist: float = offset.length()
+		if dist <= 0.001 or dist >= PATROL_SEPARATION_DISTANCE:
+			continue
+		var strength: float = (PATROL_SEPARATION_DISTANCE - dist) / PATROL_SEPARATION_DISTANCE
+		repel += (offset / dist) * strength
+		nearby_count += 1
+		if nearby_count >= 6:
+			break
+	if repel.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	return repel.normalized() * min(1.0, repel.length())
+
+func _is_patrol_friendly(actor: CharacterBody2D, other: Node2D) -> bool:
+	if actor.has_method("get_faction_id") and other.has_method("get_faction_id"):
+		return String(actor.call("get_faction_id")) == String(other.call("get_faction_id"))
+	return true
 
 func _do_chase(actor: CharacterBody2D, target: Node2D, combat: NormalNeutralMobCombat) -> void:
 	if target == null or not is_instance_valid(target):

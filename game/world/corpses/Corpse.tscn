@@ -21,6 +21,7 @@ visible = false
 centered = true
 
 [node name="ModelHighlight" parent="." instance=ExtResource("2_highlight")]
+z_index = -1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_7sxr2")
