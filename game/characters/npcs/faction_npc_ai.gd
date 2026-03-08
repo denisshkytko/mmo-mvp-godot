@@ -10,6 +10,8 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const COMBAT_SPACING_BUFFER: float = 32.0
 const PATROL_SEPARATION_DISTANCE: float = 28.0
 const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
+const OBSTACLE_AVOID_LOOKAHEAD: float = 18.0
+const OBSTACLE_AVOID_ANGLES := [0.35, -0.35, 0.7, -0.7, 1.2, -1.2]
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
@@ -130,7 +132,11 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		final_dir = final_dir.normalized()
 	else:
 		final_dir = patrol_dir
-	actor.velocity = final_dir * patrol_speed
+	final_dir = _steer_around_obstacles(actor, final_dir)
+	if final_dir.length_squared() <= 0.0001:
+		actor.velocity = Vector2.ZERO
+	else:
+		actor.velocity = final_dir * patrol_speed
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, true)
 	actor.move_and_slide()
@@ -177,6 +183,26 @@ func _is_patrol_friendly(actor: CharacterBody2D, other: Node2D) -> bool:
 		return String(actor.call("get_faction_id")) == String(other.call("get_faction_id"))
 	return true
 
+func _steer_around_obstacles(actor: CharacterBody2D, desired_dir: Vector2) -> Vector2:
+	if actor == null or not is_instance_valid(actor):
+		return Vector2.ZERO
+	if desired_dir.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	var base_dir: Vector2 = desired_dir.normalized()
+	if not _is_motion_blocked(actor, base_dir):
+		return base_dir
+	for angle in OBSTACLE_AVOID_ANGLES:
+		var candidate := base_dir.rotated(float(angle))
+		if not _is_motion_blocked(actor, candidate):
+			return candidate
+	return Vector2.ZERO
+
+func _is_motion_blocked(actor: CharacterBody2D, direction: Vector2) -> bool:
+	if direction.length_squared() <= 0.0001:
+		return false
+	var motion: Vector2 = direction.normalized() * OBSTACLE_AVOID_LOOKAHEAD
+	return actor.test_move(actor.global_transform, motion)
+
 func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat) -> void:
 	if target == null or not is_instance_valid(target):
 		state = State.RETURN
@@ -195,10 +221,12 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat)
 	var spacing_distance: float = max(0.0, stop - COMBAT_SPACING_BUFFER)
 
 	if dist > stop:
-		actor.velocity = to.normalized() * speed
+		var chase_dir := _steer_around_obstacles(actor, to.normalized())
+		actor.velocity = chase_dir * speed if chase_dir.length_squared() > 0.0001 else Vector2.ZERO
 	elif dist < spacing_distance:
 		if _should_backstep_from_target(target):
-			actor.velocity = (-to).normalized() * (speed * 0.5)
+			var backstep_dir := _steer_around_obstacles(actor, (-to).normalized())
+			actor.velocity = backstep_dir * (speed * 0.5) if backstep_dir.length_squared() > 0.0001 else Vector2.ZERO
 		else:
 			actor.velocity = Vector2.ZERO
 	else:
@@ -228,7 +256,8 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 		actor.move_and_slide()
 		return
 
-	actor.velocity = to.normalized() * speed
+	var return_dir := _steer_around_obstacles(actor, to.normalized())
+	actor.velocity = return_dir * speed if return_dir.length_squared() > 0.0001 else Vector2.ZERO
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, false)
 	actor.move_and_slide()
