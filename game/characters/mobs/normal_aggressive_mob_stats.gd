@@ -5,6 +5,7 @@ const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const NODE_CACHE := preload("res://core/runtime/node_cache.gd")
 
 var mob_level: int = 1
 
@@ -177,6 +178,12 @@ func tick_status_effects(delta: float) -> void:
 				var caster_ref: Variant = data.get("caster_ref", null)
 				if caster_ref != null and caster_ref is Node and is_instance_valid(caster_ref):
 					dot_attacker = caster_ref as Node
+				if dot_attacker == null:
+					var owner_id: int = int(data.get("caster_owner_id", 0))
+					if owner_id != 0:
+						var player_node: Node = NODE_CACHE.get_player(get_tree())
+						if player_node != null and is_instance_valid(player_node) and player_node.get_instance_id() == owner_id:
+							dot_attacker = player_node
 				var owner_entity: Node = get_parent()
 				if owner_entity != null and owner_entity.get_parent() != null and owner_entity.get_parent() is Node2D:
 					owner_entity = owner_entity.get_parent()

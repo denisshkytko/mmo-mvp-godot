@@ -503,7 +503,8 @@ func get_attack_speed_multiplier() -> float:
 		var id: String = String(k)
 		var entry: Dictionary = _buffs[id] as Dictionary
 		var data: Dictionary = entry.get("data", {}) as Dictionary
-		var aspd_mult: float = float(data.get("attack_speed_multiplier", 1.0))
+		var secondary_add: Dictionary = data.get("secondary_add", {}) as Dictionary
+		var aspd_mult: float = float(data.get("attack_speed_multiplier", secondary_add.get("attack_speed_multiplier", 1.0)))
 		if aspd_mult > 0.0 and aspd_mult != 1.0:
 			mult *= aspd_mult
 	if mult <= 0.0:
