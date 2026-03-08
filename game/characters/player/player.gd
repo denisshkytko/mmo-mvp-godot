@@ -868,7 +868,7 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 		model_highlight = highlight_node as CanvasItem
 	if overlay_bars_widget != null:
 		overlay_bars_widget.set_show_name(true)
-		overlay_bars_widget.set_display_name(String(name))
+		overlay_bars_widget.set_display_name(get_display_name())
 	_update_model_hp_bar()
 	if cast_bar != null and not c_ability_caster.is_casting():
 		cast_bar.set_cast_visible(false)
@@ -975,6 +975,17 @@ func export_character_data() -> Dictionary:
 
 	return base
 
+
+
+func get_display_name() -> String:
+	var app_state := get_node_or_null("/root/AppState")
+	if app_state != null:
+		var data_v: Variant = app_state.get("selected_character_data")
+		if data_v is Dictionary:
+			var n := String((data_v as Dictionary).get("name", "")).strip_edges()
+			if n != "":
+				return n
+	return String(name).strip_edges()
 
 func get_faction_id() -> String:
 	return faction_id

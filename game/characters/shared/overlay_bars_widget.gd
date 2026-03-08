@@ -10,7 +10,8 @@ class_name OverlayBarsWidget
 @export var name_text_color: Color = Color(1.0, 1.0, 1.0, 1.0)
 @export var name_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export_range(0, 8, 1) var name_outline_size: int = 3
-@export_range(0.0, 64.0, 1.0) var hidden_name_shift_y: float = 6.0
+@export_range(0.0, 64.0, 1.0) var name_cast_spacing: float = 6.0
+@export var cast_bar_base_y: float = -42.0
 
 func _ready() -> void:
 	_refresh_name_visuals()
@@ -40,7 +41,8 @@ func _refresh_layout() -> void:
 	if name_label == null or cast_bar == null:
 		return
 	name_label.visible = show_name
-	cast_bar.position.y = -42.0 if show_name else -42.0 + hidden_name_shift_y
+	var hidden_shift: float = _measure_name_slot_height() + max(0.0, name_cast_spacing)
+	cast_bar.position.y = cast_bar_base_y if show_name else cast_bar_base_y + hidden_shift
 	_refresh_name_visuals()
 
 func _refresh_name_visuals() -> void:
@@ -51,3 +53,12 @@ func _refresh_name_visuals() -> void:
 	name_label.add_theme_color_override("font_color", name_text_color)
 	name_label.add_theme_color_override("font_outline_color", name_outline_color)
 	name_label.add_theme_constant_override("outline_size", max(0, name_outline_size))
+
+
+func _measure_name_slot_height() -> float:
+	if name_label == null:
+		return 0.0
+	var h: float = name_label.size.y
+	if h <= 0.001:
+		h = max(0.0, name_label.offset_bottom - name_label.offset_top)
+	return max(0.0, h)
