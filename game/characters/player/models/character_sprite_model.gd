@@ -22,10 +22,18 @@ signal death_pose_ready(snapshot: Dictionary)
 @export var hp_bar_size: Vector2 = Vector2(36.0, 6.0)
 @export var hp_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.88235295)
 @export var hp_bar_fill_color: Color = Color(0.38720772, 0.18201989, 0.97702104, 1.0)
+@export_range(0.0, 128.0, 1.0) var hp_bar_corner_radius: float = 0.0
+@export var hp_bar_outline_enabled: bool = false
+@export_range(0, 32, 1) var hp_bar_outline_width: int = 0
+@export var hp_bar_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export var cast_bar_size: Vector2 = Vector2(38.0, 12.0)
 @export var cast_bar_icon_size: Vector2 = Vector2(16.0, 16.0)
 @export var cast_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.8)
 @export var cast_bar_fill_color: Color = Color(0.2, 0.8, 1.0, 0.9)
+@export_range(0.0, 128.0, 1.0) var cast_bar_corner_radius: float = 0.0
+@export var cast_bar_outline_enabled: bool = false
+@export_range(0, 32, 1) var cast_bar_outline_width: int = 0
+@export var cast_bar_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export var cast_bar_icon_visible: bool = true
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -264,6 +272,10 @@ func get_overlay_profile() -> Dictionary:
 			"size": hp_size,
 			"back_color": hp_bar_back_color,
 			"fill_color": hp_bar_fill_color,
+			"corner_radius": hp_bar_corner_radius,
+			"outline_enabled": hp_bar_outline_enabled,
+			"outline_width": hp_bar_outline_width,
+			"outline_color": hp_bar_outline_color,
 		},
 		"cast_bar": {
 			"offset": cast_offset,
@@ -271,6 +283,10 @@ func get_overlay_profile() -> Dictionary:
 			"icon_size": cast_icon_size,
 			"back_color": cast_bar_back_color,
 			"fill_color": cast_bar_fill_color,
+			"corner_radius": cast_bar_corner_radius,
+			"outline_enabled": cast_bar_outline_enabled,
+			"outline_width": cast_bar_outline_width,
+			"outline_color": cast_bar_outline_color,
 			"icon_visible": cast_icon_visible,
 		},
 	}
