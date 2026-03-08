@@ -123,7 +123,7 @@ func _build_spell_preset_hint() -> String:
 
 func _build_interaction_hint() -> String:
 	if _fighter_type_internal == FighterType.COMBATANT:
-		return "Quest:2"
+		return "None:0,Quest:2"
 	return "None:0,Merchant:1,Quest:2,Trainer:3"
 
 func _get_spawn_scene() -> PackedScene:
@@ -195,36 +195,49 @@ func _default_attack_range_for_class(choice: int) -> int:
 			return AttackRangeChoice.MELEE
 
 func _sanitize_interaction_type(value: int) -> int:
+	var normalized := clampi(int(value), InteractionType.NONE, InteractionType.TRAINER)
 	if _fighter_type_internal == FighterType.COMBATANT:
-		return InteractionType.QUEST
-	return clampi(int(value), InteractionType.NONE, InteractionType.TRAINER)
+		if normalized == InteractionType.QUEST:
+			return InteractionType.QUEST
+		return InteractionType.NONE
+	return normalized
 
 func _sync_default_model_scene_choice() -> void:
 	if _fighter_type_internal == FighterType.COMBATANT:
-		match clampi(_class_choice_internal, C_PALADIN, C_HUNTER):
-			C_PALADIN:
-				_model_scene_choice_internal = ModelSceneChoice.PALADIN
-			C_WARRIOR:
-				_model_scene_choice_internal = ModelSceneChoice.WARRIOR
-			C_SHAMAN:
-				_model_scene_choice_internal = ModelSceneChoice.SHAMAN
-			C_MAGE:
-				_model_scene_choice_internal = ModelSceneChoice.MAGE
-			C_PRIEST:
-				_model_scene_choice_internal = ModelSceneChoice.PRIEST
-			C_HUNTER:
-				_model_scene_choice_internal = ModelSceneChoice.HUNTER
-			_:
-				_model_scene_choice_internal = ModelSceneChoice.WARRIOR
+		if _interaction_type_internal == InteractionType.NONE:
+			_model_scene_choice_internal = _resolve_class_model_scene_choice(_class_choice_internal)
+		else:
+			_model_scene_choice_internal = ModelSceneChoice.NONE
 		return
 
 	match _interaction_type_internal:
+		InteractionType.NONE:
+			_model_scene_choice_internal = _resolve_class_model_scene_choice(_class_choice_internal)
 		InteractionType.MERCHANT:
 			_model_scene_choice_internal = ModelSceneChoice.MERCHANT
 		InteractionType.TRAINER:
 			_model_scene_choice_internal = ModelSceneChoice.TRAINER
+		InteractionType.QUEST:
+			_model_scene_choice_internal = ModelSceneChoice.NONE
 		_:
 			_model_scene_choice_internal = ModelSceneChoice.NONE
+
+func _resolve_class_model_scene_choice(choice: int) -> int:
+	match clampi(choice, C_PALADIN, C_HUNTER):
+		C_PALADIN:
+			return ModelSceneChoice.PALADIN
+		C_WARRIOR:
+			return ModelSceneChoice.WARRIOR
+		C_SHAMAN:
+			return ModelSceneChoice.SHAMAN
+		C_MAGE:
+			return ModelSceneChoice.MAGE
+		C_PRIEST:
+			return ModelSceneChoice.PRIEST
+		C_HUNTER:
+			return ModelSceneChoice.HUNTER
+		_:
+			return ModelSceneChoice.WARRIOR
 
 func _resolve_model_scene_choice() -> PackedScene:
 	match clampi(_model_scene_choice_internal, ModelSceneChoice.NONE, ModelSceneChoice.HUNTER):
