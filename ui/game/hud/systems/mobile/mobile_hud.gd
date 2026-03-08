@@ -124,25 +124,30 @@ func _on_move_dir_changed(dir: Vector2) -> void:
 func _process(_delta: float) -> void:
 	if not _bindings_ready:
 		_try_bind_player_dependencies()
+	if _player == null or not is_instance_valid(_player):
+		_player = NodeCache.get_player(get_tree())
+	if _spellbook == null and _player is Player:
+		_spellbook = (_player as Player).c_spellbook
 
 	if _player == null or skill_pad == null or _spellbook == null:
 		return
 	var caster := _get_player_caster()
+	var target: Node = null
+	var gm := NodeCache.get_game_manager(get_tree())
+	if gm != null and gm.has_method("get_target"):
+		target = gm.call("get_target") as Node
+	var has_target: bool = target != null
 	for i in range(_spellbook.loadout_slots.size()):
 		var ability_id: String = _spellbook.loadout_slots[i]
 		var pct: float = 0.0
 		var out_of_range: bool = false
 		if caster != null:
 			pct = caster.get_cooldown_pct(ability_id)
-			if ability_id != "":
-				var target: Node = null
-				var gm := NodeCache.get_game_manager(get_tree())
-				if gm != null and gm.has_method("get_target"):
-					target = gm.call("get_target") as Node
+			if ability_id != "" and has_target:
 				var preview: Dictionary = caster.get_targeting_preview(ability_id, target)
 				out_of_range = (not bool(preview.get("ok", false))) and String(preview.get("reason", "")) == "out_of_range"
 		skill_pad.set_slot_cooldown(i, pct)
-		skill_pad.set_slot_out_of_range(i, out_of_range)
+		skill_pad.set_slot_range_state(i, has_target, out_of_range)
 
 func _on_skill_pressed(slot_index: int) -> void:
 	if _player != null and _player.has_method("try_use_ability_slot"):

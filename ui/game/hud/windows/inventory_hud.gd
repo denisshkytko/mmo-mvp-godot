@@ -45,6 +45,7 @@ var _is_open: bool = true
 var _trade_open: bool = false
 
 const HOLD_THRESHOLD_MS: int = 1000
+const COOLDOWN_VISUAL_TICK_SEC: float = 0.03
 var _slot_press_start_ms: int = 0
 var _slot_press_index: int = -1
 var _slot_press_pos: Vector2 = Vector2.ZERO
@@ -313,7 +314,7 @@ func _process(_delta: float) -> void:
 			_refresh_requested = false
 			await _refresh()
 		_refresh_accum += _delta
-		if _refresh_accum >= 0.12:
+		if _refresh_accum >= COOLDOWN_VISUAL_TICK_SEC:
 			_refresh_accum = 0.0
 			var snap: Dictionary = player.get_inventory_snapshot()
 			# Cooldowns tick even if inventory content didn't change.
@@ -321,7 +322,7 @@ func _process(_delta: float) -> void:
 		return
 	# Inventory is closed: still tick quick-slot cooldown overlays.
 	_refresh_accum += _delta
-	if _refresh_accum >= 0.12:
+	if _refresh_accum >= COOLDOWN_VISUAL_TICK_SEC:
 		_refresh_accum = 0.0
 		_update_quick_cooldowns_only()
 

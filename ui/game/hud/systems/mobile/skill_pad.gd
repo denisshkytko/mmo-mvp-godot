@@ -115,7 +115,7 @@ func set_slot_enabled(slot: int, enabled: bool) -> void:
 	btn.disabled = not enabled
 	btn.modulate = Color(1, 1, 1, 1.0 if enabled else 0.5)
 
-func set_slot_out_of_range(slot: int, blocked: bool) -> void:
+func set_slot_range_state(slot: int, has_target: bool, blocked: bool) -> void:
 	if slot < 0 or slot >= _skill_buttons.size():
 		return
 	var btn := _skill_buttons[slot] as TextureButton
@@ -124,13 +124,11 @@ func set_slot_out_of_range(slot: int, blocked: bool) -> void:
 	var ring := _ensure_range_ring(btn)
 	if ring == null:
 		return
-	ring.visible = blocked
-	if not blocked:
-		return
+	ring.visible = has_target
 	var mat := ring.material as ShaderMaterial
 	if mat == null:
 		return
-	mat.set_shader_parameter("ring_color", RANGE_RING_BLOCKED_COLOR)
+	mat.set_shader_parameter("ring_color", RANGE_RING_BLOCKED_COLOR if blocked else RANGE_RING_OK_COLOR)
 
 func _ensure_range_ring(btn: TextureButton) -> ColorRect:
 	var ring := btn.get_node_or_null("RangeRing") as ColorRect
