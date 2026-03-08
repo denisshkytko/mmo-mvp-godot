@@ -76,7 +76,7 @@ func apply_pose_snapshot(snapshot: Dictionary) -> void:
 			hs.y = 1.0
 		var h2 := model_highlight as Node2D
 		h2.scale = hs
-		h2.position = Vector2(0.0, 75.0 * abs(hs.y))
+		h2.position = Vector2.ZERO
 	var offset_v: Variant = snapshot.get("offset", Vector2.ZERO)
 	if offset_v is Vector2:
 		corpse_sprite.position = offset_v as Vector2

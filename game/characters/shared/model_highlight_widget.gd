@@ -3,7 +3,7 @@ class_name ModelHighlightWidget
 
 const CIRCLE_SEGMENTS := 360
 
-@export_range(1.0, 2048.0, 1.0) var radius: float = 50.0:
+@export_range(1.0, 2048.0, 1.0) var radius: float = 200.0:
 	set(v):
 		radius = max(1.0, v)
 		queue_redraw()
@@ -18,15 +18,21 @@ const CIRCLE_SEGMENTS := 360
 		edge_color = v
 		queue_redraw()
 
+@export var y_offset: float = 75.0:
+	set(v):
+		y_offset = v
+		queue_redraw()
+
 func _draw() -> void:
 	var points := PackedVector2Array()
 	var colors := PackedColorArray()
-	points.append(Vector2.ZERO)
+	var center := Vector2(0.0, y_offset)
+	points.append(center)
 	colors.append(center_color)
 	for i in range(CIRCLE_SEGMENTS + 1):
 		var t := float(i) / float(CIRCLE_SEGMENTS)
 		var angle := t * TAU
-		points.append(Vector2(cos(angle), sin(angle)) * radius)
+		points.append(center + Vector2(cos(angle), sin(angle)) * radius)
 		colors.append(edge_color)
 	draw_polygon(points, colors)
 
