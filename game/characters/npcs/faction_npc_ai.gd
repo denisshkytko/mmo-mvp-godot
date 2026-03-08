@@ -12,6 +12,9 @@ const PATROL_SEPARATION_DISTANCE: float = 28.0
 const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
 const OBSTACLE_AVOID_LOOKAHEAD: float = 18.0
 const OBSTACLE_AVOID_ANGLES := [0.35, -0.35, 0.7, -0.7, 1.2, -1.2]
+const PATROL_SOFT_STUCK_SEC: float = 0.8
+const PATROL_HARD_STUCK_SEC: float = 1.6
+const PATROL_UNSTUCK_STEP_OPTIONS := [16.0, 24.0, 32.0]
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
@@ -116,9 +119,14 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		var patrol_progress: float = actor.global_position.distance_to(_patrol_last_position)
 		if patrol_progress < 0.5 and d > 12.0:
 			_patrol_stuck_time += delta
-			if _patrol_stuck_time >= 0.8:
+			if _patrol_stuck_time >= PATROL_HARD_STUCK_SEC:
+				_force_unstuck_position(actor)
 				_pick_patrol_target()
 				_patrol_stuck_time = 0.0
+				_patrol_has_last_position = false
+			elif _patrol_stuck_time >= PATROL_SOFT_STUCK_SEC:
+				_pick_patrol_target()
+				_patrol_stuck_time = PATROL_SOFT_STUCK_SEC
 				_patrol_has_last_position = false
 		else:
 			_patrol_stuck_time = 0.0
@@ -203,6 +211,19 @@ func _is_motion_blocked(actor: CharacterBody2D, direction: Vector2) -> bool:
 	var motion: Vector2 = direction.normalized() * OBSTACLE_AVOID_LOOKAHEAD
 	return actor.test_move(actor.global_transform, motion)
 
+func _force_unstuck_position(actor: CharacterBody2D) -> void:
+	if actor == null or not is_instance_valid(actor):
+		return
+	for step_v in PATROL_UNSTUCK_STEP_OPTIONS:
+		var step_len := float(step_v)
+		for angle in OBSTACLE_AVOID_ANGLES:
+			var dir := Vector2.RIGHT.rotated(float(angle))
+			var motion := dir * step_len
+			if actor.test_move(actor.global_transform, motion):
+				continue
+			actor.global_position += motion
+			return
+
 func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat) -> void:
 	if target == null or not is_instance_valid(target):
 		state = State.RETURN
@@ -232,7 +253,10 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat)
 	else:
 		actor.velocity = Vector2.ZERO
 	if actor.has_method("update_movement_animation"):
-		actor.call("update_movement_animation", actor.velocity, false)
+		var anim_dir: Vector2 = actor.velocity
+		if anim_dir.length_squared() <= 0.0001 and dist > 0.001:
+			anim_dir = to.normalized() * 0.02
+		actor.call("update_movement_animation", anim_dir, false)
 	actor.move_and_slide()
 
 func _should_backstep_from_target(target: Node2D) -> bool:
@@ -244,7 +268,8 @@ func _should_backstep_from_target(target: Node2D) -> bool:
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 	var to: Vector2 = home_position - actor.global_position
-	if to.length() <= 6.0:
+	var dist_home: float = to.length()
+	if dist_home <= 6.0:
 		state = State.IDLE
 		_has_patrol_target = false
 		_wait = patrol_pause_seconds
@@ -259,5 +284,8 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 	var return_dir := _steer_around_obstacles(actor, to.normalized())
 	actor.velocity = return_dir * speed if return_dir.length_squared() > 0.0001 else Vector2.ZERO
 	if actor.has_method("update_movement_animation"):
-		actor.call("update_movement_animation", actor.velocity, false)
+		var anim_dir: Vector2 = actor.velocity
+		if anim_dir.length_squared() <= 0.0001 and dist_home > 0.001:
+			anim_dir = to.normalized() * 0.02
+		actor.call("update_movement_animation", anim_dir, false)
 	actor.move_and_slide()

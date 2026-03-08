@@ -18,7 +18,7 @@ const CIRCLE_SEGMENTS := 360
 		edge_color = v
 		queue_redraw()
 
-@export var y_offset: float = 75.0:
+@export var y_offset: float = 100.0:
 	set(v):
 		y_offset = v
 		queue_redraw()
