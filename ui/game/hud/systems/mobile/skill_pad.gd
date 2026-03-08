@@ -128,7 +128,24 @@ func set_slot_range_state(slot: int, has_target: bool, blocked: bool) -> void:
 	var mat := ring.material as ShaderMaterial
 	if mat == null:
 		return
+	mat.set_shader_parameter("ring_thickness", _compute_ring_thickness(btn))
 	mat.set_shader_parameter("ring_color", RANGE_RING_BLOCKED_COLOR if blocked else RANGE_RING_OK_COLOR)
+
+func _compute_ring_thickness(btn: TextureButton) -> float:
+	if btn == null:
+		return 0.08
+	var icon := btn.get_node_or_null("Icon") as TextureRect
+	if icon == null:
+		return 0.08
+	var margin_left: float = max(0.0, icon.offset_left)
+	var margin_top: float = max(0.0, icon.offset_top)
+	var margin_right: float = max(0.0, -icon.offset_right)
+	var margin_bottom: float = max(0.0, -icon.offset_bottom)
+	var px_gap: float = min(min(margin_left, margin_top), min(margin_right, margin_bottom))
+	if px_gap <= 0.0:
+		return 0.08
+	var min_side := max(1.0, min(btn.size.x, btn.size.y))
+	return clamp(px_gap / min_side, 0.01, 0.25)
 
 func _ensure_range_ring(btn: TextureButton) -> ColorRect:
 	var ring := btn.get_node_or_null("RangeRing") as ColorRect
@@ -149,6 +166,7 @@ func _ensure_range_ring(btn: TextureButton) -> ColorRect:
 	var mat := ShaderMaterial.new()
 	mat.shader = shader
 	mat.set_shader_parameter("ring_color", RANGE_RING_OK_COLOR)
+	mat.set_shader_parameter("ring_thickness", _compute_ring_thickness(btn))
 	ring.material = mat
 	btn.add_child(ring)
 	return ring
