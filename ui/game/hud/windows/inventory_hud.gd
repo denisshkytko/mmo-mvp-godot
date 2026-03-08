@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
+const COOLDOWN_FILL_SHADER_CODE := "shader_type canvas_item;\n\nuniform float fill_pct : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tif (UV.y < (1.0 - fill_pct)) {\n\t\tdiscard;\n\t}\n\tCOLOR = vec4(0.0, 0.0, 0.0, 0.65);\n}\n"
 signal hud_visibility_changed(is_open: bool)
 @onready var panel: Control = $Root/Panel
 @onready var gold_label: RichTextLabel = $Root/Panel/GoldLabel
@@ -478,7 +479,7 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 	if cd == null:
 		cd = ColorRect.new()
 		cd.name = "Cooldown"
-		cd.color = Color(0, 0, 0, 0.65)
+		cd.color = Color.WHITE
 		cd.visible = false
 		cd.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot_panel.add_child(cd)
@@ -487,6 +488,12 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 		cd.offset_top = 0
 		cd.offset_right = 0
 		cd.offset_bottom = 0
+		var sh := Shader.new()
+		sh.code = COOLDOWN_FILL_SHADER_CODE
+		var sm := ShaderMaterial.new()
+		sm.shader = sh
+		sm.set_shader_parameter("fill_pct", 0.0)
+		cd.material = sm
 		var cd_lbl := Label.new()
 		cd_lbl.name = "CooldownText"
 		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -817,6 +824,8 @@ func _resize_tooltip_to_content() -> void:
 		btn_h += max(32.0, _tooltip_quick_btn.get_combined_minimum_size().y)
 	if _tooltip_bag_btn != null and _tooltip_bag_btn.visible:
 		btn_h += max(32.0, _tooltip_bag_btn.get_combined_minimum_size().y)
+	if _tooltip_drop_btn != null and _tooltip_drop_btn.visible:
+		btn_h += max(32.0, _tooltip_drop_btn.get_combined_minimum_size().y)
 	# label + optional button + small spacing
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
@@ -1590,7 +1599,12 @@ func _update_slot_cooldown(slot_panel: Panel, item_id: String) -> void:
 	if left <= 0.01:
 		cd.visible = false
 		return
+	var total := _get_consumable_cd_total_for_kind(kind)
+	var pct: float = clamp(left / max(0.01, total), 0.0, 1.0)
 	cd.visible = true
+	var mat := cd.material as ShaderMaterial
+	if mat != null:
+		mat.set_shader_parameter("fill_pct", pct)
 	var lbl: Label = cd.get_node_or_null("CooldownText") as Label
 	if lbl != null:
 		lbl.text = str(int(ceil(left)))
@@ -1612,7 +1626,12 @@ func _update_quick_cooldown(btn: Button, item_id: String) -> void:
 	if left <= 0.01:
 		cd.visible = false
 		return
+	var total := _get_consumable_cd_total_for_kind(kind)
+	var pct: float = clamp(left / max(0.01, total), 0.0, 1.0)
 	cd.visible = true
+	var mat := cd.material as ShaderMaterial
+	if mat != null:
+		mat.set_shader_parameter("fill_pct", pct)
 	var lbl: Label = cd.get_node_or_null("CooldownText") as Label
 	if lbl != null:
 		lbl.text = str(int(ceil(left)))
@@ -2086,7 +2105,7 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 	if cd == null:
 		cd = ColorRect.new()
 		cd.name = "Cooldown"
-		cd.color = Color(0, 0, 0, 0.65)
+		cd.color = Color.WHITE
 		cd.visible = false
 		cd.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(cd)
@@ -2095,6 +2114,12 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 		cd.offset_top = 0
 		cd.offset_right = 0
 		cd.offset_bottom = 0
+		var sh := Shader.new()
+		sh.code = COOLDOWN_FILL_SHADER_CODE
+		var sm := ShaderMaterial.new()
+		sm.shader = sh
+		sm.set_shader_parameter("fill_pct", 0.0)
+		cd.material = sm
 		var cd_lbl := Label.new()
 		cd_lbl.name = "CooldownText"
 		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
