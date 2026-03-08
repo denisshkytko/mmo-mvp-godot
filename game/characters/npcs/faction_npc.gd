@@ -511,7 +511,6 @@ func _physics_process(delta: float) -> void:
 
 	# AI tick
 	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
-	_update_model_motion(velocity.normalized() if velocity.length() > 0.01 else Vector2.ZERO)
 
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
@@ -669,17 +668,18 @@ func play_model_death() -> void:
 	if _character_model.has_method("play_death"):
 		_character_model.call("play_death")
 
+func get_corpse_pose_snapshot() -> Dictionary:
+	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("build_corpse_pose_snapshot"):
+		var v: Variant = _character_model.call("build_corpse_pose_snapshot")
+		if v is Dictionary:
+			return v as Dictionary
+	return {}
+
 func play_model_combat_action(action_kind: String, is_moving_now: bool = false) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):
 		return
 	if _character_model.has_method("play_combat_action"):
 		_character_model.call("play_combat_action", action_kind, is_moving_now, c_stats.class_id if c_stats != null else "")
-
-func _update_model_motion(dir: Vector2) -> void:
-	if _character_model == null or not is_instance_valid(_character_model):
-		return
-	if _character_model.has_method("set_move_direction"):
-		_character_model.call("set_move_direction", dir)
 
 func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 	if _character_model == null or not is_instance_valid(_character_model):

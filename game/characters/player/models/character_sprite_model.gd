@@ -38,8 +38,6 @@ signal death_pose_ready(snapshot: Dictionary)
 @export var overlay_name_text_color: Color = Color(1.0, 1.0, 1.0, 1.0)
 @export var overlay_name_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export_range(0, 8, 1) var overlay_name_outline_size: int = 3
-@export_range(1.0, 512.0, 1.0) var model_highlight_radius: float = 200.0
-@export var use_model_highlight_widget_radius: bool = true
 @export var model_highlight_override_widget_colors: bool = false
 @export var model_highlight_center_color: Color = Color(0.2, 0.6, 1.0, 0.28)
 @export var model_highlight_edge_color: Color = Color(0.2, 0.6, 1.0, 0.0)
@@ -307,7 +305,6 @@ func get_overlay_profile() -> Dictionary:
 			"outline_size": overlay_name_outline_size,
 		},
 		"model_highlight": {
-			"radius": model_highlight_radius,
 			"override_widget_colors": model_highlight_override_widget_colors,
 			"center_color": model_highlight_center_color,
 			"edge_color": model_highlight_edge_color,
@@ -324,8 +321,6 @@ func _apply_overlay_name_profile() -> void:
 func _sync_model_highlight_profile() -> void:
 	if model_highlight_widget == null or not is_instance_valid(model_highlight_widget):
 		return
-	if not use_model_highlight_widget_radius and model_highlight_widget.has_method("set_radius"):
-		model_highlight_widget.call("set_radius", model_highlight_radius)
 	if model_highlight_override_widget_colors and model_highlight_widget.has_method("set_colors"):
 		model_highlight_widget.call("set_colors", model_highlight_center_color, model_highlight_edge_color)
 	if body_hitbox_shape != null:
