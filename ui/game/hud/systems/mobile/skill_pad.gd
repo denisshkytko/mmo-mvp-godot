@@ -9,14 +9,14 @@ const RANGE_RING_SHADER_CODE := "shader_type canvas_item;\n\nuniform vec4 ring_c
 const RANGE_RING_OK_COLOR := Color(1.0, 1.0, 1.0, 0.72)
 const RANGE_RING_BLOCKED_COLOR := Color(0.95, 0.24, 0.24, 0.9)
 
-@onready var quick_skill_btn: BaseButton = $QuickSkillBtn
-@onready var skill_btn_1: BaseButton = $SkillBtn1
-@onready var skill_btn_2: BaseButton = $SkillBtn2
-@onready var skill_btn_3: BaseButton = $SkillBtn3
-@onready var skill_btn_4: BaseButton = $SkillBtn4
+@onready var quick_skill_btn: TextureButton = $QuickSkillBtn
+@onready var skill_btn_1: TextureButton = $SkillBtn1
+@onready var skill_btn_2: TextureButton = $SkillBtn2
+@onready var skill_btn_3: TextureButton = $SkillBtn3
+@onready var skill_btn_4: TextureButton = $SkillBtn4
 @onready var interact_btn: BaseButton = $"../InteractBtn"
 
-var _skill_buttons: Array[BaseButton] = []
+var _skill_buttons: Array[TextureButton] = []
 var _icon_rects: Array[TextureRect] = []
 
 

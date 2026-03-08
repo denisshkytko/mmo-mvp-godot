@@ -301,12 +301,14 @@ func _set_grid_cells_visible(visible_state: bool) -> void:
 		slot_panel.visible = visible_state
 
 func _process(_delta: float) -> void:
-	if _is_open and not _is_player_ready():
+	if not _is_player_ready():
 		_auto_bind_player()
 	if _is_open and not _initial_layout_done and not _initial_layout_pending and _is_player_ready():
 		call_deferred("_deferred_force_initial_layout")
+	if not _is_player_ready():
+		return
 	# While open, keep HUD in sync (so looting updates without requiring sort).
-	if _is_open and _is_player_ready():
+	if _is_open:
 		if _refresh_requested:
 			_refresh_requested = false
 			await _refresh()
@@ -316,6 +318,17 @@ func _process(_delta: float) -> void:
 			var snap: Dictionary = player.get_inventory_snapshot()
 			# Cooldowns tick even if inventory content didn't change.
 			_update_visible_cooldowns(snap)
+		return
+	# Inventory is closed: still tick quick-slot cooldown overlays.
+	_refresh_accum += _delta
+	if _refresh_accum >= 0.12:
+		_refresh_accum = 0.0
+		_update_quick_cooldowns_only()
+
+func _update_quick_cooldowns_only() -> void:
+	for qi in range(min(_quick_buttons.size(), _quick_refs.size())):
+		var b := _quick_buttons[qi]
+		_update_quick_cooldown(b, _quick_refs[qi])
 
 func _toggle_inventory() -> void:
 	_set_open(not _is_open)
@@ -497,6 +510,7 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 		cd.material = sm
 		var cd_lbl := Label.new()
 		cd_lbl.name = "CooldownText"
+		cd_lbl.visible = false
 		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		cd_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		cd_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -1608,7 +1622,8 @@ func _update_slot_cooldown(slot_panel: Panel, item_id: String) -> void:
 		mat.set_shader_parameter("fill_pct", pct)
 	var lbl: Label = cd.get_node_or_null("CooldownText") as Label
 	if lbl != null:
-		lbl.text = str(int(ceil(left)))
+		lbl.visible = false
+		lbl.text = ""
 
 
 func _update_quick_cooldown(btn: Button, item_id: String) -> void:
@@ -1635,7 +1650,8 @@ func _update_quick_cooldown(btn: Button, item_id: String) -> void:
 		mat.set_shader_parameter("fill_pct", pct)
 	var lbl: Label = cd.get_node_or_null("CooldownText") as Label
 	if lbl != null:
-		lbl.text = str(int(ceil(left)))
+		lbl.visible = false
+		lbl.text = ""
 
 
 func _update_visible_cooldowns(snap: Dictionary) -> void:
@@ -2124,6 +2140,7 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 		cd.material = sm
 		var cd_lbl := Label.new()
 		cd_lbl.name = "CooldownText"
+		cd_lbl.visible = false
 		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		cd_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		cd_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE

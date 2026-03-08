@@ -20,6 +20,15 @@ var _menu_open: bool = false
 var _trainer_open: bool = false
 var _bindings_ready: bool = false
 
+func _get_player_caster() -> PlayerAbilityCaster:
+	if _player == null or not is_instance_valid(_player):
+		return null
+	if _player is Player:
+		return (_player as Player).c_ability_caster
+	if _player.has_method("get"):
+		return _player.get("c_ability_caster") as PlayerAbilityCaster
+	return null
+
 
 func _ready() -> void:
 	_base_visible = _is_mobile_enabled()
@@ -118,21 +127,20 @@ func _process(_delta: float) -> void:
 
 	if _player == null or skill_pad == null or _spellbook == null:
 		return
+	var caster := _get_player_caster()
 	for i in range(_spellbook.loadout_slots.size()):
 		var ability_id: String = _spellbook.loadout_slots[i]
 		var pct: float = 0.0
 		var out_of_range: bool = false
-		if _player.has_method("get") and _player.get("c_ability_caster") != null:
-			var caster: PlayerAbilityCaster = _player.get("c_ability_caster") as PlayerAbilityCaster
-			if caster != null:
-				pct = caster.get_cooldown_pct(ability_id)
-				if ability_id != "":
-					var target: Node = null
-					var gm := NodeCache.get_game_manager(get_tree())
-					if gm != null and gm.has_method("get_target"):
-						target = gm.call("get_target") as Node
-					var preview: Dictionary = caster.get_targeting_preview(ability_id, target)
-					out_of_range = (not bool(preview.get("ok", false))) and String(preview.get("reason", "")) == "out_of_range"
+		if caster != null:
+			pct = caster.get_cooldown_pct(ability_id)
+			if ability_id != "":
+				var target: Node = null
+				var gm := NodeCache.get_game_manager(get_tree())
+				if gm != null and gm.has_method("get_target"):
+					target = gm.call("get_target") as Node
+				var preview: Dictionary = caster.get_targeting_preview(ability_id, target)
+				out_of_range = (not bool(preview.get("ok", false))) and String(preview.get("reason", "")) == "out_of_range"
 		skill_pad.set_slot_cooldown(i, pct)
 		skill_pad.set_slot_out_of_range(i, out_of_range)
 
