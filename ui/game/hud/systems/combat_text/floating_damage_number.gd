@@ -1,8 +1,8 @@
 extends Node2D
 class_name FloatingDamageNumber
 
-@export var float_distance: float = 30.0
-@export var lifetime_sec: float = 0.55
+@export var float_distance: float = 40.0
+@export var lifetime_sec: float = 1.55
 @export var start_scale: Vector2 = Vector2(1.0, 1.0)
 @export var end_scale: Vector2 = Vector2(1.07, 1.07)
 
