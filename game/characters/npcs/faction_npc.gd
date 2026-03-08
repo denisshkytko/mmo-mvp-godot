@@ -880,23 +880,9 @@ func _clear_direct_attackers() -> void:
 		direct_attackers.clear()
 
 func _update_interaction() -> void:
-	if interaction_type != InteractionType.MERCHANT and interaction_type != InteractionType.TRAINER:
-		return
-	var p: Node = NodeCache.get_player(get_tree())
-	if p == null or not is_instance_valid(p):
-		return
-	var dist: float = global_position.distance_to(p.global_position)
-	var can_interact: bool = false
-	if interaction_type == InteractionType.MERCHANT:
-		can_interact = _can_trade_with(p)
-	else:
-		can_interact = _can_train_with(p)
-	var can_open: bool = can_interact and dist <= merchant_interact_radius
-	if can_open and Input.is_action_just_pressed("loot"):
-		if interaction_type == InteractionType.MERCHANT:
-			_try_open_merchant(p)
-		else:
-			_try_open_trainer(p)
+	# Взаимодействие по кнопке обрабатывается централизованно через Player/InteractionDetector
+	# (открывается только ближайший источник), здесь ничего не триггерим.
+	return
 
 func _can_trade_with(player_node: Node) -> bool:
 	if player_node == null or c_stats == null or c_stats.is_dead:

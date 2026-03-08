@@ -348,6 +348,11 @@ func _on_bag_button_pressed() -> void:
 func toggle_inventory() -> void:
 	_toggle_inventory()
 
+func ensure_open() -> void:
+	if _is_open:
+		return
+	_set_open(true)
+
 # --- Bag slots ---
 
 func _get_bag_button_for_logical(logical_index: int) -> Button:

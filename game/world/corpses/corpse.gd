@@ -251,11 +251,7 @@ func _process(delta: float) -> void:
 		else:
 			_player_in_range = null
 
-	# 3) interaction (строго по праву на лут)
-	var can_loot_now: bool = (_player_in_range != null and has_loot() and _can_be_looted_by(_player_in_range))
-	if can_loot_now and Input.is_action_just_pressed("loot"):
-		_try_open_loot()
-
+	# 3) interaction выполняется через Player/InteractionDetector (берётся только ближайший источник)
 	_update_model_highlight()
 
 	# 4) blink (только если игрок реально может лутать)

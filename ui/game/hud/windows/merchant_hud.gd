@@ -131,6 +131,10 @@ func open_for_merchant(merchant_node: Node) -> void:
 	_refresh_buy_grid()
 	_refresh_sell_grid()
 	_sync_inventory_trade_state(true)
+	var inv_ui := get_tree().get_first_node_in_group("inventory_ui")
+	if inv_ui != null and inv_ui.has_method("is_open") and inv_ui.has_method("ensure_open"):
+		if not bool(inv_ui.call("is_open")):
+			inv_ui.call("ensure_open")
 
 func close() -> void:
 	_is_open = false

@@ -293,6 +293,9 @@ func _physics_process(_delta: float) -> void:
 			Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		)
 
+	if Input.is_action_just_pressed("loot"):
+		try_interact()
+
 	if c_ability_caster != null and c_ability_caster.is_casting() and input_dir.length() > 0.0:
 		c_ability_caster.interrupt_cast("movement")
 	if c_ability_caster != null and c_ability_caster.is_casting():
