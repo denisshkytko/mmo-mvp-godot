@@ -10,12 +10,12 @@ const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_c
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 
-const WARRIOR_MODEL_SCENE := preload("res://game/characters/models/player/WarriorModel.tscn")
-const MAGE_MODEL_SCENE := preload("res://game/characters/models/player/MageModel.tscn")
-const PALADIN_MODEL_SCENE := preload("res://game/characters/models/player/PaladinModel.tscn")
-const PRIEST_MODEL_SCENE := preload("res://game/characters/models/player/PriestModel.tscn")
-const SHAMAN_MODEL_SCENE := preload("res://game/characters/models/player/ShamanModel.tscn")
-const HUNTER_MODEL_SCENE := preload("res://game/characters/models/player/HunterModel.tscn")
+const WARRIOR_MODEL_SCENE := preload("res://game/characters/player/models/WarriorModel.tscn")
+const MAGE_MODEL_SCENE := preload("res://game/characters/player/models/MageModel.tscn")
+const PALADIN_MODEL_SCENE := preload("res://game/characters/player/models/PaladinModel.tscn")
+const PRIEST_MODEL_SCENE := preload("res://game/characters/player/models/PriestModel.tscn")
+const SHAMAN_MODEL_SCENE := preload("res://game/characters/player/models/ShamanModel.tscn")
+const HUNTER_MODEL_SCENE := preload("res://game/characters/player/models/HunterModel.tscn")
 const MAX_LEVEL: int = 60
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE

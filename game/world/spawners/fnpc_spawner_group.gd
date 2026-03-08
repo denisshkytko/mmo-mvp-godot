@@ -6,14 +6,14 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 const NPC_SCENE: PackedScene = preload("res://game/characters/npcs/FactionNPC.tscn")
 const DEFAULT_PROJECTILE: PackedScene = preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
-const MERCHANT_MODEL_SCENE: PackedScene = preload("res://game/characters/models/npcs/MerchantModel.tscn")
-const TRAINER_MODEL_SCENE: PackedScene = preload("res://game/characters/models/npcs/TrainerModel.tscn")
-const PALADIN_MODEL_SCENE: PackedScene = preload("res://game/characters/models/player/PaladinModel.tscn")
-const WARRIOR_MODEL_SCENE: PackedScene = preload("res://game/characters/models/player/WarriorModel.tscn")
-const SHAMAN_MODEL_SCENE: PackedScene = preload("res://game/characters/models/player/ShamanModel.tscn")
-const MAGE_MODEL_SCENE: PackedScene = preload("res://game/characters/models/player/MageModel.tscn")
-const PRIEST_MODEL_SCENE: PackedScene = preload("res://game/characters/models/player/PriestModel.tscn")
-const HUNTER_MODEL_SCENE: PackedScene = preload("res://game/characters/models/player/HunterModel.tscn")
+const MERCHANT_MODEL_SCENE: PackedScene = preload("res://game/characters/npcs/models/MerchantModel.tscn")
+const TRAINER_MODEL_SCENE: PackedScene = preload("res://game/characters/npcs/models/TrainerModel.tscn")
+const PALADIN_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/PaladinModel.tscn")
+const WARRIOR_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/WarriorModel.tscn")
+const SHAMAN_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/ShamanModel.tscn")
+const MAGE_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/MageModel.tscn")
+const PRIEST_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/PriestModel.tscn")
+const HUNTER_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/HunterModel.tscn")
 
 enum Behavior { GUARD, PATROL }
 enum FighterType { CIVILIAN, COMBATANT }

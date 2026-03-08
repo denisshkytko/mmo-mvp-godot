@@ -12,9 +12,9 @@ const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_c
 
 const MODEL_SCENE_PATHS := {
 	"golems": {
-		"earth": "res://game/characters/models/mobs/GolemEarthModel.tscn",
-		"ice": "res://game/characters/models/mobs/GolemIceModel.tscn",
-		"magma": "res://game/characters/models/mobs/GolemMagmaModel.tscn",
+		"earth": "res://game/characters/mobs/models/GolemEarthModel.tscn",
+		"ice": "res://game/characters/mobs/models/GolemIceModel.tscn",
+		"magma": "res://game/characters/mobs/models/GolemMagmaModel.tscn",
 	},
 }
 
