@@ -110,7 +110,7 @@ func _resolve_float_direction(target: Node2D, value_type: String = "physical") -
 		var up := Vector2(0.0, -1.0)
 		if value_type == "heal":
 			return up
-		var yellow_dir := Vector2(look_dir_x, -1.0).normalized()
+		var yellow_dir := Vector2(-look_dir_x, -1.0).normalized()
 		if value_type == "magic":
 			return yellow_dir
 		# white (physical/default): between yellow and green(up)

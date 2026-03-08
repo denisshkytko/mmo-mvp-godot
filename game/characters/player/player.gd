@@ -461,20 +461,11 @@ func get_stats_snapshot() -> Dictionary:
 	if c_buffs != null and c_buffs.has_method("get_attack_speed_multiplier"):
 		var mult: float = float(c_buffs.call("get_attack_speed_multiplier"))
 		if mult > 0.0 and mult != 1.0:
+			# Stance/buff attack speed bonuses are additive in percentage points
+			# (e.g. +42% should raise 12.23% to 54.23% without changing rating).
 			var base_pct: float = float(snap.get("attack_speed_pct", 0.0))
-			var speed_base: float = 1.0 + (base_pct / 100.0)
-			var speed_eff: float = max(0.01, speed_base * mult)
-			snap["attack_speed_pct"] = (speed_eff - 1.0) * 100.0
-			if snap.has("derived"):
-				var derived2: Dictionary = snap.get("derived", {}) as Dictionary
-				var as_rating_base: float = float(derived2.get("attack_speed_rating", 0.0))
-				derived2["attack_speed_rating"] = as_rating_base + (mult - 1.0) * 100.0
-				snap["derived"] = derived2
-			var br: Dictionary = snap.get("derived_breakdown", {}) as Dictionary
-			var arr_as: Array = br.get("attack_speed_rating", [])
-			arr_as.append({"source": "effects", "value": (mult - 1.0) * 100.0})
-			br["attack_speed_rating"] = arr_as
-			snap["derived_breakdown"] = br
+			var bonus_pct_points: float = (mult - 1.0) * 100.0
+			snap["attack_speed_pct"] = base_pct + bonus_pct_points
 	return snap
 
 
