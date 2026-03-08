@@ -10,6 +10,7 @@ const HEAL_COLOR := Color(0.42, 1.0, 0.45, 1.0)
 const DEFAULT_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 const BASE_Y_OFFSET := -30.0
 const SIDE_OFFSET_STEP := 22.0
+const DUAL_HIT_SIDE_OFFSET_STEP := 88.0
 const BURST_WINDOW_MS := 160
 const FLOAT_TEXT_Z_INDEX := 4096
 const FLOAT_TEXT_GAP_ABOVE_CASTBAR := 8.0
@@ -149,9 +150,9 @@ func _resolve_sprite_rect_local(sprite: AnimatedSprite2D) -> Rect2:
 
 func _burst_side_offset(index: int) -> float:
 	if index == 0:
-		return -SIDE_OFFSET_STEP
+		return -DUAL_HIT_SIDE_OFFSET_STEP
 	if index == 1:
-		return SIDE_OFFSET_STEP
+		return DUAL_HIT_SIDE_OFFSET_STEP
 	var pair: int = int(floor(float(index - 2) / 2.0))
 	var magnitude: float = SIDE_OFFSET_STEP * float(pair + 2)
 	return -magnitude if index % 2 == 0 else magnitude

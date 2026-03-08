@@ -475,18 +475,19 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 
 	var count_label := slot_panel.get_node_or_null("Count") as Label
 	if count_label == null:
-		count_label = Label.new()
-		count_label.name = "Count"
+		# Reuse legacy template label from scene (Slot0/Text) as the canonical
+		# count label source so styling/positioning is editable in the tscn.
+		var template_text := slot_panel.get_node_or_null("Text") as Label
+		if template_text != null:
+			template_text.name = "Count"
+			count_label = template_text
+		else:
+			count_label = Label.new()
+			count_label.name = "Count"
+			count_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			slot_panel.add_child(count_label)
+	if count_label != null:
 		count_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		count_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-		count_label.clip_text = true
-		slot_panel.add_child(count_label)
-		count_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-		count_label.offset_left = 2
-		count_label.offset_top = 2
-		count_label.offset_right = -2
-		count_label.offset_bottom = -2
 
 	# Cooldown overlay (for consumables), similar to ability cooldown visuals.
 	var cd := slot_panel.get_node_or_null("Cooldown") as ColorRect
