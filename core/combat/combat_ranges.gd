@@ -1,7 +1,7 @@
 extends RefCounted
 class_name CombatRanges
 
-const AGGRO_RADIUS: float = 200.0
+const AGGRO_RADIUS: float = 300.0
 const LEASH_DISTANCE: float = 1000.0
 const PATROL_RADIUS: float = 225.0
 
