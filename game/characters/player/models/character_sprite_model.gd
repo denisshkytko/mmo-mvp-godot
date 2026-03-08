@@ -120,11 +120,11 @@ func set_move_direction_mode(dir: Vector2, prefer_walk: bool) -> void:
 
 	if _is_moving:
 		if prefer_walk and _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 		elif _has_animation(run_animation):
-			_play_animation_if_needed(run_animation)
+			_play_locomotion_animation(run_animation)
 		elif _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 		else:
 			play_idle()
 	else:
@@ -367,15 +367,22 @@ func _refresh_locomotion_animation() -> void:
 		return
 	if _is_moving:
 		if _prefer_walk_mode and _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 			return
 		if _has_animation(run_animation):
-			_play_animation_if_needed(run_animation)
+			_play_locomotion_animation(run_animation)
 			return
 		if _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 			return
 	play_idle()
+
+func _play_locomotion_animation(name: String) -> void:
+	if animated_sprite == null or name == "":
+		return
+	if animated_sprite.sprite_frames != null:
+		animated_sprite.sprite_frames.set_animation_loop(name, true)
+	_play_animation_if_needed(name)
 
 func _on_animation_finished() -> void:
 	if animated_sprite == null:
