@@ -324,7 +324,9 @@ func _sync_model_highlight_profile() -> void:
 	if model_highlight_override_widget_colors and model_highlight_widget.has_method("set_colors"):
 		model_highlight_widget.call("set_colors", model_highlight_center_color, model_highlight_edge_color)
 	if body_hitbox_shape != null:
-		model_highlight_widget.position = body_hitbox_shape.position
+		model_highlight_widget.position = Vector2(body_hitbox_shape.position.x, 75.0)
+	else:
+		model_highlight_widget.position = Vector2(0.0, 75.0)
 
 func _resolve_overlay_node(node_name: String) -> Node2D:
 	var direct := get_node_or_null("OverlayProfile/%s" % node_name)

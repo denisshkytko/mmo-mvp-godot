@@ -197,12 +197,22 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat)
 	if dist > stop:
 		actor.velocity = to.normalized() * speed
 	elif dist < spacing_distance:
-		actor.velocity = (-to).normalized() * (speed * 0.5)
+		if _should_backstep_from_target(target):
+			actor.velocity = (-to).normalized() * (speed * 0.5)
+		else:
+			actor.velocity = Vector2.ZERO
 	else:
 		actor.velocity = Vector2.ZERO
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, false)
 	actor.move_and_slide()
+
+func _should_backstep_from_target(target: Node2D) -> bool:
+	if target == null or not is_instance_valid(target):
+		return false
+	if target.is_in_group("player"):
+		return true
+	return false
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 	var to: Vector2 = home_position - actor.global_position
