@@ -81,7 +81,7 @@ func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
 	var side_offset: float = _burst_side_offset(burst_index)
 	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
 	if sprite != null and is_instance_valid(sprite):
-		var sprite_rect: Rect2 = sprite.get_rect()
+		var sprite_rect: Rect2 = _resolve_sprite_rect_local(sprite)
 		var top_left: Vector2 = sprite.to_global(sprite_rect.position)
 		var top_right: Vector2 = sprite.to_global(sprite_rect.position + Vector2(sprite_rect.size.x, 0.0))
 		var spawn_from_right: bool = sprite.flip_h
@@ -124,6 +124,23 @@ func _resolve_target_sprite(target: Node2D) -> AnimatedSprite2D:
 	if own != null:
 		return own
 	return target.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
+
+func _resolve_sprite_rect_local(sprite: AnimatedSprite2D) -> Rect2:
+	if sprite == null:
+		return Rect2(Vector2(-16.0, -16.0), Vector2(32.0, 32.0))
+	var tex: Texture2D = null
+	if sprite.sprite_frames != null:
+		var anim: StringName = sprite.animation
+		if anim != StringName("") and sprite.sprite_frames.has_animation(anim):
+			var frame_count: int = sprite.sprite_frames.get_frame_count(anim)
+			if frame_count > 0:
+				var frame_idx: int = clampi(sprite.frame, 0, frame_count - 1)
+				tex = sprite.sprite_frames.get_frame_texture(anim, frame_idx)
+	var size: Vector2 = tex.get_size() if tex != null else Vector2(32.0, 32.0)
+	var pos: Vector2 = sprite.offset
+	if sprite.centered:
+		pos -= size * 0.5
+	return Rect2(pos, size)
 
 func _burst_side_offset(index: int) -> float:
 	if index == 0:
