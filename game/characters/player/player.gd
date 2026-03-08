@@ -344,8 +344,6 @@ func _process(delta: float) -> void:
 	_update_model_hp_bar()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
 
-	if OS.is_debug_build():
-		queue_redraw()
 
 
 func get_body_hitbox_center_global() -> Vector2:
@@ -357,20 +355,6 @@ func get_sort_anchor_global() -> Vector2:
 	return get_body_hitbox_center_global()
 
 
-func _draw() -> void:
-	if not OS.is_debug_build():
-		return
-	var center_local := to_local(get_body_hitbox_center_global())
-	var melee_radius := COMBAT_RANGES.MELEE_ATTACK_RANGE
-	var ranged_radius := COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE * PROG.get_ranged_auto_attack_range_multiplier_for_class(class_id)
-	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
-	draw_arc(center_local, melee_radius, 0.0, TAU, 96, ring_color, 1.5, true)
-	draw_arc(center_local, ranged_radius, 0.0, TAU, 96, ring_color, 1.5, true)
-
-
-# -----------------------
-# Compatibility API (как было раньше)
-# -----------------------
 func get_attack_damage() -> int:
 	return c_combat.get_attack_damage()
 

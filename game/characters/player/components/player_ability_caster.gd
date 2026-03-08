@@ -83,7 +83,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if get_cooldown_left(ability_id) > 0.0:
 		return {"ok": false, "reason": "cooldown"}
 
-	var target_result := _resolve_cast_target(def, target)
+	var target_result := _resolve_cast_target(def, target, true)
 	if not bool(target_result.get("ok", false)):
 		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
 	var actual_target: Node = target_result.get("target") as Node
@@ -149,7 +149,7 @@ func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
 	if not _is_weapon_requirement_satisfied(ability_id):
 		return {"ok": false, "reason": "weapon_required"}
 
-	var target_result := _resolve_cast_target(def, target)
+	var target_result := _resolve_cast_target(def, target, false)
 	if not bool(target_result.get("ok", false)):
 		return {"ok": false, "reason": String(target_result.get("reason", "invalid_target"))}
 	return {"ok": true, "target": target_result.get("target")}
@@ -394,7 +394,7 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 		context[k] = extra[k]
 	return context
 
-func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
+func _resolve_cast_target(def: AbilityDefinition, target: Node, allow_target_assignment: bool = true) -> Dictionary:
 	var pre_target: Node = target
 	if def != null and p != null and String(def.target_type) == "enemy" and pre_target == null and not _can_fallback_to_self(def):
 		var range: float = _resolve_range_by_mode(String(def.range_mode))
@@ -403,7 +403,7 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node) -> Dictionary:
 			var gm: Node = null
 			if p.has_method("_get_game_manager"):
 				gm = p.call("_get_game_manager") as Node
-			if gm != null and gm.has_method("set_target"):
+			if allow_target_assignment and gm != null and gm.has_method("set_target"):
 				gm.call("set_target", pre_target)
 	var target_result := _normalize_target(def, pre_target)
 	if not bool(target_result.get("ok", false)):

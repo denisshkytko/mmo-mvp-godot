@@ -38,8 +38,8 @@ limit_left = -2000
 limit_top = -1200
 limit_right = 2000
 limit_bottom = 1200
-position_smoothing_enabled = true
-position_smoothing_speed = 8.0
+position_smoothing_enabled = false
+position_smoothing_speed = 12.0
 
 [node name="BodyHitboxArea" type="Area2D" parent="."]
 collision_layer = 0

@@ -196,8 +196,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
-	if OS.is_debug_build():
-		queue_redraw()
 
 
 func get_body_hitbox_center_global() -> Vector2:
@@ -208,18 +206,6 @@ func get_body_hitbox_center_global() -> Vector2:
 func get_sort_anchor_global() -> Vector2:
 	return get_body_hitbox_center_global()
 
-
-func _draw() -> void:
-	if not OS.is_debug_build():
-		return
-	if c_combat == null:
-		return
-	var center_local := to_local(get_body_hitbox_center_global())
-	var ring_color := Color(1.0, 0.9, 0.2, 0.85)
-	draw_arc(center_local, c_combat.melee_attack_range, 0.0, TAU, 96, ring_color, 1.5, true)
-	draw_arc(center_local, c_combat.ranged_attack_range, 0.0, TAU, 96, ring_color, 1.5, true)
-	if c_ai != null and c_ai.aggro_radius > 0.0:
-		draw_arc(center_local, c_ai.aggro_radius, 0.0, TAU, 96, Color(1.0, 0.2, 0.2, 0.85), 1.5, true)
 
 func _physics_process(delta: float) -> void:
 	_update_visual_render_order()
