@@ -1,6 +1,8 @@
 extends Area2D
 class_name Corpse
 
+const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+
 signal despawned
 
 @onready var visual: ColorRect = $Visual
@@ -267,7 +269,17 @@ func _process(delta: float) -> void:
 func _update_model_highlight() -> void:
 	if model_highlight == null or not is_instance_valid(model_highlight):
 		return
-	model_highlight.visible = (_player_cached != null and is_instance_valid(_player_cached) and has_loot() and _can_be_looted_by(_player_cached))
+	var can_loot: bool = (_player_cached != null and is_instance_valid(_player_cached) and has_loot() and _can_be_looted_by(_player_cached))
+	model_highlight.visible = can_loot
+	if not can_loot:
+		return
+	if model_highlight.has_method("set_colors"):
+		var pulse: float = 0.65 + (0.35 * (0.5 + 0.5 * sin(_blink_t * 9.0)))
+		var center: Color = OVERLAY_COLORS.GOLD
+		center.a = pulse
+		var edge: Color = OVERLAY_COLORS.GOLD
+		edge.a = 0.5 * pulse
+		model_highlight.call("set_colors", center, edge)
 
 func _on_enter(body: Node) -> void:
 	if not (body != null and body.is_in_group("player")):

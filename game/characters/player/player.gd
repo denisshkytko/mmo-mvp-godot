@@ -5,6 +5,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -869,6 +870,15 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 	if overlay_bars_widget != null:
 		overlay_bars_widget.set_show_name(true)
 		overlay_bars_widget.set_display_name(get_display_name())
+	var viewer_faction: String = faction_id
+	var local_player: Node = NodeCache.get_player(get_tree())
+	if local_player != null and local_player.has_method("get_faction_id"):
+		viewer_faction = String(local_player.call("get_faction_id"))
+	var player_color: Color = OVERLAY_COLORS.hp_color_for_faction_target(viewer_faction, faction_id)
+	if hp_bar != null:
+		hp_bar.set_fill_color(player_color)
+	if overlay_bars_widget != null:
+		overlay_bars_widget.set_name_visual(player_color, Color(0.0, 0.0, 0.0, 1.0), 3)
 	_update_model_hp_bar()
 	if cast_bar != null and not c_ability_caster.is_casting():
 		cast_bar.set_cast_visible(false)

@@ -7,6 +7,7 @@ const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 const MODEL_SCENE_PATHS := {
 		"cinderborn": {
@@ -850,7 +851,7 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	if highlight_node is CanvasItem:
 		model_highlight = highlight_node as CanvasItem
 	if hp_bar != null:
-		hp_bar.set_fill_color(Color(1.0, 0.05, 0.02, 1.0))
+		hp_bar.set_fill_color(OVERLAY_COLORS.mob_hp_color(true))
 		c_stats.update_hp_bar(hp_bar)
 	if overlay_bars_widget != null:
 		overlay_bars_widget.set_show_name(false)
@@ -860,6 +861,9 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 		cast_bar.set_icon_texture(null)
 	if model_highlight != null:
 		model_highlight.visible = false
+		if model_highlight.has_method("set_colors"):
+			var hc := OVERLAY_COLORS.highlight_colors(OVERLAY_COLORS.mob_hp_color(true), 0.5)
+			model_highlight.call("set_colors", hc.get("center"), hc.get("edge"))
 
 func _find_first_by_type(root: Node, script_type: Variant) -> Node:
 	if root == null or not is_instance_valid(root):

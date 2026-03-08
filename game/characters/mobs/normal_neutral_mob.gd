@@ -8,6 +8,7 @@ const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 const MODEL_SCENE_PATHS := {
 	"golems": {
@@ -799,7 +800,7 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	if highlight_node is CanvasItem:
 		model_highlight = highlight_node as CanvasItem
 	if hp_bar != null:
-		hp_bar.set_fill_color(Color(1.0, 1.0, 0.0, 1.0))
+		hp_bar.set_fill_color(OVERLAY_COLORS.mob_hp_color(false))
 		c_stats.update_hp_bar(hp_bar)
 	if overlay_bars_widget != null:
 		overlay_bars_widget.set_show_name(false)
@@ -809,6 +810,9 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 		cast_bar.set_icon_texture(null)
 	if model_highlight != null:
 		model_highlight.visible = false
+		if model_highlight.has_method("set_colors"):
+			var hc := OVERLAY_COLORS.highlight_colors(OVERLAY_COLORS.mob_hp_color(false), 0.5)
+			model_highlight.call("set_colors", hc.get("center"), hc.get("edge"))
 
 func _find_first_by_type(root: Node, script_type: Variant) -> Node:
 	if root == null or not is_instance_valid(root):
