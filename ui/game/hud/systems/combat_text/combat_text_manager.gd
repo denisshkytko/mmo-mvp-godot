@@ -39,8 +39,8 @@ func _show_value(source: Node2D, target: Node2D, value: int, value_type: String)
 		return
 
 	var burst_index: int = _next_burst_index(target)
-	var start: Vector2 = _resolve_start_position(target, burst_index)
-	var drift_dir: Vector2 = _resolve_float_direction(target)
+	var start: Vector2 = _resolve_start_position(target, burst_index, value_type)
+	var drift_dir: Vector2 = _resolve_float_direction(target, value_type)
 	instance.position = start
 	instance.z_as_relative = false
 	instance.z_index = FLOAT_TEXT_Z_INDEX
@@ -78,8 +78,10 @@ func _node_has_player_engagement(node: Node, player: Node) -> bool:
 			return true
 	return false
 
-func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
-	var side_offset: float = _burst_side_offset(burst_index)
+func _resolve_start_position(target: Node2D, burst_index: int, value_type: String) -> Vector2:
+	var side_offset: float = _resolve_type_lane_offset(target, value_type)
+	if burst_index >= 3:
+		side_offset += _burst_side_offset(burst_index) * 0.5
 	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
 	if sprite != null and is_instance_valid(sprite):
 		var sprite_rect: Rect2 = _resolve_sprite_rect_local(sprite)
@@ -101,12 +103,30 @@ func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
 				y_anchor = cast_bar.global_position.y - (cast_size.y * 0.5) - FLOAT_TEXT_GAP_ABOVE_CASTBAR
 	return Vector2(target.global_position.x + x_offset, y_anchor)
 
-func _resolve_float_direction(target: Node2D) -> Vector2:
+func _resolve_float_direction(target: Node2D, value_type: String = "physical") -> Vector2:
 	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
 	if sprite != null and is_instance_valid(sprite):
-		# Opposite to look direction + upward drift.
-		return Vector2(1.0, -1.0).normalized() if sprite.flip_h else Vector2(-1.0, -1.0).normalized()
+		var look_dir_x: float = -1.0 if sprite.flip_h else 1.0
+		var up := Vector2(0.0, -1.0)
+		if value_type == "heal":
+			return up
+		var yellow_dir := Vector2(look_dir_x, -1.0).normalized()
+		if value_type == "magic":
+			return yellow_dir
+		# white (physical/default): between yellow and green(up)
+		return (up + yellow_dir).normalized()
 	return Vector2(0.0, -1.0)
+
+func _resolve_type_lane_offset(target: Node2D, value_type: String) -> float:
+	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
+	if sprite == null or not is_instance_valid(sprite):
+		return 0.0
+	var face_dir_x: float = -1.0 if sprite.flip_h else 1.0
+	if value_type == "heal":
+		return face_dir_x * DUAL_HIT_SIDE_OFFSET_STEP
+	if value_type == "magic":
+		return -face_dir_x * DUAL_HIT_SIDE_OFFSET_STEP
+	return 0.0
 
 func _resolve_target_sprite(target: Node2D) -> AnimatedSprite2D:
 	if target == null or not is_instance_valid(target):
