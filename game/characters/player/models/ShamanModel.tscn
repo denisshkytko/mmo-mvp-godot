@@ -1,9 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cky3eqd2x6qdp"]
+[gd_scene load_steps=9 format=3 uid="uid://cky3eqd2x6qdp"]
 
 [ext_resource type="Script" uid="uid://batbkni3sgfgo" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
 [ext_resource type="SpriteFrames" uid="uid://cqjulccyfdcth" path="res://game/characters/player/models/frames/ShamanSpriteFrames.tres" id="2_frames"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/HealthBarWidget.tscn" id="3_hpbar"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/CastBarWidget.tscn" id="4_castbar"]
+[ext_resource type="PackedScene" uid="uid://c746ykha3j66g" path="res://game/characters/shared/HealthBarWidget.tscn" id="3_hpbar"]
+[ext_resource type="PackedScene" uid="uid://bqrjc01gju82q" path="res://game/characters/shared/CastBarWidget.tscn" id="4_castbar"]
 [ext_resource type="PackedScene" path="res://game/characters/shared/TargetMarkerWidget.tscn" id="5_target"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_world"]
@@ -20,23 +20,33 @@ radius = 300.0
 [node name="ShamanModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
+idle_animation = "Idle Blinking"
+run_animation = "Running"
+hurt_animation = "Hurt"
+death_animation = "Dying"
+melee_stand_animation = "Slashing"
+melee_run_animation = "Run Slashing"
+unarmed_stand_animation = "Throwing"
+unarmed_run_animation = "Run Throwing"
+ranged_stand_animation = "Throwing"
+ranged_run_animation = "Run Throwing"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 
 [node name="HealthBar" parent="OverlayProfile" instance=ExtResource("3_hpbar")]
 position = Vector2(0, -30)
 
-
 [node name="CastBar" parent="OverlayProfile" instance=ExtResource("4_castbar")]
 position = Vector2(0, -42)
 
-
 [node name="TargetMarker" parent="OverlayProfile" instance=ExtResource("5_target")]
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
-animation = &"Dying"
+animation = &"Walking"
 autoplay = "Idle Blinking"
+frame_progress = 0.91742265
 
 [node name="CollisionProfile" type="Area2D" parent="."]
 collision_layer = 0

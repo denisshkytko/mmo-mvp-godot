@@ -1,320 +1,619 @@
-[gd_resource type="SpriteFrames" load_steps=106 format=3]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://e6j8jsy43tqu"]
 
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_000.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_001.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_002.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_003.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_004.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_005.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_006.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_007.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_008.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_009.png" id="10_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_010.png" id="11_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_011.png" id="12_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_012.png" id="13_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_013.png" id="14_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_014.png" id="15_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_000.png" id="16_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_001.png" id="17_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_002.png" id="18_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_003.png" id="19_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_004.png" id="20_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_005.png" id="21_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_006.png" id="22_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_007.png" id="23_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_008.png" id="24_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_009.png" id="25_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_010.png" id="26_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_011.png" id="27_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_000.png" id="28_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_001.png" id="29_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_002.png" id="30_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_003.png" id="31_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_004.png" id="32_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_005.png" id="33_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_006.png" id="34_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_007.png" id="35_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_008.png" id="36_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_009.png" id="37_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_010.png" id="38_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_011.png" id="39_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_012.png" id="40_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_013.png" id="41_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_014.png" id="42_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_015.png" id="43_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_016.png" id="44_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_017.png" id="45_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_000.png" id="46_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_001.png" id="47_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_002.png" id="48_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_003.png" id="49_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_004.png" id="50_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_005.png" id="51_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_006.png" id="52_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_007.png" id="53_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_008.png" id="54_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_009.png" id="55_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_010.png" id="56_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_011.png" id="57_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_000.png" id="58_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_001.png" id="59_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_002.png" id="60_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_003.png" id="61_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_004.png" id="62_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_005.png" id="63_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_006.png" id="64_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_007.png" id="65_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_008.png" id="66_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_009.png" id="67_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_010.png" id="68_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_011.png" id="69_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_012.png" id="70_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_013.png" id="71_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_014.png" id="72_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_015.png" id="73_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_016.png" id="74_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_017.png" id="75_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_018.png" id="76_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_019.png" id="77_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_020.png" id="78_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_021.png" id="79_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_022.png" id="80_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_023.png" id="81_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_000.png" id="82_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_001.png" id="83_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_002.png" id="84_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_003.png" id="85_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_004.png" id="86_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_005.png" id="87_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_006.png" id="88_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_007.png" id="89_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_008.png" id="90_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_009.png" id="91_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_010.png" id="92_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_011.png" id="93_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_000.png" id="94_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_001.png" id="95_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_002.png" id="96_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_003.png" id="97_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_004.png" id="98_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_005.png" id="99_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_006.png" id="100_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_007.png" id="101_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_008.png" id="102_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_009.png" id="103_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_010.png" id="104_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_011.png" id="105_tex"]
+[ext_resource type="Texture2D" uid="uid://326kweov6d3f" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_000.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://cej4wuavg8rg" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_001.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://b0wancsb7u8b3" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_002.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://dpvnolukkjor4" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_003.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://cscsp1xpul7v3" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_004.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://bgwm6otpeymdq" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_005.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://udoe8xb12nvj" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_006.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://b0nn2skinndit" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_007.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://c4f6cfjk0cqsp" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_008.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://blw6rh6nthlk0" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_009.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://fljej5v8ecuv" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_010.png" id="11_tex"]
+[ext_resource type="Texture2D" uid="uid://doh4wm5mdpfjy" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_011.png" id="12_tex"]
+[ext_resource type="Texture2D" uid="uid://k7dbdsedul55" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_012.png" id="13_tex"]
+[ext_resource type="Texture2D" uid="uid://dl0j17np387g" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_013.png" id="14_tex"]
+[ext_resource type="Texture2D" uid="uid://ca32gpyaoejop" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Dying/0_Necromancer_of_the_Shadow_Dying_014.png" id="15_tex"]
+[ext_resource type="Texture2D" uid="uid://dvt4ey6gmwf84" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_000.png" id="16_tex"]
+[ext_resource type="Texture2D" uid="uid://54mcle2nd7en" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_001.png" id="17_tex"]
+[ext_resource type="Texture2D" uid="uid://ptjrmct480bw" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_002.png" id="18_tex"]
+[ext_resource type="Texture2D" uid="uid://nwmgckm83xbv" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_003.png" id="19_tex"]
+[ext_resource type="Texture2D" uid="uid://50m6bukq2ej7" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_004.png" id="20_tex"]
+[ext_resource type="Texture2D" uid="uid://bml3jiifmidt3" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_005.png" id="21_tex"]
+[ext_resource type="Texture2D" uid="uid://b6luu5o7ny25e" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_006.png" id="22_tex"]
+[ext_resource type="Texture2D" uid="uid://bh78c3lf3uua0" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_007.png" id="23_tex"]
+[ext_resource type="Texture2D" uid="uid://c4seofenw05dl" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_008.png" id="24_tex"]
+[ext_resource type="Texture2D" uid="uid://cmsasyucp3tvj" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_009.png" id="25_tex"]
+[ext_resource type="Texture2D" uid="uid://01j3y2s1i61g" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_010.png" id="26_tex"]
+[ext_resource type="Texture2D" uid="uid://bwpeyb66wgqdq" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Hurt/0_Necromancer_of_the_Shadow_Hurt_011.png" id="27_tex"]
+[ext_resource type="Texture2D" uid="uid://b4j7fflt8k7fb" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_000.png" id="28_tex"]
+[ext_resource type="Texture2D" uid="uid://c2x8bhn28kwgn" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_001.png" id="29_tex"]
+[ext_resource type="Texture2D" uid="uid://1l6vwmnonsu4" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_002.png" id="30_tex"]
+[ext_resource type="Texture2D" uid="uid://da7ou3r0l1x7" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_003.png" id="31_tex"]
+[ext_resource type="Texture2D" uid="uid://ggc1w4ccbcmf" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_004.png" id="32_tex"]
+[ext_resource type="Texture2D" uid="uid://36fog0iskkqd" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_005.png" id="33_tex"]
+[ext_resource type="Texture2D" uid="uid://bm4sfmqf0v60t" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_006.png" id="34_tex"]
+[ext_resource type="Texture2D" uid="uid://bh50qe8dwj70j" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_007.png" id="35_tex"]
+[ext_resource type="Texture2D" uid="uid://m0ndq4y5vkc8" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_008.png" id="36_tex"]
+[ext_resource type="Texture2D" uid="uid://dfhoxp0yimxm0" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_009.png" id="37_tex"]
+[ext_resource type="Texture2D" uid="uid://cd57iyg75pobj" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_010.png" id="38_tex"]
+[ext_resource type="Texture2D" uid="uid://da0wbjq75y7hv" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_011.png" id="39_tex"]
+[ext_resource type="Texture2D" uid="uid://bmgt8lwdrd8jo" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_012.png" id="40_tex"]
+[ext_resource type="Texture2D" uid="uid://cj3nmipqnr34e" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_013.png" id="41_tex"]
+[ext_resource type="Texture2D" uid="uid://dubp23pdugeu4" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_014.png" id="42_tex"]
+[ext_resource type="Texture2D" uid="uid://b2k82nbeti4n4" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_015.png" id="43_tex"]
+[ext_resource type="Texture2D" uid="uid://btdgwlqccbvf0" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_016.png" id="44_tex"]
+[ext_resource type="Texture2D" uid="uid://mwfrkggoy785" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Idle Blinking/0_Necromancer_of_the_Shadow_Idle Blinking_017.png" id="45_tex"]
+[ext_resource type="Texture2D" uid="uid://crqsrkvjlnuf1" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_000.png" id="46_06vep"]
+[ext_resource type="Texture2D" uid="uid://3tr3x7drk2k2" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_000.png" id="46_tex"]
+[ext_resource type="Texture2D" uid="uid://c37yq0da26kxt" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_001.png" id="47_6h6x6"]
+[ext_resource type="Texture2D" uid="uid://cbbgynimox4u4" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_001.png" id="47_tex"]
+[ext_resource type="Texture2D" uid="uid://bt1sbd5q87wv8" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_002.png" id="48_2801m"]
+[ext_resource type="Texture2D" uid="uid://dqm1et0v6i3fy" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_002.png" id="48_tex"]
+[ext_resource type="Texture2D" uid="uid://73bhcc8a6k4h" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_003.png" id="49_3gwll"]
+[ext_resource type="Texture2D" uid="uid://b0rg5q40umdgv" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_003.png" id="49_tex"]
+[ext_resource type="Texture2D" uid="uid://b53qce4c1cfqr" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_004.png" id="50_l5cpa"]
+[ext_resource type="Texture2D" uid="uid://dcyv25wqphlwa" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_004.png" id="50_tex"]
+[ext_resource type="Texture2D" uid="uid://ckilxg1rmuucc" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_005.png" id="51_dl5io"]
+[ext_resource type="Texture2D" uid="uid://1lt1liaf84p4" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_005.png" id="51_tex"]
+[ext_resource type="Texture2D" uid="uid://sus08wprojtt" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_006.png" id="52_tex"]
+[ext_resource type="Texture2D" uid="uid://jck7ynrwnsha" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_006.png" id="52_vnan5"]
+[ext_resource type="Texture2D" uid="uid://dcwxem3aidrwo" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_007.png" id="53_hr8ve"]
+[ext_resource type="Texture2D" uid="uid://dbtuwc74c0ar5" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_007.png" id="53_tex"]
+[ext_resource type="Texture2D" uid="uid://cq08t8bhtupyo" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_008.png" id="54_a4fql"]
+[ext_resource type="Texture2D" uid="uid://b1gf03afwcl5f" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_008.png" id="54_tex"]
+[ext_resource type="Texture2D" uid="uid://ckjg5ian6wyfo" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_009.png" id="55_4s8ig"]
+[ext_resource type="Texture2D" uid="uid://b7857qwjp5dya" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_009.png" id="55_tex"]
+[ext_resource type="Texture2D" uid="uid://bgcyisyuy0fby" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_010.png" id="56_3d264"]
+[ext_resource type="Texture2D" uid="uid://s33p1epxuspd" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_010.png" id="56_tex"]
+[ext_resource type="Texture2D" uid="uid://by37hrexkmrtg" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Kicking/0_Necromancer_of_the_Shadow_Kicking_011.png" id="57_kv4rw"]
+[ext_resource type="Texture2D" uid="uid://cv22hbrpvn5qe" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Running/0_Necromancer_of_the_Shadow_Running_011.png" id="57_tex"]
+[ext_resource type="Texture2D" uid="uid://i4sy4xq7h756" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_000.png" id="58_tex"]
+[ext_resource type="Texture2D" uid="uid://befhmbvdst3j7" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_000.png" id="58_ybtq5"]
+[ext_resource type="Texture2D" uid="uid://c7lswre1btay7" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_001.png" id="59_tex"]
+[ext_resource type="Texture2D" uid="uid://ca4n2c4q7oa3r" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_001.png" id="59_xgw10"]
+[ext_resource type="Texture2D" uid="uid://dkftdtjstaifc" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_002.png" id="60_tex"]
+[ext_resource type="Texture2D" uid="uid://dksamqomxlgg1" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_002.png" id="60_wm16s"]
+[ext_resource type="Texture2D" uid="uid://dkhoqmhlu3a3a" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_003.png" id="61_ghqx1"]
+[ext_resource type="Texture2D" uid="uid://dnpru6yrmwhkl" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_003.png" id="61_tex"]
+[ext_resource type="Texture2D" uid="uid://gjix6porxuex" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_004.png" id="62_138ba"]
+[ext_resource type="Texture2D" uid="uid://cbhj4xm8lbrg2" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_004.png" id="62_tex"]
+[ext_resource type="Texture2D" uid="uid://e7s0mdg088hr" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_005.png" id="63_tex"]
+[ext_resource type="Texture2D" uid="uid://bpxr3jbq1ye3o" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_005.png" id="63_ukkdp"]
+[ext_resource type="Texture2D" uid="uid://6cjgtgu0l1l5" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_006.png" id="64_rinff"]
+[ext_resource type="Texture2D" uid="uid://dfbpk4anpvmf" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_006.png" id="64_tex"]
+[ext_resource type="Texture2D" uid="uid://c3v3ohuphjtmj" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_007.png" id="65_1lv7g"]
+[ext_resource type="Texture2D" uid="uid://bbpfrgu0juprq" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_007.png" id="65_tex"]
+[ext_resource type="Texture2D" uid="uid://cqbpm3r64t487" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_008.png" id="66_85kee"]
+[ext_resource type="Texture2D" uid="uid://cn1haud4ocice" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_008.png" id="66_tex"]
+[ext_resource type="Texture2D" uid="uid://y8cx4p6wv3st" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_009.png" id="67_3ky1j"]
+[ext_resource type="Texture2D" uid="uid://begkryvdawmqq" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_009.png" id="67_tex"]
+[ext_resource type="Texture2D" uid="uid://dbbd3n0mjcehx" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_010.png" id="68_ktjs4"]
+[ext_resource type="Texture2D" uid="uid://bmg883s1drst8" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_010.png" id="68_tex"]
+[ext_resource type="Texture2D" uid="uid://to6eli14xcoc" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_011.png" id="69_tex"]
+[ext_resource type="Texture2D" uid="uid://htu3unf0501w" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Slashing/0_Necromancer_of_the_Shadow_Run Slashing_011.png" id="69_vl4xo"]
+[ext_resource type="Texture2D" uid="uid://dsbnv2nwoxro5" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_012.png" id="70_tex"]
+[ext_resource type="Texture2D" uid="uid://pq2hsov8wbk7" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_013.png" id="71_tex"]
+[ext_resource type="Texture2D" uid="uid://clb4r3lirtffi" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_014.png" id="72_tex"]
+[ext_resource type="Texture2D" uid="uid://5hx68cbx74po" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_015.png" id="73_tex"]
+[ext_resource type="Texture2D" uid="uid://bftikxw8wg6lr" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_016.png" id="74_tex"]
+[ext_resource type="Texture2D" uid="uid://l83ulhaiqfip" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_017.png" id="75_tex"]
+[ext_resource type="Texture2D" uid="uid://b135p0fb6jkhc" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_018.png" id="76_tex"]
+[ext_resource type="Texture2D" uid="uid://cyjom0q1diu4d" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_019.png" id="77_tex"]
+[ext_resource type="Texture2D" uid="uid://b8oovbswl4bqx" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_020.png" id="78_tex"]
+[ext_resource type="Texture2D" uid="uid://800i5xlngkt0" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_021.png" id="79_tex"]
+[ext_resource type="Texture2D" uid="uid://dy3syhek8fpf8" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_022.png" id="80_tex"]
+[ext_resource type="Texture2D" uid="uid://cjpuf6kk4o4et" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Walking/0_Necromancer_of_the_Shadow_Walking_023.png" id="81_tex"]
+[ext_resource type="Texture2D" uid="uid://cadx6p3enqj1y" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_000.png" id="82_tex"]
+[ext_resource type="Texture2D" uid="uid://qfb646m11vgw" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_001.png" id="83_tex"]
+[ext_resource type="Texture2D" uid="uid://b3n10nwrjlo2g" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_002.png" id="84_tex"]
+[ext_resource type="Texture2D" uid="uid://ca17qs5o70ebd" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_003.png" id="85_tex"]
+[ext_resource type="Texture2D" uid="uid://cdyfn1552awah" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_004.png" id="86_tex"]
+[ext_resource type="Texture2D" uid="uid://cnsx4ly58umei" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_005.png" id="87_tex"]
+[ext_resource type="Texture2D" uid="uid://d0avm2v4pcich" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_006.png" id="88_tex"]
+[ext_resource type="Texture2D" uid="uid://ct2uu4k33msui" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_007.png" id="89_tex"]
+[ext_resource type="Texture2D" uid="uid://ddnsg5e22yxmn" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_008.png" id="90_tex"]
+[ext_resource type="Texture2D" uid="uid://bc128o8lhmu5r" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_009.png" id="91_tex"]
+[ext_resource type="Texture2D" uid="uid://owq2kuohl1gp" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_010.png" id="92_tex"]
+[ext_resource type="Texture2D" uid="uid://cgu2y7sefjy81" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Run Throwing/0_Necromancer_of_the_Shadow_Run Throwing_011.png" id="93_tex"]
+[ext_resource type="Texture2D" uid="uid://mja18nqp147w" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_000.png" id="94_clae2"]
+[ext_resource type="Texture2D" uid="uid://balatl1wv8u3p" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_000.png" id="94_tex"]
+[ext_resource type="Texture2D" uid="uid://db00vxdc85es6" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_001.png" id="95_tex"]
+[ext_resource type="Texture2D" uid="uid://d27pc5h76iav6" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_001.png" id="95_w3myf"]
+[ext_resource type="Texture2D" uid="uid://bf84cmh42yhoa" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_002.png" id="96_6od2t"]
+[ext_resource type="Texture2D" uid="uid://dxc7ch2ggnbji" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_002.png" id="96_tex"]
+[ext_resource type="Texture2D" uid="uid://d2rjdgsvvmd5w" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_003.png" id="97_m03eh"]
+[ext_resource type="Texture2D" uid="uid://dhm6ndv4fijdn" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_003.png" id="97_tex"]
+[ext_resource type="Texture2D" uid="uid://dt85mroaj1ivb" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_004.png" id="98_be53d"]
+[ext_resource type="Texture2D" uid="uid://bwyngb12jgvap" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_004.png" id="98_tex"]
+[ext_resource type="Texture2D" uid="uid://c5blb6dqeglqf" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_005.png" id="99_0gmoi"]
+[ext_resource type="Texture2D" uid="uid://b1gke88xaw0ua" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_005.png" id="99_tex"]
+[ext_resource type="Texture2D" uid="uid://bdustlfqnpd2x" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_006.png" id="100_efqy4"]
+[ext_resource type="Texture2D" uid="uid://dx3j1nds2dfkx" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_006.png" id="100_tex"]
+[ext_resource type="Texture2D" uid="uid://cqqffswvr8mf3" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_007.png" id="101_tex"]
+[ext_resource type="Texture2D" uid="uid://b2i2lvpohwhnx" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_007.png" id="101_xh41m"]
+[ext_resource type="Texture2D" uid="uid://del15dwafahej" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_008.png" id="102_m7uk8"]
+[ext_resource type="Texture2D" uid="uid://bnr8onmwrlkj" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_008.png" id="102_tex"]
+[ext_resource type="Texture2D" uid="uid://cyfjoyvyn415i" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_009.png" id="103_pelky"]
+[ext_resource type="Texture2D" uid="uid://bu3x0uiymvtdc" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_009.png" id="103_tex"]
+[ext_resource type="Texture2D" uid="uid://c21grlp6g8mld" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_010.png" id="104_l2v2e"]
+[ext_resource type="Texture2D" uid="uid://cx7me4exjrsh1" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_010.png" id="104_tex"]
+[ext_resource type="Texture2D" uid="uid://c5mhi1njg2n0n" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Slashing/0_Necromancer_of_the_Shadow_Slashing_011.png" id="105_k21bo"]
+[ext_resource type="Texture2D" uid="uid://dafjsnb34bscm" path="res://assets/mobs/Cinderborn/Mage 2/PNG Sequences/Throwing/0_Necromancer_of_the_Shadow_Throwing_011.png" id="105_tex"]
 
 [resource]
 animations = [{
-"frames": [
-{"duration": 1.0, "texture": ExtResource("1_tex")},
-{"duration": 1.0, "texture": ExtResource("2_tex")},
-{"duration": 1.0, "texture": ExtResource("3_tex")},
-{"duration": 1.0, "texture": ExtResource("4_tex")},
-{"duration": 1.0, "texture": ExtResource("5_tex")},
-{"duration": 1.0, "texture": ExtResource("6_tex")},
-{"duration": 1.0, "texture": ExtResource("7_tex")},
-{"duration": 1.0, "texture": ExtResource("8_tex")},
-{"duration": 1.0, "texture": ExtResource("9_tex")},
-{"duration": 1.0, "texture": ExtResource("10_tex")},
-{"duration": 1.0, "texture": ExtResource("11_tex")},
-{"duration": 1.0, "texture": ExtResource("12_tex")},
-{"duration": 1.0, "texture": ExtResource("13_tex")},
-{"duration": 1.0, "texture": ExtResource("14_tex")},
-{"duration": 1.0, "texture": ExtResource("15_tex")}
-],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+}],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+}],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("28_tex")},
-{"duration": 1.0, "texture": ExtResource("29_tex")},
-{"duration": 1.0, "texture": ExtResource("30_tex")},
-{"duration": 1.0, "texture": ExtResource("31_tex")},
-{"duration": 1.0, "texture": ExtResource("32_tex")},
-{"duration": 1.0, "texture": ExtResource("33_tex")},
-{"duration": 1.0, "texture": ExtResource("34_tex")},
-{"duration": 1.0, "texture": ExtResource("35_tex")},
-{"duration": 1.0, "texture": ExtResource("36_tex")},
-{"duration": 1.0, "texture": ExtResource("37_tex")},
-{"duration": 1.0, "texture": ExtResource("38_tex")},
-{"duration": 1.0, "texture": ExtResource("39_tex")},
-{"duration": 1.0, "texture": ExtResource("40_tex")},
-{"duration": 1.0, "texture": ExtResource("41_tex")},
-{"duration": 1.0, "texture": ExtResource("42_tex")},
-{"duration": 1.0, "texture": ExtResource("43_tex")},
-{"duration": 1.0, "texture": ExtResource("44_tex")},
-{"duration": 1.0, "texture": ExtResource("45_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_tex")
+}],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("46_tex")},
-{"duration": 1.0, "texture": ExtResource("47_tex")},
-{"duration": 1.0, "texture": ExtResource("48_tex")},
-{"duration": 1.0, "texture": ExtResource("49_tex")},
-{"duration": 1.0, "texture": ExtResource("50_tex")},
-{"duration": 1.0, "texture": ExtResource("51_tex")},
-{"duration": 1.0, "texture": ExtResource("52_tex")},
-{"duration": 1.0, "texture": ExtResource("53_tex")},
-{"duration": 1.0, "texture": ExtResource("54_tex")},
-{"duration": 1.0, "texture": ExtResource("55_tex")},
-{"duration": 1.0, "texture": ExtResource("56_tex")},
-{"duration": 1.0, "texture": ExtResource("57_tex")}
-],
-"loop": true,
-"name": &"Running",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("58_tex")},
-{"duration": 1.0, "texture": ExtResource("59_tex")},
-{"duration": 1.0, "texture": ExtResource("60_tex")},
-{"duration": 1.0, "texture": ExtResource("61_tex")},
-{"duration": 1.0, "texture": ExtResource("62_tex")},
-{"duration": 1.0, "texture": ExtResource("63_tex")},
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")},
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")},
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")}
-],
-"loop": true,
-"name": &"Walking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
-"loop": true,
-"name": &"Run Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")},
-{"duration": 1.0, "texture": ExtResource("103_tex")},
-{"duration": 1.0, "texture": ExtResource("104_tex")},
-{"duration": 1.0, "texture": ExtResource("105_tex")}
-],
-"loop": true,
-"name": &"Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_06vep")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_6h6x6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_2801m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_3gwll")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_l5cpa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_dl5io")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_vnan5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_hr8ve")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_a4fql")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_4s8ig")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_3d264")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_kv4rw")
+}],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_ybtq5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_xgw10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_wm16s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_ghqx1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_138ba")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_ukkdp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_rinff")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_1lv7g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_85kee")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_3ky1j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_ktjs4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_vl4xo")
+}],
 "loop": true,
 "name": &"Run Slashing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")},
-{"duration": 1.0, "texture": ExtResource("103_tex")},
-{"duration": 1.0, "texture": ExtResource("104_tex")},
-{"duration": 1.0, "texture": ExtResource("105_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("82_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("85_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("86_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("87_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("88_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("89_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("90_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("91_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("92_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("93_tex")
+}],
+"loop": true,
+"name": &"Run Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_tex")
+}],
+"loop": true,
+"name": &"Running",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_clae2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_w3myf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_6od2t")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_m03eh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_be53d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_0gmoi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_efqy4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_xh41m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_m7uk8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_pelky")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_l2v2e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_k21bo")
+}],
 "loop": true,
 "name": &"Slashing",
-"speed": 12.0
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_tex")
+}],
+"loop": true,
+"name": &"Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_tex")
+}],
+"loop": true,
+"name": &"Walking",
+"speed": 24.0
 }]

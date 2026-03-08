@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgyyobqdbo7p7"
-path="res://.godot/imported/Sword.png-85dd6fdb27061ac56c6f3e4f63ee4f4a.ctex"
+path="res://.godot/imported/Sword.png-45f5f447a03127455d2c296dffac0ed5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/Vector Parts/Sword.png"
-dest_files=["res://.godot/imported/Sword.png-85dd6fdb27061ac56c6f3e4f63ee4f4a.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/Vector Parts/Sword.png"
+dest_files=["res://.godot/imported/Sword.png-45f5f447a03127455d2c296dffac0ed5.ctex"]
 
 [params]
 

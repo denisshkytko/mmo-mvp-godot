@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dm1fmn0q75m4k"
-path="res://.godot/imported/0_Valkyrie_Walking_004.png-07ff26f9e49755b3675ef13b7303fd81.ctex"
+path="res://.godot/imported/0_Valkyrie_Walking_004.png-601a23300188246d5ecf6479960b4540.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/PNG Sequences/Walking/0_Valkyrie_Walking_004.png"
-dest_files=["res://.godot/imported/0_Valkyrie_Walking_004.png-07ff26f9e49755b3675ef13b7303fd81.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_004.png"
+dest_files=["res://.godot/imported/0_Valkyrie_Walking_004.png-601a23300188246d5ecf6479960b4540.ctex"]
 
 [params]
 

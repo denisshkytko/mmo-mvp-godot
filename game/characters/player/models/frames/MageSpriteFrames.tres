@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=118 format=3 uid="uid://b4rfg1xcfhr37"]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://b4rfg1xcfhr37"]
 
 [ext_resource type="Texture2D" uid="uid://bupwwdmsyp7l6" path="res://assets/characters/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_000.png" id="1_tex"]
 [ext_resource type="Texture2D" uid="uid://bc24b8olc0rkv" path="res://assets/characters/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_001.png" id="2_tex"]
@@ -81,30 +81,54 @@
 [ext_resource type="Texture2D" uid="uid://dqc4qhurprlk7" path="res://assets/characters/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_009.png" id="115_tex"]
 [ext_resource type="Texture2D" uid="uid://boeft6oi8x0kb" path="res://assets/characters/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_010.png" id="116_tex"]
 [ext_resource type="Texture2D" uid="uid://bso673ij4o131" path="res://assets/characters/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_011.png" id="117_tex"]
+[ext_resource type="Texture2D" uid="uid://r8vf5laujx2b" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_000.png" id="118_3s3om"]
 [ext_resource type="Texture2D" uid="uid://cpxphsepvci4u" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_000.png" id="118_tex"]
+[ext_resource type="Texture2D" uid="uid://by4856lidojr3" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_001.png" id="119_rrqtj"]
 [ext_resource type="Texture2D" uid="uid://doo08dns3upgi" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_001.png" id="119_tex"]
+[ext_resource type="Texture2D" uid="uid://cucaxauu3l8ps" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_002.png" id="120_nchl0"]
 [ext_resource type="Texture2D" uid="uid://d0mj3h03egv36" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_002.png" id="120_tex"]
+[ext_resource type="Texture2D" uid="uid://bg1duni060ivl" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_003.png" id="121_nudik"]
 [ext_resource type="Texture2D" uid="uid://cuqbd1xc514xv" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_003.png" id="121_tex"]
+[ext_resource type="Texture2D" uid="uid://b7c5qerxdvmli" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_004.png" id="122_fbbuf"]
 [ext_resource type="Texture2D" uid="uid://yghemc3jt71i" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_004.png" id="122_tex"]
+[ext_resource type="Texture2D" uid="uid://bs37e3ledpgnw" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_005.png" id="123_khrb3"]
 [ext_resource type="Texture2D" uid="uid://bk16gd1s7h3xa" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_005.png" id="123_tex"]
+[ext_resource type="Texture2D" uid="uid://iytqd30c1" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_006.png" id="124_d3j0f"]
 [ext_resource type="Texture2D" uid="uid://dutqmudydnquy" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_006.png" id="124_tex"]
+[ext_resource type="Texture2D" uid="uid://cd7pr4nmnbwpn" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_007.png" id="125_80j6a"]
 [ext_resource type="Texture2D" uid="uid://kplbeek30a8v" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_007.png" id="125_tex"]
+[ext_resource type="Texture2D" uid="uid://cnxfpm3qsc1y3" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_008.png" id="126_ny53f"]
 [ext_resource type="Texture2D" uid="uid://dk30kjhhkcu0p" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_008.png" id="126_tex"]
+[ext_resource type="Texture2D" uid="uid://bgsotuqa778gq" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_009.png" id="127_8fnt5"]
 [ext_resource type="Texture2D" uid="uid://s0d1xslagui4" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_009.png" id="127_tex"]
+[ext_resource type="Texture2D" uid="uid://3s4iivbx887k" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_010.png" id="128_33j6m"]
 [ext_resource type="Texture2D" uid="uid://dy080qhj7fl6g" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_010.png" id="128_tex"]
+[ext_resource type="Texture2D" uid="uid://deutgkiwiag8c" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_011.png" id="129_ocpwq"]
 [ext_resource type="Texture2D" uid="uid://uihy8v7qt4an" path="res://assets/characters/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_011.png" id="129_tex"]
+[ext_resource type="Texture2D" uid="uid://33w3oeh3utuv" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_012.png" id="130_qshxd"]
 [ext_resource type="Texture2D" uid="uid://brqoccyr6usfh" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_000.png" id="130_tex"]
+[ext_resource type="Texture2D" uid="uid://p4yyk4dqgq3l" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_013.png" id="131_lnosu"]
 [ext_resource type="Texture2D" uid="uid://ctshlw1kessym" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_001.png" id="131_tex"]
+[ext_resource type="Texture2D" uid="uid://tf5x8ep28aou" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_014.png" id="132_kdtft"]
 [ext_resource type="Texture2D" uid="uid://big4kfuxim74g" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_002.png" id="132_tex"]
+[ext_resource type="Texture2D" uid="uid://bbwpwopk7fh31" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_015.png" id="133_3hxwh"]
 [ext_resource type="Texture2D" uid="uid://cyeccj4fpp2bp" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_003.png" id="133_tex"]
+[ext_resource type="Texture2D" uid="uid://bfwwy7cnkvw10" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_016.png" id="134_gfiu3"]
 [ext_resource type="Texture2D" uid="uid://g0q2ufliy0j6" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_004.png" id="134_tex"]
+[ext_resource type="Texture2D" uid="uid://br7qtd4i23q2p" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_017.png" id="135_bxesi"]
 [ext_resource type="Texture2D" uid="uid://bijo7d54c8v8r" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_005.png" id="135_tex"]
 [ext_resource type="Texture2D" uid="uid://cuih7rsjlbeud" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_006.png" id="136_tex"]
+[ext_resource type="Texture2D" uid="uid://c376oq60dbwcm" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_018.png" id="136_w7c6r"]
 [ext_resource type="Texture2D" uid="uid://djfwswef75fvt" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_007.png" id="137_tex"]
+[ext_resource type="Texture2D" uid="uid://d37os4cyxpqhr" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_019.png" id="137_wx2ae"]
+[ext_resource type="Texture2D" uid="uid://1op2ae6q4mph" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_020.png" id="138_qsasd"]
 [ext_resource type="Texture2D" uid="uid://bfcfepgjkw1vi" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_008.png" id="138_tex"]
+[ext_resource type="Texture2D" uid="uid://bkfvp2vqfajql" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_021.png" id="139_npinr"]
 [ext_resource type="Texture2D" uid="uid://dmp013b5lwfl1" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_009.png" id="139_tex"]
+[ext_resource type="Texture2D" uid="uid://bebcmq5hsd10q" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_022.png" id="140_qeg7y"]
 [ext_resource type="Texture2D" uid="uid://rx6s8hm5kdcf" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_010.png" id="140_tex"]
 [ext_resource type="Texture2D" uid="uid://bimtu8ojgkny4" path="res://assets/characters/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_011.png" id="141_tex"]
+[ext_resource type="Texture2D" uid="uid://cqyyxyicqwwnn" path="res://assets/characters/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_023.png" id="141_vdsgb"]
 [ext_resource type="Texture2D" uid="uid://xw3rtvcramfq" path="res://assets/characters/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_000.png" id="160_tex"]
 [ext_resource type="Texture2D" uid="uid://n12bvehw2lh4" path="res://assets/characters/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_001.png" id="161_tex"]
 [ext_resource type="Texture2D" uid="uid://kheffyywtfli" path="res://assets/characters/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_002.png" id="162_tex"]
@@ -168,9 +192,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("22_tex")
@@ -210,9 +233,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("52_tex")
@@ -270,9 +292,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("82_tex")
@@ -312,9 +333,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("94_tex")
@@ -354,9 +374,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("106_tex")
@@ -396,9 +415,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("118_tex")
@@ -438,9 +456,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Running",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("130_tex")
@@ -480,9 +497,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("160_tex")
@@ -522,47 +538,82 @@ animations = [{
 }],
 "loop": true,
 "name": &"Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("118_tex")
+"texture": ExtResource("118_3s3om")
 }, {
 "duration": 1.0,
-"texture": ExtResource("119_tex")
+"texture": ExtResource("119_rrqtj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("120_tex")
+"texture": ExtResource("120_nchl0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("121_tex")
+"texture": ExtResource("121_nudik")
 }, {
 "duration": 1.0,
-"texture": ExtResource("122_tex")
+"texture": ExtResource("122_fbbuf")
 }, {
 "duration": 1.0,
-"texture": ExtResource("123_tex")
+"texture": ExtResource("123_khrb3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("124_tex")
+"texture": ExtResource("124_d3j0f")
 }, {
 "duration": 1.0,
-"texture": ExtResource("125_tex")
+"texture": ExtResource("125_80j6a")
 }, {
 "duration": 1.0,
-"texture": ExtResource("126_tex")
+"texture": ExtResource("126_ny53f")
 }, {
 "duration": 1.0,
-"texture": ExtResource("127_tex")
+"texture": ExtResource("127_8fnt5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("128_tex")
+"texture": ExtResource("128_33j6m")
 }, {
 "duration": 1.0,
-"texture": ExtResource("129_tex")
+"texture": ExtResource("129_ocpwq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_qshxd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_lnosu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_kdtft")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_3hxwh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_gfiu3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_bxesi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_w7c6r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("137_wx2ae")
+}, {
+"duration": 1.0,
+"texture": ExtResource("138_qsasd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("139_npinr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("140_qeg7y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("141_vdsgb")
 }],
 "loop": true,
 "name": &"Walking",
-"speed": 12.0
+"speed": 24.0
 }]

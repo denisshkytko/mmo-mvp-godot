@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bu5t42mkxteyu"
-path="res://.godot/imported/0_Valkyrie_Falling Down_000.png-409daf298d058477bf3a2de740d40da4.ctex"
+path="res://.godot/imported/0_Valkyrie_Falling Down_000.png-48e4fc64ffd9ddcef86a16162d55a927.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/PNG Sequences/Falling Down/0_Valkyrie_Falling Down_000.png"
-dest_files=["res://.godot/imported/0_Valkyrie_Falling Down_000.png-409daf298d058477bf3a2de740d40da4.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/PNG Sequences/Falling Down/0_Valkyrie_Falling Down_000.png"
+dest_files=["res://.godot/imported/0_Valkyrie_Falling Down_000.png-48e4fc64ffd9ddcef86a16162d55a927.ctex"]
 
 [params]
 

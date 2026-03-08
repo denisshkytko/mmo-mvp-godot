@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=118 format=3 uid="uid://cqjulccyfdcth"]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://cqjulccyfdcth"]
 
 [ext_resource type="Texture2D" uid="uid://c6a21rf04borl" path="res://assets/characters/Shaman/PNG Sequences/Dying/0_Forest_Ranger_Dying_000.png" id="1_tex"]
 [ext_resource type="Texture2D" uid="uid://dhsencsprn3cn" path="res://assets/characters/Shaman/PNG Sequences/Dying/0_Forest_Ranger_Dying_001.png" id="2_tex"]
@@ -81,29 +81,53 @@
 [ext_resource type="Texture2D" uid="uid://hl28yk8ragbj" path="res://assets/characters/Shaman/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_009.png" id="115_tex"]
 [ext_resource type="Texture2D" uid="uid://k8gngfsv5wxh" path="res://assets/characters/Shaman/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_010.png" id="116_tex"]
 [ext_resource type="Texture2D" uid="uid://bsb5ileqaw8n7" path="res://assets/characters/Shaman/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_011.png" id="117_tex"]
+[ext_resource type="Texture2D" uid="uid://bsiyyvgy0b0d3" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_000.png" id="118_4luc7"]
 [ext_resource type="Texture2D" uid="uid://bx2p840xgoy24" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_000.png" id="118_tex"]
 [ext_resource type="Texture2D" uid="uid://5a4b5g5ak1re" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_001.png" id="119_tex"]
+[ext_resource type="Texture2D" uid="uid://bpc3sicoc1cvm" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_001.png" id="119_uj07k"]
+[ext_resource type="Texture2D" uid="uid://crtl4x35amgn3" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_002.png" id="120_8qah7"]
 [ext_resource type="Texture2D" uid="uid://c5dx44v6a5clf" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_002.png" id="120_tex"]
+[ext_resource type="Texture2D" uid="uid://dn0qh7j8ccqp" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_003.png" id="121_kj6tk"]
 [ext_resource type="Texture2D" uid="uid://b2l6pceky6yk7" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_003.png" id="121_tex"]
 [ext_resource type="Texture2D" uid="uid://caub6u4pxf1kg" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_004.png" id="122_tex"]
+[ext_resource type="Texture2D" uid="uid://da138eplqkbm7" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_004.png" id="122_vlexe"]
 [ext_resource type="Texture2D" uid="uid://cnl4hs4dfpr71" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_005.png" id="123_tex"]
+[ext_resource type="Texture2D" uid="uid://5c4gfiqux3do" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_005.png" id="123_w6v6b"]
+[ext_resource type="Texture2D" uid="uid://om86dxyi7ygt" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_006.png" id="124_7s01n"]
 [ext_resource type="Texture2D" uid="uid://d1qsyx337ewrd" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_006.png" id="124_tex"]
+[ext_resource type="Texture2D" uid="uid://5446jsnw8qb5" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_007.png" id="125_td6bi"]
 [ext_resource type="Texture2D" uid="uid://cxpt86vtuuwg7" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_007.png" id="125_tex"]
+[ext_resource type="Texture2D" uid="uid://n4nttbvgjwy0" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_008.png" id="126_m7ecd"]
 [ext_resource type="Texture2D" uid="uid://lb2ghpxsdy3j" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_008.png" id="126_tex"]
+[ext_resource type="Texture2D" uid="uid://3d6kjli17h3i" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_009.png" id="127_mxbta"]
 [ext_resource type="Texture2D" uid="uid://caxwwnlqm2qwe" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_009.png" id="127_tex"]
 [ext_resource type="Texture2D" uid="uid://de0ablstdcrxh" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_010.png" id="128_tex"]
+[ext_resource type="Texture2D" uid="uid://c7l2ju2eocpwg" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_010.png" id="128_uwdft"]
+[ext_resource type="Texture2D" uid="uid://cru2mfxntwo0v" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_011.png" id="129_7d7g0"]
 [ext_resource type="Texture2D" uid="uid://badow7le3wnch" path="res://assets/characters/Shaman/PNG Sequences/Running/0_Forest_Ranger_Running_011.png" id="129_tex"]
 [ext_resource type="Texture2D" uid="uid://dmb7ku4mwnfek" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_000.png" id="130_tex"]
+[ext_resource type="Texture2D" uid="uid://d2wgfitl08dde" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_012.png" id="130_uff3j"]
+[ext_resource type="Texture2D" uid="uid://bo1d8w0oci8sj" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_013.png" id="131_drurn"]
 [ext_resource type="Texture2D" uid="uid://gqvha643ib2j" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_001.png" id="131_tex"]
+[ext_resource type="Texture2D" uid="uid://cxyundmo2kqc0" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_014.png" id="132_4p14o"]
 [ext_resource type="Texture2D" uid="uid://bjhwcdgp6e547" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_002.png" id="132_tex"]
+[ext_resource type="Texture2D" uid="uid://cgsw4qhr33xd5" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_015.png" id="133_kdc4w"]
 [ext_resource type="Texture2D" uid="uid://cj0q04dhukrvn" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_003.png" id="133_tex"]
+[ext_resource type="Texture2D" uid="uid://s2n6v5de8iwg" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_016.png" id="134_qtdvc"]
 [ext_resource type="Texture2D" uid="uid://dx7atkeljomfp" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_004.png" id="134_tex"]
+[ext_resource type="Texture2D" uid="uid://ccnunymvnebo0" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_017.png" id="135_hbbft"]
 [ext_resource type="Texture2D" uid="uid://bnpjy71pp5pf" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_005.png" id="135_tex"]
+[ext_resource type="Texture2D" uid="uid://d4jqh3dlde5gr" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_018.png" id="136_fa0sa"]
 [ext_resource type="Texture2D" uid="uid://bvqbhh0hvhrg8" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_006.png" id="136_tex"]
+[ext_resource type="Texture2D" uid="uid://dabgbgtbq8y1y" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_019.png" id="137_5eek3"]
 [ext_resource type="Texture2D" uid="uid://rnt0txssiyrk" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_007.png" id="137_tex"]
+[ext_resource type="Texture2D" uid="uid://dixgiwjdyhvfr" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_020.png" id="138_4ukrr"]
 [ext_resource type="Texture2D" uid="uid://cyjw6bxoekbrs" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_008.png" id="138_tex"]
 [ext_resource type="Texture2D" uid="uid://bjyw1vwu8j2vt" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_009.png" id="139_tex"]
+[ext_resource type="Texture2D" uid="uid://8kympsvg4ijn" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_021.png" id="139_ulsff"]
+[ext_resource type="Texture2D" uid="uid://empxgtgjcwj7" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_022.png" id="140_llaj4"]
 [ext_resource type="Texture2D" uid="uid://cksy0ynm02x6q" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_010.png" id="140_tex"]
+[ext_resource type="Texture2D" uid="uid://ce0iosvaokkuj" path="res://assets/characters/Shaman/PNG Sequences/Walking/0_Forest_Ranger_Walking_023.png" id="141_n338i"]
 [ext_resource type="Texture2D" uid="uid://cvwy1bbobr3lj" path="res://assets/characters/Shaman/PNG Sequences/Slashing/0_Forest_Ranger_Slashing_011.png" id="141_tex"]
 [ext_resource type="Texture2D" uid="uid://0ccy4grekw2x" path="res://assets/characters/Shaman/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_000.png" id="160_tex"]
 [ext_resource type="Texture2D" uid="uid://ctl5iik0yf2bo" path="res://assets/characters/Shaman/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_001.png" id="161_tex"]
@@ -168,9 +192,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("22_tex")
@@ -210,9 +233,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("52_tex")
@@ -270,9 +292,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("82_tex")
@@ -312,9 +333,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("94_tex")
@@ -354,9 +374,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("106_tex")
@@ -396,9 +415,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("118_tex")
@@ -438,9 +456,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Running",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("130_tex")
@@ -480,9 +497,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("160_tex")
@@ -522,47 +538,82 @@ animations = [{
 }],
 "loop": true,
 "name": &"Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("118_tex")
+"texture": ExtResource("118_4luc7")
 }, {
 "duration": 1.0,
-"texture": ExtResource("119_tex")
+"texture": ExtResource("119_uj07k")
 }, {
 "duration": 1.0,
-"texture": ExtResource("120_tex")
+"texture": ExtResource("120_8qah7")
 }, {
 "duration": 1.0,
-"texture": ExtResource("121_tex")
+"texture": ExtResource("121_kj6tk")
 }, {
 "duration": 1.0,
-"texture": ExtResource("122_tex")
+"texture": ExtResource("122_vlexe")
 }, {
 "duration": 1.0,
-"texture": ExtResource("123_tex")
+"texture": ExtResource("123_w6v6b")
 }, {
 "duration": 1.0,
-"texture": ExtResource("124_tex")
+"texture": ExtResource("124_7s01n")
 }, {
 "duration": 1.0,
-"texture": ExtResource("125_tex")
+"texture": ExtResource("125_td6bi")
 }, {
 "duration": 1.0,
-"texture": ExtResource("126_tex")
+"texture": ExtResource("126_m7ecd")
 }, {
 "duration": 1.0,
-"texture": ExtResource("127_tex")
+"texture": ExtResource("127_mxbta")
 }, {
 "duration": 1.0,
-"texture": ExtResource("128_tex")
+"texture": ExtResource("128_uwdft")
 }, {
 "duration": 1.0,
-"texture": ExtResource("129_tex")
+"texture": ExtResource("129_7d7g0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_uff3j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_drurn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_4p14o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_kdc4w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_qtdvc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_hbbft")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_fa0sa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("137_5eek3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("138_4ukrr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("139_ulsff")
+}, {
+"duration": 1.0,
+"texture": ExtResource("140_llaj4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("141_n338i")
 }],
 "loop": true,
 "name": &"Walking",
-"speed": 12.0
+"speed": 24.0
 }]

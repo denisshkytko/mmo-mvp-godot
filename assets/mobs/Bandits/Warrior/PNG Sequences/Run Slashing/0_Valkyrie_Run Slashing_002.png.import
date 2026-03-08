@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlsexy0gmi2xd"
-path="res://.godot/imported/0_Valkyrie_Run Slashing_002.png-10471265ea942a0a72b74265136d6759.ctex"
+path="res://.godot/imported/0_Valkyrie_Run Slashing_002.png-38f53000a0a2af04bcc33ea9a275dccf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/PNG Sequences/Run Slashing/0_Valkyrie_Run Slashing_002.png"
-dest_files=["res://.godot/imported/0_Valkyrie_Run Slashing_002.png-10471265ea942a0a72b74265136d6759.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/PNG Sequences/Run Slashing/0_Valkyrie_Run Slashing_002.png"
+dest_files=["res://.godot/imported/0_Valkyrie_Run Slashing_002.png-38f53000a0a2af04bcc33ea9a275dccf.ctex"]
 
 [params]
 

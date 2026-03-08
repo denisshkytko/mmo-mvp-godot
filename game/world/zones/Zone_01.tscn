@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://bxeo6tvunc012" path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
 [ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/SpawnPoint.tscn" id="7_82kis"]
 [ext_resource type="Script" uid="uid://ceudd21vg5y8b" path="res://game/world/spawners/fnpc_spawner_group.gd" id="7_nldw7"]
-[ext_resource type="Script" path="res://game/world/spawn/first_entry_spawn_point.gd" id="10_first_entry"]
+[ext_resource type="Script" uid="uid://dr6lr07oir3cj" path="res://game/world/spawn/first_entry_spawn_point.gd" id="10_first_entry"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bajtg"]
 size = Vector2(4000, 40)
@@ -89,7 +89,6 @@ position = Vector2(1700, 0)
 [node name="FirstEntryBlue" type="Marker2D" parent="."]
 position = Vector2(1700, 0)
 script = ExtResource("10_first_entry")
-faction = "Синяя"
 
 [node name="ExitToZone02" type="Area2D" parent="."]
 position = Vector2(1800, 0)
@@ -114,9 +113,12 @@ position = Vector2(-1077, -619)
 [node name="NAMSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("3_rjbcs")
 loot_profile = SubResource("Resource_nldw7")
-level_max = 2
+level_min = 50
+level_max = 50
+class_choice = 5
+mob_group_choice = 1
+mob_model_choice = 3
 behavior = 1
-patrol_radius = 150.0
 patrol_pause_seconds = 3.0
 
 [node name="NAMSpawner" parent="NAMSpawnersGroup" instance=ExtResource("7_82kis")]
@@ -141,10 +143,10 @@ position = Vector2(-979, 392)
 script = ExtResource("5_qbm0w")
 loot_profile_animals = SubResource("Resource_hfd65")
 loot_profile_humanoids = SubResource("Resource_gbxao")
-level_max = 5
+level_min = 50
+level_max = 50
 body_size = 2
 behavior = 1
-patrol_radius = 150.0
 
 [node name="NNMSpawner" parent="NNMSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(353, 296)
@@ -160,9 +162,10 @@ script = ExtResource("7_nldw7")
 fighter_type = 1
 interaction_type = 1
 loot_profile = SubResource("Resource_b1gjl")
-level_min = 5
-level_max = 5
+level_min = 60
+level_max = 60
 class_choice = 2
+behavior = 1
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup" instance=ExtResource("7_82kis")]
 position = Vector2(-1659, -163)
@@ -172,9 +175,11 @@ script = ExtResource("7_nldw7")
 fighter_type = 1
 interaction_type = 3
 loot_profile = SubResource("Resource_b1gjl")
-level_min = 5
-level_max = 5
+level_min = 60
+level_max = 60
 class_choice = 3
+attack_range_choice = 1
+behavior = 1
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup5" instance=ExtResource("7_82kis")]
 position = Vector2(-1652, -85)
@@ -182,6 +187,7 @@ position = Vector2(-1652, -85)
 [node name="FNPCSpawnersGroup2" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 faction_id = "red"
+interaction_type = 1
 loot_profile = SubResource("Resource_ecawj")
 level_min = 60
 level_max = 60

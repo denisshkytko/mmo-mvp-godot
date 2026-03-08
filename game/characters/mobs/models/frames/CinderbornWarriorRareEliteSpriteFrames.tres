@@ -1,320 +1,619 @@
-[gd_resource type="SpriteFrames" load_steps=106 format=3]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://cj500r8ly54iu"]
 
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_000.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_001.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_002.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_003.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_004.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_005.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_006.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_007.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_008.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_009.png" id="10_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_010.png" id="11_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_011.png" id="12_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_012.png" id="13_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_013.png" id="14_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_014.png" id="15_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_000.png" id="16_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_001.png" id="17_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_002.png" id="18_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_003.png" id="19_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_004.png" id="20_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_005.png" id="21_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_006.png" id="22_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_007.png" id="23_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_008.png" id="24_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_009.png" id="25_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_010.png" id="26_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_011.png" id="27_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_000.png" id="28_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_001.png" id="29_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_002.png" id="30_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_003.png" id="31_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_004.png" id="32_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_005.png" id="33_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_006.png" id="34_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_007.png" id="35_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_008.png" id="36_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_009.png" id="37_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_010.png" id="38_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_011.png" id="39_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_012.png" id="40_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_013.png" id="41_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_014.png" id="42_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_015.png" id="43_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_016.png" id="44_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_017.png" id="45_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_000.png" id="46_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_001.png" id="47_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_002.png" id="48_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_003.png" id="49_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_004.png" id="50_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_005.png" id="51_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_006.png" id="52_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_007.png" id="53_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_008.png" id="54_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_009.png" id="55_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_010.png" id="56_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_011.png" id="57_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_000.png" id="58_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_001.png" id="59_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_002.png" id="60_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_003.png" id="61_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_004.png" id="62_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_005.png" id="63_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_006.png" id="64_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_007.png" id="65_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_008.png" id="66_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_009.png" id="67_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_010.png" id="68_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_011.png" id="69_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_012.png" id="70_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_013.png" id="71_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_014.png" id="72_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_015.png" id="73_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_016.png" id="74_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_017.png" id="75_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_018.png" id="76_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_019.png" id="77_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_020.png" id="78_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_021.png" id="79_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_022.png" id="80_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_023.png" id="81_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_000.png" id="82_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_001.png" id="83_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_002.png" id="84_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_003.png" id="85_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_004.png" id="86_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_005.png" id="87_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_006.png" id="88_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_007.png" id="89_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_008.png" id="90_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_009.png" id="91_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_010.png" id="92_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_011.png" id="93_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_000.png" id="94_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_001.png" id="95_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_002.png" id="96_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_003.png" id="97_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_004.png" id="98_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_005.png" id="99_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_006.png" id="100_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_007.png" id="101_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_008.png" id="102_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_009.png" id="103_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_010.png" id="104_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_011.png" id="105_tex"]
+[ext_resource type="Texture2D" uid="uid://vn1yj7ww3c1q" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_000.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://bwdwq8v27m405" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_001.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://brea3ngqtdwy2" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_002.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://bbwsksurm4th8" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_003.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://clb84jhjqeptj" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_004.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://csi2bslhd5xo0" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_005.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://fnmc7hqkkbem" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_006.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://dplrr82m30qmj" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_007.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://cna2dgvob4sn5" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_008.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://bokuayv4h1b1g" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_009.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://j5qbf7f7b2kb" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_010.png" id="11_tex"]
+[ext_resource type="Texture2D" uid="uid://byfvhcr7yoclm" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_011.png" id="12_tex"]
+[ext_resource type="Texture2D" uid="uid://ckyogguf6fvj3" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_012.png" id="13_tex"]
+[ext_resource type="Texture2D" uid="uid://ccol0hyxoggrh" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_013.png" id="14_tex"]
+[ext_resource type="Texture2D" uid="uid://b52gr8fhcdefl" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_014.png" id="15_tex"]
+[ext_resource type="Texture2D" uid="uid://3j2g17ofn82n" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_000.png" id="16_tex"]
+[ext_resource type="Texture2D" uid="uid://def27eac5mn6u" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_001.png" id="17_tex"]
+[ext_resource type="Texture2D" uid="uid://qcgardaa28vc" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_002.png" id="18_tex"]
+[ext_resource type="Texture2D" uid="uid://bsgnsw4bamk1s" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_003.png" id="19_tex"]
+[ext_resource type="Texture2D" uid="uid://dvn6ucr3uqrqx" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_004.png" id="20_tex"]
+[ext_resource type="Texture2D" uid="uid://dhiay45v7na6v" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_005.png" id="21_tex"]
+[ext_resource type="Texture2D" uid="uid://dg5bdr51tlotx" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_006.png" id="22_tex"]
+[ext_resource type="Texture2D" uid="uid://c3on7w63nb3fd" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_007.png" id="23_tex"]
+[ext_resource type="Texture2D" uid="uid://vtd5njosfb2x" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_008.png" id="24_tex"]
+[ext_resource type="Texture2D" uid="uid://dceinididtrfa" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_009.png" id="25_tex"]
+[ext_resource type="Texture2D" uid="uid://c6mp1b10jkxil" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_010.png" id="26_tex"]
+[ext_resource type="Texture2D" uid="uid://dqc21dpnhmaxe" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Hurt/0_Skeleton_Warrior_Hurt_011.png" id="27_tex"]
+[ext_resource type="Texture2D" uid="uid://ctnvl8btj5yec" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_000.png" id="28_tex"]
+[ext_resource type="Texture2D" uid="uid://dfgmta6slwt4y" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_001.png" id="29_tex"]
+[ext_resource type="Texture2D" uid="uid://c4p38w1jlu6d0" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_002.png" id="30_tex"]
+[ext_resource type="Texture2D" uid="uid://mnphsaj7r8p0" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_003.png" id="31_tex"]
+[ext_resource type="Texture2D" uid="uid://bcivtw7ges530" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_004.png" id="32_tex"]
+[ext_resource type="Texture2D" uid="uid://cucrof0s1cu20" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_005.png" id="33_tex"]
+[ext_resource type="Texture2D" uid="uid://i8m02u1fcncr" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_006.png" id="34_tex"]
+[ext_resource type="Texture2D" uid="uid://caeaqdnd5wu8b" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_007.png" id="35_tex"]
+[ext_resource type="Texture2D" uid="uid://coe8t1eo5gw1y" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_008.png" id="36_tex"]
+[ext_resource type="Texture2D" uid="uid://dk5nk78vwmiv6" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_009.png" id="37_tex"]
+[ext_resource type="Texture2D" uid="uid://bn1p8siyfv82d" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_010.png" id="38_tex"]
+[ext_resource type="Texture2D" uid="uid://bh2fa077gfae1" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_011.png" id="39_tex"]
+[ext_resource type="Texture2D" uid="uid://2vbyr08gh1wd" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_012.png" id="40_tex"]
+[ext_resource type="Texture2D" uid="uid://k1plyq0qp85i" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_013.png" id="41_tex"]
+[ext_resource type="Texture2D" uid="uid://bbslwo7i4p510" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_014.png" id="42_tex"]
+[ext_resource type="Texture2D" uid="uid://dd5r77446k5ik" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_015.png" id="43_tex"]
+[ext_resource type="Texture2D" uid="uid://btxqcy74yx1ib" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_016.png" id="44_tex"]
+[ext_resource type="Texture2D" uid="uid://bttonetfuu8gm" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_017.png" id="45_tex"]
+[ext_resource type="Texture2D" uid="uid://crsi15qmbptty" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_000.png" id="46_qkl3g"]
+[ext_resource type="Texture2D" uid="uid://c0x1ph1ip5d5q" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_000.png" id="46_tex"]
+[ext_resource type="Texture2D" uid="uid://bq47thbhnph5x" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_001.png" id="47_tex"]
+[ext_resource type="Texture2D" uid="uid://c2yxxn7b0kftj" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_001.png" id="47_uxhhq"]
+[ext_resource type="Texture2D" uid="uid://b2b57spahvdqj" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_002.png" id="48_bsea1"]
+[ext_resource type="Texture2D" uid="uid://b62gjx6guhhvs" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_002.png" id="48_tex"]
+[ext_resource type="Texture2D" uid="uid://bd212mba5mf0b" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_003.png" id="49_tex"]
+[ext_resource type="Texture2D" uid="uid://dox8v5hvatcbn" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_003.png" id="49_w4tpu"]
+[ext_resource type="Texture2D" uid="uid://5tk6ofcwskpc" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_004.png" id="50_tex"]
+[ext_resource type="Texture2D" uid="uid://bin7382xiedh6" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_004.png" id="50_udys6"]
+[ext_resource type="Texture2D" uid="uid://bjrhuk8s1umfr" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_005.png" id="51_qvvsj"]
+[ext_resource type="Texture2D" uid="uid://0xbayu16sldn" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_005.png" id="51_tex"]
+[ext_resource type="Texture2D" uid="uid://dotx351bq37n1" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_006.png" id="52_5ytu2"]
+[ext_resource type="Texture2D" uid="uid://dwhjptsdtwoj0" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_006.png" id="52_tex"]
+[ext_resource type="Texture2D" uid="uid://b4wqisd3nkwek" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_007.png" id="53_tex"]
+[ext_resource type="Texture2D" uid="uid://bwyaka8753ftt" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_007.png" id="53_th4fk"]
+[ext_resource type="Texture2D" uid="uid://dsixjftlp2nm8" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_008.png" id="54_2y47c"]
+[ext_resource type="Texture2D" uid="uid://dofnervd45yf0" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_008.png" id="54_tex"]
+[ext_resource type="Texture2D" uid="uid://dlcr2sxyyoco0" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_009.png" id="55_4m0xw"]
+[ext_resource type="Texture2D" uid="uid://cs1bmxg5fjyg" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_009.png" id="55_tex"]
+[ext_resource type="Texture2D" uid="uid://c58w4borv5d8n" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_010.png" id="56_1yo3m"]
+[ext_resource type="Texture2D" uid="uid://ce7hrdyy7ivjp" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_010.png" id="56_tex"]
+[ext_resource type="Texture2D" uid="uid://bn57am30jisue" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Kicking/0_Skeleton_Warrior_Kicking_011.png" id="57_2oi6v"]
+[ext_resource type="Texture2D" uid="uid://brpp1jvhwjnu3" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Running/0_Skeleton_Warrior_Running_011.png" id="57_tex"]
+[ext_resource type="Texture2D" uid="uid://orgmhfnhyxgu" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_000.png" id="58_tex"]
+[ext_resource type="Texture2D" uid="uid://12e80m7y4bp" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_001.png" id="59_tex"]
+[ext_resource type="Texture2D" uid="uid://cs28a2qys20ts" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_002.png" id="60_tex"]
+[ext_resource type="Texture2D" uid="uid://g58n7hu2c8yj" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_003.png" id="61_tex"]
+[ext_resource type="Texture2D" uid="uid://b1cqng26llspn" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_004.png" id="62_tex"]
+[ext_resource type="Texture2D" uid="uid://ced3ba8gp61p7" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_005.png" id="63_tex"]
+[ext_resource type="Texture2D" uid="uid://dpakhoojdlby5" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_006.png" id="64_tex"]
+[ext_resource type="Texture2D" uid="uid://dyffe6tluo1ws" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_007.png" id="65_tex"]
+[ext_resource type="Texture2D" uid="uid://ba1vvhexmmi87" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_008.png" id="66_tex"]
+[ext_resource type="Texture2D" uid="uid://boq6o2a2hcfnk" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_009.png" id="67_tex"]
+[ext_resource type="Texture2D" uid="uid://pif4nx3g1h7h" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_010.png" id="68_tex"]
+[ext_resource type="Texture2D" uid="uid://bj4qclqa1ench" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_011.png" id="69_tex"]
+[ext_resource type="Texture2D" uid="uid://xma58mf28mp7" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_000.png" id="70_7dwvp"]
+[ext_resource type="Texture2D" uid="uid://cg4y5dub78kr2" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_012.png" id="70_tex"]
+[ext_resource type="Texture2D" uid="uid://cunb7p863ada2" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_001.png" id="71_5vm72"]
+[ext_resource type="Texture2D" uid="uid://bhuj7oqj5o3r6" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_013.png" id="71_tex"]
+[ext_resource type="Texture2D" uid="uid://2yf5oksg54g0" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_002.png" id="72_a62p4"]
+[ext_resource type="Texture2D" uid="uid://cjxqbbw20ysbq" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_014.png" id="72_tex"]
+[ext_resource type="Texture2D" uid="uid://c1iagg28h73hi" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_003.png" id="73_p5kyu"]
+[ext_resource type="Texture2D" uid="uid://cypbt0pnbhbwt" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_015.png" id="73_tex"]
+[ext_resource type="Texture2D" uid="uid://b7muycp5puik2" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_004.png" id="74_jd3hn"]
+[ext_resource type="Texture2D" uid="uid://ca3hbrif82m5t" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_016.png" id="74_tex"]
+[ext_resource type="Texture2D" uid="uid://dn4nwpk8cp117" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_005.png" id="75_fl06k"]
+[ext_resource type="Texture2D" uid="uid://l0x28o1vf1dw" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_017.png" id="75_tex"]
+[ext_resource type="Texture2D" uid="uid://7jorsi2q1o0k" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_006.png" id="76_cbf2j"]
+[ext_resource type="Texture2D" uid="uid://dnndq41e13i31" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_018.png" id="76_tex"]
+[ext_resource type="Texture2D" uid="uid://dtdipolwknf1h" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_007.png" id="77_b641q"]
+[ext_resource type="Texture2D" uid="uid://cvt6eeurh4tqd" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_019.png" id="77_tex"]
+[ext_resource type="Texture2D" uid="uid://bq8vu6wamfqyw" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_008.png" id="78_8ntb6"]
+[ext_resource type="Texture2D" uid="uid://b5h1076ulqvlp" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_020.png" id="78_tex"]
+[ext_resource type="Texture2D" uid="uid://38wdue8rkq6e" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_009.png" id="79_r8xyw"]
+[ext_resource type="Texture2D" uid="uid://dcqk5tn3iu642" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_021.png" id="79_tex"]
+[ext_resource type="Texture2D" uid="uid://c84j6q6e5oba1" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_010.png" id="80_sf7cq"]
+[ext_resource type="Texture2D" uid="uid://c7j06v5bjj0gq" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_022.png" id="80_tex"]
+[ext_resource type="Texture2D" uid="uid://btwx5wf1ekwin" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_023.png" id="81_tex"]
+[ext_resource type="Texture2D" uid="uid://cuolovf8selxe" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Throwing/0_Skeleton_Warrior_Run Throwing_011.png" id="81_xlpu7"]
+[ext_resource type="Texture2D" uid="uid://boxjfyv7sklji" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_000.png" id="82_tex"]
+[ext_resource type="Texture2D" uid="uid://chj3lif4g8dgj" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_001.png" id="83_tex"]
+[ext_resource type="Texture2D" uid="uid://bfh63ax4wl0n5" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_002.png" id="84_tex"]
+[ext_resource type="Texture2D" uid="uid://hjqv4pcqi0t6" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_003.png" id="85_tex"]
+[ext_resource type="Texture2D" uid="uid://cfqd6ig7ox7r8" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_004.png" id="86_tex"]
+[ext_resource type="Texture2D" uid="uid://dugv3v6bdy4ut" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_005.png" id="87_tex"]
+[ext_resource type="Texture2D" uid="uid://ben5oab40gtrx" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_006.png" id="88_tex"]
+[ext_resource type="Texture2D" uid="uid://nodurwjx4oan" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_007.png" id="89_tex"]
+[ext_resource type="Texture2D" uid="uid://4beoaana4wpc" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_008.png" id="90_tex"]
+[ext_resource type="Texture2D" uid="uid://bo80kw51k4tk" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_009.png" id="91_tex"]
+[ext_resource type="Texture2D" uid="uid://bqanrhc4oc5q3" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_010.png" id="92_tex"]
+[ext_resource type="Texture2D" uid="uid://wiyhgnekgam6" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Run Slashing/0_Skeleton_Warrior_Run Slashing_011.png" id="93_tex"]
+[ext_resource type="Texture2D" uid="uid://k7n5jyxrn4q1" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_000.png" id="94_tex"]
+[ext_resource type="Texture2D" uid="uid://dlcfqdrrtq2ih" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_001.png" id="95_tex"]
+[ext_resource type="Texture2D" uid="uid://bp3qhxpayhgwj" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_002.png" id="96_tex"]
+[ext_resource type="Texture2D" uid="uid://byfuuylimnq4y" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_003.png" id="97_tex"]
+[ext_resource type="Texture2D" uid="uid://da1bmlpvoa1nl" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_004.png" id="98_tex"]
+[ext_resource type="Texture2D" uid="uid://c8a2dbtrhk24d" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_005.png" id="99_tex"]
+[ext_resource type="Texture2D" uid="uid://5pwk0kl86fol" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_006.png" id="100_tex"]
+[ext_resource type="Texture2D" uid="uid://d15txkc7oj807" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_007.png" id="101_tex"]
+[ext_resource type="Texture2D" uid="uid://bvdara2crskgq" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_008.png" id="102_tex"]
+[ext_resource type="Texture2D" uid="uid://cuqmoh75gfsho" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_009.png" id="103_tex"]
+[ext_resource type="Texture2D" uid="uid://derookfvqko7x" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_010.png" id="104_tex"]
+[ext_resource type="Texture2D" uid="uid://br0jsicwub1f8" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_011.png" id="105_tex"]
+[ext_resource type="Texture2D" uid="uid://dox6udl1aptwv" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_000.png" id="106_nlet1"]
+[ext_resource type="Texture2D" uid="uid://burmrs2ej66xh" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_001.png" id="107_q4ufp"]
+[ext_resource type="Texture2D" uid="uid://ckpg3kb65xqs6" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_002.png" id="108_mgo7p"]
+[ext_resource type="Texture2D" uid="uid://btxylw8bjtam3" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_003.png" id="109_tdkxu"]
+[ext_resource type="Texture2D" uid="uid://cvc8l5mi4vndy" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_004.png" id="110_57rvh"]
+[ext_resource type="Texture2D" uid="uid://b3wo3e246uphi" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_005.png" id="111_xehj3"]
+[ext_resource type="Texture2D" uid="uid://bs5l8tbyhf5q8" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_006.png" id="112_d6rc5"]
+[ext_resource type="Texture2D" uid="uid://vmepkjnjlq2a" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_007.png" id="113_llpu1"]
+[ext_resource type="Texture2D" uid="uid://bhvhno6kkmjx4" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_008.png" id="114_jgkx0"]
+[ext_resource type="Texture2D" uid="uid://c6pxms6wrjtt1" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_009.png" id="115_ukucn"]
+[ext_resource type="Texture2D" uid="uid://isn4lu5xl1tu" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_010.png" id="116_hywrx"]
+[ext_resource type="Texture2D" uid="uid://c22y20e20aqf" path="res://assets/mobs/Cinderborn/Warrior - Rare,Elite/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_011.png" id="117_s2q00"]
 
 [resource]
 animations = [{
-"frames": [
-{"duration": 1.0, "texture": ExtResource("1_tex")},
-{"duration": 1.0, "texture": ExtResource("2_tex")},
-{"duration": 1.0, "texture": ExtResource("3_tex")},
-{"duration": 1.0, "texture": ExtResource("4_tex")},
-{"duration": 1.0, "texture": ExtResource("5_tex")},
-{"duration": 1.0, "texture": ExtResource("6_tex")},
-{"duration": 1.0, "texture": ExtResource("7_tex")},
-{"duration": 1.0, "texture": ExtResource("8_tex")},
-{"duration": 1.0, "texture": ExtResource("9_tex")},
-{"duration": 1.0, "texture": ExtResource("10_tex")},
-{"duration": 1.0, "texture": ExtResource("11_tex")},
-{"duration": 1.0, "texture": ExtResource("12_tex")},
-{"duration": 1.0, "texture": ExtResource("13_tex")},
-{"duration": 1.0, "texture": ExtResource("14_tex")},
-{"duration": 1.0, "texture": ExtResource("15_tex")}
-],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+}],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+}],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("28_tex")},
-{"duration": 1.0, "texture": ExtResource("29_tex")},
-{"duration": 1.0, "texture": ExtResource("30_tex")},
-{"duration": 1.0, "texture": ExtResource("31_tex")},
-{"duration": 1.0, "texture": ExtResource("32_tex")},
-{"duration": 1.0, "texture": ExtResource("33_tex")},
-{"duration": 1.0, "texture": ExtResource("34_tex")},
-{"duration": 1.0, "texture": ExtResource("35_tex")},
-{"duration": 1.0, "texture": ExtResource("36_tex")},
-{"duration": 1.0, "texture": ExtResource("37_tex")},
-{"duration": 1.0, "texture": ExtResource("38_tex")},
-{"duration": 1.0, "texture": ExtResource("39_tex")},
-{"duration": 1.0, "texture": ExtResource("40_tex")},
-{"duration": 1.0, "texture": ExtResource("41_tex")},
-{"duration": 1.0, "texture": ExtResource("42_tex")},
-{"duration": 1.0, "texture": ExtResource("43_tex")},
-{"duration": 1.0, "texture": ExtResource("44_tex")},
-{"duration": 1.0, "texture": ExtResource("45_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_tex")
+}],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("46_tex")},
-{"duration": 1.0, "texture": ExtResource("47_tex")},
-{"duration": 1.0, "texture": ExtResource("48_tex")},
-{"duration": 1.0, "texture": ExtResource("49_tex")},
-{"duration": 1.0, "texture": ExtResource("50_tex")},
-{"duration": 1.0, "texture": ExtResource("51_tex")},
-{"duration": 1.0, "texture": ExtResource("52_tex")},
-{"duration": 1.0, "texture": ExtResource("53_tex")},
-{"duration": 1.0, "texture": ExtResource("54_tex")},
-{"duration": 1.0, "texture": ExtResource("55_tex")},
-{"duration": 1.0, "texture": ExtResource("56_tex")},
-{"duration": 1.0, "texture": ExtResource("57_tex")}
-],
-"loop": true,
-"name": &"Running",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("58_tex")},
-{"duration": 1.0, "texture": ExtResource("59_tex")},
-{"duration": 1.0, "texture": ExtResource("60_tex")},
-{"duration": 1.0, "texture": ExtResource("61_tex")},
-{"duration": 1.0, "texture": ExtResource("62_tex")},
-{"duration": 1.0, "texture": ExtResource("63_tex")},
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")},
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")},
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")}
-],
-"loop": true,
-"name": &"Walking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
-"loop": true,
-"name": &"Run Slashing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")},
-{"duration": 1.0, "texture": ExtResource("103_tex")},
-{"duration": 1.0, "texture": ExtResource("104_tex")},
-{"duration": 1.0, "texture": ExtResource("105_tex")}
-],
-"loop": true,
-"name": &"Slashing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_qkl3g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_uxhhq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_bsea1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_w4tpu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_udys6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_qvvsj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_5ytu2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_th4fk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_2y47c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_4m0xw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_1yo3m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_2oi6v")
+}],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("82_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("85_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("86_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("87_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("88_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("89_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("90_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("91_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("92_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("93_tex")
+}],
+"loop": true,
+"name": &"Run Slashing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("70_7dwvp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_5vm72")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_a62p4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_p5kyu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_jd3hn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_fl06k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_cbf2j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_b641q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_8ntb6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_r8xyw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_sf7cq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_xlpu7")
+}],
 "loop": true,
 "name": &"Run Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")},
-{"duration": 1.0, "texture": ExtResource("103_tex")},
-{"duration": 1.0, "texture": ExtResource("104_tex")},
-{"duration": 1.0, "texture": ExtResource("105_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_tex")
+}],
+"loop": true,
+"name": &"Running",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_tex")
+}],
+"loop": true,
+"name": &"Slashing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("106_nlet1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("107_q4ufp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("108_mgo7p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("109_tdkxu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("110_57rvh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("111_xehj3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("112_d6rc5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("113_llpu1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("114_jgkx0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("115_ukucn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("116_hywrx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("117_s2q00")
+}],
 "loop": true,
 "name": &"Throwing",
-"speed": 12.0
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_tex")
+}],
+"loop": true,
+"name": &"Walking",
+"speed": 24.0
 }]

@@ -1,296 +1,619 @@
-[gd_resource type="SpriteFrames" load_steps=88 format=3]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://bfsqx74qfmkwg"]
 
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_000.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_001.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_002.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_003.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_004.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_005.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_006.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_007.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_008.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_009.png" id="10_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_010.png" id="11_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_011.png" id="12_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_012.png" id="13_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_013.png" id="14_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_014.png" id="15_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_000.png" id="16_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_001.png" id="17_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_002.png" id="18_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_003.png" id="19_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_004.png" id="20_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_005.png" id="21_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_006.png" id="22_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_007.png" id="23_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_008.png" id="24_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_009.png" id="25_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_010.png" id="26_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_011.png" id="27_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_000.png" id="28_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_001.png" id="29_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_002.png" id="30_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_003.png" id="31_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_004.png" id="32_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_005.png" id="33_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_006.png" id="34_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_007.png" id="35_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_008.png" id="36_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_009.png" id="37_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_010.png" id="38_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_011.png" id="39_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_000.png" id="40_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_001.png" id="41_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_002.png" id="42_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_003.png" id="43_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_004.png" id="44_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_005.png" id="45_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_006.png" id="46_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_007.png" id="47_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_008.png" id="48_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_009.png" id="49_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_010.png" id="50_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_011.png" id="51_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_012.png" id="52_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_013.png" id="53_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_014.png" id="54_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_015.png" id="55_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_016.png" id="56_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_017.png" id="57_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_018.png" id="58_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_019.png" id="59_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_020.png" id="60_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_021.png" id="61_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_022.png" id="62_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_023.png" id="63_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_000.png" id="64_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_001.png" id="65_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_002.png" id="66_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_003.png" id="67_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_004.png" id="68_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_005.png" id="69_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_006.png" id="70_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_007.png" id="71_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_008.png" id="72_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_009.png" id="73_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_010.png" id="74_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_011.png" id="75_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_000.png" id="76_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_001.png" id="77_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_002.png" id="78_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_003.png" id="79_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_004.png" id="80_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_005.png" id="81_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_006.png" id="82_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_007.png" id="83_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_008.png" id="84_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_009.png" id="85_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_010.png" id="86_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_011.png" id="87_tex"]
+[ext_resource type="Texture2D" uid="uid://pn3lr6hykgen" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_000.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://onmsqklam5vm" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_001.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://d0ocq6kilgica" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_002.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://bhr2y2r42d14g" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_003.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://bpragwbldxyfb" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_004.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://biwqgkvx1oc8y" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_005.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://b3av76pw2ncvk" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_006.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://dbg3ca8yc35gc" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_007.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://rsrprnmav8tu" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_008.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://c8mtxrrgv23h0" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_009.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://c1b8kytct8hpx" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_010.png" id="11_tex"]
+[ext_resource type="Texture2D" uid="uid://cigdupedh23qj" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_011.png" id="12_tex"]
+[ext_resource type="Texture2D" uid="uid://xstg3u0yjbhx" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_012.png" id="13_tex"]
+[ext_resource type="Texture2D" uid="uid://ciq0k1grvf1qc" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_013.png" id="14_tex"]
+[ext_resource type="Texture2D" uid="uid://bqy6obcdjbx5w" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_014.png" id="15_tex"]
+[ext_resource type="Texture2D" uid="uid://ckyclq4ia6p0y" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_000.png" id="16_tex"]
+[ext_resource type="Texture2D" uid="uid://colpk3kvwf1wb" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_001.png" id="17_tex"]
+[ext_resource type="Texture2D" uid="uid://b0w3kmy7sw06p" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_002.png" id="18_tex"]
+[ext_resource type="Texture2D" uid="uid://cghep8lirmk7o" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_003.png" id="19_tex"]
+[ext_resource type="Texture2D" uid="uid://cyoafbu5k4xq2" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_004.png" id="20_tex"]
+[ext_resource type="Texture2D" uid="uid://rrhe0i8vpkwi" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_005.png" id="21_tex"]
+[ext_resource type="Texture2D" uid="uid://dcsdpspxtw65g" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_006.png" id="22_tex"]
+[ext_resource type="Texture2D" uid="uid://dvs8i2slmu3k7" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_007.png" id="23_tex"]
+[ext_resource type="Texture2D" uid="uid://cxrx7c2mvyo1n" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_008.png" id="24_tex"]
+[ext_resource type="Texture2D" uid="uid://bjcf5wrf0k5sg" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_009.png" id="25_tex"]
+[ext_resource type="Texture2D" uid="uid://fw7rura8nv7g" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_010.png" id="26_tex"]
+[ext_resource type="Texture2D" uid="uid://cpuaiifuejqif" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Hurt/0_Bloody_Alchemist_Hurt_011.png" id="27_tex"]
+[ext_resource type="Texture2D" uid="uid://wc3s8qbp3gty" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_000.png" id="28_8ssfx"]
+[ext_resource type="Texture2D" uid="uid://dct5rtjx7r1t1" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_000.png" id="28_tex"]
+[ext_resource type="Texture2D" uid="uid://dc3osma2vcstp" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_001.png" id="29_fbm7s"]
+[ext_resource type="Texture2D" uid="uid://b8qw2uwljsddm" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_001.png" id="29_tex"]
+[ext_resource type="Texture2D" uid="uid://fql8c2tnw5i4" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_002.png" id="30_oo2kg"]
+[ext_resource type="Texture2D" uid="uid://c4c4xxb5k5clo" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_002.png" id="30_tex"]
+[ext_resource type="Texture2D" uid="uid://4pbw82wqoypa" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_003.png" id="31_sj8so"]
+[ext_resource type="Texture2D" uid="uid://duqppyypgfpwk" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_003.png" id="31_tex"]
+[ext_resource type="Texture2D" uid="uid://yq3gcgsimgg8" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_004.png" id="32_fefgg"]
+[ext_resource type="Texture2D" uid="uid://dffwsa63as8kk" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_004.png" id="32_tex"]
+[ext_resource type="Texture2D" uid="uid://ccs7p2c1lf342" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_005.png" id="33_5f6el"]
+[ext_resource type="Texture2D" uid="uid://cntt5rmdrtlna" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_005.png" id="33_tex"]
+[ext_resource type="Texture2D" uid="uid://bdtyh3jpauign" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_006.png" id="34_c24my"]
+[ext_resource type="Texture2D" uid="uid://blkqocbe3ajwr" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_006.png" id="34_tex"]
+[ext_resource type="Texture2D" uid="uid://cce3ea7sg2df1" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_007.png" id="35_tex"]
+[ext_resource type="Texture2D" uid="uid://dt264s5xr0bi0" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_007.png" id="35_y0g4e"]
+[ext_resource type="Texture2D" uid="uid://deoufepspbtk0" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_008.png" id="36_kmyaw"]
+[ext_resource type="Texture2D" uid="uid://drvn4l1d4ennc" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_008.png" id="36_tex"]
+[ext_resource type="Texture2D" uid="uid://brxnvlcvb1gjc" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_009.png" id="37_nreso"]
+[ext_resource type="Texture2D" uid="uid://biqda58mt2pde" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_009.png" id="37_tex"]
+[ext_resource type="Texture2D" uid="uid://ctx1fa6k52t08" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_010.png" id="38_pkg6b"]
+[ext_resource type="Texture2D" uid="uid://r5xuqd2dxwkn" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_010.png" id="38_tex"]
+[ext_resource type="Texture2D" uid="uid://dwlyuoaregjyv" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_011.png" id="39_p1qtw"]
+[ext_resource type="Texture2D" uid="uid://d1bgtg7vu0rtk" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Running/0_Bloody_Alchemist_Running_011.png" id="39_tex"]
+[ext_resource type="Texture2D" uid="uid://c48w1q1bvonhi" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_000.png" id="40_tex"]
+[ext_resource type="Texture2D" uid="uid://ba03qjaft16m0" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_012.png" id="40_wijqa"]
+[ext_resource type="Texture2D" uid="uid://dm27whr61bchm" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_000.png" id="40_yfm88"]
+[ext_resource type="Texture2D" uid="uid://ctgyjwvi7mjgu" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_001.png" id="41_fep5p"]
+[ext_resource type="Texture2D" uid="uid://d0d77cnhwhn6o" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_013.png" id="41_t5fkk"]
+[ext_resource type="Texture2D" uid="uid://biliaf4n3wt0v" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_001.png" id="41_tex"]
+[ext_resource type="Texture2D" uid="uid://cygmefx4qjw0t" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_014.png" id="42_r68en"]
+[ext_resource type="Texture2D" uid="uid://b7u8rgmpe8dd5" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_002.png" id="42_tex"]
+[ext_resource type="Texture2D" uid="uid://gk36ihbfp5nn" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_002.png" id="42_xxwhk"]
+[ext_resource type="Texture2D" uid="uid://c7relbvvsrquy" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_003.png" id="43_af3ri"]
+[ext_resource type="Texture2D" uid="uid://6udoox2skx7m" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_015.png" id="43_ixyj8"]
+[ext_resource type="Texture2D" uid="uid://cghq5iuqs36so" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_003.png" id="43_tex"]
+[ext_resource type="Texture2D" uid="uid://bxi5out0s8w2q" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_016.png" id="44_lqtej"]
+[ext_resource type="Texture2D" uid="uid://mmj3h2dkvwfa" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_004.png" id="44_ngayq"]
+[ext_resource type="Texture2D" uid="uid://d3o4nh6iyym38" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_004.png" id="44_tex"]
+[ext_resource type="Texture2D" uid="uid://bqd5huobf23w7" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Idle/0_Bloody_Alchemist_Idle_017.png" id="45_bydh3"]
+[ext_resource type="Texture2D" uid="uid://d2udy2kyevpui" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_005.png" id="45_c856n"]
+[ext_resource type="Texture2D" uid="uid://cyymuhuncyemr" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_005.png" id="45_tex"]
+[ext_resource type="Texture2D" uid="uid://b1fbvyqc36oiy" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_000.png" id="46_ddum0"]
+[ext_resource type="Texture2D" uid="uid://flk1fg1bdu4t" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_006.png" id="46_sb0fr"]
+[ext_resource type="Texture2D" uid="uid://7rj0utfl878v" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_006.png" id="46_tex"]
+[ext_resource type="Texture2D" uid="uid://b7mq0aodfi2ql" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_001.png" id="47_3yuq8"]
+[ext_resource type="Texture2D" uid="uid://2t47a107d0dx" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_007.png" id="47_h7blr"]
+[ext_resource type="Texture2D" uid="uid://dypcpxkl3prjn" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_007.png" id="47_tex"]
+[ext_resource type="Texture2D" uid="uid://bws0el63nno3o" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_002.png" id="48_nc0ik"]
+[ext_resource type="Texture2D" uid="uid://bs5hm2mkufgcp" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_008.png" id="48_qvlm8"]
+[ext_resource type="Texture2D" uid="uid://651xg0u67as6" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_008.png" id="48_tex"]
+[ext_resource type="Texture2D" uid="uid://dbrji5ksdr4tj" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_009.png" id="49_a3wdf"]
+[ext_resource type="Texture2D" uid="uid://dg335eby44dvc" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_009.png" id="49_tex"]
+[ext_resource type="Texture2D" uid="uid://qte7gatcjjbw" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_003.png" id="49_vhnv1"]
+[ext_resource type="Texture2D" uid="uid://dfbef077sh4kl" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_004.png" id="50_jpp3e"]
+[ext_resource type="Texture2D" uid="uid://c1e2rch1t24b7" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_010.png" id="50_nudei"]
+[ext_resource type="Texture2D" uid="uid://bc8vpuq0qbhas" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_010.png" id="50_tex"]
+[ext_resource type="Texture2D" uid="uid://di5yhe3hacpma" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_005.png" id="51_5h208"]
+[ext_resource type="Texture2D" uid="uid://dftu72kupmnxa" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Slashing/0_Bloody_Alchemist_Run Slashing_011.png" id="51_5xecc"]
+[ext_resource type="Texture2D" uid="uid://cwyeqr5qne2lj" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_011.png" id="51_tex"]
+[ext_resource type="Texture2D" uid="uid://dftvit4vj182u" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_006.png" id="52_aacxo"]
+[ext_resource type="Texture2D" uid="uid://brkkel6f7b1up" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_012.png" id="52_tex"]
+[ext_resource type="Texture2D" uid="uid://31klwxwvdno0" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_007.png" id="53_787n2"]
+[ext_resource type="Texture2D" uid="uid://b2rr44ph7vokj" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_013.png" id="53_tex"]
+[ext_resource type="Texture2D" uid="uid://vr5vvusdnw5w" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_014.png" id="54_tex"]
+[ext_resource type="Texture2D" uid="uid://m056yralvcnj" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_008.png" id="54_u80ym"]
+[ext_resource type="Texture2D" uid="uid://c1w81bgob6k28" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_009.png" id="55_gl12k"]
+[ext_resource type="Texture2D" uid="uid://dh010fqy7xs30" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_015.png" id="55_tex"]
+[ext_resource type="Texture2D" uid="uid://g72wch6gr2tl" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_010.png" id="56_0vtxr"]
+[ext_resource type="Texture2D" uid="uid://bcgxvn5xjdhmc" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_016.png" id="56_tex"]
+[ext_resource type="Texture2D" uid="uid://c7j86n7nsm3bh" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Kicking/0_Bloody_Alchemist_Kicking_011.png" id="57_eih0q"]
+[ext_resource type="Texture2D" uid="uid://esvb7blaspmy" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_017.png" id="57_tex"]
+[ext_resource type="Texture2D" uid="uid://d3s3qkrw0rbqt" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_018.png" id="58_tex"]
+[ext_resource type="Texture2D" uid="uid://44mhdvyln4bq" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_019.png" id="59_tex"]
+[ext_resource type="Texture2D" uid="uid://bkyliwwnsk7ne" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_020.png" id="60_tex"]
+[ext_resource type="Texture2D" uid="uid://dvrr26unybfk8" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_021.png" id="61_tex"]
+[ext_resource type="Texture2D" uid="uid://cr2v8p28aybtg" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_022.png" id="62_tex"]
+[ext_resource type="Texture2D" uid="uid://cq76va1unhnhg" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_023.png" id="63_tex"]
+[ext_resource type="Texture2D" uid="uid://dy85pcilkiaki" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_000.png" id="64_tex"]
+[ext_resource type="Texture2D" uid="uid://b3xdhcchq76y3" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_001.png" id="65_tex"]
+[ext_resource type="Texture2D" uid="uid://csobco7v21j5s" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_002.png" id="66_tex"]
+[ext_resource type="Texture2D" uid="uid://bcx3om8rf6u4k" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_003.png" id="67_tex"]
+[ext_resource type="Texture2D" uid="uid://ct4rcqboo24ai" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_004.png" id="68_tex"]
+[ext_resource type="Texture2D" uid="uid://dsv0xo6ryub3" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_005.png" id="69_tex"]
+[ext_resource type="Texture2D" uid="uid://cphbtu85384rk" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_006.png" id="70_tex"]
+[ext_resource type="Texture2D" uid="uid://5yc2n5y2e6ff" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_007.png" id="71_tex"]
+[ext_resource type="Texture2D" uid="uid://bcdtrkrxm8784" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_008.png" id="72_tex"]
+[ext_resource type="Texture2D" uid="uid://dkxler6on8lru" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_009.png" id="73_tex"]
+[ext_resource type="Texture2D" uid="uid://dvgu82u6623u3" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_010.png" id="74_tex"]
+[ext_resource type="Texture2D" uid="uid://dwub8g0d1cx0t" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_011.png" id="75_tex"]
+[ext_resource type="Texture2D" uid="uid://cdsutiinu42fk" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_000.png" id="76_tex"]
+[ext_resource type="Texture2D" uid="uid://j2xhsk81aoev" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_001.png" id="77_tex"]
+[ext_resource type="Texture2D" uid="uid://cwsrgubwbe23l" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_002.png" id="78_tex"]
+[ext_resource type="Texture2D" uid="uid://cqdpmaufkwso1" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_003.png" id="79_tex"]
+[ext_resource type="Texture2D" uid="uid://xsb2vm5347dc" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_004.png" id="80_tex"]
+[ext_resource type="Texture2D" uid="uid://dwum50dfcppiw" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_005.png" id="81_tex"]
+[ext_resource type="Texture2D" uid="uid://b8et13mi5tgut" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_006.png" id="82_tex"]
+[ext_resource type="Texture2D" uid="uid://blta8vs7fk2lt" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_007.png" id="83_tex"]
+[ext_resource type="Texture2D" uid="uid://cmlho4jrgs6f0" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_008.png" id="84_tex"]
+[ext_resource type="Texture2D" uid="uid://d4fpfgw525uhp" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_009.png" id="85_tex"]
+[ext_resource type="Texture2D" uid="uid://6v7bxdtjci4v" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_010.png" id="86_tex"]
+[ext_resource type="Texture2D" uid="uid://bfwaf6h62cbmj" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_011.png" id="87_tex"]
+[ext_resource type="Texture2D" uid="uid://c7mkbjy1rct6r" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_000.png" id="94_1qni2"]
+[ext_resource type="Texture2D" uid="uid://1jfrjksa5qkq" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_001.png" id="95_s6181"]
+[ext_resource type="Texture2D" uid="uid://f2nlutvnh3r7" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_002.png" id="96_ccekk"]
+[ext_resource type="Texture2D" uid="uid://byw52vbcgwewa" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_003.png" id="97_udjwv"]
+[ext_resource type="Texture2D" uid="uid://drcpemitagahu" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_004.png" id="98_6fw2u"]
+[ext_resource type="Texture2D" uid="uid://ba5dhj076pgh4" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_005.png" id="99_3c846"]
+[ext_resource type="Texture2D" uid="uid://dmjwkpn2ymbs7" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_006.png" id="100_o8c6b"]
+[ext_resource type="Texture2D" uid="uid://dlr0hthg53doa" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_007.png" id="101_y163a"]
+[ext_resource type="Texture2D" uid="uid://bdroleelfdrwp" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_008.png" id="102_ma6vg"]
+[ext_resource type="Texture2D" uid="uid://cosavjhjl266r" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_009.png" id="103_2ce22"]
+[ext_resource type="Texture2D" uid="uid://ceohr5am0n3fy" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_010.png" id="104_f6xw7"]
+[ext_resource type="Texture2D" uid="uid://csx75ncw3e02a" path="res://assets/mobs/Bandits/Hunter - Melee/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_011.png" id="105_wi0pc"]
 
 [resource]
 animations = [{
-"frames": [
-{"duration": 1.0, "texture": ExtResource("1_tex")},
-{"duration": 1.0, "texture": ExtResource("2_tex")},
-{"duration": 1.0, "texture": ExtResource("3_tex")},
-{"duration": 1.0, "texture": ExtResource("4_tex")},
-{"duration": 1.0, "texture": ExtResource("5_tex")},
-{"duration": 1.0, "texture": ExtResource("6_tex")},
-{"duration": 1.0, "texture": ExtResource("7_tex")},
-{"duration": 1.0, "texture": ExtResource("8_tex")},
-{"duration": 1.0, "texture": ExtResource("9_tex")},
-{"duration": 1.0, "texture": ExtResource("10_tex")},
-{"duration": 1.0, "texture": ExtResource("11_tex")},
-{"duration": 1.0, "texture": ExtResource("12_tex")},
-{"duration": 1.0, "texture": ExtResource("13_tex")},
-{"duration": 1.0, "texture": ExtResource("14_tex")},
-{"duration": 1.0, "texture": ExtResource("15_tex")}
-],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+}],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+}],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("28_tex")},
-{"duration": 1.0, "texture": ExtResource("29_tex")},
-{"duration": 1.0, "texture": ExtResource("30_tex")},
-{"duration": 1.0, "texture": ExtResource("31_tex")},
-{"duration": 1.0, "texture": ExtResource("32_tex")},
-{"duration": 1.0, "texture": ExtResource("33_tex")},
-{"duration": 1.0, "texture": ExtResource("34_tex")},
-{"duration": 1.0, "texture": ExtResource("35_tex")},
-{"duration": 1.0, "texture": ExtResource("36_tex")},
-{"duration": 1.0, "texture": ExtResource("37_tex")},
-{"duration": 1.0, "texture": ExtResource("38_tex")},
-{"duration": 1.0, "texture": ExtResource("39_tex")}
-],
-"loop": true,
-"name": &"Running",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("40_tex")},
-{"duration": 1.0, "texture": ExtResource("41_tex")},
-{"duration": 1.0, "texture": ExtResource("42_tex")},
-{"duration": 1.0, "texture": ExtResource("43_tex")},
-{"duration": 1.0, "texture": ExtResource("44_tex")},
-{"duration": 1.0, "texture": ExtResource("45_tex")},
-{"duration": 1.0, "texture": ExtResource("46_tex")},
-{"duration": 1.0, "texture": ExtResource("47_tex")},
-{"duration": 1.0, "texture": ExtResource("48_tex")},
-{"duration": 1.0, "texture": ExtResource("49_tex")},
-{"duration": 1.0, "texture": ExtResource("50_tex")},
-{"duration": 1.0, "texture": ExtResource("51_tex")},
-{"duration": 1.0, "texture": ExtResource("52_tex")},
-{"duration": 1.0, "texture": ExtResource("53_tex")},
-{"duration": 1.0, "texture": ExtResource("54_tex")},
-{"duration": 1.0, "texture": ExtResource("55_tex")},
-{"duration": 1.0, "texture": ExtResource("56_tex")},
-{"duration": 1.0, "texture": ExtResource("57_tex")},
-{"duration": 1.0, "texture": ExtResource("58_tex")},
-{"duration": 1.0, "texture": ExtResource("59_tex")},
-{"duration": 1.0, "texture": ExtResource("60_tex")},
-{"duration": 1.0, "texture": ExtResource("61_tex")},
-{"duration": 1.0, "texture": ExtResource("62_tex")},
-{"duration": 1.0, "texture": ExtResource("63_tex")}
-],
-"loop": true,
-"name": &"Walking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")},
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")}
-],
-"loop": true,
-"name": &"Run Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")},
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")}
-],
-"loop": true,
-"name": &"Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")},
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")}
-],
-"loop": true,
-"name": &"Run Slashing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")},
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")}
-],
-"loop": true,
-"name": &"Slashing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("28_tex")},
-{"duration": 1.0, "texture": ExtResource("29_tex")},
-{"duration": 1.0, "texture": ExtResource("30_tex")},
-{"duration": 1.0, "texture": ExtResource("31_tex")},
-{"duration": 1.0, "texture": ExtResource("32_tex")},
-{"duration": 1.0, "texture": ExtResource("33_tex")},
-{"duration": 1.0, "texture": ExtResource("34_tex")},
-{"duration": 1.0, "texture": ExtResource("35_tex")},
-{"duration": 1.0, "texture": ExtResource("36_tex")},
-{"duration": 1.0, "texture": ExtResource("37_tex")},
-{"duration": 1.0, "texture": ExtResource("38_tex")},
-{"duration": 1.0, "texture": ExtResource("39_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("28_8ssfx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_fbm7s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_oo2kg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_sj8so")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_fefgg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_5f6el")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_c24my")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_y0g4e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_kmyaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_nreso")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_pkg6b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_p1qtw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_wijqa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_t5fkk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_r68en")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_ixyj8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_lqtej")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_bydh3")
+}],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_ddum0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_3yuq8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_nc0ik")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_vhnv1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_jpp3e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_5h208")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_aacxo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_787n2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_u80ym")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_gl12k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_0vtxr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_eih0q")
+}],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("40_yfm88")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_fep5p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_xxwhk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_af3ri")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_ngayq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_c856n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46_sb0fr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_h7blr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_qvlm8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_a3wdf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_nudei")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_5xecc")
+}],
+"loop": true,
+"name": &"Run Slashing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("64_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_tex")
+}],
+"loop": true,
+"name": &"Run Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_tex")
+}],
+"loop": true,
+"name": &"Running",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_1qni2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_s6181")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_ccekk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_udjwv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_6fw2u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_3c846")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_o8c6b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_y163a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_ma6vg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_2ce22")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_f6xw7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_wi0pc")
+}],
+"loop": true,
+"name": &"Slashing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("76_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("82_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("85_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("86_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("87_tex")
+}],
+"loop": true,
+"name": &"Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("40_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("58_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_tex")
+}],
+"loop": true,
+"name": &"Walking",
+"speed": 24.0
 }]

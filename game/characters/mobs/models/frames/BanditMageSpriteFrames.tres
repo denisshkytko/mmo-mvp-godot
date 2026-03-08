@@ -1,320 +1,619 @@
-[gd_resource type="SpriteFrames" load_steps=106 format=3]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://b2q34ogbq8byl"]
 
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_000.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_001.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_002.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_003.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_004.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_005.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_006.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_007.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_008.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_009.png" id="10_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_010.png" id="11_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_011.png" id="12_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_012.png" id="13_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_013.png" id="14_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_014.png" id="15_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_000.png" id="16_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_001.png" id="17_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_002.png" id="18_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_003.png" id="19_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_004.png" id="20_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_005.png" id="21_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_006.png" id="22_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_007.png" id="23_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_008.png" id="24_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_009.png" id="25_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_010.png" id="26_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_011.png" id="27_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_000.png" id="28_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_001.png" id="29_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_002.png" id="30_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_003.png" id="31_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_004.png" id="32_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_005.png" id="33_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_006.png" id="34_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_007.png" id="35_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_008.png" id="36_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_009.png" id="37_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_010.png" id="38_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_011.png" id="39_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_012.png" id="40_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_013.png" id="41_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_014.png" id="42_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_015.png" id="43_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_016.png" id="44_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_017.png" id="45_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_000.png" id="46_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_001.png" id="47_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_002.png" id="48_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_003.png" id="49_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_004.png" id="50_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_005.png" id="51_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_006.png" id="52_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_007.png" id="53_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_008.png" id="54_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_009.png" id="55_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_010.png" id="56_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_011.png" id="57_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_000.png" id="58_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_001.png" id="59_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_002.png" id="60_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_003.png" id="61_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_004.png" id="62_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_005.png" id="63_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_006.png" id="64_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_007.png" id="65_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_008.png" id="66_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_009.png" id="67_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_010.png" id="68_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_011.png" id="69_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_012.png" id="70_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_013.png" id="71_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_014.png" id="72_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_015.png" id="73_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_016.png" id="74_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_017.png" id="75_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_018.png" id="76_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_019.png" id="77_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_020.png" id="78_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_021.png" id="79_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_022.png" id="80_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_023.png" id="81_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_000.png" id="82_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_001.png" id="83_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_002.png" id="84_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_003.png" id="85_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_004.png" id="86_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_005.png" id="87_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_006.png" id="88_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_007.png" id="89_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_008.png" id="90_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_009.png" id="91_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_010.png" id="92_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_011.png" id="93_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_000.png" id="94_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_001.png" id="95_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_002.png" id="96_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_003.png" id="97_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_004.png" id="98_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_005.png" id="99_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_006.png" id="100_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_007.png" id="101_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_008.png" id="102_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_009.png" id="103_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_010.png" id="104_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_011.png" id="105_tex"]
+[ext_resource type="Texture2D" uid="uid://dbx0qyqqhlvu" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_000.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://cv0vpkinh0all" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_001.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://dep122nt7qk2" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_002.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://doiwbhm1px1pl" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_003.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://5fp5imq8u50h" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_004.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://8t2wga4lc2ad" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_005.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://cq3un0bvo1b6g" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_006.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://cf1d6ulmbwxk3" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_007.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://c1q2que1t2jve" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_008.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://clavy7ikkogxi" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_009.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://d1ac71b140b1" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_010.png" id="11_tex"]
+[ext_resource type="Texture2D" uid="uid://mymux80edltg" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_011.png" id="12_tex"]
+[ext_resource type="Texture2D" uid="uid://ccdmi1es88tqv" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_012.png" id="13_tex"]
+[ext_resource type="Texture2D" uid="uid://bol25vmti4rjb" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_013.png" id="14_tex"]
+[ext_resource type="Texture2D" uid="uid://cm72jopvtau6" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Dying/0_Dark_Oracle_Dying_014.png" id="15_tex"]
+[ext_resource type="Texture2D" uid="uid://drk8kep7y3mcc" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_000.png" id="16_tex"]
+[ext_resource type="Texture2D" uid="uid://d13uh26h2nqfo" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_001.png" id="17_tex"]
+[ext_resource type="Texture2D" uid="uid://m1g74gjclylg" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_002.png" id="18_tex"]
+[ext_resource type="Texture2D" uid="uid://bx81ue11afnge" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_003.png" id="19_tex"]
+[ext_resource type="Texture2D" uid="uid://brs16kd3othfg" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_004.png" id="20_tex"]
+[ext_resource type="Texture2D" uid="uid://bgdytm8741c7" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_005.png" id="21_tex"]
+[ext_resource type="Texture2D" uid="uid://ckqvmxeiesode" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_006.png" id="22_tex"]
+[ext_resource type="Texture2D" uid="uid://oap7caht3ud5" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_007.png" id="23_tex"]
+[ext_resource type="Texture2D" uid="uid://brvxvv2n4ll6a" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_008.png" id="24_tex"]
+[ext_resource type="Texture2D" uid="uid://dmjjejcplygy6" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_009.png" id="25_tex"]
+[ext_resource type="Texture2D" uid="uid://c365ax1c7n6q8" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_010.png" id="26_tex"]
+[ext_resource type="Texture2D" uid="uid://deo18wbbk43u1" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Hurt/0_Dark_Oracle_Hurt_011.png" id="27_tex"]
+[ext_resource type="Texture2D" uid="uid://ccyv3hjd0q6y1" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_000.png" id="28_tex"]
+[ext_resource type="Texture2D" uid="uid://opkftcg3evic" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_001.png" id="29_tex"]
+[ext_resource type="Texture2D" uid="uid://cbd453cb426y" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_002.png" id="30_tex"]
+[ext_resource type="Texture2D" uid="uid://dad7r0yq8x757" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_003.png" id="31_tex"]
+[ext_resource type="Texture2D" uid="uid://csavkaoha7qrm" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_004.png" id="32_tex"]
+[ext_resource type="Texture2D" uid="uid://dsxv6dbhh8wy1" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_005.png" id="33_tex"]
+[ext_resource type="Texture2D" uid="uid://bm05a3tno43bj" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_006.png" id="34_tex"]
+[ext_resource type="Texture2D" uid="uid://c48hgexn1vol4" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_007.png" id="35_tex"]
+[ext_resource type="Texture2D" uid="uid://cioplffkwjj01" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_008.png" id="36_tex"]
+[ext_resource type="Texture2D" uid="uid://d2ajxttluggfo" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_009.png" id="37_tex"]
+[ext_resource type="Texture2D" uid="uid://bqk30yqc5exq5" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_010.png" id="38_tex"]
+[ext_resource type="Texture2D" uid="uid://c5nvrdi6k48gn" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_011.png" id="39_tex"]
+[ext_resource type="Texture2D" uid="uid://l4ibsaqrd8wg" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_012.png" id="40_tex"]
+[ext_resource type="Texture2D" uid="uid://dn0jll3ux4gpo" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_013.png" id="41_tex"]
+[ext_resource type="Texture2D" uid="uid://dhmepynot2265" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_014.png" id="42_tex"]
+[ext_resource type="Texture2D" uid="uid://cxmcnyaknj8p2" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_015.png" id="43_tex"]
+[ext_resource type="Texture2D" uid="uid://ck4ojlobymw0j" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_016.png" id="44_tex"]
+[ext_resource type="Texture2D" uid="uid://b6au4j0x6ut6a" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Idle Blinking/0_Dark_Oracle_Idle Blinking_017.png" id="45_tex"]
+[ext_resource type="Texture2D" uid="uid://ddnb314pdh0gc" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_000.png" id="46_jasd6"]
+[ext_resource type="Texture2D" uid="uid://c6d50x650c35y" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_000.png" id="46_tex"]
+[ext_resource type="Texture2D" uid="uid://is0bcy3631lo" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_001.png" id="47_1vt2b"]
+[ext_resource type="Texture2D" uid="uid://cr46ciygh66ns" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_001.png" id="47_tex"]
+[ext_resource type="Texture2D" uid="uid://dus3lpq5syx21" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_002.png" id="48_s56jk"]
+[ext_resource type="Texture2D" uid="uid://3shco0800tup" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_002.png" id="48_tex"]
+[ext_resource type="Texture2D" uid="uid://cj2huhkf5yygs" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_003.png" id="49_08gm7"]
+[ext_resource type="Texture2D" uid="uid://ba3lf4hypmbqu" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_003.png" id="49_tex"]
+[ext_resource type="Texture2D" uid="uid://cb3dvqc67ha18" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_004.png" id="50_8qon0"]
+[ext_resource type="Texture2D" uid="uid://dqmg3a5jjwjfm" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_004.png" id="50_tex"]
+[ext_resource type="Texture2D" uid="uid://keijvp8rus4a" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_005.png" id="51_ddpc7"]
+[ext_resource type="Texture2D" uid="uid://c1vrclg04b6uk" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_005.png" id="51_tex"]
+[ext_resource type="Texture2D" uid="uid://8unkfn7hkvag" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_006.png" id="52_b1h5t"]
+[ext_resource type="Texture2D" uid="uid://d04fm8qkte65y" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_006.png" id="52_tex"]
+[ext_resource type="Texture2D" uid="uid://y607s2tjfub0" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_007.png" id="53_2vxgj"]
+[ext_resource type="Texture2D" uid="uid://cht8s65g4pyt4" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_007.png" id="53_tex"]
+[ext_resource type="Texture2D" uid="uid://dg5cr01k4uwmy" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_008.png" id="54_avvjq"]
+[ext_resource type="Texture2D" uid="uid://buaawiav2y4cs" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_008.png" id="54_tex"]
+[ext_resource type="Texture2D" uid="uid://ditjbsn87kb2p" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_009.png" id="55_8j3lp"]
+[ext_resource type="Texture2D" uid="uid://dkj6do6kxyiy" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_009.png" id="55_tex"]
+[ext_resource type="Texture2D" uid="uid://crjowdrf2v6l3" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_010.png" id="56_tex"]
+[ext_resource type="Texture2D" uid="uid://t45f0vg6vwt2" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_010.png" id="56_vnio4"]
+[ext_resource type="Texture2D" uid="uid://672ph2iqv5hg" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Kicking/0_Dark_Oracle_Kicking_011.png" id="57_nvknu"]
+[ext_resource type="Texture2D" uid="uid://budjlgbp6ml8w" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Running/0_Dark_Oracle_Running_011.png" id="57_tex"]
+[ext_resource type="Texture2D" uid="uid://jla5wp7ho7l" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_000.png" id="58_tex"]
+[ext_resource type="Texture2D" uid="uid://f7mrud4xi6x5" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_000.png" id="58_tk8yg"]
+[ext_resource type="Texture2D" uid="uid://0s2p4nry2hhh" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_001.png" id="59_3e430"]
+[ext_resource type="Texture2D" uid="uid://kgpvn26ovi7v" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_001.png" id="59_tex"]
+[ext_resource type="Texture2D" uid="uid://cvm8gjqtf7qio" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_002.png" id="60_5y70h"]
+[ext_resource type="Texture2D" uid="uid://dx86bdvkiqg5w" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_002.png" id="60_tex"]
+[ext_resource type="Texture2D" uid="uid://baqtck5t4wjuq" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_003.png" id="61_hrag2"]
+[ext_resource type="Texture2D" uid="uid://b422sx0yejt04" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_003.png" id="61_tex"]
+[ext_resource type="Texture2D" uid="uid://7274a6p3vmdr" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_004.png" id="62_fqd4a"]
+[ext_resource type="Texture2D" uid="uid://cmt0ecjljki3w" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_004.png" id="62_tex"]
+[ext_resource type="Texture2D" uid="uid://b12pymdqrx85m" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_005.png" id="63_6l5v7"]
+[ext_resource type="Texture2D" uid="uid://cx0faynu0wvhx" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_005.png" id="63_tex"]
+[ext_resource type="Texture2D" uid="uid://tpc6a67r8bc5" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_006.png" id="64_tex"]
+[ext_resource type="Texture2D" uid="uid://bd7oijitrttv0" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_006.png" id="64_wg4jl"]
+[ext_resource type="Texture2D" uid="uid://blkkm46y82hpg" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_007.png" id="65_tbme1"]
+[ext_resource type="Texture2D" uid="uid://40w4ooej5ql0" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_007.png" id="65_tex"]
+[ext_resource type="Texture2D" uid="uid://bxnyvm4ms4hpp" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_008.png" id="66_fo8ha"]
+[ext_resource type="Texture2D" uid="uid://2hpljc7r4gwo" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_008.png" id="66_tex"]
+[ext_resource type="Texture2D" uid="uid://c3n8iikacd2gf" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_009.png" id="67_n6c1w"]
+[ext_resource type="Texture2D" uid="uid://c71o8aibpfm7g" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_009.png" id="67_tex"]
+[ext_resource type="Texture2D" uid="uid://cj565as8cng11" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_010.png" id="68_nb1qb"]
+[ext_resource type="Texture2D" uid="uid://ib42emx6apfw" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_010.png" id="68_tex"]
+[ext_resource type="Texture2D" uid="uid://b6x26domdbm23" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Slashing/0_Dark_Oracle_Run Slashing_011.png" id="69_4btvn"]
+[ext_resource type="Texture2D" uid="uid://6n06jojj5xgf" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_011.png" id="69_tex"]
+[ext_resource type="Texture2D" uid="uid://n2cm7y0hdc3k" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_012.png" id="70_tex"]
+[ext_resource type="Texture2D" uid="uid://bp5vkngts1axt" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_013.png" id="71_tex"]
+[ext_resource type="Texture2D" uid="uid://d1psjrm2isg14" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_014.png" id="72_tex"]
+[ext_resource type="Texture2D" uid="uid://ds3mh7egu24c6" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_015.png" id="73_tex"]
+[ext_resource type="Texture2D" uid="uid://d4eesvxc2ip6m" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_016.png" id="74_tex"]
+[ext_resource type="Texture2D" uid="uid://3bkf5yxox81m" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_017.png" id="75_tex"]
+[ext_resource type="Texture2D" uid="uid://iqq5c8nj84s8" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_018.png" id="76_tex"]
+[ext_resource type="Texture2D" uid="uid://cmdun7sea2y06" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_019.png" id="77_tex"]
+[ext_resource type="Texture2D" uid="uid://bwnbjqf7p8w5d" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_020.png" id="78_tex"]
+[ext_resource type="Texture2D" uid="uid://c0nwk4stj253p" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_021.png" id="79_tex"]
+[ext_resource type="Texture2D" uid="uid://ckde5ww6cw862" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_022.png" id="80_tex"]
+[ext_resource type="Texture2D" uid="uid://cirogjrrpx1ie" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Walking/0_Dark_Oracle_Walking_023.png" id="81_tex"]
+[ext_resource type="Texture2D" uid="uid://bob40x2an6svx" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_000.png" id="82_tex"]
+[ext_resource type="Texture2D" uid="uid://cjxa8nra4tjnt" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_001.png" id="83_tex"]
+[ext_resource type="Texture2D" uid="uid://cw4hg44b0c5fj" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_002.png" id="84_tex"]
+[ext_resource type="Texture2D" uid="uid://crd3kotlogx4j" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_003.png" id="85_tex"]
+[ext_resource type="Texture2D" uid="uid://8kenxpk0xbwx" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_004.png" id="86_tex"]
+[ext_resource type="Texture2D" uid="uid://c26m6prl8ynp7" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_005.png" id="87_tex"]
+[ext_resource type="Texture2D" uid="uid://bxewbp7fx48bl" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_006.png" id="88_tex"]
+[ext_resource type="Texture2D" uid="uid://cnqu3uv54rhdk" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_007.png" id="89_tex"]
+[ext_resource type="Texture2D" uid="uid://bkqd6ndg8hh2a" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_008.png" id="90_tex"]
+[ext_resource type="Texture2D" uid="uid://47e05lrhboav" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_009.png" id="91_tex"]
+[ext_resource type="Texture2D" uid="uid://llp5irw8ai44" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_010.png" id="92_tex"]
+[ext_resource type="Texture2D" uid="uid://wc2swn1yq8vh" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Run Throwing/0_Dark_Oracle_Run Throwing_011.png" id="93_tex"]
+[ext_resource type="Texture2D" uid="uid://c88vb0slsc0x7" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_000.png" id="94_018w5"]
+[ext_resource type="Texture2D" uid="uid://5vaevwndgr57" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_000.png" id="94_tex"]
+[ext_resource type="Texture2D" uid="uid://dk2vhwj1tq2tf" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_001.png" id="95_6qorw"]
+[ext_resource type="Texture2D" uid="uid://cyppp877av42g" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_001.png" id="95_tex"]
+[ext_resource type="Texture2D" uid="uid://c7fjdn4it3nvl" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_002.png" id="96_hqkge"]
+[ext_resource type="Texture2D" uid="uid://degocfgoaxn8e" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_002.png" id="96_tex"]
+[ext_resource type="Texture2D" uid="uid://bldx5tvxbdab6" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_003.png" id="97_jvhs4"]
+[ext_resource type="Texture2D" uid="uid://ceye4vrryb778" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_003.png" id="97_tex"]
+[ext_resource type="Texture2D" uid="uid://bb6cr5vy0v2up" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_004.png" id="98_jgeco"]
+[ext_resource type="Texture2D" uid="uid://x412ocdr36mj" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_004.png" id="98_tex"]
+[ext_resource type="Texture2D" uid="uid://djsarpvq2sm7u" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_005.png" id="99_781w4"]
+[ext_resource type="Texture2D" uid="uid://plkn5o7knihe" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_005.png" id="99_tex"]
+[ext_resource type="Texture2D" uid="uid://b85hfo67wgfl1" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_006.png" id="100_dy55r"]
+[ext_resource type="Texture2D" uid="uid://dbehjjioybc5f" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_006.png" id="100_tex"]
+[ext_resource type="Texture2D" uid="uid://cbqhi30r4vgm2" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_007.png" id="101_tex"]
+[ext_resource type="Texture2D" uid="uid://d3i3hgqemphcq" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_007.png" id="101_u00yr"]
+[ext_resource type="Texture2D" uid="uid://3d7pkao4girl" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_008.png" id="102_q1fqg"]
+[ext_resource type="Texture2D" uid="uid://b4q8a7qslkw8l" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_008.png" id="102_tex"]
+[ext_resource type="Texture2D" uid="uid://ctw571xbrtf3p" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_009.png" id="103_tex"]
+[ext_resource type="Texture2D" uid="uid://5b6163q8fdpt" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_009.png" id="103_y0qxq"]
+[ext_resource type="Texture2D" uid="uid://dj3iy4ichyhqa" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_010.png" id="104_81bjt"]
+[ext_resource type="Texture2D" uid="uid://d1fbkem2bx2kj" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_010.png" id="104_tex"]
+[ext_resource type="Texture2D" uid="uid://dh0ysjqmwx64x" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Throwing/0_Dark_Oracle_Throwing_011.png" id="105_tex"]
+[ext_resource type="Texture2D" uid="uid://v7rgako5rkxx" path="res://assets/mobs/Bandits/Mage/PNG Sequences/Slashing/0_Dark_Oracle_Slashing_011.png" id="105_vux5u"]
 
 [resource]
 animations = [{
-"frames": [
-{"duration": 1.0, "texture": ExtResource("1_tex")},
-{"duration": 1.0, "texture": ExtResource("2_tex")},
-{"duration": 1.0, "texture": ExtResource("3_tex")},
-{"duration": 1.0, "texture": ExtResource("4_tex")},
-{"duration": 1.0, "texture": ExtResource("5_tex")},
-{"duration": 1.0, "texture": ExtResource("6_tex")},
-{"duration": 1.0, "texture": ExtResource("7_tex")},
-{"duration": 1.0, "texture": ExtResource("8_tex")},
-{"duration": 1.0, "texture": ExtResource("9_tex")},
-{"duration": 1.0, "texture": ExtResource("10_tex")},
-{"duration": 1.0, "texture": ExtResource("11_tex")},
-{"duration": 1.0, "texture": ExtResource("12_tex")},
-{"duration": 1.0, "texture": ExtResource("13_tex")},
-{"duration": 1.0, "texture": ExtResource("14_tex")},
-{"duration": 1.0, "texture": ExtResource("15_tex")}
-],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+}],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+}],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("28_tex")},
-{"duration": 1.0, "texture": ExtResource("29_tex")},
-{"duration": 1.0, "texture": ExtResource("30_tex")},
-{"duration": 1.0, "texture": ExtResource("31_tex")},
-{"duration": 1.0, "texture": ExtResource("32_tex")},
-{"duration": 1.0, "texture": ExtResource("33_tex")},
-{"duration": 1.0, "texture": ExtResource("34_tex")},
-{"duration": 1.0, "texture": ExtResource("35_tex")},
-{"duration": 1.0, "texture": ExtResource("36_tex")},
-{"duration": 1.0, "texture": ExtResource("37_tex")},
-{"duration": 1.0, "texture": ExtResource("38_tex")},
-{"duration": 1.0, "texture": ExtResource("39_tex")},
-{"duration": 1.0, "texture": ExtResource("40_tex")},
-{"duration": 1.0, "texture": ExtResource("41_tex")},
-{"duration": 1.0, "texture": ExtResource("42_tex")},
-{"duration": 1.0, "texture": ExtResource("43_tex")},
-{"duration": 1.0, "texture": ExtResource("44_tex")},
-{"duration": 1.0, "texture": ExtResource("45_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_tex")
+}],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("46_tex")},
-{"duration": 1.0, "texture": ExtResource("47_tex")},
-{"duration": 1.0, "texture": ExtResource("48_tex")},
-{"duration": 1.0, "texture": ExtResource("49_tex")},
-{"duration": 1.0, "texture": ExtResource("50_tex")},
-{"duration": 1.0, "texture": ExtResource("51_tex")},
-{"duration": 1.0, "texture": ExtResource("52_tex")},
-{"duration": 1.0, "texture": ExtResource("53_tex")},
-{"duration": 1.0, "texture": ExtResource("54_tex")},
-{"duration": 1.0, "texture": ExtResource("55_tex")},
-{"duration": 1.0, "texture": ExtResource("56_tex")},
-{"duration": 1.0, "texture": ExtResource("57_tex")}
-],
-"loop": true,
-"name": &"Running",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("58_tex")},
-{"duration": 1.0, "texture": ExtResource("59_tex")},
-{"duration": 1.0, "texture": ExtResource("60_tex")},
-{"duration": 1.0, "texture": ExtResource("61_tex")},
-{"duration": 1.0, "texture": ExtResource("62_tex")},
-{"duration": 1.0, "texture": ExtResource("63_tex")},
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")},
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")},
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")}
-],
-"loop": true,
-"name": &"Walking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
-"loop": true,
-"name": &"Run Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")},
-{"duration": 1.0, "texture": ExtResource("103_tex")},
-{"duration": 1.0, "texture": ExtResource("104_tex")},
-{"duration": 1.0, "texture": ExtResource("105_tex")}
-],
-"loop": true,
-"name": &"Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_jasd6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_1vt2b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_s56jk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_08gm7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_8qon0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_ddpc7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_b1h5t")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_2vxgj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_avvjq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_8j3lp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_vnio4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_nvknu")
+}],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_tk8yg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_3e430")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_5y70h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_hrag2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_fqd4a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_6l5v7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_wg4jl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_tbme1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_fo8ha")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_n6c1w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_nb1qb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_4btvn")
+}],
 "loop": true,
 "name": &"Run Slashing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")},
-{"duration": 1.0, "texture": ExtResource("103_tex")},
-{"duration": 1.0, "texture": ExtResource("104_tex")},
-{"duration": 1.0, "texture": ExtResource("105_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("82_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("85_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("86_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("87_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("88_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("89_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("90_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("91_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("92_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("93_tex")
+}],
+"loop": true,
+"name": &"Run Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_tex")
+}],
+"loop": true,
+"name": &"Running",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_018w5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_6qorw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_hqkge")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_jvhs4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_jgeco")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_781w4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_dy55r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_u00yr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_q1fqg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_y0qxq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_81bjt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_vux5u")
+}],
 "loop": true,
 "name": &"Slashing",
-"speed": 12.0
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_tex")
+}],
+"loop": true,
+"name": &"Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_tex")
+}],
+"loop": true,
+"name": &"Walking",
+"speed": 24.0
 }]

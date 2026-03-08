@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0utbirr0j0ny"
-path="res://.godot/imported/0_Valkyrie_Idle Blinking_008.png-1cd82405026fc1b5eb0849a8eb9dc8e5.ctex"
+path="res://.godot/imported/0_Valkyrie_Idle Blinking_008.png-8d9a0154d1168d2938da9423905dbe5d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/PNG Sequences/Idle Blinking/0_Valkyrie_Idle Blinking_008.png"
-dest_files=["res://.godot/imported/0_Valkyrie_Idle Blinking_008.png-1cd82405026fc1b5eb0849a8eb9dc8e5.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/PNG Sequences/Idle Blinking/0_Valkyrie_Idle Blinking_008.png"
+dest_files=["res://.godot/imported/0_Valkyrie_Idle Blinking_008.png-8d9a0154d1168d2938da9423905dbe5d.ctex"]
 
 [params]
 

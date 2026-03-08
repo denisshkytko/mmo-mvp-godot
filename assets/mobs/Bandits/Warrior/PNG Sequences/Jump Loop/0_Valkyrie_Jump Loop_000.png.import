@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0ota145kfdku"
-path="res://.godot/imported/0_Valkyrie_Jump Loop_000.png-44d2182d5737e93e392a3668ee39b6e3.ctex"
+path="res://.godot/imported/0_Valkyrie_Jump Loop_000.png-de2bd1c0c65fe09ef4ad920cf1bd0b67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/PNG Sequences/Jump Loop/0_Valkyrie_Jump Loop_000.png"
-dest_files=["res://.godot/imported/0_Valkyrie_Jump Loop_000.png-44d2182d5737e93e392a3668ee39b6e3.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/PNG Sequences/Jump Loop/0_Valkyrie_Jump Loop_000.png"
+dest_files=["res://.godot/imported/0_Valkyrie_Jump Loop_000.png-de2bd1c0c65fe09ef4ad920cf1bd0b67.ctex"]
 
 [params]
 

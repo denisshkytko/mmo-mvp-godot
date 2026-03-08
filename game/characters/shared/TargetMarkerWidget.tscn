@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://vmpal7e6e6t1"]
 
-[ext_resource type="Script" path="res://game/characters/shared/target_marker_widget.gd" id="1"]
+[ext_resource type="Script" uid="uid://dub2eqdb05bn1" path="res://game/characters/shared/target_marker_widget.gd" id="1"]
 
 [node name="TargetMarkerWidget" type="Node2D"]
 visible = false
 script = ExtResource("1")
+radius_x = 240.0
+radius_y = 56.0
+y_offset = 265.0
+marker_color = Color(1, 1, 1, 0.5411765)

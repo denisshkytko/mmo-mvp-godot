@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://277upr6qka2t"
-path="res://.godot/imported/Left Arm.png-81320bdd68e354f38519b5ca977ced2a.ctex"
+path="res://.godot/imported/Left Arm.png-10b1920ed819dc75065a30fff3b0ba99.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/Vector Parts/Left Arm.png"
-dest_files=["res://.godot/imported/Left Arm.png-81320bdd68e354f38519b5ca977ced2a.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/Vector Parts/Left Arm.png"
+dest_files=["res://.godot/imported/Left Arm.png-10b1920ed819dc75065a30fff3b0ba99.ctex"]
 
 [params]
 

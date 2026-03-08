@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mn53ml0ufack"
-path="res://.godot/imported/SlashFX.png-04f0eb445f4ec0c93cc5b375731b9a22.ctex"
+path="res://.godot/imported/SlashFX.png-754178557104fa7a7d93549b9e8e4fb0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/Vector Parts/SlashFX.png"
-dest_files=["res://.godot/imported/SlashFX.png-04f0eb445f4ec0c93cc5b375731b9a22.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/Vector Parts/SlashFX.png"
+dest_files=["res://.godot/imported/SlashFX.png-754178557104fa7a7d93549b9e8e4fb0.ctex"]
 
 [params]
 

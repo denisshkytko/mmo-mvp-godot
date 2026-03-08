@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qm26sntm0mq5"
-path="res://.godot/imported/Face 03.png-f7bc3902bcd7689061311f4a1d3e4337.ctex"
+path="res://.godot/imported/Face 03.png-aac5e855d47cd69968942a8d50b3916d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mobs/Bandits/Valkyrie_1/Vector Parts/Face 03.png"
-dest_files=["res://.godot/imported/Face 03.png-f7bc3902bcd7689061311f4a1d3e4337.ctex"]
+source_file="res://assets/mobs/Bandits/Warrior/Vector Parts/Face 03.png"
+dest_files=["res://.godot/imported/Face 03.png-aac5e855d47cd69968942a8d50b3916d.ctex"]
 
 [params]
 

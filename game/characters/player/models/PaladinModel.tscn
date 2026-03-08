@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b05dlfxt4bywa"]
+[gd_scene load_steps=9 format=3 uid="uid://b05dlfxt4bywa"]
 
 [ext_resource type="Script" uid="uid://batbkni3sgfgo" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
 [ext_resource type="SpriteFrames" uid="uid://cg6vlyyau5tlo" path="res://game/characters/player/models/frames/PaladinSpriteFrames.tres" id="2_frames"]
@@ -20,6 +20,14 @@ radius = 300.0
 [node name="PaladinModel" type="Node2D"]
 scale = Vector2(0.2, 0.2)
 script = ExtResource("1_model")
+idle_animation = "Idle Blinking"
+run_animation = "Running"
+hurt_animation = "Hurt"
+death_animation = "Dying"
+melee_stand_animation = "Slashing"
+melee_run_animation = "Run Slashing"
+unarmed_stand_animation = "Throwing"
+unarmed_run_animation = "Run Throwing"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 
@@ -28,13 +36,15 @@ position = Vector2(0, -30)
 
 [node name="CastBar" parent="OverlayProfile" instance=ExtResource("4_castbar")]
 
-
 [node name="TargetMarker" parent="OverlayProfile" instance=ExtResource("5_target")]
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
-animation = &"Dying"
+animation = &"Walking"
 autoplay = "Idle Blinking"
+frame_progress = 0.25057557
+flip_h = true
 
 [node name="CollisionProfile" type="Area2D" parent="."]
 collision_layer = 0

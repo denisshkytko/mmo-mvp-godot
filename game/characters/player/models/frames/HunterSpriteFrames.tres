@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=115 format=3 uid="uid://d1j0bar0iyy2h"]
+[gd_resource type="SpriteFrames" load_steps=139 format=3 uid="uid://d1j0bar0iyy2h"]
 
 [ext_resource type="Texture2D" uid="uid://bpdvo6l28jr28" path="res://assets/characters/Hunter/PNG Sequences/Dying/0_Forest_Ranger_Dying_000.png" id="1_tex"]
 [ext_resource type="Texture2D" uid="uid://leqd8ujn4yr8" path="res://assets/characters/Hunter/PNG Sequences/Dying/0_Forest_Ranger_Dying_001.png" id="2_tex"]
@@ -78,29 +78,53 @@
 [ext_resource type="Texture2D" uid="uid://dq1f7706nnukk" path="res://assets/characters/Hunter/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_006.png" id="112_tex"]
 [ext_resource type="Texture2D" uid="uid://by10mkvmw224w" path="res://assets/characters/Hunter/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_007.png" id="113_tex"]
 [ext_resource type="Texture2D" uid="uid://ip76cmb4xic3" path="res://assets/characters/Hunter/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_008.png" id="114_tex"]
+[ext_resource type="Texture2D" uid="uid://dlk6xsr278rm3" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_000.png" id="115_p4f0t"]
 [ext_resource type="Texture2D" uid="uid://m02kp1frpi8p" path="res://assets/characters/Hunter/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_009.png" id="115_tex"]
+[ext_resource type="Texture2D" uid="uid://be4f3nhv8q4ga" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_001.png" id="116_7xa8w"]
 [ext_resource type="Texture2D" uid="uid://ccfapecn02c84" path="res://assets/characters/Hunter/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_010.png" id="116_tex"]
+[ext_resource type="Texture2D" uid="uid://dlvhnhb7ah5x2" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_002.png" id="117_mq8pj"]
 [ext_resource type="Texture2D" uid="uid://cbj51oxbw7hny" path="res://assets/characters/Hunter/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_011.png" id="117_tex"]
+[ext_resource type="Texture2D" uid="uid://dv7i4trgngvpr" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_003.png" id="118_1xfy1"]
 [ext_resource type="Texture2D" uid="uid://cvoi2isq2rrut" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_000.png" id="118_tex"]
 [ext_resource type="Texture2D" uid="uid://1m0kx4v2s2fj" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_001.png" id="119_tex"]
+[ext_resource type="Texture2D" uid="uid://c60knfagwsxll" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_004.png" id="119_u4adj"]
+[ext_resource type="Texture2D" uid="uid://c184wkgmlem6a" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_005.png" id="120_ny2lj"]
 [ext_resource type="Texture2D" uid="uid://dembxfegk3ow0" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_002.png" id="120_tex"]
+[ext_resource type="Texture2D" uid="uid://bjmscanc3ge4e" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_006.png" id="121_4vcjc"]
 [ext_resource type="Texture2D" uid="uid://c0um18y6vmlam" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_003.png" id="121_tex"]
+[ext_resource type="Texture2D" uid="uid://ceqh8jh22sfjk" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_007.png" id="122_bmk1w"]
 [ext_resource type="Texture2D" uid="uid://bhxaykrnyvy1g" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_004.png" id="122_tex"]
+[ext_resource type="Texture2D" uid="uid://bkl83fwrqpqe6" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_008.png" id="123_bqnyq"]
 [ext_resource type="Texture2D" uid="uid://ddb7wpi8lfol6" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_005.png" id="123_tex"]
+[ext_resource type="Texture2D" uid="uid://bv5wr2vs8nubv" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_009.png" id="124_53pqo"]
 [ext_resource type="Texture2D" uid="uid://daillqrs7b2sf" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_006.png" id="124_tex"]
+[ext_resource type="Texture2D" uid="uid://3t5ey5lp7vho" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_010.png" id="125_gyx4i"]
 [ext_resource type="Texture2D" uid="uid://bxduppm4ww5ha" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_007.png" id="125_tex"]
 [ext_resource type="Texture2D" uid="uid://bngpv0rm1b32b" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_008.png" id="126_tex"]
+[ext_resource type="Texture2D" uid="uid://7l6te2prr8mp" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_011.png" id="126_xtgsv"]
+[ext_resource type="Texture2D" uid="uid://bqi8l6tf7t5kq" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_012.png" id="127_jne4e"]
 [ext_resource type="Texture2D" uid="uid://biytbqvjpo01v" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_009.png" id="127_tex"]
+[ext_resource type="Texture2D" uid="uid://bfv8ybnxvab5q" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_013.png" id="128_8abd7"]
 [ext_resource type="Texture2D" uid="uid://dns8o0oygy4dm" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_010.png" id="128_tex"]
+[ext_resource type="Texture2D" uid="uid://t58svydm0j62" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_014.png" id="129_3xrpx"]
 [ext_resource type="Texture2D" uid="uid://sbt3gbcisc4b" path="res://assets/characters/Hunter/PNG Sequences/Running/0_Forest_Ranger_Running_011.png" id="129_tex"]
+[ext_resource type="Texture2D" uid="uid://bdbrjar5cdkdn" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_015.png" id="130_ds2rt"]
 [ext_resource type="Texture2D" uid="uid://bbd08pg51rmau" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_000.png" id="130_tex"]
+[ext_resource type="Texture2D" uid="uid://buthfg1avbj1i" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_016.png" id="131_j2afp"]
 [ext_resource type="Texture2D" uid="uid://dp72j1sk28j0o" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_001.png" id="131_tex"]
+[ext_resource type="Texture2D" uid="uid://ca2yrqrq5dokf" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_017.png" id="132_nwaql"]
 [ext_resource type="Texture2D" uid="uid://bd3t0aghne0p2" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_002.png" id="132_tex"]
+[ext_resource type="Texture2D" uid="uid://bkxvwqu3yyxp7" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_018.png" id="133_b7wwl"]
 [ext_resource type="Texture2D" uid="uid://dt62fic7x45p5" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_003.png" id="133_tex"]
+[ext_resource type="Texture2D" uid="uid://c1a1bfnkydnrn" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_019.png" id="134_73vnx"]
 [ext_resource type="Texture2D" uid="uid://cviu21ec0gb6i" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_004.png" id="134_tex"]
 [ext_resource type="Texture2D" uid="uid://bb1ukj22uyjlu" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_005.png" id="135_tex"]
+[ext_resource type="Texture2D" uid="uid://bwp0mk3m3776h" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_020.png" id="135_v545h"]
+[ext_resource type="Texture2D" uid="uid://bsa00oinqi1ed" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_021.png" id="136_r8kdl"]
 [ext_resource type="Texture2D" uid="uid://s50bngl0xxpu" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_006.png" id="136_tex"]
+[ext_resource type="Texture2D" uid="uid://dya4mb4yrtnqm" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_022.png" id="137_8i837"]
 [ext_resource type="Texture2D" uid="uid://clpvxwbb3b4cs" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_007.png" id="137_tex"]
+[ext_resource type="Texture2D" uid="uid://cbk5220j78nm3" path="res://assets/characters/Hunter/PNG Sequences/Walking/0_Forest_Ranger_Walking_023.png" id="138_akgca"]
 [ext_resource type="Texture2D" uid="uid://ukrsmaldmsqv" path="res://assets/characters/Hunter/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_008.png" id="138_tex"]
 [ext_resource type="Texture2D" uid="uid://dmd6p30otajxj" path="res://assets/characters/Hunter/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_000.png" id="154_tex"]
 [ext_resource type="Texture2D" uid="uid://bqnr1fdf1304e" path="res://assets/characters/Hunter/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_001.png" id="155_tex"]
@@ -165,9 +189,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("22_tex")
@@ -207,9 +230,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("52_tex")
@@ -267,9 +289,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("82_tex")
@@ -309,9 +330,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("94_tex")
@@ -351,9 +371,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Shooting",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("106_tex")
@@ -393,9 +412,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("118_tex")
@@ -435,9 +453,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Running",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("130_tex")
@@ -468,9 +485,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Shooting",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("154_tex")
@@ -510,47 +526,82 @@ animations = [{
 }],
 "loop": true,
 "name": &"Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("118_tex")
+"texture": ExtResource("115_p4f0t")
 }, {
 "duration": 1.0,
-"texture": ExtResource("119_tex")
+"texture": ExtResource("116_7xa8w")
 }, {
 "duration": 1.0,
-"texture": ExtResource("120_tex")
+"texture": ExtResource("117_mq8pj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("121_tex")
+"texture": ExtResource("118_1xfy1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("122_tex")
+"texture": ExtResource("119_u4adj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("123_tex")
+"texture": ExtResource("120_ny2lj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("124_tex")
+"texture": ExtResource("121_4vcjc")
 }, {
 "duration": 1.0,
-"texture": ExtResource("125_tex")
+"texture": ExtResource("122_bmk1w")
 }, {
 "duration": 1.0,
-"texture": ExtResource("126_tex")
+"texture": ExtResource("123_bqnyq")
 }, {
 "duration": 1.0,
-"texture": ExtResource("127_tex")
+"texture": ExtResource("124_53pqo")
 }, {
 "duration": 1.0,
-"texture": ExtResource("128_tex")
+"texture": ExtResource("125_gyx4i")
 }, {
 "duration": 1.0,
-"texture": ExtResource("129_tex")
+"texture": ExtResource("126_xtgsv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("127_jne4e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("128_8abd7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("129_3xrpx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_ds2rt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_j2afp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_nwaql")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_b7wwl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_73vnx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_v545h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_r8kdl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("137_8i837")
+}, {
+"duration": 1.0,
+"texture": ExtResource("138_akgca")
 }],
 "loop": true,
 "name": &"Walking",
-"speed": 12.0
+"speed": 24.0
 }]

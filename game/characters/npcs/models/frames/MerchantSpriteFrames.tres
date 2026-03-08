@@ -1,284 +1,619 @@
-[gd_resource type="SpriteFrames" load_steps=82 format=3]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://cp3by2vxr8bxg"]
 
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_000.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_001.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_002.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_003.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_004.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_005.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_006.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_007.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_008.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_009.png" id="10_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_010.png" id="11_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_011.png" id="12_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_012.png" id="13_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_013.png" id="14_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_014.png" id="15_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_000.png" id="16_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_001.png" id="17_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_002.png" id="18_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_003.png" id="19_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_004.png" id="20_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_005.png" id="21_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_006.png" id="22_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_007.png" id="23_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_008.png" id="24_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_009.png" id="25_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_010.png" id="26_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_011.png" id="27_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_000.png" id="28_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_001.png" id="29_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_002.png" id="30_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_003.png" id="31_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_004.png" id="32_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_005.png" id="33_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_006.png" id="34_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_007.png" id="35_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_008.png" id="36_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_009.png" id="37_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_010.png" id="38_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_011.png" id="39_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_012.png" id="40_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_013.png" id="41_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_014.png" id="42_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_015.png" id="43_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_016.png" id="44_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_017.png" id="45_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_000.png" id="46_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_001.png" id="47_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_002.png" id="48_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_003.png" id="49_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_004.png" id="50_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_005.png" id="51_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_006.png" id="52_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_007.png" id="53_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_008.png" id="54_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_009.png" id="55_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_010.png" id="56_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_011.png" id="57_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_000.png" id="58_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_001.png" id="59_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_002.png" id="60_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_003.png" id="61_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_004.png" id="62_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_005.png" id="63_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_006.png" id="64_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_007.png" id="65_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_008.png" id="66_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_009.png" id="67_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_010.png" id="68_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_011.png" id="69_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_000.png" id="70_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_001.png" id="71_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_002.png" id="72_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_003.png" id="73_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_004.png" id="74_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_005.png" id="75_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_006.png" id="76_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_007.png" id="77_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_008.png" id="78_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_009.png" id="79_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_010.png" id="80_tex"]
-[ext_resource type="Texture2D" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_011.png" id="81_tex"]
+[ext_resource type="Texture2D" uid="uid://3nm20s7gkbvt" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_000.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://darc01yjmn8r4" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_001.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://d0n3bijv40l0y" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_002.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://x5w4m5gjxlqt" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_003.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://dmreeh34ky1w3" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_004.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://dvbn5lb6mciwc" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_005.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://brmaxiwf3vtbp" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_006.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://dgxk65x83lrca" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_007.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://cld1g0kdavayr" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_008.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://cpa0imclutjxg" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_009.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://ghyd8ajlqboy" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_010.png" id="11_tex"]
+[ext_resource type="Texture2D" uid="uid://fg8lyowxkv3p" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_011.png" id="12_tex"]
+[ext_resource type="Texture2D" uid="uid://bvvfk8yjb54ya" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_012.png" id="13_tex"]
+[ext_resource type="Texture2D" uid="uid://udj280bnsxga" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_013.png" id="14_tex"]
+[ext_resource type="Texture2D" uid="uid://b7142eujr7jek" path="res://assets/NPCs/Merchant/PNG Sequences/Dying/0_Fallen_Angels_Dying_014.png" id="15_tex"]
+[ext_resource type="Texture2D" uid="uid://f5usa4ymxwc1" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_000.png" id="16_tex"]
+[ext_resource type="Texture2D" uid="uid://cmed0rsdx0fl2" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_001.png" id="17_tex"]
+[ext_resource type="Texture2D" uid="uid://nvtbs5sc1e7f" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_002.png" id="18_tex"]
+[ext_resource type="Texture2D" uid="uid://dwfoij2611p35" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_003.png" id="19_tex"]
+[ext_resource type="Texture2D" uid="uid://b17w1c0van1h6" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_004.png" id="20_tex"]
+[ext_resource type="Texture2D" uid="uid://d1ydsp114e51y" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_005.png" id="21_tex"]
+[ext_resource type="Texture2D" uid="uid://bu60o2y30kri0" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_006.png" id="22_tex"]
+[ext_resource type="Texture2D" uid="uid://b03syleokvcbt" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_007.png" id="23_tex"]
+[ext_resource type="Texture2D" uid="uid://b5dq7od7lqm27" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_008.png" id="24_tex"]
+[ext_resource type="Texture2D" uid="uid://bcagj8uedytwy" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_009.png" id="25_tex"]
+[ext_resource type="Texture2D" uid="uid://dymg3ovg5nka8" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_010.png" id="26_tex"]
+[ext_resource type="Texture2D" uid="uid://bev42py6hp6ov" path="res://assets/NPCs/Merchant/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_011.png" id="27_tex"]
+[ext_resource type="Texture2D" uid="uid://3jpurroy1y2a" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_000.png" id="28_tex"]
+[ext_resource type="Texture2D" uid="uid://dbvaeeqemm87w" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_001.png" id="29_tex"]
+[ext_resource type="Texture2D" uid="uid://cyped5axihlo4" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_002.png" id="30_tex"]
+[ext_resource type="Texture2D" uid="uid://22giylbr2qqu" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_003.png" id="31_tex"]
+[ext_resource type="Texture2D" uid="uid://bkl6605mwtfgq" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_004.png" id="32_tex"]
+[ext_resource type="Texture2D" uid="uid://x3wrus444bfb" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_005.png" id="33_tex"]
+[ext_resource type="Texture2D" uid="uid://luu6ncer042f" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_006.png" id="34_tex"]
+[ext_resource type="Texture2D" uid="uid://brbb7ag687uxh" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_007.png" id="35_tex"]
+[ext_resource type="Texture2D" uid="uid://b8mt7a55ci41w" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_008.png" id="36_tex"]
+[ext_resource type="Texture2D" uid="uid://dbb0llksna1e5" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_009.png" id="37_tex"]
+[ext_resource type="Texture2D" uid="uid://dpwasddjs5vxd" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_010.png" id="38_tex"]
+[ext_resource type="Texture2D" uid="uid://b7j0w6sdgcl10" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_011.png" id="39_tex"]
+[ext_resource type="Texture2D" uid="uid://dy5513c2q4o1t" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_012.png" id="40_tex"]
+[ext_resource type="Texture2D" uid="uid://bqwwhsdlahbih" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_013.png" id="41_tex"]
+[ext_resource type="Texture2D" uid="uid://cjxo7erjyc4pp" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_014.png" id="42_tex"]
+[ext_resource type="Texture2D" uid="uid://ciygpa1lv6v6f" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_015.png" id="43_tex"]
+[ext_resource type="Texture2D" uid="uid://ds8iqtv4mftth" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_016.png" id="44_tex"]
+[ext_resource type="Texture2D" uid="uid://cycyrcdq14xn2" path="res://assets/NPCs/Merchant/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_017.png" id="45_tex"]
+[ext_resource type="Texture2D" uid="uid://mp6bpyqtiai0" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_000.png" id="46_68xbi"]
+[ext_resource type="Texture2D" uid="uid://kwjyj7jxqnmb" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_000.png" id="46_tex"]
+[ext_resource type="Texture2D" uid="uid://t3cdce17nl3e" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_001.png" id="47_ocdwd"]
+[ext_resource type="Texture2D" uid="uid://bsodlcf58d83f" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_001.png" id="47_tex"]
+[ext_resource type="Texture2D" uid="uid://bkrtx8inwekqb" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_002.png" id="48_aev1y"]
+[ext_resource type="Texture2D" uid="uid://dqiuk1geaqev8" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_002.png" id="48_tex"]
+[ext_resource type="Texture2D" uid="uid://46qkw5avwk3l" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_003.png" id="49_bvi24"]
+[ext_resource type="Texture2D" uid="uid://c67rh6yfxl46a" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_003.png" id="49_tex"]
+[ext_resource type="Texture2D" uid="uid://c42626pqioy03" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_004.png" id="50_tex"]
+[ext_resource type="Texture2D" uid="uid://dwycnqu8727vd" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_004.png" id="50_va5lo"]
+[ext_resource type="Texture2D" uid="uid://bhrnkxcc8jgc8" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_005.png" id="51_28xr1"]
+[ext_resource type="Texture2D" uid="uid://qij7bnkbcnto" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_005.png" id="51_tex"]
+[ext_resource type="Texture2D" uid="uid://cbetukj8u64ac" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_006.png" id="52_k43nm"]
+[ext_resource type="Texture2D" uid="uid://nj33tfqjsknw" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_006.png" id="52_tex"]
+[ext_resource type="Texture2D" uid="uid://cd07lbvmhucih" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_007.png" id="53_s2s35"]
+[ext_resource type="Texture2D" uid="uid://dhqw7ew3o10g" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_007.png" id="53_tex"]
+[ext_resource type="Texture2D" uid="uid://cl8fq25vld8pl" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_008.png" id="54_sk2vm"]
+[ext_resource type="Texture2D" uid="uid://dmtfd5xprebmt" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_008.png" id="54_tex"]
+[ext_resource type="Texture2D" uid="uid://12jkosrg8lda" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_009.png" id="55_7nt13"]
+[ext_resource type="Texture2D" uid="uid://qrxtkcn20yrk" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_009.png" id="55_tex"]
+[ext_resource type="Texture2D" uid="uid://13y10pnhpig0" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_010.png" id="56_hljdw"]
+[ext_resource type="Texture2D" uid="uid://dgfvbmcuvbuql" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_010.png" id="56_tex"]
+[ext_resource type="Texture2D" uid="uid://6yo81jm5drgj" path="res://assets/NPCs/Merchant/PNG Sequences/Kicking/0_Fallen_Angels_Kicking_011.png" id="57_dw561"]
+[ext_resource type="Texture2D" uid="uid://c77urj0i4rqma" path="res://assets/NPCs/Merchant/PNG Sequences/Throwing/0_Fallen_Angels_Throwing_011.png" id="57_tex"]
+[ext_resource type="Texture2D" uid="uid://cvdoq7qbfs4on" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_000.png" id="58_lv21k"]
+[ext_resource type="Texture2D" uid="uid://bau7j6681kqd1" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_000.png" id="58_tex"]
+[ext_resource type="Texture2D" uid="uid://b5iok1d1p3sqq" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_001.png" id="59_3gqlo"]
+[ext_resource type="Texture2D" uid="uid://bwss6vurqrgxw" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_001.png" id="59_tex"]
+[ext_resource type="Texture2D" uid="uid://bb3c02rchu457" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_002.png" id="60_tex"]
+[ext_resource type="Texture2D" uid="uid://ca71lcqfl44mq" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_002.png" id="60_ujmsl"]
+[ext_resource type="Texture2D" uid="uid://simpubjjs2dm" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_003.png" id="61_h7hga"]
+[ext_resource type="Texture2D" uid="uid://dahvbtnoavhfa" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_003.png" id="61_tex"]
+[ext_resource type="Texture2D" uid="uid://c4vhtlsx416s2" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_004.png" id="62_nwagn"]
+[ext_resource type="Texture2D" uid="uid://s8da00jvclc7" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_004.png" id="62_tex"]
+[ext_resource type="Texture2D" uid="uid://hjcn4yfi74k6" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_005.png" id="63_tex"]
+[ext_resource type="Texture2D" uid="uid://cigcsouq45uo1" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_005.png" id="63_x68ss"]
+[ext_resource type="Texture2D" uid="uid://i7wwhuwano42" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_006.png" id="64_dimwj"]
+[ext_resource type="Texture2D" uid="uid://xad7k24hmygv" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_006.png" id="64_tex"]
+[ext_resource type="Texture2D" uid="uid://dyelhgr12e558" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_007.png" id="65_esbeh"]
+[ext_resource type="Texture2D" uid="uid://bqn4jt12r8rcc" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_007.png" id="65_tex"]
+[ext_resource type="Texture2D" uid="uid://cuvq4huitwj2e" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_008.png" id="66_tex"]
+[ext_resource type="Texture2D" uid="uid://mdbpyma3c2go" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_008.png" id="66_vegl3"]
+[ext_resource type="Texture2D" uid="uid://cctrjeddlimst" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_009.png" id="67_hqapp"]
+[ext_resource type="Texture2D" uid="uid://wxgjwroglkn" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_009.png" id="67_tex"]
+[ext_resource type="Texture2D" uid="uid://cja2i7dlps2wo" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_010.png" id="68_7fqpm"]
+[ext_resource type="Texture2D" uid="uid://b1w47vec4x3m5" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_010.png" id="68_tex"]
+[ext_resource type="Texture2D" uid="uid://djexm053as5oy" path="res://assets/NPCs/Merchant/PNG Sequences/Run Throwing/0_Fallen_Angels_Run Throwing_011.png" id="69_tex"]
+[ext_resource type="Texture2D" uid="uid://bsnpebyuw2871" path="res://assets/NPCs/Merchant/PNG Sequences/Run Slashing/0_Fallen_Angels_Run Slashing_011.png" id="69_vbv3b"]
+[ext_resource type="Texture2D" uid="uid://dnad2tj8662if" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_000.png" id="70_tex"]
+[ext_resource type="Texture2D" uid="uid://b7g48u7da5gon" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_001.png" id="71_tex"]
+[ext_resource type="Texture2D" uid="uid://tlyck6s6noj4" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_002.png" id="72_tex"]
+[ext_resource type="Texture2D" uid="uid://cwqs7rolxemi3" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_003.png" id="73_tex"]
+[ext_resource type="Texture2D" uid="uid://5kyk53co8neh" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_004.png" id="74_tex"]
+[ext_resource type="Texture2D" uid="uid://de78g6mhy6jdu" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_005.png" id="75_tex"]
+[ext_resource type="Texture2D" uid="uid://yvpcil2ppmfu" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_006.png" id="76_tex"]
+[ext_resource type="Texture2D" uid="uid://pwexsqvjtbgg" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_007.png" id="77_tex"]
+[ext_resource type="Texture2D" uid="uid://d38hsongafjnj" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_008.png" id="78_tex"]
+[ext_resource type="Texture2D" uid="uid://c7f4r1xk2voxm" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_009.png" id="79_tex"]
+[ext_resource type="Texture2D" uid="uid://b1a5wnncrgjdi" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_010.png" id="80_tex"]
+[ext_resource type="Texture2D" uid="uid://b02mnf7jk3dgh" path="res://assets/NPCs/Merchant/PNG Sequences/Running/0_Fallen_Angels_Running_011.png" id="81_tex"]
+[ext_resource type="Texture2D" uid="uid://bp23lavxupen0" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_000.png" id="94_x2v0d"]
+[ext_resource type="Texture2D" uid="uid://7lxactayehfh" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_001.png" id="95_bxy2q"]
+[ext_resource type="Texture2D" uid="uid://8lheikxutt3u" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_002.png" id="96_w8fyk"]
+[ext_resource type="Texture2D" uid="uid://cusdmw8pnccpu" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_003.png" id="97_n68fj"]
+[ext_resource type="Texture2D" uid="uid://6hp4oiub7g4w" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_004.png" id="98_fsptc"]
+[ext_resource type="Texture2D" uid="uid://xrxun2s5upsf" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_005.png" id="99_rq3jh"]
+[ext_resource type="Texture2D" uid="uid://dwque5eycco76" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_006.png" id="100_qip3r"]
+[ext_resource type="Texture2D" uid="uid://1oblx6u2r1wn" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_007.png" id="101_evhf2"]
+[ext_resource type="Texture2D" uid="uid://csyhj3myhx2th" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_008.png" id="102_gb6rq"]
+[ext_resource type="Texture2D" uid="uid://st4hwicw0876" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_009.png" id="103_g2b0y"]
+[ext_resource type="Texture2D" uid="uid://dqry7ulq5u6ke" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_010.png" id="104_5j1ao"]
+[ext_resource type="Texture2D" uid="uid://b5wyvmqe36n53" path="res://assets/NPCs/Merchant/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_011.png" id="105_nf1nv"]
+[ext_resource type="Texture2D" uid="uid://eakjqnxx31o3" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_000.png" id="118_tqjfj"]
+[ext_resource type="Texture2D" uid="uid://y501dsn7g7mb" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_001.png" id="119_jkii0"]
+[ext_resource type="Texture2D" uid="uid://dcfy7hqkr6phc" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_002.png" id="120_koq80"]
+[ext_resource type="Texture2D" uid="uid://3i5wnwmtgx7s" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_003.png" id="121_un333"]
+[ext_resource type="Texture2D" uid="uid://bkdgqf8jjvpwo" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_004.png" id="122_tvu30"]
+[ext_resource type="Texture2D" uid="uid://25wew7hywnc7" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_005.png" id="123_1ujbu"]
+[ext_resource type="Texture2D" uid="uid://bydmjhd15l1ee" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_006.png" id="124_8uytk"]
+[ext_resource type="Texture2D" uid="uid://cmjqayx1574jt" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_007.png" id="125_w1j0s"]
+[ext_resource type="Texture2D" uid="uid://cwttyikxwrb3k" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_008.png" id="126_okma6"]
+[ext_resource type="Texture2D" uid="uid://cgqeu8yfuy2js" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_009.png" id="127_rxdef"]
+[ext_resource type="Texture2D" uid="uid://hkljujayo6sx" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_010.png" id="128_e72sm"]
+[ext_resource type="Texture2D" uid="uid://hvg24f68ixal" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_011.png" id="129_gvvvi"]
+[ext_resource type="Texture2D" uid="uid://mat6sl07h6xt" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_012.png" id="130_f5isn"]
+[ext_resource type="Texture2D" uid="uid://cmlt30rsb65dc" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_013.png" id="131_f4kqa"]
+[ext_resource type="Texture2D" uid="uid://30t0qo0bpolg" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_014.png" id="132_sqv02"]
+[ext_resource type="Texture2D" uid="uid://bu1pasrkmyvfj" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_015.png" id="133_ifnx0"]
+[ext_resource type="Texture2D" uid="uid://bumhmem3co7ba" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_016.png" id="134_1643l"]
+[ext_resource type="Texture2D" uid="uid://cs36fsbyoqura" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_017.png" id="135_eupsk"]
+[ext_resource type="Texture2D" uid="uid://bgob8j3jtpeli" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_018.png" id="136_k07xg"]
+[ext_resource type="Texture2D" uid="uid://07j120rdkl0b" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_019.png" id="137_r0enr"]
+[ext_resource type="Texture2D" uid="uid://bunypug05ce57" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_020.png" id="138_kwxpb"]
+[ext_resource type="Texture2D" uid="uid://c8j44su6vu2f4" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_021.png" id="139_di5hd"]
+[ext_resource type="Texture2D" uid="uid://cvhwlyny0cnm2" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_022.png" id="140_tcco0"]
+[ext_resource type="Texture2D" uid="uid://bfcio3bvmpetk" path="res://assets/NPCs/Merchant/PNG Sequences/Walking/0_Fallen_Angels_Walking_023.png" id="141_00o37"]
 
 [resource]
 animations = [{
-"frames": [
-{"duration": 1.0, "texture": ExtResource("1_tex")},
-{"duration": 1.0, "texture": ExtResource("2_tex")},
-{"duration": 1.0, "texture": ExtResource("3_tex")},
-{"duration": 1.0, "texture": ExtResource("4_tex")},
-{"duration": 1.0, "texture": ExtResource("5_tex")},
-{"duration": 1.0, "texture": ExtResource("6_tex")},
-{"duration": 1.0, "texture": ExtResource("7_tex")},
-{"duration": 1.0, "texture": ExtResource("8_tex")},
-{"duration": 1.0, "texture": ExtResource("9_tex")},
-{"duration": 1.0, "texture": ExtResource("10_tex")},
-{"duration": 1.0, "texture": ExtResource("11_tex")},
-{"duration": 1.0, "texture": ExtResource("12_tex")},
-{"duration": 1.0, "texture": ExtResource("13_tex")},
-{"duration": 1.0, "texture": ExtResource("14_tex")},
-{"duration": 1.0, "texture": ExtResource("15_tex")}
-],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+}],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+}],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("28_tex")},
-{"duration": 1.0, "texture": ExtResource("29_tex")},
-{"duration": 1.0, "texture": ExtResource("30_tex")},
-{"duration": 1.0, "texture": ExtResource("31_tex")},
-{"duration": 1.0, "texture": ExtResource("32_tex")},
-{"duration": 1.0, "texture": ExtResource("33_tex")},
-{"duration": 1.0, "texture": ExtResource("34_tex")},
-{"duration": 1.0, "texture": ExtResource("35_tex")},
-{"duration": 1.0, "texture": ExtResource("36_tex")},
-{"duration": 1.0, "texture": ExtResource("37_tex")},
-{"duration": 1.0, "texture": ExtResource("38_tex")},
-{"duration": 1.0, "texture": ExtResource("39_tex")},
-{"duration": 1.0, "texture": ExtResource("40_tex")},
-{"duration": 1.0, "texture": ExtResource("41_tex")},
-{"duration": 1.0, "texture": ExtResource("42_tex")},
-{"duration": 1.0, "texture": ExtResource("43_tex")},
-{"duration": 1.0, "texture": ExtResource("44_tex")},
-{"duration": 1.0, "texture": ExtResource("45_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_tex")
+}],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("46_tex")},
-{"duration": 1.0, "texture": ExtResource("47_tex")},
-{"duration": 1.0, "texture": ExtResource("48_tex")},
-{"duration": 1.0, "texture": ExtResource("49_tex")},
-{"duration": 1.0, "texture": ExtResource("50_tex")},
-{"duration": 1.0, "texture": ExtResource("51_tex")},
-{"duration": 1.0, "texture": ExtResource("52_tex")},
-{"duration": 1.0, "texture": ExtResource("53_tex")},
-{"duration": 1.0, "texture": ExtResource("54_tex")},
-{"duration": 1.0, "texture": ExtResource("55_tex")},
-{"duration": 1.0, "texture": ExtResource("56_tex")},
-{"duration": 1.0, "texture": ExtResource("57_tex")}
-],
-"loop": true,
-"name": &"Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("58_tex")},
-{"duration": 1.0, "texture": ExtResource("59_tex")},
-{"duration": 1.0, "texture": ExtResource("60_tex")},
-{"duration": 1.0, "texture": ExtResource("61_tex")},
-{"duration": 1.0, "texture": ExtResource("62_tex")},
-{"duration": 1.0, "texture": ExtResource("63_tex")},
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")}
-],
-"loop": true,
-"name": &"Run Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")},
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")}
-],
-"loop": true,
-"name": &"Running",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_68xbi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_ocdwd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_aev1y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_bvi24")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_va5lo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_28xr1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_k43nm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_s2s35")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_sk2vm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_7nt13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_hljdw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_dw561")
+}],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")},
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")}
-],
-"loop": true,
-"name": &"Walking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("58_tex")},
-{"duration": 1.0, "texture": ExtResource("59_tex")},
-{"duration": 1.0, "texture": ExtResource("60_tex")},
-{"duration": 1.0, "texture": ExtResource("61_tex")},
-{"duration": 1.0, "texture": ExtResource("62_tex")},
-{"duration": 1.0, "texture": ExtResource("63_tex")},
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_lv21k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_3gqlo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_ujmsl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_h7hga")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_nwagn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_x68ss")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_dimwj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_esbeh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_vegl3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_hqapp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_7fqpm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_vbv3b")
+}],
 "loop": true,
 "name": &"Run Slashing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("46_tex")},
-{"duration": 1.0, "texture": ExtResource("47_tex")},
-{"duration": 1.0, "texture": ExtResource("48_tex")},
-{"duration": 1.0, "texture": ExtResource("49_tex")},
-{"duration": 1.0, "texture": ExtResource("50_tex")},
-{"duration": 1.0, "texture": ExtResource("51_tex")},
-{"duration": 1.0, "texture": ExtResource("52_tex")},
-{"duration": 1.0, "texture": ExtResource("53_tex")},
-{"duration": 1.0, "texture": ExtResource("54_tex")},
-{"duration": 1.0, "texture": ExtResource("55_tex")},
-{"duration": 1.0, "texture": ExtResource("56_tex")},
-{"duration": 1.0, "texture": ExtResource("57_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_tex")
+}],
+"loop": true,
+"name": &"Run Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("70_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_tex")
+}],
+"loop": true,
+"name": &"Running",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_x2v0d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_bxy2q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_w8fyk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_n68fj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_fsptc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_rq3jh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_qip3r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_evhf2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_gb6rq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("103_g2b0y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_5j1ao")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_nf1nv")
+}],
 "loop": true,
 "name": &"Slashing",
-"speed": 12.0
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_tex")
+}],
+"loop": true,
+"name": &"Throwing",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("118_tqjfj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("119_jkii0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("120_koq80")
+}, {
+"duration": 1.0,
+"texture": ExtResource("121_un333")
+}, {
+"duration": 1.0,
+"texture": ExtResource("122_tvu30")
+}, {
+"duration": 1.0,
+"texture": ExtResource("123_1ujbu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("124_8uytk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("125_w1j0s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("126_okma6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("127_rxdef")
+}, {
+"duration": 1.0,
+"texture": ExtResource("128_e72sm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("129_gvvvi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_f5isn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_f4kqa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_sqv02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_ifnx0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_1643l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_eupsk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_k07xg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("137_r0enr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("138_kwxpb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("139_di5hd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("140_tcco0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("141_00o37")
+}],
+"loop": true,
+"name": &"Walking",
+"speed": 24.0
 }]

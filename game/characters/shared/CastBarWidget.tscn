@@ -18,24 +18,24 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -31.0
-offset_top = -8.0
-offset_right = 31.0
-offset_bottom = 8.0
+offset_left = -258.0
+offset_top = -436.0
+offset_right = 258.0
+offset_bottom = -372.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 4
 alignment = 1
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer"]
-custom_minimum_size = Vector2(16, 16)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Progress" type="ProgressBar" parent="HBoxContainer"]
-custom_minimum_size = Vector2(38, 12)
+custom_minimum_size = Vector2(38, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4

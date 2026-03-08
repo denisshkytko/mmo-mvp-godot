@@ -1,311 +1,607 @@
-[gd_resource type="SpriteFrames" load_steps=103 format=3]
+[gd_resource type="SpriteFrames" load_steps=139 format=3 uid="uid://cypfe0muayjnn"]
 
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_000.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_001.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_002.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_003.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_004.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_005.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_006.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_007.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_008.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_009.png" id="10_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_010.png" id="11_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_011.png" id="12_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_012.png" id="13_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_013.png" id="14_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_014.png" id="15_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_000.png" id="16_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_001.png" id="17_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_002.png" id="18_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_003.png" id="19_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_004.png" id="20_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_005.png" id="21_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_006.png" id="22_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_007.png" id="23_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_008.png" id="24_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_009.png" id="25_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_010.png" id="26_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_011.png" id="27_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_000.png" id="28_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_001.png" id="29_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_002.png" id="30_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_003.png" id="31_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_004.png" id="32_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_005.png" id="33_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_006.png" id="34_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_007.png" id="35_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_008.png" id="36_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_009.png" id="37_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_010.png" id="38_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_011.png" id="39_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_012.png" id="40_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_013.png" id="41_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_014.png" id="42_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_015.png" id="43_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_016.png" id="44_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_017.png" id="45_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_000.png" id="46_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_001.png" id="47_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_002.png" id="48_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_003.png" id="49_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_004.png" id="50_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_005.png" id="51_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_006.png" id="52_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_007.png" id="53_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_008.png" id="54_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_009.png" id="55_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_010.png" id="56_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_011.png" id="57_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_000.png" id="58_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_001.png" id="59_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_002.png" id="60_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_003.png" id="61_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_004.png" id="62_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_005.png" id="63_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_006.png" id="64_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_007.png" id="65_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_008.png" id="66_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_009.png" id="67_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_010.png" id="68_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_011.png" id="69_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_012.png" id="70_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_013.png" id="71_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_014.png" id="72_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_015.png" id="73_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_016.png" id="74_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_017.png" id="75_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_018.png" id="76_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_019.png" id="77_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_020.png" id="78_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_021.png" id="79_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_022.png" id="80_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_023.png" id="81_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_000.png" id="82_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_001.png" id="83_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_002.png" id="84_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_003.png" id="85_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_004.png" id="86_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_005.png" id="87_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_006.png" id="88_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_007.png" id="89_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_008.png" id="90_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_009.png" id="91_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_010.png" id="92_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_011.png" id="93_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_000.png" id="94_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_001.png" id="95_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_002.png" id="96_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_003.png" id="97_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_004.png" id="98_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_005.png" id="99_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_006.png" id="100_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_007.png" id="101_tex"]
-[ext_resource type="Texture2D" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_008.png" id="102_tex"]
+[ext_resource type="Texture2D" uid="uid://bnbudws6wxeiw" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_000.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://c7fcqkfnj5oiy" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_001.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://bcheq5j4xugh4" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_002.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://dwqk3enuxpx7m" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_003.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://bqlsrsvyfftv7" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_004.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://gfreeqvxqdmp" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_005.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://cr3ukl5rfmvlp" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_006.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://b60fj20edjcl1" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_007.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://lt0n1ipmlgii" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_008.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://q4x5t66bc7tf" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_009.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://6p483yy6xcm7" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_010.png" id="11_tex"]
+[ext_resource type="Texture2D" uid="uid://3wf5j44fpeix" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_011.png" id="12_tex"]
+[ext_resource type="Texture2D" uid="uid://d3j4afh0npen1" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_012.png" id="13_tex"]
+[ext_resource type="Texture2D" uid="uid://bpndslim57omj" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_013.png" id="14_tex"]
+[ext_resource type="Texture2D" uid="uid://4s0dyfrkdes0" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Dying/0_Forest_Ranger_Dying_014.png" id="15_tex"]
+[ext_resource type="Texture2D" uid="uid://cgkwrmwnsc1tf" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_000.png" id="16_tex"]
+[ext_resource type="Texture2D" uid="uid://c4jhrj05c6epm" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_001.png" id="17_tex"]
+[ext_resource type="Texture2D" uid="uid://cbpddkg1w0wyn" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_002.png" id="18_tex"]
+[ext_resource type="Texture2D" uid="uid://5wbhojaf8oo3" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_003.png" id="19_tex"]
+[ext_resource type="Texture2D" uid="uid://nuojhqpiguwl" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_004.png" id="20_tex"]
+[ext_resource type="Texture2D" uid="uid://bscqqoneg374s" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_005.png" id="21_tex"]
+[ext_resource type="Texture2D" uid="uid://cjptdyx5mrxdv" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_006.png" id="22_tex"]
+[ext_resource type="Texture2D" uid="uid://coko6bekc4fw4" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_007.png" id="23_tex"]
+[ext_resource type="Texture2D" uid="uid://bujvuyhc1m7x6" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_008.png" id="24_tex"]
+[ext_resource type="Texture2D" uid="uid://nqyvlo8flj53" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_009.png" id="25_tex"]
+[ext_resource type="Texture2D" uid="uid://bay6m0irapqsl" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_010.png" id="26_tex"]
+[ext_resource type="Texture2D" uid="uid://bwr1xnru2e0wf" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Hurt/0_Forest_Ranger_Hurt_011.png" id="27_tex"]
+[ext_resource type="Texture2D" uid="uid://b1kw4fu11ahst" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_000.png" id="28_tex"]
+[ext_resource type="Texture2D" uid="uid://5ut5r83al0bg" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_001.png" id="29_tex"]
+[ext_resource type="Texture2D" uid="uid://b0a4t1hni053q" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_002.png" id="30_tex"]
+[ext_resource type="Texture2D" uid="uid://bk75ivse7pkao" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_003.png" id="31_tex"]
+[ext_resource type="Texture2D" uid="uid://b608jjd2ro7ru" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_004.png" id="32_tex"]
+[ext_resource type="Texture2D" uid="uid://cgfe31xjm0ko2" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_005.png" id="33_tex"]
+[ext_resource type="Texture2D" uid="uid://birpdc628s6xq" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_006.png" id="34_tex"]
+[ext_resource type="Texture2D" uid="uid://d3fxsneud7nrk" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_007.png" id="35_tex"]
+[ext_resource type="Texture2D" uid="uid://dc3tmem1koc4c" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_008.png" id="36_tex"]
+[ext_resource type="Texture2D" uid="uid://d12gyx5ahm21l" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_009.png" id="37_tex"]
+[ext_resource type="Texture2D" uid="uid://bt08se84c0v8y" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_010.png" id="38_tex"]
+[ext_resource type="Texture2D" uid="uid://d3liqafkam7bo" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_011.png" id="39_tex"]
+[ext_resource type="Texture2D" uid="uid://bka7lnjntra63" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_012.png" id="40_tex"]
+[ext_resource type="Texture2D" uid="uid://c7qoxjddp42sn" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_013.png" id="41_tex"]
+[ext_resource type="Texture2D" uid="uid://brcojxodudlhy" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_014.png" id="42_tex"]
+[ext_resource type="Texture2D" uid="uid://bra54brwynf1n" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_015.png" id="43_tex"]
+[ext_resource type="Texture2D" uid="uid://cg8v36luuoe8f" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_016.png" id="44_tex"]
+[ext_resource type="Texture2D" uid="uid://bsi8mpb15ch81" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Idle Blinking/0_Forest_Ranger_Idle Blinking_017.png" id="45_tex"]
+[ext_resource type="Texture2D" uid="uid://emrs4apesa0a" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_000.png" id="46_56mnb"]
+[ext_resource type="Texture2D" uid="uid://c50qn7qiqqvs7" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_000.png" id="46_tex"]
+[ext_resource type="Texture2D" uid="uid://4s4lsqlsnsde" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_001.png" id="47_f8q6x"]
+[ext_resource type="Texture2D" uid="uid://dnq7qmhkrglb2" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_001.png" id="47_tex"]
+[ext_resource type="Texture2D" uid="uid://dyi24s2cx1jm4" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_002.png" id="48_ogvey"]
+[ext_resource type="Texture2D" uid="uid://cbrerqus0qhom" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_002.png" id="48_tex"]
+[ext_resource type="Texture2D" uid="uid://dkpabbq4l873l" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_003.png" id="49_bta0u"]
+[ext_resource type="Texture2D" uid="uid://dbpitwt55j7sn" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_003.png" id="49_tex"]
+[ext_resource type="Texture2D" uid="uid://dxykr7reevcwi" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_004.png" id="50_rj8e6"]
+[ext_resource type="Texture2D" uid="uid://c2offhe11a0if" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_004.png" id="50_tex"]
+[ext_resource type="Texture2D" uid="uid://c6npjma7lfcwv" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_005.png" id="51_egoxp"]
+[ext_resource type="Texture2D" uid="uid://bboq68i70bm28" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_005.png" id="51_tex"]
+[ext_resource type="Texture2D" uid="uid://di6vdddh0y8ah" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_006.png" id="52_7xo3p"]
+[ext_resource type="Texture2D" uid="uid://l7wfvxs850hp" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_006.png" id="52_tex"]
+[ext_resource type="Texture2D" uid="uid://6uipc265syv8" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_007.png" id="53_dwmsx"]
+[ext_resource type="Texture2D" uid="uid://dv4tv7qn0mhn1" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_007.png" id="53_tex"]
+[ext_resource type="Texture2D" uid="uid://cevf3lx7w23m6" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_008.png" id="54_e4r5n"]
+[ext_resource type="Texture2D" uid="uid://7ikxhhh4427p" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_008.png" id="54_tex"]
+[ext_resource type="Texture2D" uid="uid://vcal6j8lwymo" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_009.png" id="55_5v8rn"]
+[ext_resource type="Texture2D" uid="uid://b2sswf3iwbolq" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_009.png" id="55_tex"]
+[ext_resource type="Texture2D" uid="uid://rfc1gywgxk4l" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_010.png" id="56_jg7k1"]
+[ext_resource type="Texture2D" uid="uid://q4edsrailqsp" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_010.png" id="56_tex"]
+[ext_resource type="Texture2D" uid="uid://cwvpj6ej0vdss" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Kicking/0_Forest_Ranger_Kicking_011.png" id="57_0eypi"]
+[ext_resource type="Texture2D" uid="uid://borydncw100n4" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Running/0_Forest_Ranger_Running_011.png" id="57_tex"]
+[ext_resource type="Texture2D" uid="uid://c5uql8mn5b2uc" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_000.png" id="58_tex"]
+[ext_resource type="Texture2D" uid="uid://cny2sb4gbasst" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_001.png" id="59_tex"]
+[ext_resource type="Texture2D" uid="uid://csah10f8sjchp" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_002.png" id="60_tex"]
+[ext_resource type="Texture2D" uid="uid://nplw71fi8pp3" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_003.png" id="61_tex"]
+[ext_resource type="Texture2D" uid="uid://dwnr2roif3k42" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_004.png" id="62_tex"]
+[ext_resource type="Texture2D" uid="uid://52t8385h7oo1" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_005.png" id="63_tex"]
+[ext_resource type="Texture2D" uid="uid://dospa8q4kxrsq" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_006.png" id="64_tex"]
+[ext_resource type="Texture2D" uid="uid://dj2j1yvdqvbod" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_007.png" id="65_tex"]
+[ext_resource type="Texture2D" uid="uid://bcv4ij1q7x1yt" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_008.png" id="66_tex"]
+[ext_resource type="Texture2D" uid="uid://d20jyclim0fdv" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_009.png" id="67_tex"]
+[ext_resource type="Texture2D" uid="uid://kbknx2g8au8" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_010.png" id="68_tex"]
+[ext_resource type="Texture2D" uid="uid://cynnu6addsx3" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_011.png" id="69_tex"]
+[ext_resource type="Texture2D" uid="uid://nxtw6hfcakx8" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_000.png" id="70_f0flv"]
+[ext_resource type="Texture2D" uid="uid://ce8yqhs8k6r75" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_012.png" id="70_tex"]
+[ext_resource type="Texture2D" uid="uid://p0gmdmoo6172" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_001.png" id="71_oqtxl"]
+[ext_resource type="Texture2D" uid="uid://meow57aa3hid" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_013.png" id="71_tex"]
+[ext_resource type="Texture2D" uid="uid://dbjmne105idmi" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_002.png" id="72_1v46v"]
+[ext_resource type="Texture2D" uid="uid://s7y65jx8p81h" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_014.png" id="72_tex"]
+[ext_resource type="Texture2D" uid="uid://hl3unf43t1w1" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_003.png" id="73_myt5n"]
+[ext_resource type="Texture2D" uid="uid://nif6b6t5nmyv" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_015.png" id="73_tex"]
+[ext_resource type="Texture2D" uid="uid://bvnb1rsgvax5o" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_004.png" id="74_ecl2g"]
+[ext_resource type="Texture2D" uid="uid://dwhlci3oi7eky" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_016.png" id="74_tex"]
+[ext_resource type="Texture2D" uid="uid://cfvodnum5dy86" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_005.png" id="75_qtnp0"]
+[ext_resource type="Texture2D" uid="uid://cuk3h2xtxj1c5" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_017.png" id="75_tex"]
+[ext_resource type="Texture2D" uid="uid://fm4gk28vpn44" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_006.png" id="76_ebyru"]
+[ext_resource type="Texture2D" uid="uid://3055ugf8slc5" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_018.png" id="76_tex"]
+[ext_resource type="Texture2D" uid="uid://dsd66lj5nxsio" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_007.png" id="77_4283f"]
+[ext_resource type="Texture2D" uid="uid://4vfqps7ydqcy" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_019.png" id="77_tex"]
+[ext_resource type="Texture2D" uid="uid://bmknyo664hexs" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_008.png" id="78_32ofj"]
+[ext_resource type="Texture2D" uid="uid://d0xrfdg7ij0cr" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_020.png" id="78_tex"]
+[ext_resource type="Texture2D" uid="uid://gtad0ausjqyo" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_009.png" id="79_3a33m"]
+[ext_resource type="Texture2D" uid="uid://c2pvmddqk0dhb" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_021.png" id="79_tex"]
+[ext_resource type="Texture2D" uid="uid://cs8m2movqni5i" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_010.png" id="80_llcn5"]
+[ext_resource type="Texture2D" uid="uid://ctemn1nx2rdij" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_022.png" id="80_tex"]
+[ext_resource type="Texture2D" uid="uid://crr5h65140dkj" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Throwing/0_Forest_Ranger_Run Throwing_011.png" id="81_axj42"]
+[ext_resource type="Texture2D" uid="uid://ta4e3hbiya3w" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Walking/0_Forest_Ranger_Walking_023.png" id="81_tex"]
+[ext_resource type="Texture2D" uid="uid://cajbloxhyhrq6" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_000.png" id="82_tex"]
+[ext_resource type="Texture2D" uid="uid://d113hhra2l762" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_001.png" id="83_tex"]
+[ext_resource type="Texture2D" uid="uid://cifoc5garpi7r" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_002.png" id="84_tex"]
+[ext_resource type="Texture2D" uid="uid://ds3efsftkhfyr" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_003.png" id="85_tex"]
+[ext_resource type="Texture2D" uid="uid://ycw71egc4u60" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_004.png" id="86_tex"]
+[ext_resource type="Texture2D" uid="uid://lf236gf275yt" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_005.png" id="87_tex"]
+[ext_resource type="Texture2D" uid="uid://c0pt8uk66e62l" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_006.png" id="88_tex"]
+[ext_resource type="Texture2D" uid="uid://d1d6ctwjp8445" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_007.png" id="89_tex"]
+[ext_resource type="Texture2D" uid="uid://btyk4eivqc81o" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_008.png" id="90_tex"]
+[ext_resource type="Texture2D" uid="uid://p4irbvgrblys" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_009.png" id="91_tex"]
+[ext_resource type="Texture2D" uid="uid://btpiq1pf0f4q5" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_010.png" id="92_tex"]
+[ext_resource type="Texture2D" uid="uid://coo7gnwupcaeq" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Run Shooting/0_Forest_Ranger_Run Shooting_011.png" id="93_tex"]
+[ext_resource type="Texture2D" uid="uid://irfq1fxawu53" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_000.png" id="94_tex"]
+[ext_resource type="Texture2D" uid="uid://dosnpgkrrg5aq" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_001.png" id="95_tex"]
+[ext_resource type="Texture2D" uid="uid://cvxoh8mfvcln6" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_002.png" id="96_tex"]
+[ext_resource type="Texture2D" uid="uid://dpavv2yfwjfnj" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_003.png" id="97_tex"]
+[ext_resource type="Texture2D" uid="uid://ngtfpwswvcnu" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_004.png" id="98_tex"]
+[ext_resource type="Texture2D" uid="uid://b3rlwhywn3o0u" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_005.png" id="99_tex"]
+[ext_resource type="Texture2D" uid="uid://b82xm1lqmqdco" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_006.png" id="100_tex"]
+[ext_resource type="Texture2D" uid="uid://b1i1skmgf8ueo" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_007.png" id="101_tex"]
+[ext_resource type="Texture2D" uid="uid://fo4nqe4xkpsy" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Shooting/0_Forest_Ranger_Shooting_008.png" id="102_tex"]
+[ext_resource type="Texture2D" uid="uid://tj2di6383c7o" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_000.png" id="103_i4ijf"]
+[ext_resource type="Texture2D" uid="uid://bvv8yukumycow" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_001.png" id="104_g3jg4"]
+[ext_resource type="Texture2D" uid="uid://d0nl3bgnh6wb2" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_002.png" id="105_4bc8v"]
+[ext_resource type="Texture2D" uid="uid://cryhbw7qobcff" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_003.png" id="106_yb5jo"]
+[ext_resource type="Texture2D" uid="uid://bb2lkwok0vple" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_004.png" id="107_rielt"]
+[ext_resource type="Texture2D" uid="uid://bqv32baductl0" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_005.png" id="108_5cjd0"]
+[ext_resource type="Texture2D" uid="uid://joeacti26kvx" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_006.png" id="109_ie877"]
+[ext_resource type="Texture2D" uid="uid://duso8js7crui3" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_007.png" id="110_spfsj"]
+[ext_resource type="Texture2D" uid="uid://dyw54puih0kju" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_008.png" id="111_le66i"]
+[ext_resource type="Texture2D" uid="uid://cbvhrmpgv8wqm" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_009.png" id="112_uvmw3"]
+[ext_resource type="Texture2D" uid="uid://ekvdeomlx7na" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_010.png" id="113_umlbi"]
+[ext_resource type="Texture2D" uid="uid://p04wsawpmmvu" path="res://assets/mobs/Bandits/Hunter - Range/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_011.png" id="114_q5uph"]
 
 [resource]
 animations = [{
-"frames": [
-{"duration": 1.0, "texture": ExtResource("1_tex")},
-{"duration": 1.0, "texture": ExtResource("2_tex")},
-{"duration": 1.0, "texture": ExtResource("3_tex")},
-{"duration": 1.0, "texture": ExtResource("4_tex")},
-{"duration": 1.0, "texture": ExtResource("5_tex")},
-{"duration": 1.0, "texture": ExtResource("6_tex")},
-{"duration": 1.0, "texture": ExtResource("7_tex")},
-{"duration": 1.0, "texture": ExtResource("8_tex")},
-{"duration": 1.0, "texture": ExtResource("9_tex")},
-{"duration": 1.0, "texture": ExtResource("10_tex")},
-{"duration": 1.0, "texture": ExtResource("11_tex")},
-{"duration": 1.0, "texture": ExtResource("12_tex")},
-{"duration": 1.0, "texture": ExtResource("13_tex")},
-{"duration": 1.0, "texture": ExtResource("14_tex")},
-{"duration": 1.0, "texture": ExtResource("15_tex")}
-],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+}],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+}],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("28_tex")},
-{"duration": 1.0, "texture": ExtResource("29_tex")},
-{"duration": 1.0, "texture": ExtResource("30_tex")},
-{"duration": 1.0, "texture": ExtResource("31_tex")},
-{"duration": 1.0, "texture": ExtResource("32_tex")},
-{"duration": 1.0, "texture": ExtResource("33_tex")},
-{"duration": 1.0, "texture": ExtResource("34_tex")},
-{"duration": 1.0, "texture": ExtResource("35_tex")},
-{"duration": 1.0, "texture": ExtResource("36_tex")},
-{"duration": 1.0, "texture": ExtResource("37_tex")},
-{"duration": 1.0, "texture": ExtResource("38_tex")},
-{"duration": 1.0, "texture": ExtResource("39_tex")},
-{"duration": 1.0, "texture": ExtResource("40_tex")},
-{"duration": 1.0, "texture": ExtResource("41_tex")},
-{"duration": 1.0, "texture": ExtResource("42_tex")},
-{"duration": 1.0, "texture": ExtResource("43_tex")},
-{"duration": 1.0, "texture": ExtResource("44_tex")},
-{"duration": 1.0, "texture": ExtResource("45_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_tex")
+}],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("46_tex")},
-{"duration": 1.0, "texture": ExtResource("47_tex")},
-{"duration": 1.0, "texture": ExtResource("48_tex")},
-{"duration": 1.0, "texture": ExtResource("49_tex")},
-{"duration": 1.0, "texture": ExtResource("50_tex")},
-{"duration": 1.0, "texture": ExtResource("51_tex")},
-{"duration": 1.0, "texture": ExtResource("52_tex")},
-{"duration": 1.0, "texture": ExtResource("53_tex")},
-{"duration": 1.0, "texture": ExtResource("54_tex")},
-{"duration": 1.0, "texture": ExtResource("55_tex")},
-{"duration": 1.0, "texture": ExtResource("56_tex")},
-{"duration": 1.0, "texture": ExtResource("57_tex")}
-],
-"loop": true,
-"name": &"Running",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("58_tex")},
-{"duration": 1.0, "texture": ExtResource("59_tex")},
-{"duration": 1.0, "texture": ExtResource("60_tex")},
-{"duration": 1.0, "texture": ExtResource("61_tex")},
-{"duration": 1.0, "texture": ExtResource("62_tex")},
-{"duration": 1.0, "texture": ExtResource("63_tex")},
-{"duration": 1.0, "texture": ExtResource("64_tex")},
-{"duration": 1.0, "texture": ExtResource("65_tex")},
-{"duration": 1.0, "texture": ExtResource("66_tex")},
-{"duration": 1.0, "texture": ExtResource("67_tex")},
-{"duration": 1.0, "texture": ExtResource("68_tex")},
-{"duration": 1.0, "texture": ExtResource("69_tex")},
-{"duration": 1.0, "texture": ExtResource("70_tex")},
-{"duration": 1.0, "texture": ExtResource("71_tex")},
-{"duration": 1.0, "texture": ExtResource("72_tex")},
-{"duration": 1.0, "texture": ExtResource("73_tex")},
-{"duration": 1.0, "texture": ExtResource("74_tex")},
-{"duration": 1.0, "texture": ExtResource("75_tex")},
-{"duration": 1.0, "texture": ExtResource("76_tex")},
-{"duration": 1.0, "texture": ExtResource("77_tex")},
-{"duration": 1.0, "texture": ExtResource("78_tex")},
-{"duration": 1.0, "texture": ExtResource("79_tex")},
-{"duration": 1.0, "texture": ExtResource("80_tex")},
-{"duration": 1.0, "texture": ExtResource("81_tex")}
-],
-"loop": true,
-"name": &"Walking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
-"loop": true,
-"name": &"Run Shooting",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")}
-],
-"loop": true,
-"name": &"Shooting",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("16_tex")},
-{"duration": 1.0, "texture": ExtResource("17_tex")},
-{"duration": 1.0, "texture": ExtResource("18_tex")},
-{"duration": 1.0, "texture": ExtResource("19_tex")},
-{"duration": 1.0, "texture": ExtResource("20_tex")},
-{"duration": 1.0, "texture": ExtResource("21_tex")},
-{"duration": 1.0, "texture": ExtResource("22_tex")},
-{"duration": 1.0, "texture": ExtResource("23_tex")},
-{"duration": 1.0, "texture": ExtResource("24_tex")},
-{"duration": 1.0, "texture": ExtResource("25_tex")},
-{"duration": 1.0, "texture": ExtResource("26_tex")},
-{"duration": 1.0, "texture": ExtResource("27_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_56mnb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_f8q6x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_ogvey")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_bta0u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_rj8e6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_egoxp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_7xo3p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_dwmsx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_e4r5n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_5v8rn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_jg7k1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_0eypi")
+}],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("82_tex")},
-{"duration": 1.0, "texture": ExtResource("83_tex")},
-{"duration": 1.0, "texture": ExtResource("84_tex")},
-{"duration": 1.0, "texture": ExtResource("85_tex")},
-{"duration": 1.0, "texture": ExtResource("86_tex")},
-{"duration": 1.0, "texture": ExtResource("87_tex")},
-{"duration": 1.0, "texture": ExtResource("88_tex")},
-{"duration": 1.0, "texture": ExtResource("89_tex")},
-{"duration": 1.0, "texture": ExtResource("90_tex")},
-{"duration": 1.0, "texture": ExtResource("91_tex")},
-{"duration": 1.0, "texture": ExtResource("92_tex")},
-{"duration": 1.0, "texture": ExtResource("93_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("82_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("85_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("86_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("87_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("88_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("89_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("90_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("91_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("92_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("93_tex")
+}],
+"loop": true,
+"name": &"Run Shooting",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("70_f0flv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_oqtxl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_1v46v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_myt5n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_ecl2g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_qtnp0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_ebyru")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_4283f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_32ofj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_3a33m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_llcn5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_axj42")
+}],
 "loop": true,
 "name": &"Run Throwing",
-"speed": 12.0
-}
-, {
-"frames": [
-{"duration": 1.0, "texture": ExtResource("94_tex")},
-{"duration": 1.0, "texture": ExtResource("95_tex")},
-{"duration": 1.0, "texture": ExtResource("96_tex")},
-{"duration": 1.0, "texture": ExtResource("97_tex")},
-{"duration": 1.0, "texture": ExtResource("98_tex")},
-{"duration": 1.0, "texture": ExtResource("99_tex")},
-{"duration": 1.0, "texture": ExtResource("100_tex")},
-{"duration": 1.0, "texture": ExtResource("101_tex")},
-{"duration": 1.0, "texture": ExtResource("102_tex")}
-],
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("46_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_tex")
+}],
+"loop": true,
+"name": &"Running",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("94_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("95_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("96_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("97_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("98_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("99_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("100_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("101_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("102_tex")
+}],
+"loop": true,
+"name": &"Shooting",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("103_i4ijf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("104_g3jg4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("105_4bc8v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("106_yb5jo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("107_rielt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("108_5cjd0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("109_ie877")
+}, {
+"duration": 1.0,
+"texture": ExtResource("110_spfsj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("111_le66i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("112_uvmw3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("113_umlbi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("114_q5uph")
+}],
 "loop": true,
 "name": &"Throwing",
-"speed": 12.0
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("58_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("59_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("68_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("77_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("78_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("79_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("80_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("81_tex")
+}],
+"loop": true,
+"name": &"Walking",
+"speed": 24.0
 }]

@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=118 format=3 uid="uid://c4yr7bi41qd7a"]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://c4yr7bi41qd7a"]
 
 [ext_resource type="Texture2D" uid="uid://cs571ikl1mw2x" path="res://assets/characters/Priest/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_000.png" id="1_tex"]
 [ext_resource type="Texture2D" uid="uid://5na6r1kjlrkb" path="res://assets/characters/Priest/PNG Sequences/Dying/0_Bloody_Alchemist_Dying_001.png" id="2_tex"]
@@ -81,29 +81,53 @@
 [ext_resource type="Texture2D" uid="uid://cfwwk1lprpdnk" path="res://assets/characters/Priest/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_009.png" id="115_tex"]
 [ext_resource type="Texture2D" uid="uid://fev8kx4n5uum" path="res://assets/characters/Priest/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_010.png" id="116_tex"]
 [ext_resource type="Texture2D" uid="uid://ccynuc7laypo5" path="res://assets/characters/Priest/PNG Sequences/Run Throwing/0_Bloody_Alchemist_Run Throwing_011.png" id="117_tex"]
+[ext_resource type="Texture2D" uid="uid://cetmd3w0qx50u" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_000.png" id="118_pspu3"]
 [ext_resource type="Texture2D" uid="uid://bcfltdbyd8y8y" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_000.png" id="118_tex"]
+[ext_resource type="Texture2D" uid="uid://dciya20co0r3m" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_001.png" id="119_kkr4q"]
 [ext_resource type="Texture2D" uid="uid://dsn5lqitd8b4g" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_001.png" id="119_tex"]
+[ext_resource type="Texture2D" uid="uid://bc55c0sgwa4n5" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_002.png" id="120_8ia4t"]
 [ext_resource type="Texture2D" uid="uid://bntof305s5yy7" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_002.png" id="120_tex"]
 [ext_resource type="Texture2D" uid="uid://co7awa4qovy3w" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_003.png" id="121_tex"]
+[ext_resource type="Texture2D" uid="uid://bncbwyg8p1hxn" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_003.png" id="121_x7rfm"]
+[ext_resource type="Texture2D" uid="uid://dtgwk37k21a5d" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_004.png" id="122_hw01w"]
 [ext_resource type="Texture2D" uid="uid://0eq7nvwts0hs" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_004.png" id="122_tex"]
+[ext_resource type="Texture2D" uid="uid://c82wmu7x2pvb0" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_005.png" id="123_kxyk8"]
 [ext_resource type="Texture2D" uid="uid://bmab71j8p17yo" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_005.png" id="123_tex"]
+[ext_resource type="Texture2D" uid="uid://tfmagymdfdl0" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_006.png" id="124_6bjv2"]
 [ext_resource type="Texture2D" uid="uid://rvurnwrie85l" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_006.png" id="124_tex"]
+[ext_resource type="Texture2D" uid="uid://cfdrbov6yqjox" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_007.png" id="125_lis11"]
 [ext_resource type="Texture2D" uid="uid://dlaap1kk72d4i" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_007.png" id="125_tex"]
+[ext_resource type="Texture2D" uid="uid://cbgckgks65fpw" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_008.png" id="126_g2poj"]
 [ext_resource type="Texture2D" uid="uid://bp1iuxtgqu8f3" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_008.png" id="126_tex"]
+[ext_resource type="Texture2D" uid="uid://6dcomwd8qwf4" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_009.png" id="127_g2yk2"]
 [ext_resource type="Texture2D" uid="uid://bhioi4u4l0m0y" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_009.png" id="127_tex"]
+[ext_resource type="Texture2D" uid="uid://7foxqq7se464" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_010.png" id="128_q7v60"]
 [ext_resource type="Texture2D" uid="uid://xy067fsgk6l8" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_010.png" id="128_tex"]
 [ext_resource type="Texture2D" uid="uid://cgxfvu6cyqd40" path="res://assets/characters/Priest/PNG Sequences/Running/0_Bloody_Alchemist_Running_011.png" id="129_tex"]
+[ext_resource type="Texture2D" uid="uid://dm3yabj2vecm5" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_011.png" id="129_x4i02"]
 [ext_resource type="Texture2D" uid="uid://b3j3dgmo0fvo2" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_000.png" id="130_tex"]
+[ext_resource type="Texture2D" uid="uid://6itlwiiyjggv" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_012.png" id="130_wiubx"]
 [ext_resource type="Texture2D" uid="uid://bnvquw5weh51v" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_001.png" id="131_tex"]
+[ext_resource type="Texture2D" uid="uid://yp6lwkd2dq8l" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_013.png" id="131_xe8bj"]
+[ext_resource type="Texture2D" uid="uid://dbmtuhdc5vi64" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_014.png" id="132_aka63"]
 [ext_resource type="Texture2D" uid="uid://dgld0u0p6ddya" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_002.png" id="132_tex"]
+[ext_resource type="Texture2D" uid="uid://datgjtnejgvkb" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_015.png" id="133_a24im"]
 [ext_resource type="Texture2D" uid="uid://c33s8ci08efo3" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_003.png" id="133_tex"]
+[ext_resource type="Texture2D" uid="uid://ci22mrj4hfilw" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_016.png" id="134_pllfk"]
 [ext_resource type="Texture2D" uid="uid://bclvb6qds22is" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_004.png" id="134_tex"]
 [ext_resource type="Texture2D" uid="uid://dp0kgfru8tsee" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_005.png" id="135_tex"]
+[ext_resource type="Texture2D" uid="uid://cn2l1kuwa4utu" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_017.png" id="135_wthxn"]
+[ext_resource type="Texture2D" uid="uid://ctej5wjdkp0rx" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_018.png" id="136_igtbt"]
 [ext_resource type="Texture2D" uid="uid://5rkr0sbpqkag" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_006.png" id="136_tex"]
+[ext_resource type="Texture2D" uid="uid://b5070m1ayq88" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_019.png" id="137_jedvb"]
 [ext_resource type="Texture2D" uid="uid://dhbldms40kc68" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_007.png" id="137_tex"]
+[ext_resource type="Texture2D" uid="uid://br1havklrfvv7" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_020.png" id="138_e6s31"]
 [ext_resource type="Texture2D" uid="uid://cc228kxvdbti2" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_008.png" id="138_tex"]
 [ext_resource type="Texture2D" uid="uid://t4rprdn2be3t" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_009.png" id="139_tex"]
+[ext_resource type="Texture2D" uid="uid://707yren4p5nv" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_021.png" id="139_yxffa"]
+[ext_resource type="Texture2D" uid="uid://cd2q8osi2akxm" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_022.png" id="140_is0ll"]
 [ext_resource type="Texture2D" uid="uid://cvonav4h1jcvb" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_010.png" id="140_tex"]
+[ext_resource type="Texture2D" uid="uid://brihlc70jn8xd" path="res://assets/characters/Priest/PNG Sequences/Walking/0_Bloody_Alchemist_Walking_023.png" id="141_7nniw"]
 [ext_resource type="Texture2D" uid="uid://cps7gyjx3tjv7" path="res://assets/characters/Priest/PNG Sequences/Slashing/0_Bloody_Alchemist_Slashing_011.png" id="141_tex"]
 [ext_resource type="Texture2D" uid="uid://d03rx2ow0ykrc" path="res://assets/characters/Priest/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_000.png" id="160_tex"]
 [ext_resource type="Texture2D" uid="uid://bv4078nmfpxje" path="res://assets/characters/Priest/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_001.png" id="161_tex"]
@@ -168,9 +192,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("22_tex")
@@ -210,9 +233,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("52_tex")
@@ -270,9 +292,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("82_tex")
@@ -312,9 +333,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("94_tex")
@@ -354,9 +374,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("106_tex")
@@ -396,9 +415,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("118_tex")
@@ -438,9 +456,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Running",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("130_tex")
@@ -480,9 +497,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("160_tex")
@@ -522,47 +538,82 @@ animations = [{
 }],
 "loop": true,
 "name": &"Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("118_tex")
+"texture": ExtResource("118_pspu3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("119_tex")
+"texture": ExtResource("119_kkr4q")
 }, {
 "duration": 1.0,
-"texture": ExtResource("120_tex")
+"texture": ExtResource("120_8ia4t")
 }, {
 "duration": 1.0,
-"texture": ExtResource("121_tex")
+"texture": ExtResource("121_x7rfm")
 }, {
 "duration": 1.0,
-"texture": ExtResource("122_tex")
+"texture": ExtResource("122_hw01w")
 }, {
 "duration": 1.0,
-"texture": ExtResource("123_tex")
+"texture": ExtResource("123_kxyk8")
 }, {
 "duration": 1.0,
-"texture": ExtResource("124_tex")
+"texture": ExtResource("124_6bjv2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("125_tex")
+"texture": ExtResource("125_lis11")
 }, {
 "duration": 1.0,
-"texture": ExtResource("126_tex")
+"texture": ExtResource("126_g2poj")
 }, {
 "duration": 1.0,
-"texture": ExtResource("127_tex")
+"texture": ExtResource("127_g2yk2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("128_tex")
+"texture": ExtResource("128_q7v60")
 }, {
 "duration": 1.0,
-"texture": ExtResource("129_tex")
+"texture": ExtResource("129_x4i02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_wiubx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_xe8bj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_aka63")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_a24im")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_pllfk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_wthxn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_igtbt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("137_jedvb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("138_e6s31")
+}, {
+"duration": 1.0,
+"texture": ExtResource("139_yxffa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("140_is0ll")
+}, {
+"duration": 1.0,
+"texture": ExtResource("141_7nniw")
 }],
 "loop": true,
 "name": &"Walking",
-"speed": 12.0
+"speed": 24.0
 }]

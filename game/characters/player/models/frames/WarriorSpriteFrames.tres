@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=118 format=3 uid="uid://dffj2td8k5p6e"]
+[gd_resource type="SpriteFrames" load_steps=142 format=3 uid="uid://dffj2td8k5p6e"]
 
 [ext_resource type="Texture2D" uid="uid://beta30ksrhwon" path="res://assets/characters/Warrior/PNG Sequences/Dying/0_Valkyrie_Dying_000.png" id="1_tex"]
 [ext_resource type="Texture2D" uid="uid://cijtoude6ofbc" path="res://assets/characters/Warrior/PNG Sequences/Dying/0_Valkyrie_Dying_001.png" id="2_tex"]
@@ -81,30 +81,54 @@
 [ext_resource type="Texture2D" uid="uid://bl7pjgpd3601j" path="res://assets/characters/Warrior/PNG Sequences/Run Throwing/0_Valkyrie_Run Throwing_009.png" id="115_tex"]
 [ext_resource type="Texture2D" uid="uid://dcamfs5orippa" path="res://assets/characters/Warrior/PNG Sequences/Run Throwing/0_Valkyrie_Run Throwing_010.png" id="116_tex"]
 [ext_resource type="Texture2D" uid="uid://cqiycmo4sy165" path="res://assets/characters/Warrior/PNG Sequences/Run Throwing/0_Valkyrie_Run Throwing_011.png" id="117_tex"]
+[ext_resource type="Texture2D" uid="uid://cddj7va82h3gb" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_000.png" id="118_1ci5b"]
 [ext_resource type="Texture2D" uid="uid://4gcyeycee71r" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_000.png" id="118_tex"]
+[ext_resource type="Texture2D" uid="uid://qxcqa1kcjs8u" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_001.png" id="119_f6fsv"]
 [ext_resource type="Texture2D" uid="uid://dc464u72h7k85" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_001.png" id="119_tex"]
+[ext_resource type="Texture2D" uid="uid://coeupjyw1tpd8" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_002.png" id="120_fddoy"]
 [ext_resource type="Texture2D" uid="uid://lrmedbufw0lr" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_002.png" id="120_tex"]
+[ext_resource type="Texture2D" uid="uid://bqugta3tcwetj" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_003.png" id="121_421vx"]
 [ext_resource type="Texture2D" uid="uid://c3l6jv63fodny" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_003.png" id="121_tex"]
+[ext_resource type="Texture2D" uid="uid://bfdxydcb56e0e" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_004.png" id="122_hsmmg"]
 [ext_resource type="Texture2D" uid="uid://dwpvdi2b855tu" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_004.png" id="122_tex"]
+[ext_resource type="Texture2D" uid="uid://ct4dmwn8t1bwj" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_005.png" id="123_jitra"]
 [ext_resource type="Texture2D" uid="uid://c5n3yy3ulwc65" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_005.png" id="123_tex"]
+[ext_resource type="Texture2D" uid="uid://cjdil36x4vj3y" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_006.png" id="124_e2ooo"]
 [ext_resource type="Texture2D" uid="uid://bbkpbdcgb0unj" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_006.png" id="124_tex"]
+[ext_resource type="Texture2D" uid="uid://fwv7x614ynxe" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_007.png" id="125_5tl4v"]
 [ext_resource type="Texture2D" uid="uid://d12ohsbruab4a" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_007.png" id="125_tex"]
+[ext_resource type="Texture2D" uid="uid://cc5jrfn08hj2y" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_008.png" id="126_p6744"]
 [ext_resource type="Texture2D" uid="uid://0hy7cvxutn5h" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_008.png" id="126_tex"]
+[ext_resource type="Texture2D" uid="uid://docgcna82te5d" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_009.png" id="127_pjssm"]
 [ext_resource type="Texture2D" uid="uid://b5s4bgq6qe06o" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_009.png" id="127_tex"]
+[ext_resource type="Texture2D" uid="uid://c0wxlfu1gs88b" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_010.png" id="128_lokma"]
 [ext_resource type="Texture2D" uid="uid://d3axf1qcijhrs" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_010.png" id="128_tex"]
+[ext_resource type="Texture2D" uid="uid://b0hr3hmsnuder" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_011.png" id="129_e1pw0"]
 [ext_resource type="Texture2D" uid="uid://bkvudqhkm5oup" path="res://assets/characters/Warrior/PNG Sequences/Running/0_Valkyrie_Running_011.png" id="129_tex"]
+[ext_resource type="Texture2D" uid="uid://but0cctjs1wxy" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_012.png" id="130_i1ffp"]
 [ext_resource type="Texture2D" uid="uid://cmnh8ha3sfcto" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_000.png" id="130_tex"]
 [ext_resource type="Texture2D" uid="uid://q5wnohsnw3u4" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_001.png" id="131_tex"]
+[ext_resource type="Texture2D" uid="uid://bjvl6mti7fldu" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_013.png" id="131_w5yah"]
 [ext_resource type="Texture2D" uid="uid://ce346j2xsu7rw" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_002.png" id="132_tex"]
+[ext_resource type="Texture2D" uid="uid://dugyl70bgnb3k" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_014.png" id="132_ykujq"]
+[ext_resource type="Texture2D" uid="uid://4xii31dyf3s5" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_015.png" id="133_llb5x"]
 [ext_resource type="Texture2D" uid="uid://gwgurmgksbyj" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_003.png" id="133_tex"]
 [ext_resource type="Texture2D" uid="uid://c1m3ndwkyaua0" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_004.png" id="134_tex"]
+[ext_resource type="Texture2D" uid="uid://bl6tfeocd0r7r" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_016.png" id="134_tt8l6"]
+[ext_resource type="Texture2D" uid="uid://ba3nlot8u6jqx" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_017.png" id="135_dw248"]
 [ext_resource type="Texture2D" uid="uid://3l8wbf6ro8ty" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_005.png" id="135_tex"]
+[ext_resource type="Texture2D" uid="uid://dgp7vg4nfd5vi" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_018.png" id="136_2c422"]
 [ext_resource type="Texture2D" uid="uid://cew787v4e8sb6" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_006.png" id="136_tex"]
+[ext_resource type="Texture2D" uid="uid://bnucpil5cm4w0" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_019.png" id="137_r80to"]
 [ext_resource type="Texture2D" uid="uid://ds6h1037a4p05" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_007.png" id="137_tex"]
 [ext_resource type="Texture2D" uid="uid://c083hbr1ybgi8" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_008.png" id="138_tex"]
+[ext_resource type="Texture2D" uid="uid://djl518ltiro8i" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_020.png" id="138_uoebt"]
+[ext_resource type="Texture2D" uid="uid://dc47o3muprvum" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_021.png" id="139_66wkj"]
 [ext_resource type="Texture2D" uid="uid://niy13takr8yv" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_009.png" id="139_tex"]
 [ext_resource type="Texture2D" uid="uid://bnud1id1koj16" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_010.png" id="140_tex"]
+[ext_resource type="Texture2D" uid="uid://c6prdhk7n5p8p" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_022.png" id="140_x1jaj"]
 [ext_resource type="Texture2D" uid="uid://crgrpuvhkb8fo" path="res://assets/characters/Warrior/PNG Sequences/Slashing/0_Valkyrie_Slashing_011.png" id="141_tex"]
+[ext_resource type="Texture2D" uid="uid://crldgdybgqfc7" path="res://assets/characters/Warrior/PNG Sequences/Walking/0_Valkyrie_Walking_023.png" id="141_uflkd"]
 [ext_resource type="Texture2D" uid="uid://x1whqs8m7uw8" path="res://assets/characters/Warrior/PNG Sequences/Throwing/0_Valkyrie_Throwing_000.png" id="160_tex"]
 [ext_resource type="Texture2D" uid="uid://bxl1do6xt6d76" path="res://assets/characters/Warrior/PNG Sequences/Throwing/0_Valkyrie_Throwing_001.png" id="161_tex"]
 [ext_resource type="Texture2D" uid="uid://c7qeewojrnv0i" path="res://assets/characters/Warrior/PNG Sequences/Throwing/0_Valkyrie_Throwing_002.png" id="162_tex"]
@@ -168,9 +192,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Dying",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("22_tex")
@@ -210,9 +233,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Hurt",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("52_tex")
@@ -270,9 +292,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Idle Blinking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("82_tex")
@@ -312,9 +333,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Kicking",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("94_tex")
@@ -354,9 +374,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("106_tex")
@@ -396,9 +415,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("118_tex")
@@ -438,9 +456,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Running",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("130_tex")
@@ -480,9 +497,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Slashing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("160_tex")
@@ -522,47 +538,82 @@ animations = [{
 }],
 "loop": true,
 "name": &"Throwing",
-"speed": 12.0
-}
-, {
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("118_tex")
+"texture": ExtResource("118_1ci5b")
 }, {
 "duration": 1.0,
-"texture": ExtResource("119_tex")
+"texture": ExtResource("119_f6fsv")
 }, {
 "duration": 1.0,
-"texture": ExtResource("120_tex")
+"texture": ExtResource("120_fddoy")
 }, {
 "duration": 1.0,
-"texture": ExtResource("121_tex")
+"texture": ExtResource("121_421vx")
 }, {
 "duration": 1.0,
-"texture": ExtResource("122_tex")
+"texture": ExtResource("122_hsmmg")
 }, {
 "duration": 1.0,
-"texture": ExtResource("123_tex")
+"texture": ExtResource("123_jitra")
 }, {
 "duration": 1.0,
-"texture": ExtResource("124_tex")
+"texture": ExtResource("124_e2ooo")
 }, {
 "duration": 1.0,
-"texture": ExtResource("125_tex")
+"texture": ExtResource("125_5tl4v")
 }, {
 "duration": 1.0,
-"texture": ExtResource("126_tex")
+"texture": ExtResource("126_p6744")
 }, {
 "duration": 1.0,
-"texture": ExtResource("127_tex")
+"texture": ExtResource("127_pjssm")
 }, {
 "duration": 1.0,
-"texture": ExtResource("128_tex")
+"texture": ExtResource("128_lokma")
 }, {
 "duration": 1.0,
-"texture": ExtResource("129_tex")
+"texture": ExtResource("129_e1pw0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("130_i1ffp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("131_w5yah")
+}, {
+"duration": 1.0,
+"texture": ExtResource("132_ykujq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("133_llb5x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("134_tt8l6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("135_dw248")
+}, {
+"duration": 1.0,
+"texture": ExtResource("136_2c422")
+}, {
+"duration": 1.0,
+"texture": ExtResource("137_r80to")
+}, {
+"duration": 1.0,
+"texture": ExtResource("138_uoebt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("139_66wkj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("140_x1jaj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("141_uflkd")
 }],
 "loop": true,
 "name": &"Walking",
-"speed": 12.0
+"speed": 24.0
 }]
