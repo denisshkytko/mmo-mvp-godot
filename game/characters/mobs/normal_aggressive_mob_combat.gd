@@ -82,7 +82,7 @@ func _fire_ranged(actor: Node2D, target: Node2D, damage: int) -> void:
 		return
 
 	parent.add_child(proj)
-	proj.global_position = actor.global_position
+	proj.global_position = _projectile_spawn_origin(actor)
 
 	if proj.has_method("setup"):
 		proj.call("setup", target, damage, actor)
@@ -110,3 +110,12 @@ func _distance_between_body_hitboxes(a: Node2D, b: Node2D) -> float:
 	if b.has_method("get_body_hitbox_center_global"):
 		b_pos = b.call("get_body_hitbox_center_global")
 	return a_pos.distance_to(b_pos)
+
+func _projectile_spawn_origin(actor: Node2D) -> Vector2:
+	if actor == null:
+		return Vector2.ZERO
+	if actor.has_method("get_body_hitbox_center_global"):
+		var v: Variant = actor.call("get_body_hitbox_center_global")
+		if v is Vector2:
+			return v as Vector2
+	return actor.global_position
