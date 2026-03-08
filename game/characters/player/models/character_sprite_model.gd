@@ -322,7 +322,7 @@ func _sync_model_highlight_profile() -> void:
 	if model_highlight_widget == null or not is_instance_valid(model_highlight_widget):
 		return
 	if model_highlight_widget.has_method("set_radius"):
-		var scale_factor := max(0.0001, abs(scale.x))
+		var scale_factor: float = max(0.0001, abs(scale.x))
 		model_highlight_widget.call("set_radius", model_highlight_radius / scale_factor)
 	if model_highlight_widget.has_method("set_colors"):
 		model_highlight_widget.call("set_colors", model_highlight_center_color, model_highlight_edge_color)
@@ -357,26 +357,26 @@ func _duplicate_scaled_shape(shape: Shape2D, model_scale: Vector2) -> Shape2D:
 		return circ
 	return dup
 
-func _play_animation_if_needed(name: String) -> void:
-	if animated_sprite == null or name == "":
+func _play_animation_if_needed(anim_name: String) -> void:
+	if animated_sprite == null or anim_name == "":
 		return
-	if animated_sprite.animation == name and animated_sprite.is_playing():
+	if animated_sprite.animation == anim_name and animated_sprite.is_playing():
 		return
-	animated_sprite.play(name)
+	animated_sprite.play(anim_name)
 
-func _play_one_shot(name: String, back_to_locomotion: bool) -> void:
-	if not _has_animation(name):
+func _play_one_shot(anim_name: String, back_to_locomotion: bool) -> void:
+	if not _has_animation(anim_name):
 		if back_to_locomotion:
 			_refresh_locomotion_animation()
 		else:
 			play_idle()
 		return
 	if animated_sprite.sprite_frames != null:
-		animated_sprite.sprite_frames.set_animation_loop(name, false)
+		animated_sprite.sprite_frames.set_animation_loop(anim_name, false)
 	_one_shot_lock_active = true
 	_queued_locomotion_after_one_shot = back_to_locomotion
 	_queued_idle_after_one_shot = not back_to_locomotion
-	_play_animation_if_needed(name)
+	_play_animation_if_needed(anim_name)
 
 func reset_after_respawn() -> void:
 	_is_dead = false
@@ -440,12 +440,12 @@ func _refresh_locomotion_animation() -> void:
 			return
 	play_idle()
 
-func _play_locomotion_animation(name: String) -> void:
-	if animated_sprite == null or name == "":
+func _play_locomotion_animation(anim_name: String) -> void:
+	if animated_sprite == null or anim_name == "":
 		return
 	if animated_sprite.sprite_frames != null:
-		animated_sprite.sprite_frames.set_animation_loop(name, true)
-	_play_animation_if_needed(name)
+		animated_sprite.sprite_frames.set_animation_loop(anim_name, true)
+	_play_animation_if_needed(anim_name)
 
 func _on_animation_finished() -> void:
 	if animated_sprite == null:
@@ -475,12 +475,12 @@ func _apply_animation_speed_to_all() -> void:
 	for anim in frames.get_animation_names():
 		frames.set_animation_speed(anim, animation_fps)
 
-func _has_animation(name: String) -> bool:
+func _has_animation(anim_name: String) -> bool:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return false
-	if name == "":
+	if anim_name == "":
 		return false
-	return animated_sprite.sprite_frames.has_animation(name)
+	return animated_sprite.sprite_frames.has_animation(anim_name)
 
 func _apply_facing_from_direction(dir: Vector2) -> void:
 	if animated_sprite == null:
