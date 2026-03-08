@@ -1464,7 +1464,7 @@ func _refresh() -> void:
 			continue
 		_render_slot(slot_panel, i, slots)
 
-	_update_bag_buttons(bag_slots)
+	_update_bag_buttons(bag_slot_items)
 	_refresh_quick_bar()
 	if _is_open:
 		grid.visible = true
