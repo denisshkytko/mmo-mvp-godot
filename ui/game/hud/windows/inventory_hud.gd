@@ -480,6 +480,7 @@ func _ensure_slot_visuals(slot_panel: Panel) -> void:
 		cd = ColorRect.new()
 		cd.name = "Cooldown"
 		cd.color = Color.WHITE
+		cd.z_index = 10
 		cd.visible = false
 		cd.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot_panel.add_child(cd)
@@ -2106,6 +2107,7 @@ func _ensure_quick_button_visuals(b: Button) -> void:
 		cd = ColorRect.new()
 		cd.name = "Cooldown"
 		cd.color = Color.WHITE
+		cd.z_index = 10
 		cd.visible = false
 		cd.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(cd)

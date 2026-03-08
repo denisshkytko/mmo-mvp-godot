@@ -53,27 +53,27 @@ func set_interact_visible(visible_state: bool) -> void:
 	interact_btn.visible = visible_state
 
 
-func set_slot_icon(_slot: int, _texture: Texture2D) -> void:
-	if _slot < 0 or _slot >= _skill_buttons.size():
+func set_slot_icon(slot: int, texture: Texture2D) -> void:
+	if slot < 0 or slot >= _skill_buttons.size():
 		return
-	if _slot < 0 or _slot >= _icon_rects.size():
+	if slot < 0 or slot >= _icon_rects.size():
 		return
-	var icon_rect := _icon_rects[_slot]
+	var icon_rect := _icon_rects[slot]
 	if icon_rect == null:
 		return
-	icon_rect.texture = _texture
+	icon_rect.texture = texture
 
 
-func set_slot_cooldown(_slot: int, _pct: float) -> void:
-	if _slot < 0 or _slot >= _skill_buttons.size():
+func set_slot_cooldown(slot: int, pct_value: float) -> void:
+	if slot < 0 or slot >= _skill_buttons.size():
 		return
-	var btn := _skill_buttons[_slot] as TextureButton
+	var btn := _skill_buttons[slot] as TextureButton
 	if btn == null:
 		return
 	var overlay := _ensure_cooldown_overlay(btn)
 	if overlay == null:
 		return
-	var pct: float = clamp(_pct, 0.0, 1.0)
+	var pct: float = clamp(pct_value, 0.0, 1.0)
 	overlay.visible = pct > 0.0
 	if not overlay.visible:
 		return
@@ -88,6 +88,7 @@ func _ensure_cooldown_overlay(btn: TextureButton) -> ColorRect:
 		return overlay
 	overlay = ColorRect.new()
 	overlay.name = "CooldownOverlay"
+	overlay.z_index = 10
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	overlay.anchors_preset = Control.PRESET_FULL_RECT
 	overlay.offset_left = 6
@@ -105,26 +106,26 @@ func _ensure_cooldown_overlay(btn: TextureButton) -> ColorRect:
 	return overlay
 
 
-func set_slot_enabled(_slot: int, _enabled: bool) -> void:
-	if _slot < 0 or _slot >= _skill_buttons.size():
+func set_slot_enabled(slot: int, enabled: bool) -> void:
+	if slot < 0 or slot >= _skill_buttons.size():
 		return
-	var btn := _skill_buttons[_slot] as BaseButton
+	var btn := _skill_buttons[slot] as BaseButton
 	if btn == null:
 		return
-	btn.disabled = not _enabled
-	btn.modulate = Color(1, 1, 1, 1.0 if _enabled else 0.5)
+	btn.disabled = not enabled
+	btn.modulate = Color(1, 1, 1, 1.0 if enabled else 0.5)
 
-func set_slot_out_of_range(_slot: int, _blocked: bool) -> void:
-	if _slot < 0 or _slot >= _skill_buttons.size():
+func set_slot_out_of_range(slot: int, blocked: bool) -> void:
+	if slot < 0 or slot >= _skill_buttons.size():
 		return
-	var btn := _skill_buttons[_slot] as TextureButton
+	var btn := _skill_buttons[slot] as TextureButton
 	if btn == null:
 		return
 	var ring := _ensure_range_ring(btn)
 	if ring == null:
 		return
-	ring.visible = _blocked
-	if not _blocked:
+	ring.visible = blocked
+	if not blocked:
 		return
 	var mat := ring.material as ShaderMaterial
 	if mat == null:

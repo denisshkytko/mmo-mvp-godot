@@ -91,6 +91,23 @@ var _consumable_cd_end_sec: Dictionary = {} # kind -> float end time
 func _now_sec() -> float:
 	return float(Time.get_ticks_msec()) / 1000.0
 
+func _normalize_consumable_cd_kind(item_type: String, raw_kind: String) -> String:
+	var t: String = item_type.to_lower()
+	var k: String = raw_kind.to_lower()
+	if t == "potion" or k.begins_with("potion"):
+		return "potion"
+	if t == "food" or t == "drink" or k.begins_with("food") or k.begins_with("drink"):
+		return "fooddrink"
+	return k if k != "" else t
+
+func _get_consumable_cd_left_exact(kind: String) -> float:
+	if kind == "":
+		return 0.0
+	var end_sec: float = float(_consumable_cd_end_sec.get(kind, 0.0))
+	if end_sec <= 0.0:
+		return 0.0
+	return max(0.0, end_sec - _now_sec())
+
 func is_consumable_on_cooldown(kind: String) -> bool:
 	if kind == "":
 		return false
@@ -104,12 +121,22 @@ func start_consumable_cooldown(kind: String, seconds: float) -> void:
 	_consumable_cd_end_sec[kind] = _now_sec() + seconds
 
 func get_consumable_cooldown_left(kind: String) -> float:
-	if kind == "":
+	var k: String = kind.to_lower()
+	if k == "":
 		return 0.0
-	var end_sec: float = float(_consumable_cd_end_sec.get(kind, 0.0))
-	if end_sec <= 0.0:
-		return 0.0
-	return max(0.0, end_sec - _now_sec())
+	var left: float = _get_consumable_cd_left_exact(k)
+	if left > 0.0:
+		return left
+	# Backward-compatible lookup for legacy/non-normalized keys.
+	if k == "fooddrink":
+		left = max(left, _get_consumable_cd_left_exact("food"))
+		left = max(left, _get_consumable_cd_left_exact("drink"))
+	if k == "potion":
+		for key_v in _consumable_cd_end_sec.keys():
+			var key: String = String(key_v).to_lower()
+			if key.begins_with("potion"):
+				left = max(left, _get_consumable_cd_left_exact(key))
+	return left
 
 func try_apply_consumable(item_id: String) -> Dictionary:
 	# Applies the consumable's effect (instant or over-time) WITHOUT removing the item from inventory.
@@ -128,7 +155,8 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 	if req_lvl > level:
 		return {"ok": false, "reason": "level", "kind": "" , "required_level": req_lvl}
 	var cons: Dictionary = meta.get("consumable", {}) as Dictionary
-	var kind: String = String(cons.get("kind", typ)).to_lower()
+	var raw_kind: String = String(cons.get("kind", typ)).to_lower()
+	var kind: String = _normalize_consumable_cd_kind(typ, raw_kind)
 	if is_consumable_on_cooldown(kind):
 		return {"ok": false, "reason": "cooldown", "kind": kind}
 
