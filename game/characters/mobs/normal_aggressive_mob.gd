@@ -7,6 +7,7 @@ const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 const MODEL_SCENE_PATHS := {
 		"cinderborn": {
@@ -37,6 +38,8 @@ signal died(corpse: Corpse)
 var hp_bar: HealthBarWidget = null
 var target_marker: CanvasItem = null
 var cast_bar: CastBarWidget = null
+var model_highlight: CanvasItem = null
+var overlay_bars_widget: OverlayBarsWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = get_node_or_null("Visual") as Node2D
@@ -834,21 +837,42 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	hp_bar = null
 	cast_bar = null
 	target_marker = null
+	model_highlight = null
+	overlay_bars_widget = null
 	if model == null or not is_instance_valid(model):
 		return
-	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
-	if hp_node is HealthBarWidget:
-		hp_bar = hp_node as HealthBarWidget
-	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
-	if cast_node is CastBarWidget:
-		cast_bar = cast_node as CastBarWidget
+	overlay_bars_widget = _find_first_by_type(model, OverlayBarsWidget) as OverlayBarsWidget
+	hp_bar = _find_first_by_type(model, HealthBarWidget) as HealthBarWidget
+	cast_bar = _find_first_by_type(model, CastBarWidget) as CastBarWidget
 	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
 	if marker_node is CanvasItem:
 		target_marker = marker_node as CanvasItem
+	var highlight_node := model.get_node_or_null("OverlayProfile/ModelHighlight")
+	if highlight_node is CanvasItem:
+		model_highlight = highlight_node as CanvasItem
 	if hp_bar != null:
-		hp_bar.set_fill_color(Color(1.0, 0.05, 0.02, 1.0))
+		hp_bar.set_fill_color(OVERLAY_COLORS.mob_hp_color(true))
 		c_stats.update_hp_bar(hp_bar)
+	if overlay_bars_widget != null:
+		overlay_bars_widget.set_show_name(false)
 	if cast_bar != null and not c_spell_caster.is_casting():
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
 		cast_bar.set_icon_texture(null)
+	if model_highlight != null:
+		model_highlight.visible = false
+		if model_highlight.has_method("set_colors"):
+			var hc := OVERLAY_COLORS.highlight_colors(OVERLAY_COLORS.mob_hp_color(true), 0.5)
+			model_highlight.call("set_colors", hc.get("center"), hc.get("edge"))
+
+func _find_first_by_type(root: Node, script_type: Variant) -> Node:
+	if root == null or not is_instance_valid(root):
+		return null
+	for child in root.get_children():
+		if is_instance_of(child, script_type):
+			return child
+		if child is Node:
+			var nested := _find_first_by_type(child, script_type)
+			if nested != null:
+				return nested
+	return null

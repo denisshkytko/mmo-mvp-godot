@@ -5,6 +5,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -195,6 +196,8 @@ func try_apply_consumable(item_id: String) -> Dictionary:
 var cast_bar: CastBarWidget = null
 var hp_bar: HealthBarWidget = null
 var target_marker: CanvasItem = null
+var model_highlight: CanvasItem = null
+var overlay_bars_widget: OverlayBarsWidget = null
 @onready var c_interaction: InteractionDetector = $InteractionDetector as InteractionDetector
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
@@ -851,22 +854,38 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 	cast_bar = null
 	hp_bar = null
 	target_marker = null
+	model_highlight = null
+	overlay_bars_widget = null
 	if model == null or not is_instance_valid(model):
 		return
-	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
-	if cast_node is CastBarWidget:
-		cast_bar = cast_node as CastBarWidget
-	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
-	if hp_node is HealthBarWidget:
-		hp_bar = hp_node as HealthBarWidget
+	overlay_bars_widget = _find_first_by_type(model, OverlayBarsWidget) as OverlayBarsWidget
+	cast_bar = _find_first_by_type(model, CastBarWidget) as CastBarWidget
+	hp_bar = _find_first_by_type(model, HealthBarWidget) as HealthBarWidget
 	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
 	if marker_node is CanvasItem:
 		target_marker = marker_node as CanvasItem
+	var highlight_node := model.get_node_or_null("OverlayProfile/ModelHighlight")
+	if highlight_node is CanvasItem:
+		model_highlight = highlight_node as CanvasItem
+	if overlay_bars_widget != null:
+		overlay_bars_widget.set_show_name(true)
+		overlay_bars_widget.set_display_name(get_display_name())
+	var viewer_faction: String = faction_id
+	var local_player: Node = NodeCache.get_player(get_tree())
+	if local_player != null and local_player.has_method("get_faction_id"):
+		viewer_faction = String(local_player.call("get_faction_id"))
+	var player_color: Color = OVERLAY_COLORS.hp_color_for_faction_target(viewer_faction, faction_id)
+	if hp_bar != null:
+		hp_bar.set_fill_color(player_color)
+	if overlay_bars_widget != null:
+		overlay_bars_widget.set_name_visual(player_color, Color(0.0, 0.0, 0.0, 1.0), 3)
 	_update_model_hp_bar()
 	if cast_bar != null and not c_ability_caster.is_casting():
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
 		cast_bar.set_icon_texture(null)
+	if model_highlight != null:
+		model_highlight.visible = false
 
 
 func _update_model_hp_bar() -> void:
@@ -967,6 +986,17 @@ func export_character_data() -> Dictionary:
 	return base
 
 
+
+func get_display_name() -> String:
+	var app_state := get_node_or_null("/root/AppState")
+	if app_state != null:
+		var data_v: Variant = app_state.get("selected_character_data")
+		if data_v is Dictionary:
+			var n := String((data_v as Dictionary).get("name", "")).strip_edges()
+			if n != "":
+				return n
+	return String(name).strip_edges()
+
 func get_faction_id() -> String:
 	return faction_id
 
@@ -976,3 +1006,15 @@ func _to_string_array(value: Variant) -> Array[String]:
 		for entry in value:
 			out.append(String(entry))
 	return out
+
+func _find_first_by_type(root: Node, script_type: Variant) -> Node:
+	if root == null or not is_instance_valid(root):
+		return null
+	for child in root.get_children():
+		if is_instance_of(child, script_type):
+			return child
+		if child is Node:
+			var nested := _find_first_by_type(child, script_type)
+			if nested != null:
+				return nested
+	return null

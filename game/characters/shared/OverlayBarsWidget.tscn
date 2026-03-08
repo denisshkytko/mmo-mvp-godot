@@ -1,0 +1,95 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/characters/shared/overlay_bars_widget.gd" id="1"]
+[ext_resource type="Script" uid="uid://cqkuoxxjlwlty" path="res://game/characters/shared/cast_bar_widget.gd" id="2_cast_script"]
+[ext_resource type="Script" uid="uid://ccm2upj2qm6f7" path="res://game/characters/shared/health_bar_widget.gd" id="3_hp_script"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_name"]
+font_size = 16
+font_color = Color(1, 1, 1, 1)
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cast_back"]
+bg_color = Color(0, 0, 0, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cast_fill"]
+bg_color = Color(0.2, 0.8, 1, 0.9)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_back"]
+bg_color = Color(0, 0, 0, 0.88235295)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="OverlayBarsWidget" type="Node2D"]
+script = ExtResource("1")
+
+[node name="CastBar" type="Node2D" parent="."]
+visible = false
+position = Vector2(0, -42)
+script = ExtResource("2_cast_script")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CastBar"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -258.0
+offset_top = -436.0
+offset_right = 258.0
+offset_bottom = -372.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="CastBar/HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Progress" type="ProgressBar" parent="CastBar/HBoxContainer"]
+custom_minimum_size = Vector2(38, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_cast_back")
+theme_override_styles/fill = SubResource("StyleBoxFlat_cast_fill")
+show_percentage = false
+
+[node name="NameLabel" type="Label" parent="."]
+visible = false
+offset_left = -140.0
+offset_top = -44.0
+offset_right = 140.0
+offset_bottom = -18.0
+horizontal_alignment = 1
+label_settings = SubResource("LabelSettings_name")
+text = "Player"
+
+[node name="HealthBar" type="Node2D" parent="."]
+position = Vector2(0, -30)
+script = ExtResource("3_hp_script")
+
+[node name="Progress" type="ProgressBar" parent="HealthBar"]
+custom_minimum_size = Vector2(420, 48)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -360.0
+offset_right = 210.0
+offset_bottom = -312.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_back")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+value = 100.0
+show_percentage = false

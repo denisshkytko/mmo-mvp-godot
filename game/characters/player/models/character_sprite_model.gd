@@ -22,18 +22,35 @@ signal death_pose_ready(snapshot: Dictionary)
 @export var hp_bar_size: Vector2 = Vector2(36.0, 6.0)
 @export var hp_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.88235295)
 @export var hp_bar_fill_color: Color = Color(0.38720772, 0.18201989, 0.97702104, 1.0)
+@export_range(0.0, 128.0, 1.0) var hp_bar_corner_radius: float = 0.0
+@export var hp_bar_outline_enabled: bool = false
+@export_range(0, 32, 1) var hp_bar_outline_width: int = 0
+@export var hp_bar_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export var cast_bar_size: Vector2 = Vector2(38.0, 12.0)
 @export var cast_bar_icon_size: Vector2 = Vector2(16.0, 16.0)
 @export var cast_bar_back_color: Color = Color(0.0, 0.0, 0.0, 0.8)
 @export var cast_bar_fill_color: Color = Color(0.2, 0.8, 1.0, 0.9)
+@export_range(0.0, 128.0, 1.0) var cast_bar_corner_radius: float = 0.0
+@export var cast_bar_outline_enabled: bool = false
+@export_range(0, 32, 1) var cast_bar_outline_width: int = 0
+@export var cast_bar_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 @export var cast_bar_icon_visible: bool = true
+@export var overlay_name_text_color: Color = Color(1.0, 1.0, 1.0, 1.0)
+@export var overlay_name_outline_color: Color = Color(0.0, 0.0, 0.0, 1.0)
+@export_range(0, 8, 1) var overlay_name_outline_size: int = 3
+@export_range(1.0, 512.0, 1.0) var model_highlight_radius: float = 200.0
+@export var model_highlight_override_widget_colors: bool = false
+@export var model_highlight_center_color: Color = Color(0.2, 0.6, 1.0, 0.28)
+@export var model_highlight_edge_color: Color = Color(0.2, 0.6, 1.0, 0.0)
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var world_collision_shape: CollisionShape2D = $CollisionProfile/WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $CollisionProfile/BodyHitbox as CollisionShape2D
 @onready var interaction_radius_shape: CollisionShape2D = $CollisionProfile/InteractionRadius as CollisionShape2D
-@onready var overlay_hp_bar: Node2D = get_node_or_null("OverlayProfile/HealthBar") as Node2D
-@onready var overlay_cast_bar: Node2D = get_node_or_null("OverlayProfile/CastBar") as Node2D
+@onready var overlay_hp_bar: Node2D = _resolve_overlay_node("HealthBar")
+@onready var overlay_cast_bar: Node2D = _resolve_overlay_node("CastBar")
+@onready var overlay_bars_widget: Node = get_node_or_null("OverlayProfile/Bars")
+@onready var model_highlight_widget: Node2D = _resolve_overlay_node("ModelHighlight")
 
 var _is_moving: bool = false
 var _prefer_walk_mode: bool = false
@@ -89,6 +106,8 @@ func _ready() -> void:
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 	play_idle()
 	_reset_idle_liveliness_timer()
+	_apply_overlay_name_profile()
+	_sync_model_highlight_profile()
 
 func _process(delta: float) -> void:
 	if animated_sprite == null:
@@ -120,11 +139,11 @@ func set_move_direction_mode(dir: Vector2, prefer_walk: bool) -> void:
 
 	if _is_moving:
 		if prefer_walk and _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 		elif _has_animation(run_animation):
-			_play_animation_if_needed(run_animation)
+			_play_locomotion_animation(run_animation)
 		elif _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 		else:
 			play_idle()
 	else:
@@ -264,6 +283,10 @@ func get_overlay_profile() -> Dictionary:
 			"size": hp_size,
 			"back_color": hp_bar_back_color,
 			"fill_color": hp_bar_fill_color,
+			"corner_radius": hp_bar_corner_radius,
+			"outline_enabled": hp_bar_outline_enabled,
+			"outline_width": hp_bar_outline_width,
+			"outline_color": hp_bar_outline_color,
 		},
 		"cast_bar": {
 			"offset": cast_offset,
@@ -271,9 +294,51 @@ func get_overlay_profile() -> Dictionary:
 			"icon_size": cast_icon_size,
 			"back_color": cast_bar_back_color,
 			"fill_color": cast_bar_fill_color,
+			"corner_radius": cast_bar_corner_radius,
+			"outline_enabled": cast_bar_outline_enabled,
+			"outline_width": cast_bar_outline_width,
+			"outline_color": cast_bar_outline_color,
 			"icon_visible": cast_icon_visible,
 		},
+		"name": {
+			"text_color": overlay_name_text_color,
+			"outline_color": overlay_name_outline_color,
+			"outline_size": overlay_name_outline_size,
+		},
+		"model_highlight": {
+			"radius": model_highlight_radius,
+			"override_widget_colors": model_highlight_override_widget_colors,
+			"center_color": model_highlight_center_color,
+			"edge_color": model_highlight_edge_color,
+		},
 	}
+
+
+func _apply_overlay_name_profile() -> void:
+	if overlay_bars_widget == null or not is_instance_valid(overlay_bars_widget):
+		return
+	if overlay_bars_widget.has_method("set_name_visual"):
+		overlay_bars_widget.call("set_name_visual", overlay_name_text_color, overlay_name_outline_color, overlay_name_outline_size)
+
+func _sync_model_highlight_profile() -> void:
+	if model_highlight_widget == null or not is_instance_valid(model_highlight_widget):
+		return
+	if model_highlight_widget.has_method("set_radius"):
+		var scale_factor: float = max(0.0001, abs(scale.x))
+		model_highlight_widget.call("set_radius", model_highlight_radius / scale_factor)
+	if model_highlight_override_widget_colors and model_highlight_widget.has_method("set_colors"):
+		model_highlight_widget.call("set_colors", model_highlight_center_color, model_highlight_edge_color)
+	if body_hitbox_shape != null:
+		model_highlight_widget.position = body_hitbox_shape.position
+
+func _resolve_overlay_node(node_name: String) -> Node2D:
+	var direct := get_node_or_null("OverlayProfile/%s" % node_name)
+	if direct is Node2D:
+		return direct as Node2D
+	var nested := get_node_or_null("OverlayProfile/Bars/%s" % node_name)
+	if nested is Node2D:
+		return nested as Node2D
+	return null
 
 func _duplicate_scaled_shape(shape: Shape2D, model_scale: Vector2) -> Shape2D:
 	if shape == null:
@@ -294,26 +359,26 @@ func _duplicate_scaled_shape(shape: Shape2D, model_scale: Vector2) -> Shape2D:
 		return circ
 	return dup
 
-func _play_animation_if_needed(name: String) -> void:
-	if animated_sprite == null or name == "":
+func _play_animation_if_needed(anim_name: String) -> void:
+	if animated_sprite == null or anim_name == "":
 		return
-	if animated_sprite.animation == name and animated_sprite.is_playing():
+	if animated_sprite.animation == anim_name and animated_sprite.is_playing():
 		return
-	animated_sprite.play(name)
+	animated_sprite.play(anim_name)
 
-func _play_one_shot(name: String, back_to_locomotion: bool) -> void:
-	if not _has_animation(name):
+func _play_one_shot(anim_name: String, back_to_locomotion: bool) -> void:
+	if not _has_animation(anim_name):
 		if back_to_locomotion:
 			_refresh_locomotion_animation()
 		else:
 			play_idle()
 		return
 	if animated_sprite.sprite_frames != null:
-		animated_sprite.sprite_frames.set_animation_loop(name, false)
+		animated_sprite.sprite_frames.set_animation_loop(anim_name, false)
 	_one_shot_lock_active = true
 	_queued_locomotion_after_one_shot = back_to_locomotion
 	_queued_idle_after_one_shot = not back_to_locomotion
-	_play_animation_if_needed(name)
+	_play_animation_if_needed(anim_name)
 
 func reset_after_respawn() -> void:
 	_is_dead = false
@@ -367,15 +432,22 @@ func _refresh_locomotion_animation() -> void:
 		return
 	if _is_moving:
 		if _prefer_walk_mode and _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 			return
 		if _has_animation(run_animation):
-			_play_animation_if_needed(run_animation)
+			_play_locomotion_animation(run_animation)
 			return
 		if _has_animation(walk_animation):
-			_play_animation_if_needed(walk_animation)
+			_play_locomotion_animation(walk_animation)
 			return
 	play_idle()
+
+func _play_locomotion_animation(anim_name: String) -> void:
+	if animated_sprite == null or anim_name == "":
+		return
+	if animated_sprite.sprite_frames != null:
+		animated_sprite.sprite_frames.set_animation_loop(anim_name, true)
+	_play_animation_if_needed(anim_name)
 
 func _on_animation_finished() -> void:
 	if animated_sprite == null:
@@ -405,12 +477,12 @@ func _apply_animation_speed_to_all() -> void:
 	for anim in frames.get_animation_names():
 		frames.set_animation_speed(anim, animation_fps)
 
-func _has_animation(name: String) -> bool:
+func _has_animation(anim_name: String) -> bool:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return false
-	if name == "":
+	if anim_name == "":
 		return false
-	return animated_sprite.sprite_frames.has_animation(name)
+	return animated_sprite.sprite_frames.has_animation(anim_name)
 
 func _apply_facing_from_direction(dir: Vector2) -> void:
 	if animated_sprite == null:

@@ -9,6 +9,7 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/MerchantModel.tscn")
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
+const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 signal died(corpse: Corpse)
 
@@ -16,6 +17,8 @@ signal died(corpse: Corpse)
 var hp_bar: HealthBarWidget = null
 var target_marker: CanvasItem = null
 var cast_bar: CastBarWidget = null
+var model_highlight: CanvasItem = null
+var overlay_bars_widget: OverlayBarsWidget = null
 @onready var world_collision: CollisionShape2D = $WorldCollider as CollisionShape2D
 @onready var body_hitbox_shape: CollisionShape2D = $BodyHitboxArea/BodyHitbox as CollisionShape2D
 @onready var visual_root: Node2D = $Visual as Node2D
@@ -371,9 +374,23 @@ func apply_spawn_init(
 
 func _process(_delta: float) -> void:
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
+	_refresh_model_highlight_visual()
 	if OS.is_debug_build():
 		queue_redraw()
 	_update_interaction()
+
+func _refresh_model_highlight_visual() -> void:
+	if model_highlight == null or not is_instance_valid(model_highlight):
+		return
+	var player_faction: String = "blue"
+	var player_node: Node = NodeCache.get_player(get_tree())
+	if player_node != null and player_node.has_method("get_faction_id"):
+		player_faction = String(player_node.call("get_faction_id"))
+	var relation_color: Color = OVERLAY_COLORS.hp_color_for_faction_target(player_faction, faction_id)
+	model_highlight.visible = (c_stats != null and not c_stats.is_dead)
+	if model_highlight.visible and model_highlight.has_method("set_colors"):
+		var hc := OVERLAY_COLORS.highlight_colors(relation_color, 0.5)
+		model_highlight.call("set_colors", hc.get("center"), hc.get("edge"))
 
 
 func get_body_hitbox_center_global() -> Vector2:
@@ -740,19 +757,30 @@ func _bind_overlay_widgets_from_model(model: Node) -> void:
 	hp_bar = null
 	cast_bar = null
 	target_marker = null
+	model_highlight = null
+	overlay_bars_widget = null
 	if model == null or not is_instance_valid(model):
 		return
-	var hp_node := model.get_node_or_null("OverlayProfile/HealthBar")
-	if hp_node is HealthBarWidget:
-		hp_bar = hp_node as HealthBarWidget
-		hp_bar.set_fill_color(Color(0.38720772, 0.18201989, 0.97702104, 1.0))
-	var cast_node := model.get_node_or_null("OverlayProfile/CastBar")
-	if cast_node is CastBarWidget:
-		cast_bar = cast_node as CastBarWidget
+	overlay_bars_widget = _find_first_by_type(model, OverlayBarsWidget) as OverlayBarsWidget
+	hp_bar = _find_first_by_type(model, HealthBarWidget) as HealthBarWidget
+	cast_bar = _find_first_by_type(model, CastBarWidget) as CastBarWidget
+	if hp_bar != null:
+		var player_faction: String = "blue"
+		var p: Node = NodeCache.get_player(get_tree())
+		if p != null and p.has_method("get_faction_id"):
+			player_faction = String(p.call("get_faction_id"))
+		var hp_color: Color = OVERLAY_COLORS.hp_color_for_faction_target(player_faction, faction_id)
+		hp_bar.set_fill_color(hp_color)
 	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
 	if marker_node is CanvasItem:
 		target_marker = marker_node as CanvasItem
+	var highlight_node := model.get_node_or_null("OverlayProfile/ModelHighlight")
+	if highlight_node is CanvasItem:
+		model_highlight = highlight_node as CanvasItem
 	_update_hp()
+	if overlay_bars_widget != null:
+		overlay_bars_widget.set_show_name(false)
+	_refresh_model_highlight_visual()
 	if cast_bar != null and not c_spell_caster.is_casting():
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
@@ -762,6 +790,8 @@ func _restore_default_overlay_mount() -> void:
 	hp_bar = null
 	cast_bar = null
 	target_marker = null
+	model_highlight = null
+	overlay_bars_widget = null
 
 func _apply_hp_overlay_defaults() -> void:
 	pass
@@ -1043,3 +1073,15 @@ func _is_combat_visible_for_player() -> bool:
 	if direct_attackers.has(player_id):
 		return true
 	return false
+
+func _find_first_by_type(root: Node, script_type: Variant) -> Node:
+	if root == null or not is_instance_valid(root):
+		return null
+	for child in root.get_children():
+		if is_instance_of(child, script_type):
+			return child
+		if child is Node:
+			var nested := _find_first_by_type(child, script_type)
+			if nested != null:
+				return nested
+	return null
