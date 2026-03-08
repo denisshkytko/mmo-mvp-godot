@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://batbkni3sgfgo" path="res://game/characters/player/models/character_sprite_model.gd" id="1_model"]
 [ext_resource type="SpriteFrames" uid="uid://b2q34ogbq8byl" path="res://game/characters/mobs/models/frames/BanditMageSpriteFrames.tres" id="2_frames"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/TargetMarkerWidget.tscn" id="5_target"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/OverlayBarsWidget.tscn" id="6_bars"]
-[ext_resource type="PackedScene" path="res://game/characters/shared/ModelHighlightWidget.tscn" id="7_highlight"]
+[ext_resource type="PackedScene" uid="uid://vmpal7e6e6t1" path="res://game/characters/shared/TargetMarkerWidget.tscn" id="5_target"]
+[ext_resource type="PackedScene" uid="uid://c7s3u3jv0bpp1" path="res://game/characters/shared/OverlayBarsWidget.tscn" id="6_bars"]
+[ext_resource type="PackedScene" uid="uid://ca736sr8bjxs7" path="res://game/characters/shared/ModelHighlightWidget.tscn" id="7_highlight"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_world"]
 radius = 20.0
@@ -32,18 +32,19 @@ ranged_run_animation = "Run Throwing"
 
 [node name="OverlayProfile" type="Node2D" parent="."]
 
+[node name="ModelHighlight" parent="OverlayProfile" instance=ExtResource("7_highlight")]
+scale = Vector2(0.99999994, 0.99999994)
+
 [node name="Bars" parent="OverlayProfile" instance=ExtResource("6_bars")]
 
 [node name="TargetMarker" parent="OverlayProfile" instance=ExtResource("5_target")]
-
-[node name="ModelHighlight" parent="OverlayProfile" instance=ExtResource("7_highlight")]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
 animation = &"Idle Blinking"
 autoplay = "Idle Blinking"
-frame_progress = 0.781066
+frame_progress = 0.79536474
 flip_h = true
 
 [node name="CollisionProfile" type="Area2D" parent="."]

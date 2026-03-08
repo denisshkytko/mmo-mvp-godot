@@ -1,9 +1,9 @@
 extends Node2D
 class_name ModelHighlightWidget
 
-const CIRCLE_SEGMENTS := 96
+const CIRCLE_SEGMENTS := 360
 
-@export_range(1.0, 2048.0, 1.0) var radius: float = 200.0:
+@export_range(1.0, 2048.0, 1.0) var radius: float = 50.0:
 	set(v):
 		radius = max(1.0, v)
 		queue_redraw()
