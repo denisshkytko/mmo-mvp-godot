@@ -49,8 +49,8 @@ func _on_interact_pressed() -> void:
 	emit_signal("interact_pressed")
 
 
-func set_interact_visible(is_visible: bool) -> void:
-	interact_btn.visible = is_visible
+func set_interact_visible(visible_state: bool) -> void:
+	interact_btn.visible = visible_state
 
 
 func set_slot_icon(_slot: int, _texture: Texture2D) -> void:
@@ -89,7 +89,6 @@ func _ensure_cooldown_overlay(btn: TextureButton) -> ColorRect:
 	overlay = ColorRect.new()
 	overlay.name = "CooldownOverlay"
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.layout_mode = 1
 	overlay.anchors_preset = Control.PRESET_FULL_RECT
 	overlay.offset_left = 6
 	overlay.offset_top = 6
@@ -139,7 +138,6 @@ func _ensure_range_ring(btn: TextureButton) -> ColorRect:
 	ring = ColorRect.new()
 	ring.name = "RangeRing"
 	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ring.layout_mode = 1
 	ring.anchors_preset = Control.PRESET_FULL_RECT
 	ring.offset_left = 0
 	ring.offset_top = 0

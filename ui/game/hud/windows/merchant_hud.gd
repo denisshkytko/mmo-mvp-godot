@@ -362,12 +362,12 @@ func _ensure_dialog_layer() -> void:
 
 func _format_item_label(item_id: String, count: int) -> String:
 	var db := get_node_or_null("/root/DataDB")
-	var name: String = item_id
+	var item_name: String = item_id
 	if db != null and db.is_ready and db.has_method("get_item_name"):
-		name = String(db.call("get_item_name", item_id))
+		item_name = String(db.call("get_item_name", item_id))
 	if count > 1:
-		return UI_TEXT.item_with_stack(name, count)
-	return name
+		return UI_TEXT.item_with_stack(item_name, count)
+	return item_name
 
 func _on_item_tooltip_input(event: InputEvent, item_id: String, count: int) -> void:
 	if event is InputEventMouseButton:
@@ -413,7 +413,7 @@ func _toggle_tooltip(item_id: String, count: int, global_pos: Vector2) -> void:
 		return
 	_show_tooltip(item_id, count, global_pos)
 
-func _on_buy_button_pressed(item_id: String, count: int) -> void:
+func _on_buy_button_pressed(item_id: String, _count: int) -> void:
 	var stack_max := _get_stack_max(item_id)
 	if stack_max <= 1:
 		_try_buy_item(item_id, 1)

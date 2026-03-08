@@ -807,7 +807,10 @@ func _setup_resource_from_class(class_id_value: String) -> void:
 	if c_resource == null:
 		return
 	c_resource.setup(self)
-	c_resource.configure_from_class_id(class_id_value)
+	var safe_class_id := class_id_value.strip_edges().to_lower()
+	if safe_class_id == "":
+		safe_class_id = "warrior"
+	c_resource.configure_from_class_id(safe_class_id)
 	if c_resource.resource_type == "rage":
 		c_resource.set_empty()
 	else:
