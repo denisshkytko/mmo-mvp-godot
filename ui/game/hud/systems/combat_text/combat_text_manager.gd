@@ -11,6 +11,8 @@ const DEFAULT_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 const BASE_Y_OFFSET := -30.0
 const SIDE_OFFSET_STEP := 22.0
 const BURST_WINDOW_MS := 160
+const FLOAT_TEXT_Z_INDEX := 4096
+const FLOAT_TEXT_GAP_ABOVE_CASTBAR := 8.0
 
 var _burst_state: Dictionary = {}
 
@@ -37,6 +39,8 @@ func _show_value(source: Node2D, target: Node2D, value: int, value_type: String)
 	var burst_index: int = _next_burst_index(target)
 	var start: Vector2 = _resolve_start_position(target, burst_index)
 	instance.position = start
+	instance.z_as_relative = false
+	instance.z_index = FLOAT_TEXT_Z_INDEX
 	add_child(instance)
 	instance.show_value(value, _color_for_value_type(value_type))
 
@@ -73,7 +77,18 @@ func _node_has_player_engagement(node: Node, player: Node) -> bool:
 
 func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
 	var x_offset: float = _burst_side_offset(burst_index)
-	return target.global_position + Vector2(x_offset, BASE_Y_OFFSET)
+	var y_anchor: float = target.global_position.y + BASE_Y_OFFSET
+	var cast_bar_v: Variant = target.get("cast_bar") if target.has_method("get") else null
+	if cast_bar_v is CastBarWidget:
+		var cast_bar: CastBarWidget = cast_bar_v as CastBarWidget
+		if is_instance_valid(cast_bar):
+			var cast_size: Vector2 = Vector2.ZERO
+			if cast_bar.has_method("get_visual_size"):
+				var size_v: Variant = cast_bar.call("get_visual_size")
+				if size_v is Vector2:
+					cast_size = size_v as Vector2
+			y_anchor = cast_bar.global_position.y - (cast_size.y * 0.5) - FLOAT_TEXT_GAP_ABOVE_CASTBAR
+	return Vector2(target.global_position.x + x_offset, y_anchor)
 
 func _burst_side_offset(index: int) -> float:
 	if index == 0:
