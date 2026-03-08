@@ -95,11 +95,11 @@ var _interaction_type_internal: int = InteractionType.NONE
 var _model_scene_choice_internal: int = ModelSceneChoice.NONE
 
 func _validate_property(property: Dictionary) -> void:
-	var name := String(property.get("name", ""))
-	if name == "spell_preset_id":
+	var prop_name := String(property.get("name", ""))
+	if prop_name == "spell_preset_id":
 		property["hint"] = PROPERTY_HINT_ENUM
 		property["hint_string"] = _build_spell_preset_hint()
-	elif name == "interaction_type":
+	elif prop_name == "interaction_type":
 		property["hint"] = PROPERTY_HINT_ENUM
 		property["hint_string"] = _build_interaction_hint()
 

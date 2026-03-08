@@ -207,7 +207,7 @@ func _truncate_with_ellipsis(text: String, font: Font, font_size: int, max_width
 	var high := text.length()
 	var best := ellipsis
 	while low <= high:
-		var mid := int((low + high) / 2)
+		var mid := int((float(low + high)) / 2.0)
 		var candidate := text.substr(0, mid) + ellipsis
 		var candidate_w := font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
 		if candidate_w <= max_width:

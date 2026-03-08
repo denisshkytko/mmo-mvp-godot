@@ -550,9 +550,6 @@ func _is_rage_player() -> bool:
 	return false
 
 func _format_snapshot(snap: Dictionary) -> String:
-	var p: Dictionary = snap.get("primary", {}) as Dictionary
-	var d: Dictionary = snap.get("derived", {}) as Dictionary
-
 	var lines: Array[String] = []
 	var is_rage_player := _is_rage_player()
 

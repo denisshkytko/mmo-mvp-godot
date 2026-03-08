@@ -68,7 +68,7 @@ func _show_and_position(target_pos: Vector2) -> void:
 	await get_tree().process_frame
 	_position_tooltip(target_pos)
 
-func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int, player: Player) -> String:
+func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, _rank: int, player: Player) -> String:
 	if rank_data == null:
 		return def.get_description_template()
 	var spell_power: float = 0.0
@@ -114,7 +114,7 @@ func _build_tooltip_text(def: AbilityDefinition, rank_data: RankData, rank: int,
 		lines.append(effect)
 	return "\n".join(lines)
 
-func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: float, base_phys: int) -> String:
+func _effect_line(def: AbilityDefinition, rank_data: RankData, spell_power: float, _base_phys: int) -> String:
 	if def == null:
 		return ""
 	var ability_id: String = def.id

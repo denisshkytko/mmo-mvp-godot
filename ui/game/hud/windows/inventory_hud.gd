@@ -154,7 +154,6 @@ func _ready() -> void:
 	if bag_button != null:
 		bag_button.pressed.connect(_on_bag_button_pressed)
 	if grid_scroll_wrapper != null:
-		grid_scroll_wrapper.layout_mode = 2
 		grid_scroll_wrapper.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		grid_scroll_wrapper.anchor_left = 0
 		grid_scroll_wrapper.anchor_top = 0
@@ -164,7 +163,6 @@ func _ready() -> void:
 		grid_scroll_wrapper.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 		grid_scroll_wrapper.size_flags_stretch_ratio = 0.0
 	if grid_scroll != null:
-		grid_scroll.layout_mode = 2
 		grid_scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 		grid_scroll.anchor_left = 0
 		grid_scroll.anchor_top = 0
@@ -287,14 +285,14 @@ func _get_total_slots_from_player_fallback() -> int:
 func _deferred_force_initial_layout() -> void:
 	await _force_initial_layout()
 
-func _set_grid_cells_visible(is_visible: bool) -> void:
+func _set_grid_cells_visible(visible_state: bool) -> void:
 	if grid == null:
 		return
 	for i in range(grid.get_child_count()):
 		var slot_panel: Panel = grid.get_child(i) as Panel
 		if slot_panel == null:
 			continue
-		slot_panel.visible = is_visible
+		slot_panel.visible = visible_state
 
 func _process(_delta: float) -> void:
 	if _is_open and not _is_player_ready():
@@ -1284,8 +1282,8 @@ func _on_tooltip_bag_pressed() -> void:
 	var id: String = String((v as Dictionary).get("id", ""))
 	if not _is_bag_item(id):
 		return
-	var bag_slots: Array = snap.get("bag_slots", [])
-	var bag_index := _find_first_free_bag_slot(bag_slots)
+	var bag_slot_items: Array = snap.get("bag_slots", [])
+	var bag_index := _find_first_free_bag_slot(bag_slot_items)
 	if bag_index == -1:
 		show_center_toast(tr("ui.inventory.no_free_slots"))
 		return
@@ -1297,7 +1295,7 @@ func _on_tooltip_bag_pressed() -> void:
 		show_center_toast(tr("ui.inventory.no_free_slots"))
 
 
-func _show_consumable_fail_toast(reason: String, item_id: String) -> void:
+func _show_consumable_fail_toast(reason: String, _item_id: String) -> void:
 	_ensure_support_ui()
 	if _toast_label == null:
 		return
@@ -1422,11 +1420,11 @@ func _refresh() -> void:
 	var snap: Dictionary = player.get_inventory_snapshot()
 	_sync_quick_slots_from_snapshot(snap)
 	var slots: Array = snap.get("slots", [])
-	var bag_slots: Array = snap.get("bag_slots", [])
+	var bag_slot_items: Array = snap.get("bag_slots", [])
 	var total_slots: int = slots.size()
 	if total_slots == 0:
 		total_slots = _get_total_slots_from_player_fallback()
-	var bag_hash: int = str(bag_slots).hash()
+	var bag_hash: int = str(bag_slot_items).hash()
 
 	# Mark layout dirty only when geometry changes.
 	if total_slots != _last_total_slots:
@@ -1598,13 +1596,13 @@ func _update_visible_cooldowns(snap: Dictionary) -> void:
 		var b := _quick_buttons[qi]
 		_update_quick_cooldown(b, _quick_refs[qi])
 
-func _update_bag_buttons(bag_slots: Array) -> void:
+func _update_bag_buttons(bag_slot_items: Array) -> void:
 	# bag slots array is logical [0..3] (near base -> outward)
 	for bi in range(4):
 		var btn: Button = _get_bag_button_for_logical(bi)
 		if btn == null:
 			continue
-		var v: Variant = bag_slots[bi] if bi < bag_slots.size() else null
+		var v: Variant = bag_slot_items[bi] if bi < bag_slot_items.size() else null
 		if v != null and v is Dictionary:
 			var id: String = String((v as Dictionary).get("id", ""))
 			var slots_count: int = 0
@@ -1638,9 +1636,9 @@ func _find_first_free_slot(slots: Array) -> int:
 			return i
 	return -1
 
-func _find_first_free_bag_slot(bag_slots: Array) -> int:
-	for i in range(min(4, bag_slots.size())):
-		if bag_slots[i] == null:
+func _find_first_free_bag_slot(bag_slot_items: Array) -> int:
+	for i in range(min(4, bag_slot_items.size())):
+		if bag_slot_items[i] == null:
 			return i
 	return -1
 
@@ -2147,7 +2145,7 @@ func _refresh_quick_bar() -> void:
 	if quick_changed:
 		_persist_quick_slots()
 
-func _rebuild_layout(reason: String) -> void:
+func _rebuild_layout(_reason: String) -> void:
 	if _rebuild_in_progress:
 		_rebuild_requested = true
 		return
