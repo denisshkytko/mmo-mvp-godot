@@ -24,9 +24,18 @@ func _get_player_caster() -> PlayerAbilityCaster:
 	if _player == null or not is_instance_valid(_player):
 		return null
 	if _player is Player:
-		return (_player as Player).c_ability_caster
+		var typed_player := _player as Player
+		if typed_player.c_ability_caster != null:
+			return typed_player.c_ability_caster
+		var node_caster := typed_player.get_node_or_null("Components/AbilityCaster") as PlayerAbilityCaster
+		if node_caster != null:
+			return node_caster
 	if _player.has_method("get"):
-		return _player.get("c_ability_caster") as PlayerAbilityCaster
+		var v: Variant = _player.get("c_ability_caster")
+		if v is PlayerAbilityCaster:
+			return v as PlayerAbilityCaster
+	if _player.has_method("get_node_or_null"):
+		return _player.get_node_or_null("Components/AbilityCaster") as PlayerAbilityCaster
 	return null
 
 

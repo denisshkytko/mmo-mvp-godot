@@ -6,7 +6,7 @@ signal interact_pressed()
 
 const COOLDOWN_SHADER_CODE := "shader_type canvas_item;\n\nuniform float fill_pct : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tvec2 d = UV - vec2(0.5);\n\tif (length(d) > 0.5) {\n\t\tdiscard;\n\t}\n\tif (UV.y < (1.0 - fill_pct)) {\n\t\tdiscard;\n\t}\n\tCOLOR = vec4(0.0, 0.0, 0.0, 0.62);\n}\n"
 const RANGE_RING_SHADER_CODE := "shader_type canvas_item;\n\nuniform vec4 ring_color : source_color = vec4(1.0, 1.0, 1.0, 0.75);\nuniform float ring_thickness : hint_range(0.01, 0.25) = 0.08;\n\nvoid fragment() {\n\tvec2 d = UV - vec2(0.5);\n\tfloat r = length(d);\n\tif (r > 0.5 || r < (0.5 - ring_thickness)) {\n\t\tdiscard;\n\t}\n\tCOLOR = ring_color;\n}\n"
-const RANGE_RING_OK_COLOR := Color(1.0, 1.0, 1.0, 0.72)
+const RANGE_RING_OK_COLOR := Color(0.72, 0.72, 0.72, 0.78)
 const RANGE_RING_BLOCKED_COLOR := Color(0.95, 0.24, 0.24, 0.9)
 
 @onready var quick_skill_btn: TextureButton = $QuickSkillBtn
@@ -90,7 +90,7 @@ func _ensure_cooldown_overlay(btn: TextureButton) -> ColorRect:
 	overlay.name = "CooldownOverlay"
 	overlay.z_index = 10
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.anchors_preset = Control.PRESET_FULL_RECT
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.offset_left = 6
 	overlay.offset_top = 6
 	overlay.offset_right = -6
@@ -136,8 +136,9 @@ func _ensure_range_ring(btn: TextureButton) -> ColorRect:
 		return ring
 	ring = ColorRect.new()
 	ring.name = "RangeRing"
+	ring.z_index = 11
 	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ring.anchors_preset = Control.PRESET_FULL_RECT
+	ring.set_anchors_preset(Control.PRESET_FULL_RECT)
 	ring.offset_left = 0
 	ring.offset_top = 0
 	ring.offset_right = 0
@@ -150,5 +151,4 @@ func _ensure_range_ring(btn: TextureButton) -> ColorRect:
 	mat.set_shader_parameter("ring_color", RANGE_RING_OK_COLOR)
 	ring.material = mat
 	btn.add_child(ring)
-	btn.move_child(ring, 0)
 	return ring
