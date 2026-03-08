@@ -78,16 +78,14 @@ func _node_has_player_engagement(node: Node, player: Node) -> bool:
 func _resolve_start_position(target: Node2D, burst_index: int) -> Vector2:
 	var x_offset: float = _burst_side_offset(burst_index)
 	var y_anchor: float = target.global_position.y + BASE_Y_OFFSET
-	var cast_bar_v: Variant = target.get("cast_bar") if target.has_method("get") else null
-	if cast_bar_v is CastBarWidget:
-		var cast_bar: CastBarWidget = cast_bar_v as CastBarWidget
-		if is_instance_valid(cast_bar):
-			var cast_size: Vector2 = Vector2.ZERO
-			if cast_bar.has_method("get_visual_size"):
-				var size_v: Variant = cast_bar.call("get_visual_size")
-				if size_v is Vector2:
-					cast_size = size_v as Vector2
-			y_anchor = cast_bar.global_position.y - (cast_size.y * 0.5) - FLOAT_TEXT_GAP_ABOVE_CASTBAR
+	var overlay_v: Variant = target.get("overlay_bars_widget") if target.has_method("get") else null
+	if overlay_v is OverlayBarsWidget:
+		var overlay: OverlayBarsWidget = overlay_v as OverlayBarsWidget
+		if is_instance_valid(overlay):
+			var cast_bar: CastBarWidget = overlay.get_cast_bar_widget()
+			if cast_bar != null and is_instance_valid(cast_bar):
+				var cast_size: Vector2 = cast_bar.get_visual_size()
+				y_anchor = cast_bar.global_position.y - (cast_size.y * 0.5) - FLOAT_TEXT_GAP_ABOVE_CASTBAR
 	return Vector2(target.global_position.x + x_offset, y_anchor)
 
 func _burst_side_offset(index: int) -> float:
