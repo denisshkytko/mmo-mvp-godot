@@ -1,7 +1,7 @@
 extends "res://core/abilities/effects/effect_apply_buff.gd"
 class_name EffectApplyStance
 
-func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
+func apply(caster: Node, _target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null:
 		return
 	var stance_id: String = String(context.get("ability_id", ""))

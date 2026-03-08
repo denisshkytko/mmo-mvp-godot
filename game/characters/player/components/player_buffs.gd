@@ -3,8 +3,6 @@ class_name PlayerBuffs
 
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
-const BuffData := preload("res://core/buffs/buff_data.gd")
-
 const SPIRITS_AID_ABILITY_ID: String = "spirits_aid"
 const SPIRITS_AID_READY_BUFF_ID: String = "passive:spirits_aid_ready"
 const SPIRITS_AID_COOLDOWN_SEC: float = 900.0
@@ -71,7 +69,7 @@ func _apply_consumable_hots(delta: float) -> void:
 	# Each buff may carry:
 	# hot_hp_per_sec, hot_mp_per_sec, hot_hp_left, hot_mp_left, hot_tick_acc
 	# We tick once per second (accumulator) and stop early if resource reaches max.
-	var changed_any: bool = false
+	var _changed_any: bool = false
 	for k in _buffs.keys():
 		var id: String = String(k)
 		var entry: Dictionary = _buffs[id] as Dictionary
@@ -101,7 +99,7 @@ func _apply_consumable_hots(delta: float) -> void:
 					var actual_heal: int = max(0, p.current_hp - hp_before)
 					if actual_heal > 0:
 						DAMAGE_HELPER.show_heal(p, actual_heal)
-					changed_any = true
+					_changed_any = true
 			# Mana
 			if mp_left > 0 and mp_per > 0 and p.mana < p.max_mana:
 				var need2: int = p.max_mana - p.mana
@@ -110,7 +108,7 @@ func _apply_consumable_hots(delta: float) -> void:
 				if give2 > 0:
 					p.mana += give2
 					mp_left -= give2
-					changed_any = true
+					_changed_any = true
 
 		# Stop early if resource is full (even if some total left), per design.
 		var stop_early: bool = false

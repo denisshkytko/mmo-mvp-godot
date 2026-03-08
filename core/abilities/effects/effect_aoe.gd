@@ -7,7 +7,7 @@ const PLAYER_COMBAT := preload("res://game/characters/player/components/player_c
 @export var target_filter: String = "enemies_only" # enemies_only | allies_only
 @export var inner_effect: AbilityEffect
 
-func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
+func apply(caster: Node, _target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or inner_effect == null:
 		return
 	if caster.get_tree() == null:
@@ -30,7 +30,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 			continue
 		inner_effect.apply(caster, target_node, rank_data, context)
 
-func _get_radius(def: AbilityDefinition) -> float:
+func _get_radius(_def: AbilityDefinition) -> float:
 	match radius_mode:
 		"ranged":
 			return PLAYER_COMBAT.RANGED_CAST_RANGE

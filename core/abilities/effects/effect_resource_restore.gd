@@ -3,7 +3,7 @@ class_name EffectResourceRestore
 
 @export var resource_type: String = "mana"
 
-func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
+func apply(_caster: Node, target: Node, rank_data: RankData, _context: Dictionary) -> void:
 	if target == null or rank_data == null:
 		return
 	if resource_type != "mana":

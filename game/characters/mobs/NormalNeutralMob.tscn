@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://c8r5alfj31s1o" path="res://game/characters/mobs/normal_neutral_mob_ai.gd" id="2_hfa2t"]
 [ext_resource type="Script" uid="uid://d2suhm7gh6avt" path="res://game/characters/mobs/normal_neutral_mob_combat.gd" id="3_t46kp"]
 [ext_resource type="Script" uid="uid://b5xkj4n64em43" path="res://game/characters/mobs/normal_neutral_mob_stats.gd" id="4_rl5hl"]
-[ext_resource type="Script" uid="uid://c2x18xg7h0m7c" path="res://game/characters/shared/resource_component.gd" id="5_4go75"]
+[ext_resource type="Script" path="res://game/characters/shared/resource_component.gd" id="5_4go75"]
 [ext_resource type="Script" uid="uid://bq7hc15k4c0ku" path="res://core/combat/danger_meter_component.gd" id="6_tqhi1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k85i5"]

@@ -22,8 +22,8 @@ var label_name: String = "Mana"
 var _last_combat_time_sec: float = -999999.0
 var _rage_decay_accum: float = 0.0
 
-func setup(owner: Node) -> void:
-	owner_entity = owner
+func setup(entity_owner: Node) -> void:
+	owner_entity = entity_owner
 	set_process(true)
 
 func set_type(t: String) -> void:

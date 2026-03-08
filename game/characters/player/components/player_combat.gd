@@ -255,7 +255,7 @@ func _estimate_final_damage(target: Node2D, raw_damage: int, dmg_type: String) -
 	var final := int(ceil(float(raw_damage) * (1.0 - reduction_pct / 100.0)))
 	return max(1, final)
 
-func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, spell_power: float) -> void:
+func _apply_on_hit_effects(target: Node2D, final_phys: int, snap: Dictionary, _spell_power: float) -> void:
 	if p == null or p.c_buffs == null:
 		return
 	var stance_data: Dictionary = p.c_buffs.get_active_stance_data()

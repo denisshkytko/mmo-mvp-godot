@@ -397,8 +397,8 @@ func _build_context(ability_id: String, def: AbilityDefinition, extra: Dictionar
 func _resolve_cast_target(def: AbilityDefinition, target: Node, allow_target_assignment: bool = true) -> Dictionary:
 	var pre_target: Node = target
 	if def != null and p != null and String(def.target_type) == "enemy" and pre_target == null and not _can_fallback_to_self(def):
-		var range: float = _resolve_range_by_mode(String(def.range_mode))
-		pre_target = _find_nearest_hostile_target_in_range(range)
+		var cast_range: float = _resolve_range_by_mode(String(def.range_mode))
+		pre_target = _find_nearest_hostile_target_in_range(cast_range)
 		if pre_target != null:
 			var gm: Node = null
 			if p.has_method("_get_game_manager"):
@@ -412,9 +412,9 @@ func _resolve_cast_target(def: AbilityDefinition, target: Node, allow_target_ass
 
 	var range_mode := String(def.range_mode)
 	if range_mode != "self" and actual_target is Node2D:
-		var range: float = _resolve_range_by_mode(range_mode)
+		var cast_range: float = _resolve_range_by_mode(range_mode)
 		var dist: float = _distance_between_body_hitboxes(p, actual_target as Node2D)
-		if dist > range:
+		if dist > cast_range:
 			return {"ok": false, "reason": "out_of_range"}
 	elif range_mode != "self" and not (actual_target is Node2D):
 		return {"ok": false, "reason": "no_target"}

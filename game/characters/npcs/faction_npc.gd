@@ -989,8 +989,8 @@ func _prune_merchant_sales(player_id: int) -> void:
 	var filtered: Array = []
 	for entry in list:
 		if entry is Dictionary:
-			var exp: int = int((entry as Dictionary).get("expires_at", 0))
-			if exp == 0 or exp > now:
+			var expires_at_msec: int = int((entry as Dictionary).get("expires_at", 0))
+			if expires_at_msec == 0 or expires_at_msec > now:
 				filtered.append(entry)
 	if filtered.is_empty():
 		_merchant_sales.erase(player_id)
