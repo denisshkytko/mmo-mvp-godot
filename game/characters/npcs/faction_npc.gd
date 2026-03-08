@@ -71,6 +71,7 @@ var loot_owner_player_id: int = 0
 var _merchant_sales: Dictionary = {}
 var _merchant_sale_seq: int = 0
 var _character_model: Node = null
+var _model_scene_override: PackedScene = null
 var _death_sequence_started: bool = false
 
 # Реген после сброса боя
@@ -260,7 +261,8 @@ func apply_spawn_init(
 	mob_variant_in: int = MOB_VARIANT.MobVariant.NORMAL,
 	attack_mode_choice_in: int = AttackMode.MELEE,
 	abilities_in: Array[String] = [],
-	spell_preset_name_key_in: String = ""
+	spell_preset_name_key_in: String = "",
+	model_scene_override_in: PackedScene = null
 ) -> void:
 	home_position = spawn_pos
 	global_position = spawn_pos
@@ -269,6 +271,7 @@ func apply_spawn_init(
 	_update_faction_color()
 	fighter_type = fighter_in
 	interaction_type = interaction_in
+	_model_scene_override = model_scene_override_in
 	_apply_interaction_visual()
 	npc_level = max(1, level_in)
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
@@ -697,6 +700,8 @@ func _apply_interaction_visual() -> void:
 	_apply_overlay_profile_from_model(inst)
 
 func _resolve_model_scene_for_interaction(value: int) -> PackedScene:
+	if _model_scene_override != null:
+		return _model_scene_override
 	if value == InteractionType.MERCHANT:
 		return MERCHANT_MODEL_SCENE
 	if value == InteractionType.TRAINER:

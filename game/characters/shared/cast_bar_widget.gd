@@ -138,9 +138,9 @@ func _resolve_stylebox_flat(slot: StringName) -> StyleBoxFlat:
 	if current_v is StyleBox:
 		var fallback := StyleBoxFlat.new()
 		if slot == &"background":
-			fallback.bg_color = Color(0.0, 0.0, 0.0, 0.8)
+			fallback.bg_color = Color(0.0, 0.0, 0.0, 0.3)
 		else:
-			fallback.bg_color = Color(0.2, 0.8, 1.0, 0.9)
+			fallback.bg_color = Color(0.5, 0.0, 0.5, 1.0)
 		return fallback
 	return StyleBoxFlat.new()
 

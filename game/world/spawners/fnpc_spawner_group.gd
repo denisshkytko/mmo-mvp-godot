@@ -6,16 +6,53 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 const NPC_SCENE: PackedScene = preload("res://game/characters/npcs/FactionNPC.tscn")
 const DEFAULT_PROJECTILE: PackedScene = preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
+const MERCHANT_MODEL_SCENE: PackedScene = preload("res://game/characters/npcs/models/MerchantModel.tscn")
+const TRAINER_MODEL_SCENE: PackedScene = preload("res://game/characters/npcs/models/TrainerModel.tscn")
+const PALADIN_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/PaladinModel.tscn")
+const WARRIOR_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/WarriorModel.tscn")
+const SHAMAN_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/ShamanModel.tscn")
+const MAGE_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/MageModel.tscn")
+const PRIEST_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/PriestModel.tscn")
+const HUNTER_MODEL_SCENE: PackedScene = preload("res://game/characters/player/models/HunterModel.tscn")
 
 enum Behavior { GUARD, PATROL }
 enum FighterType { CIVILIAN, COMBATANT }
 enum InteractionType { NONE, MERCHANT, QUEST, TRAINER }
 enum AttackRangeChoice { MELEE, RANGED }
+enum ModelSceneChoice {
+	NONE,
+	MERCHANT,
+	TRAINER,
+	PALADIN,
+	WARRIOR,
+	SHAMAN,
+	MAGE,
+	PRIEST,
+	HUNTER,
+}
 
 @export_group("Faction NPC Setup")
 @export_enum("blue", "red", "yellow", "green") var faction_id: String = "blue"
-@export_enum("Civilian", "Combatant") var fighter_type: int = FighterType.CIVILIAN
-@export_enum("None", "Merchant", "Quest", "Trainer") var interaction_type: int = InteractionType.NONE
+@export_enum("Civilian", "Combatant") var fighter_type: int:
+	get:
+		return _fighter_type_internal
+	set(v):
+		_fighter_type_internal = clampi(int(v), FighterType.CIVILIAN, FighterType.COMBATANT)
+		interaction_type = _sanitize_interaction_type(_interaction_type_internal)
+		_sync_default_model_scene_choice()
+		notify_property_list_changed()
+@export_enum("None", "Merchant", "Quest", "Trainer") var interaction_type: int:
+	get:
+		return _interaction_type_internal
+	set(v):
+		_interaction_type_internal = _sanitize_interaction_type(int(v))
+		_sync_default_model_scene_choice()
+		notify_property_list_changed()
+@export_enum("None", "Merchant", "Trainer", "Paladin", "Warrior", "Shaman", "Mage", "Priest", "Hunter") var model_scene_choice: int:
+	get:
+		return _model_scene_choice_internal
+	set(v):
+		_model_scene_choice_internal = clampi(int(v), ModelSceneChoice.NONE, ModelSceneChoice.HUNTER)
 @export var merchant_preset: MerchantPreset = preload("res://core/trade/presets/merchant_preset_level_1.tres")
 
 @export var loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
@@ -29,6 +66,7 @@ var class_choice: int:
 		_class_choice_internal = int(v)
 		attack_range_choice = _default_attack_range_for_class(_class_choice_internal)
 		spell_preset_id = _sanitize_spell_preset_for_class(spell_preset_id)
+		_sync_default_model_scene_choice()
 		notify_property_list_changed()
 @export var spell_preset_id: String = "none":
 	get:
@@ -52,11 +90,18 @@ const C_PRIEST := 4
 const C_HUNTER := 5
 var _class_choice_internal: int = C_PALADIN
 var _spell_preset_id_internal: String = "none"
+var _fighter_type_internal: int = FighterType.CIVILIAN
+var _interaction_type_internal: int = InteractionType.NONE
+var _model_scene_choice_internal: int = ModelSceneChoice.NONE
 
 func _validate_property(property: Dictionary) -> void:
-	if String(property.get("name", "")) == "spell_preset_id":
+	var name := String(property.get("name", ""))
+	if name == "spell_preset_id":
 		property["hint"] = PROPERTY_HINT_ENUM
 		property["hint_string"] = _build_spell_preset_hint()
+	elif name == "interaction_type":
+		property["hint"] = PROPERTY_HINT_ENUM
+		property["hint_string"] = _build_interaction_hint()
 
 func _build_spell_preset_hint() -> String:
 	var cls := _get_current_class_id()
@@ -75,6 +120,11 @@ func _build_spell_preset_hint() -> String:
 			return "none:Нет,shaman_elementalist"
 		_:
 			return "none:Нет"
+
+func _build_interaction_hint() -> String:
+	if _fighter_type_internal == FighterType.COMBATANT:
+		return "Quest:2"
+	return "None:0,Merchant:1,Quest:2,Trainer:3"
 
 func _get_spawn_scene() -> PackedScene:
 	return NPC_SCENE
@@ -98,6 +148,7 @@ func _ready() -> void:
 func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var class_id: String = CLASS_IDS[class_choice]
 	var profile_id: String = "npc_citizen" if fighter_type == FighterType.CIVILIAN else "humanoid_hostile"
+	var resolved_interaction := _sanitize_interaction_type(interaction_type)
 
 	if OS.is_debug_build():
 		print("[SPAWN][FNPC] type=", fighter_type, " class_id=", class_id, " profile_id=", profile_id, " lvl=", level, " point=", point.global_position)
@@ -109,7 +160,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		point.global_position,
 		faction_id,
 		fighter_type,
-		interaction_type,
+		resolved_interaction,
 		behavior,
 		-1.0, # aggro_radius is defined on the NPC itself
 		-1.0, # leash_distance is defined on the NPC itself
@@ -124,7 +175,8 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		mob_variant,
 		attack_range_choice,
 		abilities_for_level,
-		preset_name_key
+		preset_name_key,
+		_resolve_model_scene_choice()
 	)
 	return true
 
@@ -141,3 +193,56 @@ func _default_attack_range_for_class(choice: int) -> int:
 			return AttackRangeChoice.RANGED
 		_:
 			return AttackRangeChoice.MELEE
+
+func _sanitize_interaction_type(value: int) -> int:
+	if _fighter_type_internal == FighterType.COMBATANT:
+		return InteractionType.QUEST
+	return clampi(int(value), InteractionType.NONE, InteractionType.TRAINER)
+
+func _sync_default_model_scene_choice() -> void:
+	if _fighter_type_internal == FighterType.COMBATANT:
+		match clampi(_class_choice_internal, C_PALADIN, C_HUNTER):
+			C_PALADIN:
+				_model_scene_choice_internal = ModelSceneChoice.PALADIN
+			C_WARRIOR:
+				_model_scene_choice_internal = ModelSceneChoice.WARRIOR
+			C_SHAMAN:
+				_model_scene_choice_internal = ModelSceneChoice.SHAMAN
+			C_MAGE:
+				_model_scene_choice_internal = ModelSceneChoice.MAGE
+			C_PRIEST:
+				_model_scene_choice_internal = ModelSceneChoice.PRIEST
+			C_HUNTER:
+				_model_scene_choice_internal = ModelSceneChoice.HUNTER
+			_:
+				_model_scene_choice_internal = ModelSceneChoice.WARRIOR
+		return
+
+	match _interaction_type_internal:
+		InteractionType.MERCHANT:
+			_model_scene_choice_internal = ModelSceneChoice.MERCHANT
+		InteractionType.TRAINER:
+			_model_scene_choice_internal = ModelSceneChoice.TRAINER
+		_:
+			_model_scene_choice_internal = ModelSceneChoice.NONE
+
+func _resolve_model_scene_choice() -> PackedScene:
+	match clampi(_model_scene_choice_internal, ModelSceneChoice.NONE, ModelSceneChoice.HUNTER):
+		ModelSceneChoice.MERCHANT:
+			return MERCHANT_MODEL_SCENE
+		ModelSceneChoice.TRAINER:
+			return TRAINER_MODEL_SCENE
+		ModelSceneChoice.PALADIN:
+			return PALADIN_MODEL_SCENE
+		ModelSceneChoice.WARRIOR:
+			return WARRIOR_MODEL_SCENE
+		ModelSceneChoice.SHAMAN:
+			return SHAMAN_MODEL_SCENE
+		ModelSceneChoice.MAGE:
+			return MAGE_MODEL_SCENE
+		ModelSceneChoice.PRIEST:
+			return PRIEST_MODEL_SCENE
+		ModelSceneChoice.HUNTER:
+			return HUNTER_MODEL_SCENE
+		_:
+			return null
