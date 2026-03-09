@@ -139,6 +139,7 @@
 [ext_resource type="Texture2D" uid="uid://5rwwscag51lt" path="res://assets/characters/Hunter/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_010.png" id="164_tex"]
 [ext_resource type="Texture2D" uid="uid://j513lq05lhqj" path="res://assets/characters/Hunter/PNG Sequences/Throwing/0_Forest_Ranger_Throwing_011.png" id="165_tex"]
 
+
 [resource]
 animations = [{
 "frames": [{

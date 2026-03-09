@@ -19,23 +19,24 @@ mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="Root"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(810, 620)
+custom_minimum_size = Vector2(1168, 688)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -397.0
-offset_top = -302.0
-offset_right = 397.0
-offset_bottom = 302.0
+offset_left = -405.0
+offset_top = -312.0
+offset_right = 603.0
+offset_bottom = 312.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="Root/Panel"]
+custom_minimum_size = Vector2(1168, 688)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,6 +51,7 @@ theme_override_constants/margin_bottom = 8
 [node name="VBoxContainer" type="VBoxContainer" parent="Root/Panel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Root/Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -61,7 +63,6 @@ vertical_alignment = 1
 
 [node name="Tabs" type="TabContainer" parent="Root/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 22
 current_tab = 0
@@ -84,7 +85,7 @@ theme_override_constants/separation = 16
 
 [node name="EquipmentPanel" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Персонаж/ContentRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(428, 520)
+custom_minimum_size = Vector2(640, 594)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -521,27 +522,22 @@ size_flags_vertical = 3
 theme_override_constants/separation = 6
 
 [node name="SpellsPanelA" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
-custom_minimum_size = Vector2(444, 0)
+custom_minimum_size = Vector2(640, 594)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="SpellsVBox" type="VBoxContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA"]
-custom_minimum_size = Vector2(434, 294)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 6
 
 [node name="SpellFilterOption" type="OptionButton" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelA/SpellsVBox"]
-custom_minimum_size = Vector2(0, 26)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -568,7 +564,6 @@ theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 
 [node name="SpellsPanelB" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox"]
-custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -576,17 +571,11 @@ size_flags_vertical = 3
 [node name="LoadoutMargin" type="MarginContainer" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Заклинания/SpellsVBox/SpellsPanelB"]
 custom_minimum_size = Vector2(240, 240)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -120.0
-offset_right = 120.0
-offset_bottom = 120.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = 45.0
+offset_top = 85.0
+offset_right = 285.0
+offset_bottom = 325.0
+scale = Vector2(1.75, 1.75)
 theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 6
@@ -603,14 +592,14 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -98.0
+offset_left = -117.0
 offset_top = -93.0
-offset_right = -60.0
+offset_right = -44.0
 offset_bottom = -70.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 8
 text = "Ячейка 1"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -620,12 +609,13 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 11.0
-offset_top = -62.0
-offset_right = 49.0
-offset_bottom = -39.0
+offset_left = 3.0
+offset_top = -60.0
+offset_right = 76.0
+offset_bottom = -37.0
 grow_vertical = 0
-theme_override_constants/outline_size = 3
+scale = Vector2(0.75, 0.75)
+theme_override_constants/outline_size = 8
 text = "Ячейка 2"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -635,12 +625,13 @@ layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 21.0
-offset_top = -27.0
-offset_right = 59.0
-offset_bottom = -4.0
+offset_left = 13.0
+offset_top = -24.0
+offset_right = 86.0
+offset_bottom = -1.0
 grow_vertical = 2
-theme_override_constants/outline_size = 3
+scale = Vector2(0.75, 0.75)
+theme_override_constants/outline_size = 8
 text = "Ячейка 3"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -650,12 +641,13 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -34.0
-offset_top = 28.0
-offset_right = 4.0
-offset_bottom = 51.0
+offset_left = -42.0
+offset_top = 31.0
+offset_right = 31.0
+offset_bottom = 54.0
 grow_horizontal = 2
-theme_override_constants/outline_size = 3
+scale = Vector2(0.75, 0.75)
+theme_override_constants/outline_size = 8
 text = "Ячейка 4"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -665,12 +657,13 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -69.0
-offset_top = 18.0
-offset_right = -31.0
-offset_bottom = 41.0
+offset_left = -77.0
+offset_top = 20.0
+offset_right = -4.0
+offset_bottom = 43.0
 grow_horizontal = 0
-theme_override_constants/outline_size = 3
+scale = Vector2(0.75, 0.75)
+theme_override_constants/outline_size = 8
 text = "Ячейка 5"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -694,6 +687,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 6
 
 [node name="AbilitiesPanelA" type="Panel" parent="Root/Panel/MarginContainer/VBoxContainer/Tabs/Способности/AbilitiesVBox"]
+custom_minimum_size = Vector2(640, 594)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

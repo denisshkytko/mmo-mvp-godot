@@ -142,6 +142,7 @@
 [ext_resource type="Texture2D" uid="uid://s3o5hjaplrfd" path="res://assets/characters/Priest/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_010.png" id="170_tex"]
 [ext_resource type="Texture2D" uid="uid://cnamrnvasjty4" path="res://assets/characters/Priest/PNG Sequences/Throwing/0_Bloody_Alchemist_Throwing_011.png" id="171_tex"]
 
+
 [resource]
 animations = [{
 "frames": [{

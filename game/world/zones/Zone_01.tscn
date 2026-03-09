@@ -116,8 +116,10 @@ loot_profile = SubResource("Resource_nldw7")
 level_min = 50
 level_max = 50
 class_choice = 5
+spell_preset_id = "hunter_hunter"
+attack_range_choice = 1
 mob_group_choice = 1
-mob_model_choice = 3
+mob_model_choice = 4
 behavior = 1
 patrol_pause_seconds = 3.0
 
@@ -160,7 +162,7 @@ position = Vector2(-15.999999, -318)
 [node name="FNPCSpawnersGroup" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 fighter_type = 1
-interaction_type = 1
+model_scene_choice = 5
 loot_profile = SubResource("Resource_b1gjl")
 level_min = 60
 level_max = 60
@@ -173,7 +175,7 @@ position = Vector2(-1659, -163)
 [node name="FNPCSpawnersGroup5" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 fighter_type = 1
-interaction_type = 3
+model_scene_choice = 6
 loot_profile = SubResource("Resource_b1gjl")
 level_min = 60
 level_max = 60
@@ -188,6 +190,7 @@ position = Vector2(-1652, -85)
 script = ExtResource("7_nldw7")
 faction_id = "red"
 interaction_type = 1
+model_scene_choice = 1
 loot_profile = SubResource("Resource_ecawj")
 level_min = 60
 level_max = 60
@@ -199,6 +202,7 @@ position = Vector2(-1275, -159)
 [node name="FNPCSpawnersGroup3" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 faction_id = "yellow"
+model_scene_choice = 5
 loot_profile = SubResource("Resource_g6f5m")
 level_min = 5
 level_max = 5
@@ -210,6 +214,7 @@ position = Vector2(-1663, 213)
 [node name="FNPCSpawnersGroup4" type="Node2D" parent="."]
 script = ExtResource("7_nldw7")
 faction_id = "green"
+model_scene_choice = 5
 loot_profile = SubResource("Resource_1orgs")
 level_min = 5
 level_max = 5

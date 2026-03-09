@@ -8,7 +8,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
-const HUNTER_ARROW_TEXTURE := preload("res://assets/characters/Hunter/Vector Parts/Arrow.png")
+const HUNTER_ARROW_TEXTURE := preload("res://assets/models/characters/Hunter/Vector Parts/Arrow.png")
 
 const MELEE_ATTACK_RANGE: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 const RANGED_ATTACK_RANGE: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE

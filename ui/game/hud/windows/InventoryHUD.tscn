@@ -1,7 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://bq1obwgfdui1f"]
+[gd_scene load_steps=8 format=3 uid="uid://bq1obwgfdui1f"]
 
 [ext_resource type="Script" uid="uid://dv5t17eg8j84f" path="res://ui/game/hud/windows/inventory_hud.gd" id="1_wqexf"]
 [ext_resource type="PackedScene" uid="uid://bt2tbslwfrutf" path="res://ui/game/hud/shared/SharedTooltipPanel.tscn" id="2_0n5q6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inv_settings"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wqexf"]
 border_width_left = 2
@@ -9,13 +16,6 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(7.70092e-07, 0.96191174, 0.33474815, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inv_settings"]
-bg_color = Color(0, 0, 0, 1)
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
 
 [sub_resource type="FontFile" id="FontFile_wqexf"]
 subpixel_positioning = 0
@@ -31,6 +31,36 @@ cache/0/16/0/descent = 0.0
 cache/0/16/0/underline_position = 0.0
 cache/0/16/0/underline_thickness = 0.0
 cache/0/16/0/scale = 1.0
+cache/0/30/0/ascent = 0.0
+cache/0/30/0/descent = 0.0
+cache/0/30/0/underline_position = 0.0
+cache/0/30/0/underline_thickness = 0.0
+cache/0/30/0/scale = 1.0
+cache/0/32/0/ascent = 0.0
+cache/0/32/0/descent = 0.0
+cache/0/32/0/underline_position = 0.0
+cache/0/32/0/underline_thickness = 0.0
+cache/0/32/0/scale = 1.0
+cache/0/24/0/ascent = 0.0
+cache/0/24/0/descent = 0.0
+cache/0/24/0/underline_position = 0.0
+cache/0/24/0/underline_thickness = 0.0
+cache/0/24/0/scale = 1.0
+cache/0/28/0/ascent = 0.0
+cache/0/28/0/descent = 0.0
+cache/0/28/0/underline_position = 0.0
+cache/0/28/0/underline_thickness = 0.0
+cache/0/28/0/scale = 1.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_ckdax"]
+font_size = 28
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_tejn2"]
+font_size = 28
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
 
 [node name="InventoryHUD" type="CanvasLayer"]
 script = ExtResource("1_wqexf")
@@ -72,7 +102,6 @@ scroll_active = false
 autowrap_mode = 0
 vertical_alignment = 1
 
-
 [node name="InvSettingsButton" type="Button" parent="Root/Panel"]
 z_index = 16
 custom_minimum_size = Vector2(28, 28)
@@ -84,8 +113,8 @@ offset_bottom = 36.0
 text = "⋮"
 
 [node name="InvSettingsPanel" type="Panel" parent="Root/Panel"]
-z_index = 15
 visible = false
+z_index = 15
 custom_minimum_size = Vector2(236, 212)
 layout_mode = 0
 offset_left = 86.0
@@ -93,7 +122,6 @@ offset_top = 44.0
 offset_right = 322.0
 offset_bottom = 256.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_inv_settings")
-mouse_filter = 0
 
 [node name="Margin" type="MarginContainer" parent="Root/Panel/InvSettingsPanel"]
 layout_mode = 1
@@ -113,9 +141,9 @@ theme_override_constants/separation = 8
 
 [node name="GridTitle" type="Label" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
 layout_mode = 2
-text = "Изменить сетку инвентаря"
-theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.98039216, 0.8627451, 0.19607843, 1)
+theme_override_font_sizes/font_size = 18
+text = "Изменить сетку инвентаря"
 autowrap_mode = 2
 
 [node name="ColumnsRow" type="HBoxContainer" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
@@ -145,15 +173,14 @@ custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 text = "+"
 
-
 [node name="Separator" type="HSeparator" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
 layout_mode = 2
 
 [node name="SortTitle" type="Label" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
 layout_mode = 2
-text = "Сортировка"
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.98039216, 0.8627451, 0.19607843, 1)
+theme_override_font_sizes/font_size = 16
+text = "Сортировка"
 
 [node name="SortButton" type="Button" parent="Root/Panel/InvSettingsPanel/Margin/VBox"]
 layout_mode = 2
@@ -220,18 +247,25 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wqexf")
 
 [node name="Text" type="Label" parent="Root/Panel/Content/GridScrollWrapper/GridScroll/Grid/Slot0"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -56.0
+offset_top = -48.0
+offset_right = -8.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_fonts/font = SubResource("FontFile_wqexf")
 theme_override_font_sizes/font_size = 14
-horizontal_alignment = 1
-vertical_alignment = 1
+text = "10"
+label_settings = SubResource("LabelSettings_ckdax")
+horizontal_alignment = 2
+vertical_alignment = 2
 autowrap_mode = 2
-clip_text = true
 
 [node name="QuickBar" type="HBoxContainer" parent="Root"]
 custom_minimum_size = Vector2(340, 64)
@@ -269,19 +303,21 @@ expand_mode = 2
 stretch_mode = 5
 
 [node name="Count" type="Label" parent="Root/QuickBar/Quick0"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = -2.0
-offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -56.0
+offset_top = -48.0
+offset_right = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+label_settings = SubResource("LabelSettings_tejn2")
 horizontal_alignment = 2
 vertical_alignment = 2
-clip_text = true
 text_overrun_behavior = 3
 
 [node name="Quick1" type="Button" parent="Root/QuickBar"]
@@ -304,19 +340,21 @@ expand_mode = 2
 stretch_mode = 5
 
 [node name="Count" type="Label" parent="Root/QuickBar/Quick1"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = -2.0
-offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -56.0
+offset_top = -48.0
+offset_right = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+label_settings = SubResource("LabelSettings_tejn2")
 horizontal_alignment = 2
 vertical_alignment = 2
-clip_text = true
 text_overrun_behavior = 3
 
 [node name="Quick2" type="Button" parent="Root/QuickBar"]
@@ -339,19 +377,21 @@ expand_mode = 2
 stretch_mode = 5
 
 [node name="Count" type="Label" parent="Root/QuickBar/Quick2"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = -2.0
-offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -56.0
+offset_top = -48.0
+offset_right = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+label_settings = SubResource("LabelSettings_tejn2")
 horizontal_alignment = 2
 vertical_alignment = 2
-clip_text = true
 text_overrun_behavior = 3
 
 [node name="Quick3" type="Button" parent="Root/QuickBar"]
@@ -374,19 +414,21 @@ expand_mode = 2
 stretch_mode = 5
 
 [node name="Count" type="Label" parent="Root/QuickBar/Quick3"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = -2.0
-offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -56.0
+offset_top = -48.0
+offset_right = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+label_settings = SubResource("LabelSettings_tejn2")
 horizontal_alignment = 2
 vertical_alignment = 2
-clip_text = true
 text_overrun_behavior = 3
 
 [node name="Quick4" type="Button" parent="Root/QuickBar"]
@@ -409,19 +451,21 @@ expand_mode = 2
 stretch_mode = 5
 
 [node name="Count" type="Label" parent="Root/QuickBar/Quick4"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = -2.0
-offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -56.0
+offset_top = -48.0
+offset_right = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+label_settings = SubResource("LabelSettings_tejn2")
 horizontal_alignment = 2
 vertical_alignment = 2
-clip_text = true
 text_overrun_behavior = 3
 
 [node name="InvTooltip" parent="Root" instance=ExtResource("2_0n5q6")]
