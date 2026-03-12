@@ -50,8 +50,12 @@ func _spawn_projectile(caster: Node2D, target: Node2D, damage: int, rank_data: R
 		projectile.queue_free()
 		return false
 
-	projectile.call("setup", target, 0, caster)
-	if projectile.has_signal("impacted"):
+	projectile.call("setup", target, damage, caster)
+	if projectile.has_signal("impacted_with_result"):
+		projectile.connect("impacted_with_result", func(_hit_target: Node2D, dealt: int, _dmg_type: String) -> void:
+			_restore_mana_from_damage(caster, dealt, float(rank_data.value_pct_2))
+		)
+	elif projectile.has_signal("impacted"):
 		projectile.connect("impacted", func(hit_target: Node2D) -> void:
 			if hit_target == null or not is_instance_valid(hit_target):
 				return

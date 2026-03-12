@@ -2,6 +2,7 @@ extends Node2D
 class_name HomingProjectile
 
 signal impacted(target: Node2D)
+signal impacted_with_result(target: Node2D, dealt_damage: int, dmg_type: String)
 
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
@@ -97,13 +98,16 @@ func _apply_hit() -> void:
 	if _hit:
 		return
 	_hit = true
-	impacted.emit(_target)
+	var dealt: int = 0
 
 	if _target != null and is_instance_valid(_target):
 		if "is_dead" in _target and bool(_target.get("is_dead")):
 			queue_free()
 			return
 		var source_node: Node2D = _source if _source != null and is_instance_valid(_source) else null
-		DAMAGE_HELPER.apply_damage_typed(source_node, _target, _damage, "physical")
+		dealt = DAMAGE_HELPER.apply_damage_typed_with_result(source_node, _target, _damage, "physical")
+
+	impacted.emit(_target)
+	impacted_with_result.emit(_target, dealt, "physical")
 
 	queue_free()

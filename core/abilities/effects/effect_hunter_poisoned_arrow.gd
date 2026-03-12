@@ -49,8 +49,15 @@ func _spawn_projectile(caster: Node2D, target: Node2D, damage: int, rank_data: R
 		projectile.queue_free()
 		return false
 
-	projectile.call("setup", target, 0, caster)
-	if projectile.has_signal("impacted"):
+	projectile.call("setup", target, damage, caster)
+	if projectile.has_signal("impacted_with_result"):
+		projectile.connect("impacted_with_result", func(hit_target: Node2D, _dealt: int, _dmg_type: String) -> void:
+			if hit_target == null or not is_instance_valid(hit_target):
+				return
+			if debuff_effect != null:
+				debuff_effect.apply(caster, hit_target, rank_data, context)
+		)
+	elif projectile.has_signal("impacted"):
 		projectile.connect("impacted", func(hit_target: Node2D) -> void:
 			if hit_target == null or not is_instance_valid(hit_target):
 				return
