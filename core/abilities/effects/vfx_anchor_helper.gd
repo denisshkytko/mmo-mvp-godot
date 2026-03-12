@@ -22,6 +22,22 @@ static func resolve_validated_world_anchor(target: Node2D, default_pos: Vector2 
 	var max_y: float = rect.position.y + rect.size.y + 6.0
 	return Vector2(clampf(anchor.x, min_x, max_x), clampf(anchor.y, min_y, max_y))
 
+static func resolve_world_collider_center(target: Node2D, default_pos: Vector2 = Vector2.ZERO) -> Vector2:
+	if target == null or not is_instance_valid(target):
+		return default_pos
+	return _resolve_world_collider_center(target)
+
+static func resolve_visual_root(target: Node2D) -> Node2D:
+	if target == null or not is_instance_valid(target):
+		return null
+	var visual_v: Variant = target.get("visual_root")
+	if visual_v is Node2D and is_instance_valid(visual_v):
+		return visual_v as Node2D
+	var direct := target.get_node_or_null("Visual")
+	if direct is Node2D:
+		return direct as Node2D
+	return null
+
 static func resolve_backdrop_z_index(target: Node2D, fallback_z_index: int = 0) -> int:
 	if target == null or not is_instance_valid(target):
 		return fallback_z_index
