@@ -1,5 +1,0 @@
-res://ui/game/hud/windows/InventoryHUD.tscn
-res://game/world/zones/Zone_01.tscn
-res://core/trade/presets/merchant_preset_level_1.tres
-res://ui/game/hud/windows/CharacterHUD.tscn
-res://ui/game/hud/windows/character_hud.gd
