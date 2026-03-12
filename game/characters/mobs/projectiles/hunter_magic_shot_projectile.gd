@@ -29,7 +29,8 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 		return
 
-	var to_target: Vector2 = _target.global_position - global_position
+	var target_pos: Vector2 = _resolve_target_anchor()
+	var to_target: Vector2 = target_pos - global_position
 	var dist: float = to_target.length()
 	if dist <= hit_distance:
 		_done = true
@@ -40,3 +41,12 @@ func _physics_process(delta: float) -> void:
 	var dir: Vector2 = to_target / dist
 	rotation = dir.angle()
 	global_position += dir * speed * delta
+
+func _resolve_target_anchor() -> Vector2:
+	if _target == null or not is_instance_valid(_target):
+		return global_position
+	if _target.has_method("get_body_hitbox_center_global"):
+		var v: Variant = _target.call("get_body_hitbox_center_global")
+		if v is Vector2:
+			return v as Vector2
+	return _target.global_position

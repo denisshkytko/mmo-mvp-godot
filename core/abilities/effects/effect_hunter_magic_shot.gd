@@ -39,11 +39,11 @@ func _run_sequence(caster: Node2D, target: Node2D, final_damage: int) -> void:
 		return
 
 	var caster_pos: Vector2 = _resolve_anchor(caster)
-	var shot_dir: Vector2 = _resolve_shot_direction(caster_pos, _resolve_anchor(target))
-	var shot_rotation: float = shot_dir.angle()
-	var start_dur: float = _spawn_effect(world_parent, start_vfx_scene, caster_pos, shot_rotation)
-	if start_dur > 0.0:
-		await caster.get_tree().create_timer(start_dur).timeout
+	var target_pos: Vector2 = _resolve_anchor(target)
+	var shot_rotation: float = _resolve_shot_direction(caster_pos, target_pos).angle()
+
+	var start_fx: Node2D = _spawn_effect(world_parent, start_vfx_scene, caster_pos, shot_rotation)
+	await _await_effect_finished(start_fx)
 
 	if target == null or not is_instance_valid(target):
 		return
@@ -68,51 +68,47 @@ func _on_projectile_impacted(world_parent: Node, caster: Node2D, target: Node2D,
 		return
 	if target == null or not is_instance_valid(target):
 		return
+
 	var impact_pos: Vector2 = _resolve_anchor(target)
-	var shot_dir: Vector2 = _resolve_shot_direction(_resolve_anchor(caster), impact_pos)
-	var shot_rotation: float = shot_dir.angle()
-	var end_dur: float = _spawn_effect(world_parent, end_vfx_scene, impact_pos, shot_rotation)
-	if end_dur > 0.0:
-		await caster.get_tree().create_timer(end_dur).timeout
+	var caster_pos: Vector2 = _resolve_anchor(caster)
+	var shot_rotation: float = _resolve_shot_direction(caster_pos, impact_pos).angle()
+
+	var end_fx: Node2D = _spawn_effect(world_parent, end_vfx_scene, impact_pos, shot_rotation)
+	await _await_effect_finished(end_fx)
+
+	if target == null or not is_instance_valid(target):
+		return
 	_apply_damage_if_valid(caster, target, final_damage)
 
-func _apply_damage_if_valid(caster: Node2D, target: Node2D, final_damage: int) -> void:
+func _apply_damage_if_valid(caster: Node2D, target: Node, final_damage: int) -> void:
 	if target == null or not is_instance_valid(target):
+		return
+	if not (target is Node2D):
 		return
 	if "is_dead" in target and bool(target.get("is_dead")):
 		return
-	DAMAGE_HELPER.apply_damage_typed_with_result(caster, target, final_damage, school)
+	DAMAGE_HELPER.apply_damage_typed_with_result(caster, target as Node2D, final_damage, school)
 
-func _spawn_effect(parent: Node, scene: PackedScene, world_pos: Vector2, rotation_rad: float = 0.0) -> float:
+func _spawn_effect(parent: Node, scene: PackedScene, world_pos: Vector2, rotation_rad: float = 0.0) -> Node2D:
 	if parent == null or scene == null:
-		return 0.0
+		return null
 	var node: Node2D = scene.instantiate() as Node2D
 	if node == null:
-		return 0.0
+		return null
 	parent.add_child(node)
 	node.z_as_relative = false
 	node.z_index = vfx_z_index
 	node.global_position = world_pos
 	node.rotation = rotation_rad
-	return _extract_duration(node)
+	return node
 
-func _extract_duration(node: Node) -> float:
-	if node == null:
-		return 0.0
+func _await_effect_finished(node: Node2D) -> void:
+	if node == null or not is_instance_valid(node):
+		return
 	var anim: AnimatedSprite2D = node.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
-	if anim == null or anim.sprite_frames == null:
-		return 0.0
-	var name: StringName = anim.animation
-	if name == StringName("") or not anim.sprite_frames.has_animation(name):
-		return 0.0
-	var fps: float = float(anim.sprite_frames.get_animation_speed(name))
-	if fps <= 0.0:
-		return 0.0
-	var frame_count: int = anim.sprite_frames.get_frame_count(name)
-	if frame_count <= 0:
-		return 0.0
-	return float(frame_count) / fps
-
+	if anim == null:
+		return
+	await anim.animation_finished
 
 func _resolve_shot_direction(from_pos: Vector2, to_pos: Vector2) -> Vector2:
 	var v: Vector2 = to_pos - from_pos

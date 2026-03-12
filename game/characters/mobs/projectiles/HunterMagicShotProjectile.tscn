@@ -1,13 +1,11 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/characters/mobs/projectiles/hunter_magic_shot_projectile.gd" id="1_script"]
-[ext_resource type="SpriteFrames" path="res://game/vfx/frames/projectiles/hunter_magic_shot_loop_sprite_frames.tres" id="2_frames"]
+[ext_resource type="Texture2D" path="res://assets/projectiles/characters/Hunter/poisoned_arrow/4.png" id="2_tex"]
 
 [node name="HunterMagicShotProjectile" type="Node2D"]
 script = ExtResource("1_script")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("2_frames")
-animation = &"default"
-playing = true
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_tex")
 scale = Vector2(0.85, 0.85)
