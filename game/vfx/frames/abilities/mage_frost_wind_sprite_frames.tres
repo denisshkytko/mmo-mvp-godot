@@ -1,0 +1,251 @@
+[gd_resource type="SpriteFrames" load_steps=49 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00001.png" id="1_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00002.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00003.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00004.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00005.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00006.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00007.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00008.png" id="8_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00009.png" id="9_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00010.png" id="10_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00011.png" id="11_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00012.png" id="12_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00013.png" id="13_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00014.png" id="14_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00015.png" id="15_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00016.png" id="16_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00017.png" id="17_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00018.png" id="18_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00019.png" id="19_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00020.png" id="20_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00021.png" id="21_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00022.png" id="22_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00023.png" id="23_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00024.png" id="24_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00025.png" id="25_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00026.png" id="26_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00027.png" id="27_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00028.png" id="28_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00029.png" id="29_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00030.png" id="30_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00031.png" id="31_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00032.png" id="32_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00033.png" id="33_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00034.png" id="34_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00035.png" id="35_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00036.png" id="36_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00037.png" id="37_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00038.png" id="38_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00039.png" id="39_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00040.png" id="40_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00041.png" id="41_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00042.png" id="42_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00043.png" id="43_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00044.png" id="44_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00045.png" id="45_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00046.png" id="46_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00047.png" id="47_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/frost_wind/water1_00048.png" id="48_tex"]
+
+[resource]
+animations = [{
+"frames": [
+{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("32_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("33_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("34_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("35_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("36_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("37_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("38_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("39_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("40_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("41_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("42_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("43_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("44_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("45_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("46_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("47_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("48_tex")
+}
+],
+"loop": false,
+"name": &"default",
+"speed": 18.0
+}]

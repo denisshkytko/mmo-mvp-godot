@@ -7,6 +7,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 @export var hit_distance: float = 10.0
 @export var max_lifetime: float = 6.0
 @export var default_visual_scale: Vector2 = Vector2(0.2, 0.2)
+@export var directional_animation: bool = false
 
 var _target: Node2D = null
 var _damage: int = 0
@@ -15,6 +16,7 @@ var _hit: bool = false
 var _life: float = 0.0
 
 @onready var _sprite: Sprite2D = $Sprite2D as Sprite2D
+@onready var _animated_sprite: AnimatedSprite2D = get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 
 func setup(target: Node2D, damage: int, source: Node2D = null, texture_override: Texture2D = null) -> void:
 	_target = target
@@ -22,6 +24,12 @@ func setup(target: Node2D, damage: int, source: Node2D = null, texture_override:
 	_source = source
 	if _sprite != null:
 		_sprite.scale = default_visual_scale
+	if _animated_sprite != null:
+		_animated_sprite.scale = default_visual_scale
+		if _animated_sprite.sprite_frames != null and _animated_sprite.sprite_frames.has_animation(StringName("dir_right")):
+			_animated_sprite.play("dir_right")
+		elif _animated_sprite.sprite_frames != null and _animated_sprite.sprite_frames.has_animation(StringName("default")):
+			_animated_sprite.play("default")
 	if texture_override != null and _sprite != null:
 		_sprite.texture = texture_override
 
@@ -58,8 +66,30 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var dir: Vector2 = to_target / dist
-	rotation = dir.angle()
+	if _animated_sprite == null:
+		rotation = dir.angle()
+	else:
+		_update_directional_animation(dir)
 	global_position += dir * speed * delta
+
+func _update_directional_animation(dir: Vector2) -> void:
+	if _animated_sprite == null or _animated_sprite.sprite_frames == null:
+		return
+	if not directional_animation:
+		if _animated_sprite.sprite_frames.has_animation(StringName("default")):
+			_animated_sprite.play("default")
+		return
+
+	var abs_x: float = absf(dir.x)
+	var abs_y: float = absf(dir.y)
+	var name: StringName = &"dir_right"
+	if abs_x >= abs_y:
+		name = &"dir_right" if dir.x >= 0.0 else &"dir_left"
+	else:
+		name = &"dir_down" if dir.y >= 0.0 else &"dir_up"
+
+	if _animated_sprite.sprite_frames.has_animation(name) and _animated_sprite.animation != name:
+		_animated_sprite.play(name)
 
 func _apply_hit() -> void:
 	if _hit:
