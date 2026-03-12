@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bih1t6rjh3lvj"
-path="res://.godot/imported/3.png-2a47a4fb21927aa1262eda11f00b80fa.ctex"
+uid="uid://dbn3ae4kdwpe8"
+path="res://.godot/imported/2.png-30873c979731cfda3bc77302b8c43e79.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/animations/abilities/Hunter/poisoned_arrow/end/3.png"
-dest_files=["res://.godot/imported/3.png-2a47a4fb21927aa1262eda11f00b80fa.ctex"]
+source_file="res://assets/projectiles/characters/Hunter/lucky_shot.png"
+dest_files=["res://.godot/imported/2.png-30873c979731cfda3bc77302b8c43e79.ctex"]
 
 [params]
 

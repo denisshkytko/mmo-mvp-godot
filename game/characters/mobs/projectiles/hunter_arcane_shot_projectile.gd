@@ -1,5 +1,5 @@
 extends Node2D
-class_name HunterMagicShotProjectile
+class_name HunterArcaneShotProjectile
 
 signal impacted(target: Node2D)
 

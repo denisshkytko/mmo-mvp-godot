@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dbn3ae4kdwpe8"
-path="res://.godot/imported/2.png-30873c979731cfda3bc77302b8c43e79.ctex"
+uid="uid://cmvieuwwrljho"
+path="res://.godot/imported/3.png-861e2643c120879f6b941e88b8b4e2ae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/projectiles/characters/Hunter/poisoned_arrow/2.png"
-dest_files=["res://.godot/imported/2.png-30873c979731cfda3bc77302b8c43e79.ctex"]
+source_file="res://assets/projectiles/characters/Hunter/arcane_shot.png"
+dest_files=["res://.godot/imported/3.png-861e2643c120879f6b941e88b8b4e2ae.ctex"]
 
 [params]
 

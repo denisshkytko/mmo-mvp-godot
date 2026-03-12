@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/hunter/arcane_shot.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_hunter_magic_shot.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_hunter_arcane_shot.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=9]
 script = ExtResource("3")
@@ -131,7 +131,7 @@ value_pct = 0.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectHunterMagicShot" id=20]
+[sub_resource type="Resource" script_class="EffectHunterArcaneShot" id=20]
 script = ExtResource("4")
 school = "magic"
 scaling_mode = "spell_power_flat"
