@@ -7,6 +7,7 @@ const Y_DEADZONE: float = 6.0
 const IDLE_RECHECK_INTERVAL_MSEC: int = 250
 const MOVEMENT_EPSILON: float = 1.5
 const ACTIVE_KEEPALIVE_MSEC: int = 450
+const BASE_WORLD_Z_LAYER: int = 50
 
 static var _state_by_owner_id: Dictionary = {}
 
@@ -71,7 +72,8 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 		# simultaneously intersecting actors.
 		relative += 1
 
-	var resolved_z: int = default_z if relative <= 0 else default_z + relative
+	var base_z: int = BASE_WORLD_Z_LAYER + default_z
+	var resolved_z: int = base_z if relative <= 0 else base_z + relative
 	state["last_anchor"] = self_anchor
 	state["last_check_msec"] = now_msec
 	state["last_z"] = resolved_z
