@@ -103,9 +103,12 @@ func _restore_mana_from_damage(caster: Node, final_damage: int, percent: float) 
 	if "c_resource" in caster and caster.c_resource != null:
 		if caster.c_resource.resource_type != "mana":
 			return
-		var max_resource: int = int(caster.c_resource.max_resource)
-		var current: int = int(caster.c_resource.resource)
-		caster.c_resource.resource = min(max_resource, current + gain)
+		if caster.c_resource.has_method("add"):
+			caster.c_resource.call("add", gain)
+		else:
+			var max_resource: int = int(caster.c_resource.max_resource)
+			var current: int = int(caster.c_resource.resource)
+			caster.c_resource.resource = min(max_resource, current + gain)
 		return
 
 	if "mana" in caster and "max_mana" in caster:
