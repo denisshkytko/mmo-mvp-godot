@@ -4,11 +4,12 @@ class_name EffectMageFireBlast
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
+const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_helper.gd")
 
 @export var school: String = "magic"
 @export var scaling_mode: String = "spell_power_flat"
 @export var hit_vfx_scene: PackedScene = preload("res://game/vfx/abilities/MageFireBlastVfx.tscn")
-@export var fallback_z_index: int = -5
+@export var fallback_z_index: int = 0
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or target == null or rank_data == null:
@@ -42,35 +43,8 @@ func _spawn_hit_vfx(target: Node2D) -> void:
 		return
 	parent.add_child(vfx)
 	vfx.z_as_relative = false
-	vfx.z_index = _resolve_vfx_z_index(target)
-	vfx.global_position = _resolve_world_collider_center(target)
-
-func _resolve_vfx_z_index(target: Node2D) -> int:
-	if target == null:
-		return fallback_z_index
-	if "visual_root" in target:
-		var visual_v: Variant = target.get("visual_root")
-		if visual_v is CanvasItem and is_instance_valid(visual_v):
-			return int((visual_v as CanvasItem).z_index) - 1
-	if target is CanvasItem:
-		return int((target as CanvasItem).z_index) - 1
-	return fallback_z_index
-
-func _resolve_world_collider_center(target: Node2D) -> Vector2:
-	if target == null:
-		return Vector2.ZERO
-	if "world_collision" in target:
-		var wc: Variant = target.get("world_collision")
-		if wc is CollisionShape2D and is_instance_valid(wc):
-			return (wc as CollisionShape2D).global_position
-	var node_wc := target.get_node_or_null("WorldCollider") as CollisionShape2D
-	if node_wc != null:
-		return node_wc.global_position
-	if target.has_method("get_body_hitbox_center_global"):
-		var v: Variant = target.call("get_body_hitbox_center_global")
-		if v is Vector2:
-			return v as Vector2
-	return target.global_position
+	vfx.z_index = VFX_ANCHOR_HELPER.resolve_backdrop_z_index(target, fallback_z_index)
+	vfx.global_position = VFX_ANCHOR_HELPER.resolve_validated_world_anchor(target, target.global_position)
 
 func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary) -> int:
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
