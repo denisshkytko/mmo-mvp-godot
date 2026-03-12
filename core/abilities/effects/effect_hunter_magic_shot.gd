@@ -39,7 +39,9 @@ func _run_sequence(caster: Node2D, target: Node2D, final_damage: int) -> void:
 		return
 
 	var caster_pos: Vector2 = _resolve_anchor(caster)
-	var start_dur: float = _spawn_effect(world_parent, start_vfx_scene, caster_pos)
+	var shot_dir: Vector2 = _resolve_shot_direction(caster_pos, _resolve_anchor(target))
+	var shot_rotation: float = shot_dir.angle()
+	var start_dur: float = _spawn_effect(world_parent, start_vfx_scene, caster_pos, shot_rotation)
 	if start_dur > 0.0:
 		await caster.get_tree().create_timer(start_dur).timeout
 
@@ -67,7 +69,9 @@ func _on_projectile_impacted(world_parent: Node, caster: Node2D, target: Node2D,
 	if target == null or not is_instance_valid(target):
 		return
 	var impact_pos: Vector2 = _resolve_anchor(target)
-	var end_dur: float = _spawn_effect(world_parent, end_vfx_scene, impact_pos)
+	var shot_dir: Vector2 = _resolve_shot_direction(_resolve_anchor(caster), impact_pos)
+	var shot_rotation: float = shot_dir.angle()
+	var end_dur: float = _spawn_effect(world_parent, end_vfx_scene, impact_pos, shot_rotation)
 	if end_dur > 0.0:
 		await caster.get_tree().create_timer(end_dur).timeout
 	_apply_damage_if_valid(caster, target, final_damage)
@@ -79,7 +83,7 @@ func _apply_damage_if_valid(caster: Node2D, target: Node2D, final_damage: int) -
 		return
 	DAMAGE_HELPER.apply_damage_typed_with_result(caster, target, final_damage, school)
 
-func _spawn_effect(parent: Node, scene: PackedScene, world_pos: Vector2) -> float:
+func _spawn_effect(parent: Node, scene: PackedScene, world_pos: Vector2, rotation_rad: float = 0.0) -> float:
 	if parent == null or scene == null:
 		return 0.0
 	var node: Node2D = scene.instantiate() as Node2D
@@ -89,6 +93,7 @@ func _spawn_effect(parent: Node, scene: PackedScene, world_pos: Vector2) -> floa
 	node.z_as_relative = false
 	node.z_index = vfx_z_index
 	node.global_position = world_pos
+	node.rotation = rotation_rad
 	return _extract_duration(node)
 
 func _extract_duration(node: Node) -> float:
@@ -107,6 +112,13 @@ func _extract_duration(node: Node) -> float:
 	if frame_count <= 0:
 		return 0.0
 	return float(frame_count) / fps
+
+
+func _resolve_shot_direction(from_pos: Vector2, to_pos: Vector2) -> Vector2:
+	var v: Vector2 = to_pos - from_pos
+	if v.length_squared() <= 0.0001:
+		return Vector2.RIGHT
+	return v.normalized()
 
 func _resolve_anchor(node: Node2D) -> Vector2:
 	if node == null:
