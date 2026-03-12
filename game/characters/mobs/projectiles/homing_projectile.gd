@@ -1,6 +1,8 @@
 extends Node2D
 class_name HomingProjectile
 
+signal impacted(target: Node2D)
+
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 @export var speed: float = 420.0
@@ -95,6 +97,7 @@ func _apply_hit() -> void:
 	if _hit:
 		return
 	_hit = true
+	impacted.emit(_target)
 
 	if _target != null and is_instance_valid(_target):
 		if "is_dead" in _target and bool(_target.get("is_dead")):
