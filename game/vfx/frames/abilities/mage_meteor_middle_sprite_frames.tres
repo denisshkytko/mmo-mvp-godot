@@ -175,7 +175,7 @@ animations = [{
 "texture": ExtResource("34_tex")
 }
 ],
-"loop": false,
+"loop": true,
 "name": &"default",
 "speed": 24.0
 }]

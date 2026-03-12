@@ -123,6 +123,10 @@ func _spawn_persistent_vfx(target: Node2D) -> Node2D:
 		vfx.z_index = int((target as CanvasItem).z_index) + 1
 	var anchor_global: Vector2 = VFX_ANCHOR_HELPER.resolve_world_collider_center(target, target.global_position)
 	vfx.global_position = anchor_global
+	if "follow_target" in vfx:
+		vfx.set("follow_target", target)
+	if "follow_world_collider_center" in vfx:
+		vfx.set("follow_world_collider_center", true)
 	if "free_on_finish" in vfx:
 		vfx.set("free_on_finish", false)
 	if vfx.has_node("AnimatedSprite2D"):

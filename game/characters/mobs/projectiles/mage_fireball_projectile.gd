@@ -11,6 +11,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 @export var max_lifetime: float = 6.0
 @export var default_visual_scale: Vector2 = Vector2(0.6, 0.6)
 @export var damage_school: String = "magic"
+@export var visual_rotation_offset_deg: float = 180.0
 
 var _target: Node2D = null
 var _damage: int = 0
@@ -57,7 +58,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var dir: Vector2 = to_target / maxf(0.001, dist)
-	rotation = dir.angle()
+	rotation = dir.angle() + deg_to_rad(visual_rotation_offset_deg)
 	global_position += dir * speed * delta
 
 func _apply_hit() -> void:

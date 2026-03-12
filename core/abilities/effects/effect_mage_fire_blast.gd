@@ -35,22 +35,21 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 func _spawn_hit_vfx(target: Node2D) -> void:
 	if target == null or not is_instance_valid(target) or hit_vfx_scene == null:
 		return
-	var anchor_global: Vector2 = VFX_ANCHOR_HELPER.resolve_world_collider_center(target, target.global_position)
-	var visual_root: Node2D = VFX_ANCHOR_HELPER.resolve_visual_root(target)
-	var parent: Node = visual_root if visual_root != null else target.get_parent()
+	var parent: Node = target.get_parent()
 	if parent == null:
 		return
 	var vfx: Node2D = hit_vfx_scene.instantiate() as Node2D
 	if vfx == null:
 		return
 	parent.add_child(vfx)
-	if visual_root != null:
-		vfx.position = visual_root.to_local(anchor_global)
-		vfx.z_index = -1
-		return
+
 	vfx.z_as_relative = false
 	vfx.z_index = VFX_ANCHOR_HELPER.resolve_backdrop_z_index(target, fallback_z_index)
-	vfx.global_position = anchor_global
+	vfx.global_position = VFX_ANCHOR_HELPER.resolve_world_collider_center(target, target.global_position)
+	if "follow_target" in vfx:
+		vfx.set("follow_target", target)
+	if "follow_world_collider_center" in vfx:
+		vfx.set("follow_world_collider_center", true)
 
 func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary) -> int:
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
