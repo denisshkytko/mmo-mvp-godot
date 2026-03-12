@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/characters/mobs/projectiles/mage_fireball_projectile.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://game/vfx/frames/projectiles/mage_frostbolt_projectile_sprite_frames.tres" id="2_frames"]
+
+[node name="MageFrostboltProjectile" type="Node2D"]
+script = ExtResource("1_script")
+default_visual_scale = Vector2(0.8, 0.8)
+damage_school = "magic"
+visual_rotation_offset_deg = 180.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"default"
+playing = true

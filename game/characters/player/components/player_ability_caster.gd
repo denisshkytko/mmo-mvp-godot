@@ -380,7 +380,7 @@ func _start_cooldown(ability_id: String, duration: float) -> void:
 func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data: RankData, actual_target: Node) -> void:
 	if def == null or def.effect == null:
 		return
-	if p != null and ["arcane_shot", "aimed_shot", "lucky_shot", "poisoned_arrow", "panjagan", "suppressive_shot", "fire_blast", "fireball"].has(ability_id) and p.has_method("play_model_combat_action"):
+	if p != null and ["arcane_shot", "aimed_shot", "lucky_shot", "poisoned_arrow", "panjagan", "suppressive_shot", "fire_blast", "fireball", "frostbolt"].has(ability_id) and p.has_method("play_model_combat_action"):
 		if actual_target is Node2D and p.has_method("face_model_to_world_position"):
 			p.call("face_model_to_world_position", (actual_target as Node2D).global_position)
 		var is_moving_now := p.velocity.length() > 0.01
