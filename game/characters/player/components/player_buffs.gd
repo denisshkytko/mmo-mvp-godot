@@ -60,7 +60,7 @@ func tick(delta: float) -> void:
 		return
 
 	for id in to_remove:
-		_buffs.erase(id)
+		_erase_buff(id)
 
 	_notify_stats_changed()
 
@@ -274,10 +274,12 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Variant = {}, ab
 			if int(edata.get("caster_owner_id", 0)) != owner_id:
 				continue
 			if key != id:
-				_buffs.erase(key)
+				_erase_buff(key)
 	var effective_duration: float = duration_sec
 	if effective_duration <= 0.0:
 		effective_duration = 999999.0
+	if _buffs.has(id):
+		_erase_buff(id)
 	_buffs[id] = {
 		"time_left": effective_duration,
 		"data": data_dict,
@@ -294,7 +296,7 @@ func remove_buff(id: String) -> void:
 	var source: String = String(entry.get("source", ""))
 	if source == "aura" or source == "stance" or source == "passive":
 		return
-	_buffs.erase(id)
+	_erase_buff(id)
 	_notify_stats_changed()
 
 func remove_buffs_with_prefix(prefix: String) -> void:
@@ -304,11 +306,27 @@ func remove_buffs_with_prefix(prefix: String) -> void:
 	for k in _buffs.keys():
 		var id: String = String(k)
 		if id.begins_with(prefix):
-			_buffs.erase(id)
+			_erase_buff(id)
 			removed_any = true
 	if removed_any:
 		_notify_stats_changed()
 
+
+func _erase_buff(id: String) -> void:
+	if not _buffs.has(id):
+		return
+	var entry: Dictionary = _buffs[id] as Dictionary
+	var data: Dictionary = entry.get("data", {}) as Dictionary
+	_cleanup_runtime_vfx(data)
+	_buffs.erase(id)
+
+func _cleanup_runtime_vfx(data: Dictionary) -> void:
+	if data.is_empty():
+		return
+	for key in ["runtime_persistent_vfx", "runtime_vfx"]:
+		var node_v: Variant = data.get(key, null)
+		if node_v is Node and is_instance_valid(node_v):
+			(node_v as Node).queue_free()
 
 # --- Stats helpers (for CharacterHUD) ---
 # CharacterHUD shows HP/Mana regen from Player.get_stats_snapshot().
