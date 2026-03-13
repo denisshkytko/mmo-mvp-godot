@@ -50,6 +50,10 @@ func on_cast_start(caster: Node, target: Node, _rank_data: RankData, _context: D
 		vfx.set("layer_offset_from_target", 1)
 	if "free_on_finish" in vfx:
 		vfx.set("free_on_finish", false)
+	if vfx.has_node("AnimatedSprite2D"):
+		var preview_anim := vfx.get_node("AnimatedSprite2D") as AnimatedSprite2D
+		if preview_anim != null:
+			preview_anim.play("default")
 
 	var duration: float = maxf(0.01, cast_time_sec)
 	var tw := vfx.create_tween()
