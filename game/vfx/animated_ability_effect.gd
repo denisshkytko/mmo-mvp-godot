@@ -34,7 +34,9 @@ func _on_animation_finished() -> void:
 		queue_free()
 
 func _update_follow_position() -> void:
-	if follow_target == null or not is_instance_valid(follow_target):
+	if follow_target == null:
+		return
+	if not is_instance_valid(follow_target):
 		if free_on_target_death:
 			queue_free()
 		return
