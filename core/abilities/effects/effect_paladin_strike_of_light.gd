@@ -20,6 +20,9 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	var phys_base: int = _compute_phys_base_damage(caster, rank_data)
 	var magic_base: int = _compute_magic_base_damage(rank_data, snap)
 
+	if target is Node2D:
+		_spawn_hit_vfx(target as Node2D)
+
 	var total_dealt: int = 0
 	if phys_base > 0:
 		var phys_final: int = STAT_CALC.apply_crit_to_damage_typed(phys_base, snap, "physical")
@@ -36,8 +39,6 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 
 	if total_dealt <= 0:
 		return
-	if target is Node2D:
-		_spawn_hit_vfx(target as Node2D)
 
 func _compute_phys_base_damage(caster: Node, rank_data: RankData) -> int:
 	var base_phys: int = 0
@@ -82,14 +83,3 @@ func _spawn_hit_vfx(target: Node2D) -> void:
 		var anim := vfx.get_node("AnimatedSprite2D") as AnimatedSprite2D
 		if anim != null:
 			anim.play("default")
-
-func _is_target_dead(target: Node) -> bool:
-	if target == null or not is_instance_valid(target):
-		return true
-	if "is_dead" in target and bool(target.get("is_dead")):
-		return true
-	if "c_stats" in target:
-		var stats_v: Variant = target.get("c_stats")
-		if stats_v != null and is_instance_valid(stats_v) and "is_dead" in stats_v and bool(stats_v.get("is_dead")):
-			return true
-	return false

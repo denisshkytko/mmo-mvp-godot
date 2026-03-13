@@ -26,11 +26,10 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 		return
 
 	var final: int = STAT_CALC.apply_crit_to_damage_typed(base, snap, school)
+	_spawn_hit_vfx(target as Node2D)
 	var dealt: int = DAMAGE_HELPER.apply_damage_typed_with_result(caster, target, final, school)
 	if dealt <= 0:
 		return
-
-	_spawn_hit_vfx(target as Node2D)
 
 func _spawn_hit_vfx(target: Node2D) -> void:
 	if target == null or not is_instance_valid(target) or hit_vfx_scene == null:

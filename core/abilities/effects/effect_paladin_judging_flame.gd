@@ -27,15 +27,15 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	if final <= 0:
 		return
 
+	if target is Node2D:
+		_spawn_hit_vfx(target as Node2D)
+
 	var dealt: int = DAMAGE_HELPER.apply_damage_typed_with_result(caster, target, final, school)
 	if dealt <= 0:
 		return
 
 	if school == "magic" and "c_buffs" in caster and caster.c_buffs != null and caster.c_buffs.has_method("restore_mana_from_spell_damage"):
 		caster.c_buffs.call("restore_mana_from_spell_damage", dealt)
-
-	if target is Node2D:
-		_spawn_hit_vfx(target as Node2D)
 
 func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary, context: Dictionary) -> int:
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
@@ -90,14 +90,3 @@ func _spawn_hit_vfx(target: Node2D) -> void:
 		var anim := vfx.get_node("AnimatedSprite2D") as AnimatedSprite2D
 		if anim != null:
 			anim.play("default")
-
-func _is_target_dead(target: Node) -> bool:
-	if target == null or not is_instance_valid(target):
-		return true
-	if "is_dead" in target and bool(target.get("is_dead")):
-		return true
-	if "c_stats" in target:
-		var stats_v: Variant = target.get("c_stats")
-		if stats_v != null and is_instance_valid(stats_v) and "is_dead" in stats_v and bool(stats_v.get("is_dead")):
-			return true
-	return false
