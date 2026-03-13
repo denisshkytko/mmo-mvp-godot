@@ -406,7 +406,7 @@ func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data
 		p.call("play_model_combat_action", "melee_unarmed", paladin_is_moving)
 		if paladin_is_moving and p.has_method("restore_model_facing_to_movement"):
 			p.call("restore_model_facing_to_movement")
-	if p != null and ["arcane_shot", "aimed_shot", "lucky_shot", "poisoned_arrow", "panjagan", "suppressive_shot", "fire_blast", "fireball", "frostbolt", "frost_wind", "hailstorm", "meteor"].has(ability_id) and p.has_method("play_model_combat_action"):
+	if p != null and ["arcane_shot", "aimed_shot", "lucky_shot", "poisoned_arrow", "panjagan", "suppressive_shot", "fire_blast", "fireball", "frostbolt", "frost_wind", "hailstorm", "meteor", "prayer_of_light"].has(ability_id) and p.has_method("play_model_combat_action"):
 		if actual_target is Node2D and p.has_method("face_model_to_world_position"):
 			p.call("face_model_to_world_position", (actual_target as Node2D).global_position)
 		var is_moving_now := p.velocity.length() > 0.01
