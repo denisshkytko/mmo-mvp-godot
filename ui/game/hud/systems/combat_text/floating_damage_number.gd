@@ -9,10 +9,15 @@ class_name FloatingDamageNumber
 @onready var value_label: Label = $Label
 var _move_dir: Vector2 = Vector2(0.0, -1.0)
 
-func show_value(value: int, color: Color, move_dir: Vector2 = Vector2(0.0, -1.0)) -> void:
+func show_value(value: Variant, color: Color, move_dir: Vector2 = Vector2(0.0, -1.0)) -> void:
 	if value_label == null:
 		return
-	value_label.text = str(max(0, value))
+	if value is String:
+		value_label.text = String(value)
+	elif value is StringName:
+		value_label.text = String(value)
+	else:
+		value_label.text = str(max(0, int(value)))
 	value_label.modulate = color
 	_move_dir = move_dir.normalized() if move_dir.length() > 0.001 else Vector2(0.0, -1.0)
 	modulate = Color(1.0, 1.0, 1.0, 1.0)

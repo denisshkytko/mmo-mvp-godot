@@ -13,6 +13,7 @@ const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/MerchantModel.tscn")
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 signal died(corpse: Corpse)
 
@@ -552,6 +553,7 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 
 	var snap: Dictionary = c_stats.get_stats_snapshot()
 	if _roll_evade(snap):
+		DAMAGE_HELPER.show_combat_event(self, tr("ui.hud.combat.evade"), dmg_type, attacker)
 		return 0
 	var pct: float
 	if dmg_type == "magic":
@@ -560,7 +562,12 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 		pct = float(snap.get("physical_reduction_pct", 0.0))
 	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
-	final = _apply_shield_block_if_any(final, snap)
+	var blocked_amount: int = 0
+	var after_block: int = _apply_shield_block_if_any(final, snap)
+	blocked_amount = max(0, final - after_block)
+	final = after_block
+	if blocked_amount > 0:
+		DAMAGE_HELPER.show_combat_event(self, "%s (-%d)" % [tr("ui.hud.combat.block"), blocked_amount], dmg_type, attacker)
 	if final <= 0:
 		return 0
 	play_model_hurt()

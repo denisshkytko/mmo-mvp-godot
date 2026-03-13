@@ -24,10 +24,17 @@ func show_damage(source: Node2D, target: Node2D, final_damage: int, dmg_type: St
 func show_heal(source: Node2D, target: Node2D, heal_amount: int) -> void:
 	_show_value(source, target, heal_amount, "heal")
 
-func _show_value(source: Node2D, target: Node2D, value: int, value_type: String) -> void:
+func show_event_text(source: Node2D, target: Node2D, text: String, dmg_type: String = "physical") -> void:
+	if text.strip_edges() == "":
+		return
+	_show_value(source, target, text, dmg_type)
+
+func _show_value(source: Node2D, target: Node2D, value: Variant, value_type: String) -> void:
 	if target == null or not is_instance_valid(target):
 		return
-	if value <= 0:
+	if value is int and int(value) <= 0:
+		return
+	if value is float and float(value) <= 0.0:
 		return
 	if FLOATING_DAMAGE_NUMBER_SCENE == null:
 		return
