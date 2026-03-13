@@ -7,6 +7,7 @@ class_name AnimatedAbilityEffect
 @export var follow_target: Node2D = null
 @export var follow_world_collider_center: bool = false
 @export var follow_offset: Vector2 = Vector2.ZERO
+@export var free_on_target_death: bool = true
 
 @onready var _anim: AnimatedSprite2D = $AnimatedSprite2D as AnimatedSprite2D
 
@@ -34,6 +35,11 @@ func _on_animation_finished() -> void:
 
 func _update_follow_position() -> void:
 	if follow_target == null or not is_instance_valid(follow_target):
+		if free_on_target_death:
+			queue_free()
+		return
+	if free_on_target_death and "is_dead" in follow_target and bool(follow_target.get("is_dead")):
+		queue_free()
 		return
 	var anchor: Vector2 = _resolve_target_anchor(follow_target)
 	global_position = anchor + follow_offset

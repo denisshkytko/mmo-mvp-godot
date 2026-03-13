@@ -4,7 +4,7 @@ class_name EffectMageFrostWindVfx
 const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_helper.gd")
 
 @export var vfx_scene: PackedScene = preload("res://game/vfx/abilities/MageFrostWindVfx.tscn")
-@export var z_offset_from_caster: int = -1
+@export var z_offset_from_caster: int = 2
 
 func apply(caster: Node, _target: Node, _rank_data: RankData, _context: Dictionary) -> void:
 	if caster == null or not (caster is Node2D):
@@ -24,3 +24,7 @@ func apply(caster: Node, _target: Node, _rank_data: RankData, _context: Dictiona
 	if caster is CanvasItem:
 		vfx.z_index = int((caster as CanvasItem).z_index) + z_offset_from_caster
 	vfx.global_position = VFX_ANCHOR_HELPER.resolve_world_collider_center(caster_2d, caster_2d.global_position)
+	if "follow_target" in vfx:
+		vfx.set("follow_target", caster_2d)
+	if "follow_world_collider_center" in vfx:
+		vfx.set("follow_world_collider_center", true)

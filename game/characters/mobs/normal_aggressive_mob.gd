@@ -8,6 +8,7 @@ const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const BANDIT_HUNTER_RANGED_PROJECTILE_SCENE: PackedScene = preload("res://game/characters/mobs/projectiles/BanditHunterRangeAutoAttackProjectile.tscn")
 
 const MODEL_SCENE_PATHS := {
 		"cinderborn": {
@@ -345,6 +346,9 @@ func apply_spawn_init(
 	spell_preset_name_key = spell_preset_name_key_in
 	model_group_id = String(model_group_id_in).to_lower()
 	model_id = String(model_id_in).to_lower()
+	var model_projectile: PackedScene = _resolve_ranged_projectile_scene_for_model(model_group_id, model_id)
+	if model_projectile != null:
+		ranged_projectile_scene = model_projectile
 	_apply_model_visual()
 
 	apply_spawn_settings(
@@ -391,6 +395,12 @@ func apply_spawn_init(
 	c_spell_caster.configure(abilities, mob_level)
 	_spawn_initialized = true
 
+
+
+func _resolve_ranged_projectile_scene_for_model(group_id: String, id: String) -> PackedScene:
+	if group_id == "bandits" and id == "hunter_ranged":
+		return BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
+	return null
 
 func _mark_spawned() -> void:
 	_spawn_initialized = true
