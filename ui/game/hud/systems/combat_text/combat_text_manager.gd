@@ -39,7 +39,7 @@ func _show_value(source: Node2D, target: Node2D, value: int, value_type: String)
 		return
 
 	var burst_index: int = _next_burst_index(target)
-	var start: Vector2 = _resolve_start_position(target, burst_index, value_type)
+	var start: Vector2 = _resolve_start_position(source, target, burst_index, value_type)
 	var drift_dir: Vector2 = _resolve_float_direction(target, value_type)
 	instance.position = start
 	instance.z_as_relative = false
@@ -78,7 +78,7 @@ func _node_has_player_engagement(node: Node, player: Node) -> bool:
 			return true
 	return false
 
-func _resolve_start_position(target: Node2D, burst_index: int, value_type: String) -> Vector2:
+func _resolve_start_position(source: Node2D, target: Node2D, burst_index: int, value_type: String) -> Vector2:
 	var side_offset: float = _resolve_type_lane_offset(target, value_type)
 	if burst_index >= 3:
 		side_offset += _burst_side_offset(burst_index) * 0.5
@@ -88,6 +88,8 @@ func _resolve_start_position(target: Node2D, burst_index: int, value_type: Strin
 		var top_left: Vector2 = sprite.to_global(sprite_rect.position)
 		var top_right: Vector2 = sprite.to_global(sprite_rect.position + Vector2(sprite_rect.size.x, 0.0))
 		var spawn_from_right: bool = sprite.flip_h
+		if _should_reflect_spawn_side_for_train(source, target, sprite):
+			spawn_from_right = not spawn_from_right
 		var corner: Vector2 = top_right if spawn_from_right else top_left
 		return corner + Vector2(side_offset, -FLOAT_TEXT_GAP_ABOVE_SPRITE)
 
@@ -102,6 +104,24 @@ func _resolve_start_position(target: Node2D, burst_index: int, value_type: Strin
 				var cast_size: Vector2 = cast_bar.get_visual_size()
 				y_anchor = cast_bar.global_position.y - (cast_size.y * 0.5) - FLOAT_TEXT_GAP_ABOVE_CASTBAR
 	return Vector2(target.global_position.x + x_offset, y_anchor)
+
+
+func _should_reflect_spawn_side_for_train(source: Node2D, target: Node2D, target_sprite: AnimatedSprite2D) -> bool:
+	if source == null or not is_instance_valid(source):
+		return false
+	if target == null or not is_instance_valid(target):
+		return false
+	if target_sprite == null or not is_instance_valid(target_sprite):
+		return false
+	var source_sprite: AnimatedSprite2D = _resolve_target_sprite(source)
+	if source_sprite == null or not is_instance_valid(source_sprite):
+		return false
+	var source_face_dir_x: float = -1.0 if source_sprite.flip_h else 1.0
+	var target_face_dir_x: float = -1.0 if target_sprite.flip_h else 1.0
+	if signf(source_face_dir_x) != signf(target_face_dir_x):
+		return false
+	var target_is_in_front: bool = ((target.global_position.x - source.global_position.x) * target_face_dir_x) > 0.0
+	return target_is_in_front
 
 func _resolve_float_direction(target: Node2D, value_type: String = "physical") -> Vector2:
 	var sprite: AnimatedSprite2D = _resolve_target_sprite(target)
