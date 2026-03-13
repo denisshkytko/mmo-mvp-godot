@@ -15,7 +15,7 @@ signal carrier_layer_changed(new_z_index: int)
 
 @onready var _anim: AnimatedSprite2D = $AnimatedSprite2D as AnimatedSprite2D
 
-var _connected_follow_target: Node2D = null
+var _connected_follow_target: Variant = null
 
 func _ready() -> void:
 	if _anim == null:
@@ -83,38 +83,46 @@ func _sync_follow_target_connections() -> void:
 	if _connected_follow_target != null:
 		_apply_layer_from_target(_connected_follow_target)
 
-func _connect_follow_target_signals(target: Node2D) -> void:
-	if target == null or not is_instance_valid(target):
+func _connect_follow_target_signals(target: Variant) -> void:
+	if not (target is Node2D):
 		return
-	if target.has_signal("visual_layer_changed"):
+	var target_node: Node2D = target as Node2D
+	if target_node == null or not is_instance_valid(target_node):
+		return
+	if target_node.has_signal("visual_layer_changed"):
 		var cb_layer := Callable(self, "_on_follow_target_visual_layer_changed")
-		if not target.is_connected("visual_layer_changed", cb_layer):
-			target.connect("visual_layer_changed", cb_layer)
-	if target.has_signal("carrier_effects_stop"):
+		if not target_node.is_connected("visual_layer_changed", cb_layer):
+			target_node.connect("visual_layer_changed", cb_layer)
+	if target_node.has_signal("carrier_effects_stop"):
 		var cb_stop := Callable(self, "_on_follow_target_effects_stop")
-		if not target.is_connected("carrier_effects_stop", cb_stop):
-			target.connect("carrier_effects_stop", cb_stop)
+		if not target_node.is_connected("carrier_effects_stop", cb_stop):
+			target_node.connect("carrier_effects_stop", cb_stop)
 
-func _disconnect_follow_target_signals(target: Node2D) -> void:
-	if target == null or not is_instance_valid(target):
+func _disconnect_follow_target_signals(target: Variant) -> void:
+	if not (target is Node2D):
 		return
-	if target.has_signal("visual_layer_changed"):
+	var target_node: Node2D = target as Node2D
+	if target_node == null or not is_instance_valid(target_node):
+		return
+	if target_node.has_signal("visual_layer_changed"):
 		var cb_layer := Callable(self, "_on_follow_target_visual_layer_changed")
-		if target.is_connected("visual_layer_changed", cb_layer):
-			target.disconnect("visual_layer_changed", cb_layer)
-	if target.has_signal("carrier_effects_stop"):
+		if target_node.is_connected("visual_layer_changed", cb_layer):
+			target_node.disconnect("visual_layer_changed", cb_layer)
+	if target_node.has_signal("carrier_effects_stop"):
 		var cb_stop := Callable(self, "_on_follow_target_effects_stop")
-		if target.is_connected("carrier_effects_stop", cb_stop):
-			target.disconnect("carrier_effects_stop", cb_stop)
+		if target_node.is_connected("carrier_effects_stop", cb_stop):
+			target_node.disconnect("carrier_effects_stop", cb_stop)
 
 func _on_follow_target_visual_layer_changed(new_z_index: int) -> void:
 	_apply_layer_from_z_index(new_z_index)
 
-func _apply_layer_from_target(target: Node2D) -> void:
-	if target == null or not is_instance_valid(target):
+func _apply_layer_from_target(target: Variant) -> void:
+	if not (target is CanvasItem):
 		return
-	if target is CanvasItem:
-		_apply_layer_from_z_index(int((target as CanvasItem).z_index))
+	var target_item: CanvasItem = target as CanvasItem
+	if target_item == null or not is_instance_valid(target_item):
+		return
+	_apply_layer_from_z_index(int(target_item.z_index))
 
 func _apply_layer_from_z_index(base_z_index: int) -> void:
 	if not keep_layer_offset_from_target:
