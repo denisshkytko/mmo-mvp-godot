@@ -38,6 +38,11 @@ visible = false
 layout_mode = 2
 text = "Продать"
 
+[node name="SellAllButton" type="Button" parent="Margin/VBox"]
+visible = false
+layout_mode = 2
+text = "Продать всё"
+
 [node name="QuickSlotButton" type="Button" parent="Margin/VBox"]
 visible = false
 layout_mode = 2

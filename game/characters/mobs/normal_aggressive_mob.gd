@@ -11,6 +11,7 @@ const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const BANDIT_HUNTER_RANGED_PROJECTILE_SCENE: PackedScene = preload("res://game/characters/mobs/projectiles/BanditHunterRangeAutoAttackProjectile.tscn")
 
 const MODEL_SCENE_PATHS := {
@@ -225,6 +226,7 @@ func _physics_process(delta: float) -> void:
 		_die()
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
+		_set_model_stunned(true)
 		if c_spell_caster != null:
 			c_spell_caster.interrupt_cast("stunned")
 		if cast_bar != null:
@@ -235,6 +237,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		c_combat.reset_combat()
 		return
+	_set_model_stunned(false)
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 
@@ -475,6 +478,7 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 
 	var snap: Dictionary = c_stats.get_stats_snapshot()
 	if _roll_evade(snap):
+		DAMAGE_HELPER.show_combat_event(self, tr("ui.hud.combat.evade"), dmg_type, attacker)
 		return 0
 	var pct: float
 	if dmg_type == "magic":
@@ -483,7 +487,12 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 		pct = float(snap.get("physical_reduction_pct", 0.0))
 	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
-	final = _apply_shield_block_if_any(final, snap)
+	var blocked_amount: int = 0
+	var after_block: int = _apply_shield_block_if_any(final, snap)
+	blocked_amount = max(0, final - after_block)
+	final = after_block
+	if blocked_amount > 0:
+		DAMAGE_HELPER.show_combat_event(self, "%s (-%d)" % [tr("ui.hud.combat.block"), blocked_amount], dmg_type, attacker)
 	if final <= 0:
 		return 0
 	c_stats.current_hp = max(0, c_stats.current_hp - final)
@@ -774,6 +783,12 @@ func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 		_character_model.call("set_move_direction_mode", dir, prefer_walk)
 	elif _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
+
+func _set_model_stunned(active: bool) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_stunned"):
+		_character_model.call("set_stunned", active)
 
 func _apply_model_visual() -> void:
 	if visual_root == null:

@@ -84,6 +84,25 @@ static func show_heal(target: Node, heal_amount: int, source: Node = null) -> vo
 		source_2d = source as Node2D
 	manager.show_heal(source_2d, t2d, heal_amount)
 
+static func show_combat_event(target: Node, text: String, dmg_type: String = "physical", source: Node = null) -> void:
+	if text.strip_edges() == "":
+		return
+	if target == null or not is_instance_valid(target):
+		return
+	if not (target is Node2D):
+		return
+	var t2d := target as Node2D
+	var tree := t2d.get_tree()
+	if tree == null:
+		return
+	var manager := _get_or_create_combat_text_manager(tree)
+	if manager == null:
+		return
+	var source_2d: Node2D = null
+	if source is Node2D:
+		source_2d = source as Node2D
+	manager.show_event_text(source_2d, t2d, text, dmg_type)
+
 static func _show_damage_number(attacker: Node, target: Node, final_dmg: int, dmg_type: String) -> void:
 	if final_dmg <= 0:
 		return

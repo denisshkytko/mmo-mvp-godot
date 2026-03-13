@@ -315,6 +315,7 @@ func _physics_process(_delta: float) -> void:
 		move_and_slide()
 		return
 	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
+		_set_model_stunned(true)
 		if c_ability_caster != null and c_ability_caster.is_casting():
 			c_ability_caster.interrupt_cast("stunned")
 		if cast_bar != null:
@@ -325,6 +326,7 @@ func _physics_process(_delta: float) -> void:
 		_update_model_motion(Vector2.ZERO)
 		move_and_slide()
 		return
+	_set_model_stunned(false)
 
 	var input_dir := Vector2.ZERO
 	if mobile_move_dir != Vector2.ZERO:
@@ -793,6 +795,12 @@ func _update_model_motion(dir: Vector2) -> void:
 		return
 	if _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
+
+func _set_model_stunned(active: bool) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_stunned"):
+		_character_model.call("set_stunned", active)
 
 func play_model_hurt() -> void:
 	if _character_model == null or not is_instance_valid(_character_model):

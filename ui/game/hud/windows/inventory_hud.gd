@@ -35,6 +35,7 @@ signal hud_visibility_changed(is_open: bool)
 @onready var tooltip_use_btn_scene: Button = $Root/InvTooltip/Margin/VBox/UseButton
 @onready var tooltip_equip_btn_scene: Button = $Root/InvTooltip/Margin/VBox/EquipButton
 @onready var tooltip_sell_btn_scene: Button = $Root/InvTooltip/Margin/VBox/SellButton
+@onready var tooltip_sell_all_btn_scene: Button = $Root/InvTooltip/Margin/VBox/SellAllButton
 @onready var tooltip_quick_btn_scene: Button = $Root/InvTooltip/Margin/VBox/QuickSlotButton
 @onready var tooltip_bag_btn_scene: Button = $Root/InvTooltip/Margin/VBox/BagButton
 @onready var tooltip_drop_btn_scene: Button = $Root/InvTooltip/Margin/VBox/DropButton
@@ -60,6 +61,7 @@ var _tooltip_label: RichTextLabel = null
 var _tooltip_use_btn: Button = null
 var _tooltip_equip_btn: Button = null
 var _tooltip_sell_btn: Button = null
+var _tooltip_sell_all_btn: Button = null
 var _tooltip_quick_btn: Button = null
 var _tooltip_bag_btn: Button = null
 var _tooltip_drop_btn: Button = null
@@ -729,6 +731,12 @@ func _show_tooltip_for_slot(slot_index: int, global_pos: Vector2) -> void:
 	if _tooltip_sell_btn != null:
 		_tooltip_sell_btn.visible = _trade_open
 		_tooltip_sell_btn.disabled = false
+	if _tooltip_sell_all_btn != null:
+		var stack_max: int = _get_stack_max(id)
+		var total: int = _get_total_item_count(id)
+		_tooltip_sell_all_btn.visible = _trade_open and stack_max > 1 and total > 0
+		_tooltip_sell_all_btn.text = tr("ui.merchant.sell_all")
+		_tooltip_sell_all_btn.disabled = false
 	if _tooltip_quick_btn != null:
 		var is_cons2 := _is_consumable_item(id)
 		var quick_index := _get_quick_slot_index_for_item(id)
@@ -781,6 +789,8 @@ func _show_tooltip_for_bag_slot(bag_index: int, global_pos: Vector2) -> void:
 		_tooltip_equip_btn.visible = false
 	if _tooltip_sell_btn != null:
 		_tooltip_sell_btn.visible = false
+	if _tooltip_sell_all_btn != null:
+		_tooltip_sell_all_btn.visible = false
 	if _tooltip_quick_btn != null:
 		_tooltip_quick_btn.visible = false
 	if _tooltip_bag_btn != null:
@@ -840,6 +850,8 @@ func _resize_tooltip_to_content() -> void:
 		btn_h += max(32.0, _tooltip_equip_btn.get_combined_minimum_size().y)
 	if _tooltip_sell_btn != null and _tooltip_sell_btn.visible:
 		btn_h += max(32.0, _tooltip_sell_btn.get_combined_minimum_size().y)
+	if _tooltip_sell_all_btn != null and _tooltip_sell_all_btn.visible:
+		btn_h += max(32.0, _tooltip_sell_all_btn.get_combined_minimum_size().y)
 	if _tooltip_quick_btn != null and _tooltip_quick_btn.visible:
 		btn_h += max(32.0, _tooltip_quick_btn.get_combined_minimum_size().y)
 	if _tooltip_bag_btn != null and _tooltip_bag_btn.visible:
@@ -1235,16 +1247,24 @@ func _on_tooltip_sell_pressed() -> void:
 		return
 	var d := v as Dictionary
 	var id: String = String(d.get("id", ""))
-	var count: int = int(d.get("count", 0))
 	if id == "":
 		return
 	var total: int = _get_total_item_count(id)
 	if total <= 0:
 		return
+	var stack_max: int = _get_stack_max(id)
 	var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
 	if merchant_ui == null:
 		return
-	if count <= 1 or _get_stack_max(id) <= 1:
+	if stack_max <= 1:
+		if merchant_ui.has_method("sell_items_from_inventory_slot"):
+			merchant_ui.call("sell_items_from_inventory_slot", id, 1, _tooltip_for_slot)
+		elif merchant_ui.has_method("sell_items_from_inventory"):
+			merchant_ui.call("sell_items_from_inventory", id, 1)
+		_hide_tooltip()
+		await _refresh()
+		return
+	if total <= 1:
 		if merchant_ui.has_method("sell_items_from_inventory_slot"):
 			merchant_ui.call("sell_items_from_inventory_slot", id, 1, _tooltip_for_slot)
 		elif merchant_ui.has_method("sell_items_from_inventory"):
@@ -1253,9 +1273,44 @@ func _on_tooltip_sell_pressed() -> void:
 		await _refresh()
 		return
 	if merchant_ui.has_method("request_sell_from_inventory_slot"):
-		merchant_ui.call("request_sell_from_inventory_slot", id, count, _tooltip_for_slot)
+		merchant_ui.call("request_sell_from_inventory_slot", id, total, _tooltip_for_slot)
 	elif merchant_ui.has_method("request_sell_from_inventory"):
-		merchant_ui.call("request_sell_from_inventory", id, count)
+		merchant_ui.call("request_sell_from_inventory", id, total)
+	_hide_tooltip()
+	await _refresh()
+
+func _on_tooltip_sell_all_pressed() -> void:
+	if not _trade_open:
+		return
+	if player == null or not is_instance_valid(player):
+		return
+	if _tooltip_for_slot < 0 or _tooltip_for_bag_slot != -1:
+		return
+	var snap: Dictionary = player.get_inventory_snapshot()
+	var slots: Array = snap.get("slots", [])
+	if _tooltip_for_slot >= slots.size():
+		_hide_tooltip()
+		return
+	var v: Variant = slots[_tooltip_for_slot]
+	if v == null or not (v is Dictionary):
+		_hide_tooltip()
+		return
+	var d := v as Dictionary
+	var id: String = String(d.get("id", ""))
+	if id == "":
+		return
+	if _get_stack_max(id) <= 1:
+		return
+	var total: int = _get_total_item_count(id)
+	if total <= 0:
+		return
+	var merchant_ui := get_tree().get_first_node_in_group("merchant_ui")
+	if merchant_ui == null:
+		return
+	if merchant_ui.has_method("sell_items_from_inventory_slot"):
+		merchant_ui.call("sell_items_from_inventory_slot", id, total, _tooltip_for_slot)
+	elif merchant_ui.has_method("sell_items_from_inventory"):
+		merchant_ui.call("sell_items_from_inventory", id, total)
 	_hide_tooltip()
 	await _refresh()
 
@@ -1918,6 +1973,7 @@ func _ensure_support_ui() -> void:
 		_tooltip_use_btn = tooltip_use_btn_scene
 		_tooltip_equip_btn = tooltip_equip_btn_scene
 		_tooltip_sell_btn = tooltip_sell_btn_scene
+		_tooltip_sell_all_btn = tooltip_sell_all_btn_scene
 		_tooltip_quick_btn = tooltip_quick_btn_scene
 		_tooltip_bag_btn = tooltip_bag_btn_scene
 		_tooltip_drop_btn = tooltip_drop_btn_scene
@@ -1954,6 +2010,8 @@ func _ensure_support_ui() -> void:
 			_tooltip_equip_btn.pressed.connect(_on_tooltip_equip_pressed)
 		if _tooltip_sell_btn != null and not _tooltip_sell_btn.pressed.is_connected(_on_tooltip_sell_pressed):
 			_tooltip_sell_btn.pressed.connect(_on_tooltip_sell_pressed)
+		if _tooltip_sell_all_btn != null and not _tooltip_sell_all_btn.pressed.is_connected(_on_tooltip_sell_all_pressed):
+			_tooltip_sell_all_btn.pressed.connect(_on_tooltip_sell_all_pressed)
 		if _tooltip_quick_btn != null and not _tooltip_quick_btn.pressed.is_connected(_on_tooltip_quick_pressed):
 			_tooltip_quick_btn.pressed.connect(_on_tooltip_quick_pressed)
 		if _tooltip_bag_btn != null and not _tooltip_bag_btn.pressed.is_connected(_on_tooltip_bag_pressed):

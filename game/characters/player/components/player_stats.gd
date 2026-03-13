@@ -5,6 +5,7 @@ const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const XP_SYSTEM := preload("res://core/progression/xp_system.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 var p: Player = null
 
@@ -433,14 +434,17 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 		p.c_resource.on_damage_taken()
 	if p.c_buffs != null and p.c_buffs.has_method("try_consume_defensive_reflexes_on_hit"):
 		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
+			DAMAGE_HELPER.show_combat_event(p, _defensive_reflexes_block_text(raw_damage), dmg_type, attacker)
 			return 0
 
 	# неуязвимость через баф (если есть)
 	var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
 	if _is_damage_type_blocked(dmg_type, flags):
+		DAMAGE_HELPER.show_combat_event(p, "%s (-%d)" % [tr("ui.hud.combat.block"), raw_damage], dmg_type, attacker)
 		return 0
 
 	if _roll_evade():
+		DAMAGE_HELPER.show_combat_event(p, tr("ui.hud.combat.evade"), dmg_type, attacker)
 		return 0
 
 	var pct: float
@@ -450,7 +454,12 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 		pct = float(_snapshot.get("physical_reduction_pct", 0.0))
 	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
-	final = _apply_shield_block_if_any(final)
+	var blocked_amount: int = 0
+	var after_block: int = _apply_shield_block_if_any(final)
+	blocked_amount = max(0, final - after_block)
+	final = after_block
+	if blocked_amount > 0:
+		DAMAGE_HELPER.show_combat_event(p, "%s (-%d)" % [tr("ui.hud.combat.block"), blocked_amount], dmg_type, attacker)
 	if final <= 0:
 		return 0
 	if p.c_buffs != null and p.c_buffs.has_method("absorb_incoming_damage"):
@@ -511,6 +520,7 @@ func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation:
 		return 0
 	if p.c_buffs != null and p.c_buffs.has_method("try_consume_defensive_reflexes_on_hit"):
 		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
+			DAMAGE_HELPER.show_combat_event(p, _defensive_reflexes_block_text(raw_damage), dmg_type)
 			return 0
 	if ignore_mitigation:
 		var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
@@ -526,6 +536,10 @@ func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation:
 			_on_death()
 		return final_direct
 	return take_damage_typed(raw_damage, dmg_type)
+
+func _defensive_reflexes_block_text(blocked_damage: int) -> String:
+	var amount: int = max(0, blocked_damage)
+	return "%s (-%d)" % [tr("ability.defensive_reflexes.name"), amount]
 
 func take_damage(raw_damage: int) -> void:
 	take_damage_typed(raw_damage, "physical")

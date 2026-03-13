@@ -514,6 +514,17 @@ func sell_items_from_inventory_slot(item_id: String, count: int, slot_index: int
 		return
 	if count <= 0:
 		return
+	var stack_max: int = _get_stack_max(item_id)
+	if stack_max > 1:
+		var removed_pref: int = _remove_items_preferring_small_stacks(item_id, count)
+		if removed_pref <= 0:
+			return
+		var gold_gain_pref: int = _get_base_price(item_id) * removed_pref
+		_player.call("add_gold", gold_gain_pref)
+		if _merchant.has_method("add_merchant_sale"):
+			_merchant.call("add_merchant_sale", _player.get_instance_id(), item_id, removed_pref)
+		_refresh_sell_grid()
+		return
 	if not _player.has_method("get_inventory_snapshot") or not _player.has_method("apply_inventory_snapshot"):
 		return
 	var snap: Dictionary = _player.call("get_inventory_snapshot") as Dictionary
@@ -544,6 +555,71 @@ func sell_items_from_inventory_slot(item_id: String, count: int, slot_index: int
 	if _merchant.has_method("add_merchant_sale"):
 		_merchant.call("add_merchant_sale", _player.get_instance_id(), item_id, removed)
 	_refresh_sell_grid()
+
+func _remove_items_preferring_small_stacks(item_id: String, count: int) -> int:
+	if _player == null:
+		return 0
+	if count <= 0:
+		return 0
+	if not _player.has_method("get_inventory_snapshot") or not _player.has_method("apply_inventory_snapshot"):
+		return 0
+	var snap: Dictionary = _player.call("get_inventory_snapshot") as Dictionary
+	var slots: Array = snap.get("slots", [])
+	var candidates: Array[Dictionary] = []
+	for i in range(slots.size()):
+		var v: Variant = slots[i]
+		if v == null or not (v is Dictionary):
+			continue
+		var d: Dictionary = v as Dictionary
+		if String(d.get("id", "")) != item_id:
+			continue
+		var c: int = int(d.get("count", 0))
+		if c <= 0:
+			continue
+		candidates.append({"idx": i, "count": c})
+	if candidates.is_empty():
+		return 0
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var ca: int = int(a.get("count", 0))
+		var cb: int = int(b.get("count", 0))
+		if ca == cb:
+			return int(a.get("idx", 0)) < int(b.get("idx", 0))
+		return ca < cb
+	)
+	var remaining: int = count
+	var removed_total: int = 0
+	for entry in candidates:
+		if remaining <= 0:
+			break
+		var idx: int = int(entry.get("idx", -1))
+		if idx < 0 or idx >= slots.size():
+			continue
+		var cur_v: Variant = slots[idx]
+		if cur_v == null or not (cur_v is Dictionary):
+			continue
+		var cur_d: Dictionary = cur_v as Dictionary
+		if String(cur_d.get("id", "")) != item_id:
+			continue
+		var cur_count: int = int(cur_d.get("count", 0))
+		if cur_count <= 0:
+			slots[idx] = null
+			continue
+		var take: int = min(cur_count, remaining)
+		if take <= 0:
+			continue
+		var left: int = cur_count - take
+		remaining -= take
+		removed_total += take
+		if left <= 0:
+			slots[idx] = null
+		else:
+			cur_d["count"] = left
+			slots[idx] = cur_d
+	if removed_total <= 0:
+		return 0
+	snap["slots"] = slots
+	_player.call("apply_inventory_snapshot", snap)
+	return removed_total
 
 func _has_gold(cost: int) -> bool:
 	if _player == null:

@@ -15,6 +15,10 @@ msgid "ui.merchant.sell"
 msgstr "Продать"
 
 
+msgid "ui.merchant.sell_all"
+msgstr "Продать всё"
+
+
 msgid "ui.merchant.qty_title"
 msgstr "{action}: {current} / {max}"
 

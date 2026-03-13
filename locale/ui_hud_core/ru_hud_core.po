@@ -29,3 +29,11 @@ msgstr "Ярость"
 
 msgid "ui.hud.resource.value"
 msgstr "%s %d/%d"
+
+
+msgid "ui.hud.combat.evade"
+msgstr "Уворот"
+
+
+msgid "ui.hud.combat.block"
+msgstr "Блок"

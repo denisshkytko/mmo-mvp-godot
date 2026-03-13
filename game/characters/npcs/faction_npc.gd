@@ -13,6 +13,7 @@ const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/MerchantModel.tscn")
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
 signal died(corpse: Corpse)
 
@@ -419,6 +420,7 @@ func _physics_process(delta: float) -> void:
 		_die()
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
+		_set_model_stunned(true)
 		if c_spell_caster != null:
 			c_spell_caster.interrupt_cast("stunned")
 		if cast_bar != null:
@@ -430,6 +432,7 @@ func _physics_process(delta: float) -> void:
 		if c_combat != null:
 			c_combat.reset()
 		return
+	_set_model_stunned(false)
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 
@@ -552,6 +555,7 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 
 	var snap: Dictionary = c_stats.get_stats_snapshot()
 	if _roll_evade(snap):
+		DAMAGE_HELPER.show_combat_event(self, tr("ui.hud.combat.evade"), dmg_type, attacker)
 		return 0
 	var pct: float
 	if dmg_type == "magic":
@@ -560,7 +564,12 @@ func take_damage_from_typed(raw_damage: int, attacker: Node2D, dmg_type: String)
 		pct = float(snap.get("physical_reduction_pct", 0.0))
 	var final: int = int(ceil(float(raw_damage) * (1.0 - pct / 100.0)))
 	final = max(1, final)
-	final = _apply_shield_block_if_any(final, snap)
+	var blocked_amount: int = 0
+	var after_block: int = _apply_shield_block_if_any(final, snap)
+	blocked_amount = max(0, final - after_block)
+	final = after_block
+	if blocked_amount > 0:
+		DAMAGE_HELPER.show_combat_event(self, "%s (-%d)" % [tr("ui.hud.combat.block"), blocked_amount], dmg_type, attacker)
 	if final <= 0:
 		return 0
 	play_model_hurt()
@@ -681,6 +690,12 @@ func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 		_character_model.call("set_move_direction_mode", dir, prefer_walk)
 	elif _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
+
+func _set_model_stunned(active: bool) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_stunned"):
+		_character_model.call("set_stunned", active)
 
 func _apply_interaction_visual() -> void:
 	if visual_root == null:
@@ -962,14 +977,27 @@ func add_merchant_sale(player_id: int, item_id: String, count: int) -> void:
 		return
 	_prune_merchant_sales(player_id)
 	var list: Array = _merchant_sales.get(player_id, [])
-	_merchant_sale_seq += 1
-	list.append({
-		"sale_id": _merchant_sale_seq,
-		"id": item_id,
-		"count": count,
-		"expires_at": Time.get_ticks_msec() + MERCHANT_BUYBACK_TTL_MSEC
-	})
+	var stack_max: int = _get_merchant_sale_stack_max(item_id)
+	var remaining: int = count
+	while remaining > 0:
+		var chunk: int = min(stack_max, remaining)
+		_merchant_sale_seq += 1
+		list.append({
+			"sale_id": _merchant_sale_seq,
+			"id": item_id,
+			"count": chunk,
+			"expires_at": Time.get_ticks_msec() + MERCHANT_BUYBACK_TTL_MSEC
+		})
+		remaining -= chunk
 	_merchant_sales[player_id] = list
+
+func _get_merchant_sale_stack_max(item_id: String) -> int:
+	if item_id == "":
+		return 1
+	var db := get_node_or_null("/root/DataDB")
+	if db != null and db.has_method("get_item_stack_max"):
+		return max(1, int(db.call("get_item_stack_max", item_id)))
+	return 1
 
 func get_merchant_sales_for_player(player_id: int) -> Array:
 	if player_id == 0:
