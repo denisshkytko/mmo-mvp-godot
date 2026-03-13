@@ -122,7 +122,7 @@ func _spawn_persistent_vfx(target: Node2D) -> Node2D:
 
 	vfx.z_as_relative = false
 	if target is CanvasItem:
-		vfx.z_index = int((target as CanvasItem).z_index) + 1
+		vfx.z_index = VFX_ANCHOR_HELPER.resolve_carrier_z_index(target, 0) + 1
 	var anchor_global: Vector2 = VFX_ANCHOR_HELPER.resolve_world_collider_center(target, target.global_position)
 	vfx.global_position = anchor_global
 	if "follow_target" in vfx:
@@ -130,7 +130,7 @@ func _spawn_persistent_vfx(target: Node2D) -> Node2D:
 	if "keep_layer_offset_from_target" in vfx:
 		vfx.set("keep_layer_offset_from_target", true)
 	if "layer_offset_from_target" in vfx:
-		vfx.set("layer_offset_from_target", 100)
+		vfx.set("layer_offset_from_target", 1)
 	if "follow_world_collider_center" in vfx:
 		vfx.set("follow_world_collider_center", true)
 	if "free_on_finish" in vfx:

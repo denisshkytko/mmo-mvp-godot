@@ -48,6 +48,19 @@ static func resolve_backdrop_z_index(target: Node2D, fallback_z_index: int = 0) 
 		return int((target as CanvasItem).z_index) - 1
 	return fallback_z_index
 
+static func resolve_carrier_z_index(target: Node2D, fallback_z_index: int = 0) -> int:
+	if target == null or not is_instance_valid(target):
+		return fallback_z_index
+	var visual_v: Variant = target.get("visual_root")
+	if visual_v is CanvasItem and is_instance_valid(visual_v):
+		return int((visual_v as CanvasItem).z_index)
+	var direct_visual := target.get_node_or_null("Visual")
+	if direct_visual is CanvasItem and is_instance_valid(direct_visual):
+		return int((direct_visual as CanvasItem).z_index)
+	if target is CanvasItem:
+		return int((target as CanvasItem).z_index)
+	return fallback_z_index
+
 static func _resolve_world_collider_center(target: Node2D) -> Vector2:
 	var wc: Variant = target.get("world_collision")
 	if wc is CollisionShape2D and is_instance_valid(wc):

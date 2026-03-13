@@ -117,12 +117,27 @@ func _on_follow_target_visual_layer_changed(new_z_index: int) -> void:
 	_apply_layer_from_z_index(new_z_index)
 
 func _apply_layer_from_target(target: Variant) -> void:
-	if not (target is CanvasItem):
-		return
-	var target_item: CanvasItem = target as CanvasItem
-	if target_item == null or not is_instance_valid(target_item):
-		return
-	_apply_layer_from_z_index(int(target_item.z_index))
+	var resolved_z: int = _resolve_follow_target_base_z(target)
+	_apply_layer_from_z_index(resolved_z)
+
+
+func _resolve_follow_target_base_z(target: Variant) -> int:
+	if target == null or not is_instance_valid(target):
+		return 0
+	if target is Node:
+		var target_node: Node = target as Node
+		if target_node != null:
+			var visual_v: Variant = target_node.get("visual_root")
+			if visual_v is CanvasItem and is_instance_valid(visual_v):
+				return int((visual_v as CanvasItem).z_index)
+			var direct_visual := target_node.get_node_or_null("Visual")
+			if direct_visual is CanvasItem and is_instance_valid(direct_visual):
+				return int((direct_visual as CanvasItem).z_index)
+	if target is CanvasItem:
+		var target_item: CanvasItem = target as CanvasItem
+		if target_item != null and is_instance_valid(target_item):
+			return int(target_item.z_index)
+	return 0
 
 func _apply_layer_from_z_index(base_z_index: int) -> void:
 	if not keep_layer_offset_from_target:
