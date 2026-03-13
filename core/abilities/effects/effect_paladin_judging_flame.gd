@@ -74,6 +74,14 @@ func _spawn_hit_vfx(target: Node2D) -> void:
 	vfx.z_as_relative = false
 	if target is CanvasItem:
 		vfx.z_index = int((target as CanvasItem).z_index) + vfx_layer_offset_from_target
+	if "follow_target" in vfx:
+		vfx.set("follow_target", target)
+	if "keep_layer_offset_from_target" in vfx:
+		vfx.set("keep_layer_offset_from_target", true)
+	if "layer_offset_from_target" in vfx:
+		vfx.set("layer_offset_from_target", vfx_layer_offset_from_target)
+	if "follow_world_collider_center" in vfx:
+		vfx.set("follow_world_collider_center", true)
 	var anchor: Vector2 = target.global_position
 	if target.has_method("get_body_hitbox_center_global"):
 		var center_v: Variant = target.call("get_body_hitbox_center_global")
