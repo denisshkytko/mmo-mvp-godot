@@ -59,8 +59,6 @@ func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary, c
 func _spawn_hit_vfx(target: Node2D) -> void:
 	if target == null or not is_instance_valid(target) or hit_vfx_scene == null:
 		return
-	if _is_target_dead(target):
-		return
 	var parent: Node = target.get_parent()
 	if parent == null:
 		return
