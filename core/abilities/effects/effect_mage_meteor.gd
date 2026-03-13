@@ -149,6 +149,8 @@ func _resolve_cast_marker_anchor(target: Node2D) -> Vector2:
 	return base + Vector2(0.0, cast_start_y_offset)
 
 func _apply_burn_and_vfx(caster: Node, target: Node2D, dealt: int, rank_data: RankData, context: Dictionary) -> void:
+	if _is_target_dead(target):
+		return
 	var burn_total: int = int(round(float(dealt) * float(rank_data.value_pct) / 100.0))
 	if burn_total <= 0:
 		return
@@ -234,3 +236,15 @@ func _apply_debuff_to_target(target: Node, entry_id: String, duration_sec: float
 		return
 	if "c_stats" in target and target.c_stats != null and target.c_stats.has_method("add_or_refresh_buff"):
 		target.c_stats.call("add_or_refresh_buff", entry_id, duration_sec, data)
+
+
+func _is_target_dead(target: Node) -> bool:
+	if target == null or not is_instance_valid(target):
+		return true
+	if "is_dead" in target and bool(target.get("is_dead")):
+		return true
+	if "c_stats" in target:
+		var stats_v: Variant = target.get("c_stats")
+		if stats_v != null and is_instance_valid(stats_v) and "is_dead" in stats_v and bool(stats_v.get("is_dead")):
+			return true
+	return false

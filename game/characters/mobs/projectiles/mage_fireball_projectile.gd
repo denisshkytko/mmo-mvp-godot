@@ -60,7 +60,7 @@ func _physics_process(delta: float) -> void:
 	if _source != null and not is_instance_valid(_source):
 		_source = null
 
-	if "is_dead" in _target and bool(_target.get("is_dead")):
+	if _is_target_dead(_target):
 		queue_free()
 		return
 
@@ -132,7 +132,7 @@ func _apply_hit() -> void:
 	_hit = true
 	var dealt: int = 0
 	if _target != null and is_instance_valid(_target):
-		if "is_dead" in _target and bool(_target.get("is_dead")):
+		if _is_target_dead(_target):
 			queue_free()
 			return
 		var source_node: Node2D = _source if _source != null and is_instance_valid(_source) else null
@@ -156,3 +156,15 @@ func _resolve_target_anchor() -> Vector2:
 	if world_collider != null:
 		return world_collider.global_position
 	return _target.global_position
+
+
+func _is_target_dead(target: Node) -> bool:
+	if target == null or not is_instance_valid(target):
+		return true
+	if "is_dead" in target and bool(target.get("is_dead")):
+		return true
+	if "c_stats" in target:
+		var stats_v: Variant = target.get("c_stats")
+		if stats_v != null and is_instance_valid(stats_v) and "is_dead" in stats_v and bool(stats_v.get("is_dead")):
+			return true
+	return false

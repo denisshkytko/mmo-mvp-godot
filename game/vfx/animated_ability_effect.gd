@@ -48,7 +48,7 @@ func _update_follow_position() -> void:
 		if free_on_target_death:
 			queue_free()
 		return
-	if free_on_target_death and "is_dead" in follow_target and bool(follow_target.get("is_dead")):
+	if free_on_target_death and _is_target_dead(follow_target):
 		queue_free()
 		return
 	var anchor: Vector2 = _resolve_target_anchor(follow_target)
@@ -134,3 +134,15 @@ func _apply_layer_from_z_index(base_z_index: int) -> void:
 func _on_follow_target_effects_stop() -> void:
 	if free_on_target_death:
 		queue_free()
+
+
+func _is_target_dead(target: Node) -> bool:
+	if target == null or not is_instance_valid(target):
+		return true
+	if "is_dead" in target and bool(target.get("is_dead")):
+		return true
+	if "c_stats" in target:
+		var stats_v: Variant = target.get("c_stats")
+		if stats_v != null and is_instance_valid(stats_v) and "is_dead" in stats_v and bool(stats_v.get("is_dead")):
+			return true
+	return false
