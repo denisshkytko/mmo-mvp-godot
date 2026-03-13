@@ -54,6 +54,7 @@ signal death_pose_ready(snapshot: Dictionary)
 var _is_moving: bool = false
 var _prefer_walk_mode: bool = false
 var _is_dead: bool = false
+var _is_stunned: bool = false
 var _queued_idle_after_one_shot: bool = false
 var _queued_locomotion_after_one_shot: bool = false
 var _one_shot_lock_active: bool = false
@@ -130,6 +131,11 @@ func set_move_direction_mode(dir: Vector2, prefer_walk: bool) -> void:
 	_prefer_walk_mode = prefer_walk
 	if _is_dead:
 		return
+	if _is_stunned:
+		if _one_shot_lock_active:
+			_one_shot_lock_active = false
+		play_idle()
+		return
 	if _one_shot_lock_active:
 		return
 	_apply_facing_from_direction(dir)
@@ -156,7 +162,7 @@ func set_facing_to_world_position(world_position: Vector2) -> void:
 	_reset_idle_liveliness_timer()
 
 func play_hurt() -> void:
-	if _is_dead:
+	if _is_dead or _is_stunned:
 		return
 	if _has_animation(hurt_animation):
 		_play_one_shot(hurt_animation, true)
@@ -172,7 +178,7 @@ func play_death() -> void:
 		_play_animation_if_needed(death_animation)
 
 func play_combat_action(action_kind: String, is_moving_now: bool, class_id: String) -> void:
-	if _is_dead:
+	if _is_dead or _is_stunned:
 		return
 	var anim := _resolve_combat_animation(action_kind, is_moving_now, class_id)
 	if anim == "":
@@ -192,6 +198,20 @@ func play_idle() -> void:
 		_play_animation_if_needed(run_animation)
 	elif animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.get_animation_names().size() > 0:
 		_play_animation_if_needed(animated_sprite.sprite_frames.get_animation_names()[0])
+
+func set_stunned(active: bool) -> void:
+	if _is_stunned == active:
+		if _is_stunned:
+			play_idle()
+		return
+	_is_stunned = active
+	if _is_stunned:
+		_one_shot_lock_active = false
+		_queued_idle_after_one_shot = false
+		_queued_locomotion_after_one_shot = false
+		play_idle()
+		return
+	_refresh_locomotion_animation()
 
 func get_collision_profile() -> Dictionary:
 	var model_scale := Vector2(abs(scale.x), abs(scale.y))

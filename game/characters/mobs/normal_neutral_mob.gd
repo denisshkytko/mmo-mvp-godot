@@ -224,6 +224,7 @@ func _physics_process(delta: float) -> void:
 		_die()
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
+		_set_model_stunned(true)
 		if c_spell_caster != null:
 			c_spell_caster.interrupt_cast("stunned")
 		if cast_bar != null:
@@ -234,6 +235,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		c_combat.reset_combat()
 		return
+	_set_model_stunned(false)
 
 	_apply_to_components()
 
@@ -720,6 +722,12 @@ func update_movement_animation(dir: Vector2, prefer_walk: bool) -> void:
 		_character_model.call("set_move_direction_mode", dir, prefer_walk)
 	elif _character_model.has_method("set_move_direction"):
 		_character_model.call("set_move_direction", dir)
+
+func _set_model_stunned(active: bool) -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if _character_model.has_method("set_stunned"):
+		_character_model.call("set_stunned", active)
 
 func _apply_model_visual() -> void:
 	if visual_root == null:

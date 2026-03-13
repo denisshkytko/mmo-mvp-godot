@@ -434,6 +434,7 @@ func take_damage_typed(raw_damage: int, dmg_type: String, attacker: Node2D = nul
 		p.c_resource.on_damage_taken()
 	if p.c_buffs != null and p.c_buffs.has_method("try_consume_defensive_reflexes_on_hit"):
 		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
+			DAMAGE_HELPER.show_combat_event(p, _defensive_reflexes_block_text(raw_damage), dmg_type, attacker)
 			return 0
 
 	# неуязвимость через баф (если есть)
@@ -519,6 +520,7 @@ func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation:
 		return 0
 	if p.c_buffs != null and p.c_buffs.has_method("try_consume_defensive_reflexes_on_hit"):
 		if bool(p.c_buffs.call("try_consume_defensive_reflexes_on_hit")):
+			DAMAGE_HELPER.show_combat_event(p, _defensive_reflexes_block_text(raw_damage), dmg_type)
 			return 0
 	if ignore_mitigation:
 		var flags: Dictionary = _snapshot.get("flags", {}) as Dictionary
@@ -534,6 +536,10 @@ func apply_periodic_damage(raw_damage: int, dmg_type: String, ignore_mitigation:
 			_on_death()
 		return final_direct
 	return take_damage_typed(raw_damage, dmg_type)
+
+func _defensive_reflexes_block_text(blocked_damage: int) -> String:
+	var amount: int = max(0, blocked_damage)
+	return "%s (-%d)" % [tr("ability.defensive_reflexes.name"), amount]
 
 func take_damage(raw_damage: int) -> void:
 	take_damage_typed(raw_damage, "physical")
