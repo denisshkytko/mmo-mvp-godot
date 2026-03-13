@@ -1,13 +1,12 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://cnmgirl0o2ma"]
 
-[ext_resource type="Script" path="res://game/characters/mobs/projectiles/mage_fireball_projectile.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://b8l5cls20jxty" path="res://game/characters/mobs/projectiles/mage_fireball_projectile.gd" id="1_script"]
 [ext_resource type="SpriteFrames" path="res://game/vfx/frames/projectiles/mage_fireball_projectile_sprite_frames.tres" id="2_frames"]
 
 [node name="MageFireballProjectile" type="Node2D"]
+position = Vector2(25, 0)
+scale = Vector2(0.1, 0.1)
 script = ExtResource("1_script")
-default_visual_scale = Vector2(0.8, 0.8)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_frames")
-animation = &"default"
-playing = true

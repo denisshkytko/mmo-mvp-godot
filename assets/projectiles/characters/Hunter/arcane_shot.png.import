@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmvieuwwrljho"
-path="res://.godot/imported/3.png-861e2643c120879f6b941e88b8b4e2ae.ctex"
+path="res://.godot/imported/arcane_shot.png-94ef939f308f8fb6746fdbe0df67f85b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/projectiles/characters/Hunter/arcane_shot.png"
-dest_files=["res://.godot/imported/3.png-861e2643c120879f6b941e88b8b4e2ae.ctex"]
+dest_files=["res://.godot/imported/arcane_shot.png-94ef939f308f8fb6746fdbe0df67f85b.ctex"]
 
 [params]
 

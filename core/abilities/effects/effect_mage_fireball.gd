@@ -130,7 +130,7 @@ func _spawn_persistent_vfx(target: Node2D) -> Node2D:
 	if "keep_layer_offset_from_target" in vfx:
 		vfx.set("keep_layer_offset_from_target", true)
 	if "layer_offset_from_target" in vfx:
-		vfx.set("layer_offset_from_target", 1)
+		vfx.set("layer_offset_from_target", 100)
 	if "follow_world_collider_center" in vfx:
 		vfx.set("follow_world_collider_center", true)
 	if "free_on_finish" in vfx:

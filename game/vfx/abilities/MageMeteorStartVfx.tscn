@@ -1,12 +1,11 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://di53qvcnujrka"]
 
-[ext_resource type="Script" path="res://game/vfx/animated_ability_effect.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dl8quse2hg04s" path="res://game/vfx/animated_ability_effect.gd" id="1_script"]
 [ext_resource type="SpriteFrames" path="res://game/vfx/frames/abilities/mage_meteor_start_sprite_frames.tres" id="2_frames"]
 
 [node name="MageMeteorStartVfx" type="Node2D"]
+scale = Vector2(0.25, 0.25)
 script = ExtResource("1_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_frames")
-animation = &"default"
-playing = true

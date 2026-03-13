@@ -1,40 +1,39 @@
-[gd_resource type="SpriteFrames" load_steps=7 format=3]
+[gd_resource type="SpriteFrames" load_steps=7 format=3 uid="uid://cqclyyf07r5j4"]
 
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00001.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00002.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00003.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00004.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00005.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00006.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://jgaxj2rfpirn" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00001.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://cmircghy8vgtk" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00002.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://c5blxtll6vh61" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00003.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://5b7ef0po866l" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00004.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://cfcc40dm8spip" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00005.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://c7yy4m4882kat" path="res://assets/animations/abilities/Shaman/searing_strike/slash7_00006.png" id="6_tex"]
 
 [resource]
 animations = [{
-"frames": [
-{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
 "duration": 1.0,
 "texture": ExtResource("1_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("2_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("3_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("4_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("5_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("6_tex")
-}
-],
+}, {
+"duration": 1.0,
+"texture": null
+}],
 "loop": false,
 "name": &"default",
 "speed": 24.0

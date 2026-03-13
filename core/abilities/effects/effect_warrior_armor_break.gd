@@ -6,7 +6,7 @@ const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_help
 @export var damage_effect: AbilityEffect
 @export var debuff_effect: AbilityEffect
 @export var vfx_scene: PackedScene = preload("res://game/vfx/abilities/WarriorArmorBreakVfx.tscn")
-@export var vfx_layer_offset_from_target: int = 1
+@export var vfx_layer_offset_from_target: int = 100
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or target == null or rank_data == null:

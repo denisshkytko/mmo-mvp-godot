@@ -1,60 +1,45 @@
-[gd_resource type="SpriteFrames" load_steps=11 format=3]
+[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://0otwo7oupf1u"]
 
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_00.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_01.png" id="2_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_02.png" id="3_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_03.png" id="4_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_04.png" id="5_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_05.png" id="6_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_06.png" id="7_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_07.png" id="8_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_08.png" id="9_tex"]
-[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_09.png" id="10_tex"]
+[ext_resource type="Texture2D" uid="uid://dll7fdbefm8tr" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_01.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://bd7veg55fv5s6" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_02.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://cbvpj5st7m3nc" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_03.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://ln5qipdd1cvo" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_04.png" id="5_tex"]
+[ext_resource type="Texture2D" uid="uid://cxx5lqyjp4800" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_05.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://bkod0hu3natgq" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_06.png" id="7_tex"]
+[ext_resource type="Texture2D" uid="uid://27reasaqrm6j" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_07.png" id="8_tex"]
+[ext_resource type="Texture2D" uid="uid://cy4hn0a7c037t" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_08.png" id="9_tex"]
+[ext_resource type="Texture2D" uid="uid://c4q8cp0ewv0js" path="res://assets/animations/abilities/Paladin/judging_flame/slash10.spine_09.png" id="10_tex"]
 
 [resource]
 animations = [{
-"frames": [
-{
-"duration": 1.0,
-"texture": ExtResource("1_tex")
-},
-{
+"frames": [{
 "duration": 1.0,
 "texture": ExtResource("2_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("3_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("4_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("5_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("6_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("7_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("8_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("9_tex")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("10_tex")
-}
-],
+}],
 "loop": false,
 "name": &"default",
 "speed": 24.0

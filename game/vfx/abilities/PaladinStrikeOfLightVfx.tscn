@@ -1,12 +1,13 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://canmsc2ed8djo"]
 
-[ext_resource type="Script" path="res://game/vfx/animated_ability_effect.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dl8quse2hg04s" path="res://game/vfx/animated_ability_effect.gd" id="1_script"]
 [ext_resource type="SpriteFrames" path="res://game/vfx/frames/abilities/paladin_strike_of_light_sprite_frames.tres" id="2_frames"]
 
 [node name="PaladinStrikeOfLightVfx" type="Node2D"]
+scale = Vector2(0.4, 0.4)
 script = ExtResource("1_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(120, -50)
 sprite_frames = ExtResource("2_frames")
-animation = &"default"
-playing = true
+frame = 5

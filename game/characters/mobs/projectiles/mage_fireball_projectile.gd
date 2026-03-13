@@ -9,7 +9,6 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 @export var speed: float = 420.0
 @export var hit_distance: float = 10.0
 @export var max_lifetime: float = 6.0
-@export var default_visual_scale: Vector2 = Vector2(0.6, 0.6)
 @export var damage_school: String = "magic"
 @export var visual_rotation_offset_deg: float = 180.0
 @export var use_curved_path: bool = false
@@ -36,7 +35,6 @@ func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
 	_damage = damage
 	_source = source
 	if _animated_sprite != null:
-		_animated_sprite.scale = default_visual_scale
 		if _animated_sprite.sprite_frames != null and _animated_sprite.sprite_frames.has_animation(StringName("default")):
 			_animated_sprite.play("default")
 	if path_start_global == Vector2.ZERO:

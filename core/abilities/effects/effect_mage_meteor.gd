@@ -30,6 +30,7 @@ func on_cast_start(caster: Node, target: Node, _rank_data: RankData, _context: D
 		return {}
 
 	var vfx: Node2D = cast_start_vfx_scene.instantiate() as Node2D
+	var target_scale: Vector2 = vfx.scale
 	if vfx == null:
 		return {}
 	parent.add_child(vfx)
@@ -57,7 +58,7 @@ func on_cast_start(caster: Node, target: Node, _rank_data: RankData, _context: D
 
 	var duration: float = maxf(0.01, cast_time_sec)
 	var tw := vfx.create_tween()
-	tw.tween_property(vfx, "scale", Vector2.ONE, duration)
+	tw.tween_property(vfx, "scale", target_scale, duration)
 	return {"cast_preview_vfx": vfx}
 
 func on_cast_cancel(cast_runtime: Dictionary) -> void:
@@ -201,7 +202,7 @@ func _spawn_persistent_vfx(target: Node2D) -> Node2D:
 	if "keep_layer_offset_from_target" in vfx:
 		vfx.set("keep_layer_offset_from_target", true)
 	if "layer_offset_from_target" in vfx:
-		vfx.set("layer_offset_from_target", 1)
+		vfx.set("layer_offset_from_target", 100)
 	if "follow_world_collider_center" in vfx:
 		vfx.set("follow_world_collider_center", true)
 	if "free_on_finish" in vfx:

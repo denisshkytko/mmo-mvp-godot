@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://4marnawtscae"]
 
-[ext_resource type="Script" path="res://game/characters/mobs/projectiles/homing_projectile.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/projectiles/mobs/Bandits/Hunter - Range/auto_attacks.png" id="2_tex"]
+[ext_resource type="Script" uid="uid://b8nktpjaxj3dy" path="res://game/characters/mobs/projectiles/homing_projectile.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bo8prpe51b663" path="res://assets/projectiles/mobs/Bandits/Hunter - Range/auto_attacks.png" id="2_tex"]
 
 [node name="BanditHunterRangeAutoAttackProjectile" type="Node2D"]
+scale = Vector2(0.2, 0.2)
 script = ExtResource("1_script")
 default_visual_scale = Vector2(0.8, 0.8)
 
