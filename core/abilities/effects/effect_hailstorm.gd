@@ -9,11 +9,11 @@ const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_help
 @export var scaling_mode: String = "spell_power_flat" # flat | phys_base_pct | spell_power_flat | attack_power_pct
 @export var projectile_scene: PackedScene = preload("res://game/characters/mobs/projectiles/MageFrostboltProjectile.tscn")
 @export var projectile_z_index: int = 2000
-@export var wave_delay_sec: float = 0.08
-@export var base_arc_offset_px: float = 48.0
-@export var odd_pair_step_mul: float = 1.0
-@export var even_pair_base_mul: float = 0.55
-@export var even_pair_step_mul: float = 0.9
+@export var wave_delay_sec: float = 0.10
+@export var base_arc_offset_px: float = 96.0
+@export var odd_pair_step_mul: float = 1.15
+@export var even_pair_base_mul: float = 0.70
+@export var even_pair_step_mul: float = 1.0
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or target == null or rank_data == null:

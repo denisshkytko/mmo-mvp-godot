@@ -21,8 +21,13 @@ var _damage: int = 0
 var _source: Node2D = null
 var _hit: bool = false
 var _life: float = 0.0
-var _path_initial_target_global: Vector2 = Vector2.ZERO
-var _path_total_dist: float = 0.0
+
+var _curve_enabled: bool = false
+var _curve_t: float = 0.0
+var _curve_total_dist: float = 1.0
+var _curve_p0: Vector2 = Vector2.ZERO
+var _curve_p1: Vector2 = Vector2.ZERO
+var _curve_p2: Vector2 = Vector2.ZERO
 
 @onready var _animated_sprite: AnimatedSprite2D = $AnimatedSprite2D as AnimatedSprite2D
 
@@ -37,6 +42,7 @@ func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
 	if path_start_global == Vector2.ZERO:
 		path_start_global = global_position
 	refresh_path_from_current_target()
+	_update_initial_visual_rotation()
 
 func _physics_process(delta: float) -> void:
 	if _hit:
@@ -58,41 +64,67 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 		return
 
-	var target_anchor: Vector2 = _resolve_target_anchor()
-	var desired_anchor: Vector2 = target_anchor
-	if use_curved_path and absf(path_arc_offset_px) > 0.001:
-		desired_anchor = _resolve_curved_anchor(target_anchor)
+	if _curve_enabled:
+		_curve_t = clampf(_curve_t + (speed * delta) / maxf(1.0, _curve_total_dist), 0.0, 1.0)
+		var pos: Vector2 = _bezier_point(_curve_t)
+		var tangent: Vector2 = _bezier_tangent(_curve_t)
+		if tangent.length_squared() > 0.0001:
+			rotation = tangent.angle() + deg_to_rad(visual_rotation_offset_deg)
+		global_position = pos
+		if _curve_t >= 1.0:
+			_apply_hit()
+		return
 
-	var to_desired: Vector2 = desired_anchor - global_position
-	var dist_to_desired: float = to_desired.length()
-	if dist_to_desired <= hit_distance:
+	var target_anchor: Vector2 = _resolve_target_anchor()
+	var to_target: Vector2 = target_anchor - global_position
+	var dist: float = to_target.length()
+	if dist <= hit_distance:
 		_apply_hit()
 		return
 
-	var dir: Vector2 = to_desired / maxf(0.001, dist_to_desired)
+	var dir: Vector2 = to_target / maxf(0.001, dist)
 	rotation = dir.angle() + deg_to_rad(visual_rotation_offset_deg)
 	global_position += dir * speed * delta
 
-
 func refresh_path_from_current_target() -> void:
-	_path_initial_target_global = _resolve_target_anchor()
+	var target_anchor: Vector2 = _resolve_target_anchor()
 	if path_start_global == Vector2.ZERO:
 		path_start_global = global_position
-	_path_total_dist = maxf(1.0, path_start_global.distance_to(_path_initial_target_global))
 
-func _resolve_curved_anchor(final_target_anchor: Vector2) -> Vector2:
-	var total_dist: float = _path_total_dist
-	if total_dist <= 0.001:
-		total_dist = maxf(1.0, path_start_global.distance_to(final_target_anchor))
-	var progressed: float = clampf(path_start_global.distance_to(global_position) / total_dist, 0.0, 1.0)
-	var blend_arc: float = sin(progressed * PI)
-	var path_vec: Vector2 = final_target_anchor - path_start_global
-	var base_dir: Vector2 = path_vec.normalized()
-	if base_dir.length_squared() <= 0.0001:
-		base_dir = Vector2.RIGHT
-	var side: Vector2 = Vector2(-base_dir.y, base_dir.x)
-	var center_point: Vector2 = path_start_global + path_vec * progressed
-	return center_point + side * path_arc_offset_px * blend_arc
+	_curve_enabled = use_curved_path and absf(path_arc_offset_px) > 0.001
+	if not _curve_enabled:
+		return
+
+	_curve_t = 0.0
+	_curve_p0 = path_start_global
+	_curve_p2 = target_anchor
+	var center: Vector2 = (_curve_p0 + _curve_p2) * 0.5
+	var axis: Vector2 = (_curve_p2 - _curve_p0).normalized()
+	if axis.length_squared() <= 0.0001:
+		axis = Vector2.RIGHT
+	var normal: Vector2 = Vector2(-axis.y, axis.x)
+	_curve_p1 = center + normal * path_arc_offset_px
+	# Approximate bezier length for normalized travel speed.
+	_curve_total_dist = maxf(1.0, _curve_p0.distance_to(_curve_p1) + _curve_p1.distance_to(_curve_p2))
+
+func _update_initial_visual_rotation() -> void:
+	var anchor: Vector2 = _resolve_target_anchor()
+	if _curve_enabled:
+		var tangent: Vector2 = _bezier_tangent(0.01)
+		if tangent.length_squared() > 0.0001:
+			rotation = tangent.angle() + deg_to_rad(visual_rotation_offset_deg)
+			return
+	var to_target: Vector2 = anchor - global_position
+	if to_target.length_squared() > 0.0001:
+		rotation = to_target.angle() + deg_to_rad(visual_rotation_offset_deg)
+
+func _bezier_point(t: float) -> Vector2:
+	var u: float = 1.0 - t
+	return (u * u) * _curve_p0 + (2.0 * u * t) * _curve_p1 + (t * t) * _curve_p2
+
+func _bezier_tangent(t: float) -> Vector2:
+	var u: float = 1.0 - t
+	return 2.0 * u * (_curve_p1 - _curve_p0) + 2.0 * t * (_curve_p2 - _curve_p1)
 
 func _apply_hit() -> void:
 	if _hit:
