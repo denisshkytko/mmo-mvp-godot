@@ -1,5 +1,5 @@
 extends AbilityEffect
-class_name EffectPaladinJudgingFlame
+class_name EffectShamanLightning
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
@@ -8,8 +8,9 @@ const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_help
 
 @export var school: String = "magic"
 @export var scaling_mode: String = "spell_power_flat"
-@export var hit_vfx_scene: PackedScene = preload("res://game/vfx/abilities/PaladinJudgingFlameVfx.tscn")
+@export var hit_vfx_scene: PackedScene = preload("res://game/vfx/abilities/ShamanLightningVfx.tscn")
 @export var vfx_layer_offset_from_target: int = 1
+@export var vfx_y_offset: float = 0.0
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or target == null or rank_data == null:
@@ -19,7 +20,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	if snap.is_empty() and caster.has_method("get_stats_snapshot"):
 		snap = caster.call("get_stats_snapshot") as Dictionary
 
-	var base: int = _compute_base_damage(caster, rank_data, snap, context)
+	var base: int = _compute_base_damage(caster, rank_data, snap)
 	if base <= 0:
 		return
 
@@ -37,7 +38,7 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	if school == "magic" and "c_buffs" in caster and caster.c_buffs != null and caster.c_buffs.has_method("restore_mana_from_spell_damage"):
 		caster.c_buffs.call("restore_mana_from_spell_damage", dealt)
 
-func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary, context: Dictionary) -> int:
+func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary) -> int:
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
 	var spell_power: float = float(derived.get("spell_power", 0.0))
 	var attack_power: float = float(derived.get("attack_power", 0.0))
@@ -49,11 +50,7 @@ func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary, c
 			var base_phys: int = 0
 			if "c_combat" in caster and caster.c_combat != null and caster.c_combat.has_method("get_attack_damage"):
 				base_phys = int(caster.c_combat.call("get_attack_damage"))
-			var phys_pct: float = float(rank_data.value_pct)
-			var ability_id: String = String(context.get("ability_id", ""))
-			if ability_id == "light_execution":
-				phys_pct = float(rank_data.value_pct_2)
-			return int(round(float(base_phys) * phys_pct / 100.0))
+			return int(round(float(base_phys) * float(rank_data.value_pct) / 100.0))
 		"attack_power_pct":
 			return int(round(attack_power * float(rank_data.value_pct) / 100.0))
 		_:
@@ -77,15 +74,16 @@ func _spawn_hit_vfx(target: Node2D) -> void:
 		vfx.set("follow_world_collider_center", true)
 	if "follow_target" in vfx:
 		vfx.set("follow_target", target)
+	if "follow_offset" in vfx:
+		vfx.set("follow_offset", Vector2(0.0, vfx_y_offset))
 	parent.add_child(vfx)
-	var anchor: Vector2 = target.global_position
+
+	var anchor: Vector2 = VFX_ANCHOR_HELPER.resolve_world_collider_center(target, target.global_position)
 	if target.has_method("get_body_hitbox_center_global"):
 		var center_v: Variant = target.call("get_body_hitbox_center_global")
 		if center_v is Vector2:
 			anchor = center_v as Vector2
-	else:
-		anchor = VFX_ANCHOR_HELPER.resolve_world_collider_center(target, target.global_position)
-	vfx.global_position = anchor
+	vfx.global_position = anchor + Vector2(0.0, vfx_y_offset)
 	if vfx.has_node("AnimatedSprite2D"):
 		var anim := vfx.get_node("AnimatedSprite2D") as AnimatedSprite2D
 		if anim != null:

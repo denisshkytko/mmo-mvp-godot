@@ -1,14 +1,14 @@
 extends AbilityEffect
-class_name EffectPaladinJudgingFlame
+class_name EffectPaladinLightExecution
 
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
 const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_helper.gd")
 
-@export var school: String = "magic"
-@export var scaling_mode: String = "spell_power_flat"
-@export var hit_vfx_scene: PackedScene = preload("res://game/vfx/abilities/PaladinJudgingFlameVfx.tscn")
+@export var school: String = "physical"
+@export var scaling_mode: String = "phys_base_pct"
+@export var hit_vfx_scene: PackedScene = preload("res://game/vfx/abilities/PaladinLightExecutionVfx.tscn")
 @export var vfx_layer_offset_from_target: int = 1
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
@@ -33,9 +33,6 @@ func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary)
 	var dealt: int = DAMAGE_HELPER.apply_damage_typed_with_result(caster, target, final, school)
 	if dealt <= 0:
 		return
-
-	if school == "magic" and "c_buffs" in caster and caster.c_buffs != null and caster.c_buffs.has_method("restore_mana_from_spell_damage"):
-		caster.c_buffs.call("restore_mana_from_spell_damage", dealt)
 
 func _compute_base_damage(caster: Node, rank_data: RankData, snap: Dictionary, context: Dictionary) -> int:
 	var derived: Dictionary = snap.get("derived", {}) as Dictionary
@@ -78,6 +75,7 @@ func _spawn_hit_vfx(target: Node2D) -> void:
 	if "follow_target" in vfx:
 		vfx.set("follow_target", target)
 	parent.add_child(vfx)
+
 	var anchor: Vector2 = target.global_position
 	if target.has_method("get_body_hitbox_center_global"):
 		var center_v: Variant = target.call("get_body_hitbox_center_global")

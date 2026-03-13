@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_apply_debuff.gd" id=5]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=6]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_warrior_armor_break.gd" id=6]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
@@ -120,9 +120,10 @@ primary_percent_add = {}
 flags = {"dot_damage_school": "physical", "dot_ignore_physical_mitigation": true, "dot_source_attack_damage": "caster_attack_damage", "dot_tick_interval_sec": 1.0, "dot_total_pct_of_attack_damage": "value_pct_2"}
 on_hit = {}
 
-[sub_resource type="Resource" script_class="EffectSequence" id=22]
+[sub_resource type="Resource" script_class="EffectWarriorArmorBreak" id=22]
 script = ExtResource("6")
-effects = [SubResource("20"), SubResource("21")]
+damage_effect = SubResource("20")
+debuff_effect = SubResource("21")
 
 [resource]
 script = ExtResource("1")
