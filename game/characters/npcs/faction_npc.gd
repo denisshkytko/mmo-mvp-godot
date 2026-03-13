@@ -977,14 +977,27 @@ func add_merchant_sale(player_id: int, item_id: String, count: int) -> void:
 		return
 	_prune_merchant_sales(player_id)
 	var list: Array = _merchant_sales.get(player_id, [])
-	_merchant_sale_seq += 1
-	list.append({
-		"sale_id": _merchant_sale_seq,
-		"id": item_id,
-		"count": count,
-		"expires_at": Time.get_ticks_msec() + MERCHANT_BUYBACK_TTL_MSEC
-	})
+	var stack_max: int = _get_merchant_sale_stack_max(item_id)
+	var remaining: int = count
+	while remaining > 0:
+		var chunk: int = min(stack_max, remaining)
+		_merchant_sale_seq += 1
+		list.append({
+			"sale_id": _merchant_sale_seq,
+			"id": item_id,
+			"count": chunk,
+			"expires_at": Time.get_ticks_msec() + MERCHANT_BUYBACK_TTL_MSEC
+		})
+		remaining -= chunk
 	_merchant_sales[player_id] = list
+
+func _get_merchant_sale_stack_max(item_id: String) -> int:
+	if item_id == "":
+		return 1
+	var db := get_node_or_null("/root/DataDB")
+	if db != null and db.has_method("get_item_stack_max"):
+		return max(1, int(db.call("get_item_stack_max", item_id)))
+	return 1
 
 func get_merchant_sales_for_player(player_id: int) -> Array:
 	if player_id == 0:
