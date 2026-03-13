@@ -9,7 +9,7 @@ const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_help
 @export var school: String = "magic"
 @export var scaling_mode: String = "spell_power_flat"
 @export var hit_vfx_scene: PackedScene = preload("res://game/vfx/abilities/ShamanLightningVfx.tscn")
-@export var vfx_layer_offset_from_target: int = 100
+@export var vfx_layer_offset_from_target: int = 1
 @export var vfx_y_offset: float = 0.0
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:

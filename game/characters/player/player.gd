@@ -365,11 +365,17 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = false
 	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	_apply_overlay_layer_offsets(resolved_z)
 	if visual_root.z_index != resolved_z:
 		visual_root.z_index = resolved_z
 		emit_signal("visual_layer_changed", resolved_z)
 	else:
 		visual_root.z_index = resolved_z
+
+func _apply_overlay_layer_offsets(base_visual_z: int) -> void:
+	if target_marker != null and is_instance_valid(target_marker):
+		target_marker.z_as_relative = false
+		target_marker.z_index = base_visual_z - 2
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()
@@ -918,6 +924,8 @@ func _apply_overlay_profile_from_model(model: Node) -> void:
 	var marker_node := model.get_node_or_null("OverlayProfile/TargetMarker")
 	if marker_node is CanvasItem:
 		target_marker = marker_node as CanvasItem
+		if visual_root != null and is_instance_valid(visual_root):
+			_apply_overlay_layer_offsets(int(visual_root.z_index))
 	var highlight_node := model.get_node_or_null("OverlayProfile/ModelHighlight")
 	if highlight_node is CanvasItem:
 		model_highlight = highlight_node as CanvasItem

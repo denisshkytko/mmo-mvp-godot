@@ -7,7 +7,7 @@ const SP_SCALING := preload("res://core/abilities/spell_power_scaling.gd")
 const VFX_ANCHOR_HELPER := preload("res://core/abilities/effects/vfx_anchor_helper.gd")
 
 @export var hit_vfx_scene: PackedScene = preload("res://game/vfx/abilities/PaladinStrikeOfLightVfx.tscn")
-@export var vfx_layer_offset_from_target: int = 100
+@export var vfx_layer_offset_from_target: int = 1
 
 func apply(caster: Node, target: Node, rank_data: RankData, context: Dictionary) -> void:
 	if caster == null or target == null or rank_data == null:
