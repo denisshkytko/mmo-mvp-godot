@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/mage/frost_wind.png" id=2]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=5]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_apply_debuff.gd" id=6]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=7]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_mage_frost_wind_vfx.gd" id=8]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
@@ -133,9 +134,12 @@ radius_mode = "ranged_half"
 target_filter = "enemies_only"
 inner_effect = SubResource("22")
 
+[sub_resource type="Resource" script_class="EffectMageFrostWindVfx" id=25]
+script = ExtResource("8")
+
 [sub_resource type="Resource" script_class="EffectSequence" id=24]
 script = ExtResource("7")
-effects = [SubResource("21"), SubResource("23")]
+effects = [SubResource("25"), SubResource("21"), SubResource("23")]
 
 [resource]
 script = ExtResource("1")

@@ -1,0 +1,166 @@
+[gd_resource type="SpriteFrames" load_steps=32 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/00.png" id="1_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/01.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/02.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/03.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/04.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/05.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/06.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/07.png" id="8_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/08.png" id="9_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/09.png" id="10_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/10.png" id="11_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/11.png" id="12_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/12.png" id="13_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/13.png" id="14_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/14.png" id="15_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/15.png" id="16_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/16.png" id="17_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/17.png" id="18_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/18.png" id="19_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/19.png" id="20_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/20.png" id="21_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/21.png" id="22_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/22.png" id="23_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/23.png" id="24_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/24.png" id="25_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/25.png" id="26_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/26.png" id="27_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/27.png" id="28_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/28.png" id="29_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/29.png" id="30_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/fire_blast/30.png" id="31_tex"]
+
+[resource]
+animations = [{
+"frames": [
+{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("12_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("13_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("14_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("15_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("16_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("17_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("18_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("19_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("20_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("21_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("22_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("23_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("24_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("25_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("26_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("27_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("28_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("29_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("30_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("31_tex")
+}
+],
+"loop": false,
+"name": &"default",
+"speed": 24.0
+}]

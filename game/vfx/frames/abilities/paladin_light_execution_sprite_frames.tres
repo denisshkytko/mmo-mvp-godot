@@ -1,0 +1,66 @@
+[gd_resource type="SpriteFrames" load_steps=12 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_00.png" id="1_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_01.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_02.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_03.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_04.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_05.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_06.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_07.png" id="8_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_08.png" id="9_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_09.png" id="10_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Paladin/light_execution/slash5-animation_10.png" id="11_tex"]
+
+[resource]
+animations = [{
+"frames": [
+{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("9_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("10_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("11_tex")
+}
+],
+"loop": false,
+"name": &"default",
+"speed": 24.0
+}]

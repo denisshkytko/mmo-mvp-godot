@@ -1,0 +1,16 @@
+[gd_resource type="SpriteFrames" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Shaman/lightning/2.png" id="1_tex"]
+
+[resource]
+animations = [{
+"frames": [
+{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}
+],
+"loop": false,
+"name": &"default",
+"speed": 24.0
+}]

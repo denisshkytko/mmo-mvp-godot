@@ -99,7 +99,7 @@ func _resolve_value(value, rank_data: RankData, is_percent: bool, context: Dicti
 				var sp_hot: float = float(derived_hot.get("spell_power", 0.0))
 				return float(SP_SCALING.bonus_flat(sp_hot, rank_data, "hot"))
 			_:
-				return null
+				return value
 	if typeof(value) == TYPE_INT or typeof(value) == TYPE_FLOAT:
 		return float(value)
 	if typeof(value) == TYPE_BOOL:

@@ -1,0 +1,51 @@
+[gd_resource type="SpriteFrames" load_steps=9 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_01.png" id="1_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_02.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_03.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_04.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_05.png" id="5_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_06.png" id="6_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_07.png" id="7_tex"]
+[ext_resource type="Texture2D" path="res://assets/animations/abilities/Mage/meteor/start/Fire Ball_Frame_08.png" id="8_tex"]
+
+[resource]
+animations = [{
+"frames": [
+{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("2_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("3_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("4_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("5_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("6_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("7_tex")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("8_tex")
+}
+],
+"loop": false,
+"name": &"default",
+"speed": 24.0
+}]

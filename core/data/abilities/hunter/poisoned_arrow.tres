@@ -1,11 +1,10 @@
-[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/hunter/poisoned_arrow.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_hunter_poisoned_arrow.gd" id=4]
 [ext_resource type="Script" path="res://core/abilities/effects/effect_apply_debuff.gd" id=5]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_sequence.gd" id=6]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
@@ -105,11 +104,6 @@ value_pct = 100.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectDamage" id=20]
-script = ExtResource("4")
-school = "physical"
-scaling_mode = "phys_base_pct"
-
 [sub_resource type="Resource" script_class="EffectApplyDebuff" id=21]
 script = ExtResource("5")
 buff_id = "debuff:poisoned_arrow"
@@ -120,9 +114,11 @@ primary_percent_add = {}
 flags = {"dot_bonus_damage_flat": "caster_spell_power_dot", "dot_damage_school": "magic", "dot_tick_interval_sec": 1.0, "dot_total_damage_flat": "value_flat"}
 on_hit = {}
 
-[sub_resource type="Resource" script_class="EffectSequence" id=22]
-script = ExtResource("6")
-effects = [SubResource("20"), SubResource("21")]
+[sub_resource type="Resource" script_class="EffectHunterPoisonedArrow" id=22]
+script = ExtResource("4")
+school = "physical"
+scaling_mode = "phys_base_pct"
+debuff_effect = SubResource("21")
 
 [resource]
 script = ExtResource("1")

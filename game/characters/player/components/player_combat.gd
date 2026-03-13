@@ -7,8 +7,7 @@ const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
-const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
-const HUNTER_ARROW_TEXTURE := preload("res://assets/models/characters/Hunter/Vector Parts/Arrow.png")
+const RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HunterAutoAttackProjectile.tscn")
 
 const MELEE_ATTACK_RANGE: float = COMBAT_RANGES.MELEE_ATTACK_RANGE
 const RANGED_ATTACK_RANGE: float = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
@@ -209,10 +208,7 @@ func _fire_ranged(target: Node2D, dmg: int) -> void:
 	parent.add_child(proj)
 	proj.global_position = _projectile_spawn_origin(p)
 	if proj.has_method("setup"):
-		var texture_override: Texture2D = null
-		if p != null and String(p.class_id).to_lower() == "hunter":
-			texture_override = HUNTER_ARROW_TEXTURE
-		proj.call("setup", target, dmg, p, texture_override)
+		proj.call("setup", target, dmg, p)
 
 func _projectile_spawn_origin(actor: Node2D) -> Vector2:
 	if actor == null:

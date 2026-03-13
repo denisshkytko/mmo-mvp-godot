@@ -18,6 +18,8 @@ const FALLBACK_ICON_SIZE: Vector2 = Vector2(40.0, 40.0)
 func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
 	visible = false
+	# Debuffs should start from the panel's right edge (same visual direction as buffs).
+	debuff_grid.layout_direction = Control.LAYOUT_DIRECTION_RTL
 	_apply_columns()
 	_capture_panel_anchor()
 

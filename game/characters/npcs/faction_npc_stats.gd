@@ -217,7 +217,7 @@ func tick_status_effects(delta: float) -> void:
 	if to_remove.is_empty():
 		return
 	for id in to_remove:
-		_status_effects.erase(id)
+		_erase_status_effect(id)
 
 func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {}, ability_id: String = "", source: String = "") -> void:
 	if id == "":
@@ -235,10 +235,12 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {},
 			if int(edata.get("caster_owner_id", 0)) != owner_id:
 				continue
 			if key != id:
-				_status_effects.erase(key)
+				_erase_status_effect(key)
 	var left := duration_sec
 	if left <= 0.0:
 		left = 999999.0
+	if _status_effects.has(id):
+		_cleanup_status_effect_runtime_data(_status_effects[id] as Dictionary)
 	_status_effects[id] = {
 		"time_left": left,
 		"data": data_dict,
@@ -247,6 +249,21 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {},
 	}
 
 
+
+func _erase_status_effect(id: String) -> void:
+	if not _status_effects.has(id):
+		return
+	_cleanup_status_effect_runtime_data(_status_effects[id] as Dictionary)
+	_status_effects.erase(id)
+
+func _cleanup_status_effect_runtime_data(entry: Dictionary) -> void:
+	var data: Dictionary = entry.get("data", {}) as Dictionary
+	if data.is_empty():
+		return
+	for key in ["runtime_persistent_vfx", "runtime_vfx"]:
+		var node_v: Variant = data.get(key, null)
+		if node_v is Node and is_instance_valid(node_v):
+			(node_v as Node).queue_free()
 
 func get_active_stance_data() -> Dictionary:
 	for k in _status_effects.keys():

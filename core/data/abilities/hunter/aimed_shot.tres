@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/hunter/aimed_shot.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_damage.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_hunter_aimed_shot.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
@@ -47,7 +47,7 @@ value_pct = 285.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectDamage" id=20]
+[sub_resource type="Resource" script_class="EffectHunterAimedShot" id=20]
 script = ExtResource("4")
 school = "physical"
 scaling_mode = "phys_base_pct"
