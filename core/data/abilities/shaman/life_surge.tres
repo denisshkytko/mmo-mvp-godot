@@ -52,7 +52,7 @@ script = ExtResource("4")
 scaling_mode = "spell_power_flat"
 jump_count = 2
 jump_heal_decay_pct = 30.0
-jump_radius_factor = 0.5
+jump_radius_factor = 1.0
 
 [resource]
 script = ExtResource("1")
