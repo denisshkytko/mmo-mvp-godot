@@ -1,6 +1,9 @@
 extends CharacterBody2D
 class_name Player
 
+signal visual_layer_changed(new_z_index: int)
+signal carrier_effects_stop()
+
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
@@ -359,7 +362,12 @@ func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
 	visual_root.z_as_relative = false
-	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	if visual_root.z_index != resolved_z:
+		visual_root.z_index = resolved_z
+		emit_signal("visual_layer_changed", resolved_z)
+	else:
+		visual_root.z_index = resolved_z
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()
@@ -801,6 +809,7 @@ func play_model_death() -> void:
 func begin_death_sequence() -> void:
 	if _corpse_spawned_for_current_death:
 		return
+	emit_signal("carrier_effects_stop")
 	play_model_death()
 	var timer := get_tree().create_timer(0.9)
 	timer.timeout.connect(_spawn_player_corpse_after_death_animation, CONNECT_ONE_SHOT)

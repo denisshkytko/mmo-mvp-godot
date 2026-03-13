@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://core/abilities/ability_definition.gd" id=1]
 [ext_resource type="Texture2D" path="res://assets/icons/abilities/mage/meteor.png" id=2]
 [ext_resource type="Script" path="res://core/abilities/rank_data.gd" id=3]
-[ext_resource type="Script" path="res://core/abilities/effects/effect_fireball.gd" id=4]
+[ext_resource type="Script" path="res://core/abilities/effects/effect_mage_meteor.gd" id=4]
 
 [sub_resource type="Resource" script_class="RankData" id=1]
 script = ExtResource("3")
@@ -33,7 +33,7 @@ value_pct = 80.0
 value_pct_2 = 0.0
 flags = {}
 
-[sub_resource type="Resource" script_class="EffectFireball" id=20]
+[sub_resource type="Resource" script_class="EffectMageMeteor" id=20]
 script = ExtResource("4")
 school = "magic"
 scaling_mode = "spell_power_flat"

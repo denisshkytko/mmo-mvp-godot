@@ -45,7 +45,7 @@ animations = [{
 "texture": ExtResource("8_tex")
 }
 ],
-"loop": false,
+"loop": true,
 "name": &"default",
 "speed": 24.0
 }]

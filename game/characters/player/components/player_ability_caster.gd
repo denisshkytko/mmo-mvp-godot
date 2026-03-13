@@ -115,6 +115,14 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 	if cast_time_eff > 0.0:
 		_cast_time_left = cast_time_eff
 		_cast_total_time = cast_time_eff
+		var cast_runtime: Dictionary = {}
+		if def.effect != null and def.effect.has_method("on_cast_start"):
+			var start_context := _build_context(ability_id, def, {"cast_time_sec": cast_time_eff})
+			if actual_target != null and actual_target.has_method("get_stats_snapshot"):
+				start_context["target_snapshot"] = actual_target.call("get_stats_snapshot") as Dictionary
+			var runtime_v: Variant = def.effect.call("on_cast_start", p, actual_target, rank_data, start_context, cast_time_eff)
+			if runtime_v is Dictionary:
+				cast_runtime = (runtime_v as Dictionary).duplicate(true)
 		_cast_payload = {
 			"ability_id": ability_id,
 			"target": actual_target,
@@ -123,6 +131,7 @@ func try_cast(ability_id: String, target: Node) -> Dictionary:
 			"rank_data": rank_data,
 			"cost": cost,
 			"cooldown": cd_eff,
+			"cast_runtime": cast_runtime,
 		}
 		return {"ok": true, "reason": "casting", "target": actual_target}
 
@@ -159,6 +168,10 @@ func get_targeting_preview(ability_id: String, target: Node) -> Dictionary:
 func interrupt_cast(_reason: String = "interrupted") -> void:
 	if _cast_time_left <= 0.0:
 		return
+	if not _cast_payload.is_empty():
+		var def: AbilityDefinition = _cast_payload.get("def") as AbilityDefinition
+		if def != null and def.effect != null and def.effect.has_method("on_cast_cancel"):
+			def.effect.call("on_cast_cancel", _cast_payload.get("cast_runtime", {}) as Dictionary)
 	_cast_time_left = 0.0
 	_cast_total_time = 0.0
 	_cast_payload = {}
@@ -298,17 +311,23 @@ func _finish_cast(payload: Dictionary) -> void:
 		return
 
 	if _cast_target_lost_or_changed(payload, actual_target):
+		if def.effect != null and def.effect.has_method("on_cast_cancel"):
+			def.effect.call("on_cast_cancel", payload.get("cast_runtime", {}) as Dictionary)
 		return
 	var target_result := _resolve_cast_target(def, actual_target)
 	if not bool(target_result.get("ok", false)):
+		if def.effect != null and def.effect.has_method("on_cast_cancel"):
+			def.effect.call("on_cast_cancel", payload.get("cast_runtime", {}) as Dictionary)
 		return
 	actual_target = target_result.get("target") as Node
 
 	if not _has_enough_resource(cost):
+		if def.effect != null and def.effect.has_method("on_cast_cancel"):
+			def.effect.call("on_cast_cancel", payload.get("cast_runtime", {}) as Dictionary)
 		return
 	_spend_resource(cost)
 
-	_apply_ability_effect(ability_id, def, rank_data, actual_target)
+	_apply_ability_effect(ability_id, def, rank_data, actual_target, {"cast_runtime": payload.get("cast_runtime", {})})
 	_start_cooldown(ability_id, cooldown)
 
 func _cast_target_lost_or_changed(payload: Dictionary, cast_target: Node) -> bool:
@@ -377,20 +396,48 @@ func _start_cooldown(ability_id: String, duration: float) -> void:
 	_cooldowns[ability_id] = duration
 	_cooldown_totals[ability_id] = duration
 
-func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data: RankData, actual_target: Node) -> void:
+func _apply_ability_effect(ability_id: String, def: AbilityDefinition, rank_data: RankData, actual_target: Node, extra_context: Dictionary = {}) -> void:
 	if def == null or def.effect == null:
 		return
-	if p != null and ["arcane_shot", "aimed_shot", "lucky_shot", "poisoned_arrow", "panjagan", "suppressive_shot", "fire_blast", "fireball", "frostbolt", "frost_wind"].has(ability_id) and p.has_method("play_model_combat_action"):
+	if p != null and ["judging_flame", "strike_of_light"].has(ability_id) and p.has_method("play_model_combat_action"):
+		if actual_target is Node2D and p.has_method("face_model_to_world_position"):
+			p.call("face_model_to_world_position", (actual_target as Node2D).global_position)
+		var paladin_is_moving := p.velocity.length() > 0.01
+		p.call("play_model_combat_action", "melee_unarmed", paladin_is_moving)
+		if paladin_is_moving and p.has_method("restore_model_facing_to_movement"):
+			p.call("restore_model_facing_to_movement")
+	if p != null and ability_id == "light_execution" and p.has_method("play_model_combat_action"):
+		if actual_target is Node2D and p.has_method("face_model_to_world_position"):
+			p.call("face_model_to_world_position", (actual_target as Node2D).global_position)
+		var is_moving_now := p.velocity.length() > 0.01
+		p.call("play_model_combat_action", "melee", is_moving_now)
+		if is_moving_now and p.has_method("restore_model_facing_to_movement"):
+			p.call("restore_model_facing_to_movement")
+	if p != null and ability_id == "searing_strike" and p.has_method("play_model_combat_action"):
+		if actual_target is Node2D and p.has_method("face_model_to_world_position"):
+			p.call("face_model_to_world_position", (actual_target as Node2D).global_position)
+		var is_moving_now := p.velocity.length() > 0.01
+		p.call("play_model_combat_action", "melee", is_moving_now)
+		if is_moving_now and p.has_method("restore_model_facing_to_movement"):
+			p.call("restore_model_facing_to_movement")
+	if p != null and ["arcane_shot", "aimed_shot", "lucky_shot", "poisoned_arrow", "panjagan", "suppressive_shot", "fire_blast", "fireball", "frostbolt", "frost_wind", "hailstorm", "meteor", "prayer_of_light", "lightning", "chain_lightning"].has(ability_id) and p.has_method("play_model_combat_action"):
 		if actual_target is Node2D and p.has_method("face_model_to_world_position"):
 			p.call("face_model_to_world_position", (actual_target as Node2D).global_position)
 		var is_moving_now := p.velocity.length() > 0.01
 		p.call("play_model_combat_action", "ranged", is_moving_now)
 		if is_moving_now and p.has_method("restore_model_facing_to_movement"):
 			p.call("restore_model_facing_to_movement")
+	if p != null and ability_id == "armor_break" and p.has_method("play_model_combat_action"):
+		if actual_target is Node2D and p.has_method("face_model_to_world_position"):
+			p.call("face_model_to_world_position", (actual_target as Node2D).global_position)
+		var is_moving_now := p.velocity.length() > 0.01
+		p.call("play_model_combat_action", "melee", is_moving_now)
+		if is_moving_now and p.has_method("restore_model_facing_to_movement"):
+			p.call("restore_model_facing_to_movement")
 	if p != null and ability_id == "dirty_strike" and p.has_method("play_model_combat_action"):
 		var is_moving_now := p.velocity.length() > 0.01
 		p.call("play_model_combat_action", "warrior_stun", is_moving_now)
-	var context := _build_context(ability_id, def, {})
+	var context := _build_context(ability_id, def, extra_context)
 	if actual_target != null and actual_target.has_method("get_stats_snapshot"):
 		context["target_snapshot"] = actual_target.call("get_stats_snapshot") as Dictionary
 	def.effect.apply(p, actual_target, rank_data, context)

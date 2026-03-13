@@ -1,6 +1,9 @@
 extends CharacterBody2D
 class_name NormalAggresiveMob
 
+signal visual_layer_changed(new_z_index: int)
+signal carrier_effects_stop()
+
 ## These helpers are registered as global classes (class_name).
 ## Avoid shadowing them with local constants.
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
@@ -305,7 +308,12 @@ func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
 	visual_root.z_as_relative = false
-	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	if visual_root.z_index != resolved_z:
+		visual_root.z_index = resolved_z
+		emit_signal("visual_layer_changed", resolved_z)
+	else:
+		visual_root.z_index = resolved_z
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()
@@ -638,6 +646,7 @@ func _die() -> void:
 	if is_queued_for_deletion():
 		return
 	c_stats.is_dead = true
+	emit_signal("carrier_effects_stop")
 	if _character_model != null and is_instance_valid(_character_model) and _character_model.has_method("play_death"):
 		_character_model.call("play_death")
 	if current_target != null:

@@ -12,12 +12,22 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 @export var default_visual_scale: Vector2 = Vector2(0.6, 0.6)
 @export var damage_school: String = "magic"
 @export var visual_rotation_offset_deg: float = 180.0
+@export var use_curved_path: bool = false
+@export var path_arc_offset_px: float = 0.0
+@export var path_start_global: Vector2 = Vector2.ZERO
 
 var _target: Node2D = null
 var _damage: int = 0
 var _source: Node2D = null
 var _hit: bool = false
 var _life: float = 0.0
+
+var _curve_enabled: bool = false
+var _curve_t: float = 0.0
+var _curve_total_dist: float = 1.0
+var _curve_p0: Vector2 = Vector2.ZERO
+var _curve_p1: Vector2 = Vector2.ZERO
+var _curve_p2: Vector2 = Vector2.ZERO
 
 @onready var _animated_sprite: AnimatedSprite2D = $AnimatedSprite2D as AnimatedSprite2D
 
@@ -29,6 +39,10 @@ func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
 		_animated_sprite.scale = default_visual_scale
 		if _animated_sprite.sprite_frames != null and _animated_sprite.sprite_frames.has_animation(StringName("default")):
 			_animated_sprite.play("default")
+	if path_start_global == Vector2.ZERO:
+		path_start_global = global_position
+	refresh_path_from_current_target()
+	_update_initial_visual_rotation()
 
 func _physics_process(delta: float) -> void:
 	if _hit:
@@ -46,8 +60,19 @@ func _physics_process(delta: float) -> void:
 	if _source != null and not is_instance_valid(_source):
 		_source = null
 
-	if "is_dead" in _target and bool(_target.get("is_dead")):
+	if _is_target_dead(_target):
 		queue_free()
+		return
+
+	if _curve_enabled:
+		_curve_t = clampf(_curve_t + (speed * delta) / maxf(1.0, _curve_total_dist), 0.0, 1.0)
+		var pos: Vector2 = _bezier_point(_curve_t)
+		var tangent: Vector2 = _bezier_tangent(_curve_t)
+		if tangent.length_squared() > 0.0001:
+			rotation = tangent.angle() + deg_to_rad(visual_rotation_offset_deg)
+		global_position = pos
+		if _curve_t >= 1.0:
+			_apply_hit()
 		return
 
 	var target_anchor: Vector2 = _resolve_target_anchor()
@@ -61,13 +86,53 @@ func _physics_process(delta: float) -> void:
 	rotation = dir.angle() + deg_to_rad(visual_rotation_offset_deg)
 	global_position += dir * speed * delta
 
+func refresh_path_from_current_target() -> void:
+	var target_anchor: Vector2 = _resolve_target_anchor()
+	if path_start_global == Vector2.ZERO:
+		path_start_global = global_position
+
+	_curve_enabled = use_curved_path and absf(path_arc_offset_px) > 0.001
+	if not _curve_enabled:
+		return
+
+	_curve_t = 0.0
+	_curve_p0 = path_start_global
+	_curve_p2 = target_anchor
+	var center: Vector2 = (_curve_p0 + _curve_p2) * 0.5
+	var axis: Vector2 = (_curve_p2 - _curve_p0).normalized()
+	if axis.length_squared() <= 0.0001:
+		axis = Vector2.RIGHT
+	var normal: Vector2 = Vector2(-axis.y, axis.x)
+	_curve_p1 = center + normal * path_arc_offset_px
+	# Approximate bezier length for normalized travel speed.
+	_curve_total_dist = maxf(1.0, _curve_p0.distance_to(_curve_p1) + _curve_p1.distance_to(_curve_p2))
+
+func _update_initial_visual_rotation() -> void:
+	var anchor: Vector2 = _resolve_target_anchor()
+	if _curve_enabled:
+		var tangent: Vector2 = _bezier_tangent(0.01)
+		if tangent.length_squared() > 0.0001:
+			rotation = tangent.angle() + deg_to_rad(visual_rotation_offset_deg)
+			return
+	var to_target: Vector2 = anchor - global_position
+	if to_target.length_squared() > 0.0001:
+		rotation = to_target.angle() + deg_to_rad(visual_rotation_offset_deg)
+
+func _bezier_point(t: float) -> Vector2:
+	var u: float = 1.0 - t
+	return (u * u) * _curve_p0 + (2.0 * u * t) * _curve_p1 + (t * t) * _curve_p2
+
+func _bezier_tangent(t: float) -> Vector2:
+	var u: float = 1.0 - t
+	return 2.0 * u * (_curve_p1 - _curve_p0) + 2.0 * t * (_curve_p2 - _curve_p1)
+
 func _apply_hit() -> void:
 	if _hit:
 		return
 	_hit = true
 	var dealt: int = 0
 	if _target != null and is_instance_valid(_target):
-		if "is_dead" in _target and bool(_target.get("is_dead")):
+		if _is_target_dead(_target):
 			queue_free()
 			return
 		var source_node: Node2D = _source if _source != null and is_instance_valid(_source) else null
@@ -91,3 +156,15 @@ func _resolve_target_anchor() -> Vector2:
 	if world_collider != null:
 		return world_collider.global_position
 	return _target.global_position
+
+
+func _is_target_dead(target: Node) -> bool:
+	if target == null or not is_instance_valid(target):
+		return true
+	if "is_dead" in target and bool(target.get("is_dead")):
+		return true
+	if "c_stats" in target:
+		var stats_v: Variant = target.get("c_stats")
+		if stats_v != null and is_instance_valid(stats_v) and "is_dead" in stats_v and bool(stats_v.get("is_dead")):
+			return true
+	return false
