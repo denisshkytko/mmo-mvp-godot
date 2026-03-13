@@ -26,5 +26,9 @@ func apply(caster: Node, _target: Node, _rank_data: RankData, _context: Dictiona
 	vfx.global_position = VFX_ANCHOR_HELPER.resolve_world_collider_center(caster_2d, caster_2d.global_position)
 	if "follow_target" in vfx:
 		vfx.set("follow_target", caster_2d)
+	if "keep_layer_offset_from_target" in vfx:
+		vfx.set("keep_layer_offset_from_target", true)
+	if "layer_offset_from_target" in vfx:
+		vfx.set("layer_offset_from_target", z_offset_from_caster)
 	if "follow_world_collider_center" in vfx:
 		vfx.set("follow_world_collider_center", true)

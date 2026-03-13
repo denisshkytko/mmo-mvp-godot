@@ -44,10 +44,16 @@ func _spawn_hit_vfx(target: Node2D) -> void:
 	parent.add_child(vfx)
 
 	vfx.z_as_relative = false
-	vfx.z_index = VFX_ANCHOR_HELPER.resolve_backdrop_z_index(target, fallback_z_index)
+	var resolved_backdrop_z: int = VFX_ANCHOR_HELPER.resolve_backdrop_z_index(target, fallback_z_index)
+	vfx.z_index = resolved_backdrop_z
 	vfx.global_position = VFX_ANCHOR_HELPER.resolve_world_collider_center(target, target.global_position)
 	if "follow_target" in vfx:
 		vfx.set("follow_target", target)
+	if "keep_layer_offset_from_target" in vfx:
+		vfx.set("keep_layer_offset_from_target", true)
+	if "layer_offset_from_target" in vfx:
+		var base_z: int = int((target as CanvasItem).z_index) if target is CanvasItem else 0
+		vfx.set("layer_offset_from_target", resolved_backdrop_z - base_z)
 	if "follow_world_collider_center" in vfx:
 		vfx.set("follow_world_collider_center", true)
 

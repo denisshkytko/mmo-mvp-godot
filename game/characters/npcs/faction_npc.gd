@@ -1,6 +1,9 @@
 extends CharacterBody2D
 class_name FactionNPC
 
+signal visual_layer_changed(new_z_index: int)
+signal carrier_effects_stop()
+
 @export var default_loot_profile: LootProfile = preload("res://core/loot/profiles/loot_profile_faction_gold_only.tres") as LootProfile
 ## Helpers below are global classes (class_name). Avoid shadowing them.
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
@@ -608,6 +611,7 @@ func _die() -> void:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
 		cast_bar.set_icon_texture(null)
+	emit_signal("carrier_effects_stop")
 	play_model_death()
 	if is_queued_for_deletion():
 		return
@@ -794,7 +798,12 @@ func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
 	visual_root.z_as_relative = false
-	visual_root.z_index = Y_SORTING.z_index_for_local_overlap(self, 0)
+	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	if visual_root.z_index != resolved_z:
+		visual_root.z_index = resolved_z
+		emit_signal("visual_layer_changed", resolved_z)
+	else:
+		visual_root.z_index = resolved_z
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()
