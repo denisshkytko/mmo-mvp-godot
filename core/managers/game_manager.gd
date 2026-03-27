@@ -291,15 +291,11 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 	zone_container.add_child(new_zone)
 
 	# Move player to spawn
-	var spawn: Node = new_zone.get_node_or_null(spawn_name)
-	if spawn is Marker2D:
-		player.global_position = (spawn as Marker2D).global_position
+	var resolved_spawn: Marker2D = _resolve_spawn_marker(new_zone, spawn_name)
+	if resolved_spawn != null:
+		player.global_position = resolved_spawn.global_position
 	else:
-		var default_spawn: Node = new_zone.get_node_or_null("SpawnPoint")
-		if default_spawn is Marker2D:
-			player.global_position = (default_spawn as Marker2D).global_position
-		else:
-			player.global_position = new_zone.global_position
+		push_error("Zone '%s' has no valid spawn marker. Keeping current player position." % zone_scene_path)
 
 	# Override position if saved (not first entry)
 	if _has_override_pos:
@@ -308,6 +304,57 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 
 	# Optional: target becomes invalid when changing zones
 	clear_target()
+
+
+func _resolve_spawn_marker(zone_root: Node, requested_spawn_name: String) -> Marker2D:
+	if zone_root == null:
+		return null
+
+	# 1) Explicit spawn name from portal/flow.
+	var requested: Node = zone_root.get_node_or_null(requested_spawn_name)
+	if requested is Marker2D:
+		return requested as Marker2D
+
+	# 2) Conventional name used by existing zones.
+	var default_spawn: Node = zone_root.get_node_or_null("SpawnPoint")
+	if default_spawn is Marker2D:
+		return default_spawn as Marker2D
+
+	# 3) First-entry markers can act as normal fallback if no SpawnPoint exists.
+	var first_entry_marker: Marker2D = _find_first_marker_with_script(zone_root, FIRST_ENTRY_SPAWN_POINT)
+	if first_entry_marker != null:
+		return first_entry_marker
+
+	# 4) Last resort: any marker in the zone.
+	return _find_first_marker_in_tree(zone_root)
+
+
+func _find_first_marker_with_script(root: Node, script_ref: Script) -> Marker2D:
+	if root == null or script_ref == null:
+		return null
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is Marker2D and current.get_script() == script_ref:
+			return current as Marker2D
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	return null
+
+
+func _find_first_marker_in_tree(root: Node) -> Marker2D:
+	if root == null:
+		return null
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is Marker2D:
+			return current as Marker2D
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	return null
 
 
 # ---------------------------
