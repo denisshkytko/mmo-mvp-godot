@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c12g47lfjst5m"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Cart.png-8b71306c611ae4a85c50a47283ed1a17.ctex"
+uid="uid://bl8lsd2a0v621"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Cart.png-239df4b656da8c773dc9f245679e7c79.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Wooden Cart.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Cart.png-8b71306c611ae4a85c50a47283ed1a17.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Cart.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Cart.png-239df4b656da8c773dc9f245679e7c79.ctex"]
 
 [params]
 

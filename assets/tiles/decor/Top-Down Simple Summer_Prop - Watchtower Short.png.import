@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wxxkcqakv74j"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Watchtower Short.png-617a8f9209253f8c4e0afef02321434f.ctex"
+uid="uid://bew0xl57s5oce"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Watchtower Short.png-813840fdb47f12ceaae9a5fac316077f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Watchtower Short.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Watchtower Short.png-617a8f9209253f8c4e0afef02321434f.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Watchtower Short.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Watchtower Short.png-813840fdb47f12ceaae9a5fac316077f.ctex"]
 
 [params]
 

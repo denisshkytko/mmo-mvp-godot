@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://doj4pee8psi52"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Fence Horizontal.png-65642ac0fa53ca7ced09aa0bf6693ae3.ctex"
+uid="uid://jat5vw2ve8ib"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Fence Horizontal.png-211dfad7b59e5a9164805b250e58f394.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Wooden Fence Horizontal.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Fence Horizontal.png-65642ac0fa53ca7ced09aa0bf6693ae3.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Fence Horizontal.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Fence Horizontal.png-211dfad7b59e5a9164805b250e58f394.ctex"]
 
 [params]
 

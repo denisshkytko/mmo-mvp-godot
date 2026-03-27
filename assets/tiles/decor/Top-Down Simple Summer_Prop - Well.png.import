@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://pw3i1d1hqktj"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Well.png-7bf7beab45b18442ac91ef95c9598cb9.ctex"
+uid="uid://ctjln1tt3ir6j"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Well.png-f7025f1f1363a443f1cf2b965f97c346.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Well.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Well.png-7bf7beab45b18442ac91ef95c9598cb9.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Well.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Well.png-f7025f1f1363a443f1cf2b965f97c346.ctex"]
 
 [params]
 

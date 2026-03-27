@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b437bg7ufffts"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Tree Medium.png-930a3c2a2326f7c1f499a683f10e04cd.ctex"
+uid="uid://cebx2ja26a5k7"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Tree Medium.png-9f760d0e8539bbdcadc3625aa0caa533.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Tree Medium.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Tree Medium.png-930a3c2a2326f7c1f499a683f10e04cd.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Tree Medium.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Tree Medium.png-9f760d0e8539bbdcadc3625aa0caa533.ctex"]
 
 [params]
 

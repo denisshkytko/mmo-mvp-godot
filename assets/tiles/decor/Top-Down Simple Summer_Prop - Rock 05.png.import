@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmetlsfpvtkot"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Rock 05.png-f9a8ce16b3283bd3a8f610c7aa95ee1c.ctex"
+uid="uid://1wnlpjxvoa46"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Rock 05.png-d89e205ec8bd80ac86deea3cd8b95460.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Rock 05.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Rock 05.png-f9a8ce16b3283bd3a8f610c7aa95ee1c.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Rock 05.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Rock 05.png-d89e205ec8bd80ac86deea3cd8b95460.ctex"]
 
 [params]
 

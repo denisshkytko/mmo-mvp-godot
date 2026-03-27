@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfdsx76hjwlls"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Blue Banner.png-096255832e75f74ff788a19f3e28dbe5.ctex"
+uid="uid://do7ul4vfrcleo"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Blue Banner.png-4c1f3257c1085200685871e249be5757.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Blue Banner.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Blue Banner.png-096255832e75f74ff788a19f3e28dbe5.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Blue Banner.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Blue Banner.png-4c1f3257c1085200685871e249be5757.ctex"]
 
 [params]
 

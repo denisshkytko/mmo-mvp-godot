@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c12b2o45ary71"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Magic Stone Tower.png-3d51692363fc91a54fd26f0fe5fb970d.ctex"
+uid="uid://dnd6vl8w7ilb1"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Magic Stone Tower.png-fa290885a8b0c65321ae073279c8bf17.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Magic Stone Tower.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Magic Stone Tower.png-3d51692363fc91a54fd26f0fe5fb970d.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Magic Stone Tower.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Magic Stone Tower.png-fa290885a8b0c65321ae073279c8bf17.ctex"]
 
 [params]
 

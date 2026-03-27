@@ -1,0 +1,62 @@
+[gd_resource type="TileSet" load_steps=15 format=3 uid="uid://c546yi6hxda3d"]
+
+[ext_resource type="Texture2D" uid="uid://bl8lsd2a0v621" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Cart.png" id="1_1wsfr"]
+[ext_resource type="Texture2D" uid="uid://ctjln1tt3ir6j" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Well.png" id="2_8w0qd"]
+[ext_resource type="Texture2D" uid="uid://7mjkiogocbuu" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Tent.png" id="3_nrd5e"]
+[ext_resource type="Texture2D" uid="uid://dvanvttcoucyx" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Flag.png" id="4_oisxn"]
+[ext_resource type="Texture2D" uid="uid://cxx6osa05805j" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Bushes Large.png" id="5_stwbq"]
+[ext_resource type="Texture2D" uid="uid://d3kgqdqdxfjp0" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Bushes Medium.png" id="6_45if2"]
+[ext_resource type="Texture2D" uid="uid://b4ri87rdc8yim" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Bushes Small.png" id="7_q5tsh"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3xgsl"]
+texture = ExtResource("1_1wsfr")
+texture_region_size = Vector2i(320, 160)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6rcah"]
+texture = ExtResource("2_8w0qd")
+texture_region_size = Vector2i(200, 200)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 45)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4ul3a"]
+texture = ExtResource("3_nrd5e")
+texture_region_size = Vector2i(300, 280)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(4, 65)
+0:0/0/y_sort_origin = -120
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gnvxa"]
+texture = ExtResource("4_oisxn")
+texture_region_size = Vector2i(100, 160)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(-15, 45)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jgfwk"]
+texture = ExtResource("5_stwbq")
+texture_region_size = Vector2i(240, 140)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(45, 5)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ioqtq"]
+texture = ExtResource("6_45if2")
+texture_region_size = Vector2i(180, 140)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(15, 20)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_p47ua"]
+texture = ExtResource("7_q5tsh")
+texture_region_size = Vector2i(140, 120)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(12, 5)
+
+[resource]
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_3xgsl")
+sources/1 = SubResource("TileSetAtlasSource_6rcah")
+sources/2 = SubResource("TileSetAtlasSource_4ul3a")
+sources/3 = SubResource("TileSetAtlasSource_gnvxa")
+sources/4 = SubResource("TileSetAtlasSource_jgfwk")
+sources/5 = SubResource("TileSetAtlasSource_ioqtq")
+sources/6 = SubResource("TileSetAtlasSource_p47ua")

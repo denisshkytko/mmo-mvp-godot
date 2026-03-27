@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpqvvs8jxg25j"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Bushes Small.png-e4677e001a01c82395d774a6728eb431.ctex"
+uid="uid://b4ri87rdc8yim"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Bushes Small.png-56563fc3ca68995af61b3843eddcd945.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Bushes Small.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Bushes Small.png-e4677e001a01c82395d774a6728eb431.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Bushes Small.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Bushes Small.png-56563fc3ca68995af61b3843eddcd945.ctex"]
 
 [params]
 

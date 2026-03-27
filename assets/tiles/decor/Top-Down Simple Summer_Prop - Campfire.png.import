@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://iu0x8ajee1lq"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Campfire.png-6a5bf2f1f4708987a6c95fb757838b04.ctex"
+uid="uid://dectrmyqq34tn"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Campfire.png-baaf454b9185ac8887aa82c55f71e40d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Campfire.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Campfire.png-6a5bf2f1f4708987a6c95fb757838b04.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Campfire.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Campfire.png-baaf454b9185ac8887aa82c55f71e40d.ctex"]
 
 [params]
 

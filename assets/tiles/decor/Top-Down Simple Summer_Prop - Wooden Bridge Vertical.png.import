@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bksjvx4phusff"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Bridge Vertical.png-e36cd3498a03c336614ed0ffdca5457d.ctex"
+uid="uid://cv51cw3djc2fo"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Bridge Vertical.png-f130cb131fed44fdb3ff91f6a3710046.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Wooden Bridge Vertical.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Bridge Vertical.png-e36cd3498a03c336614ed0ffdca5457d.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Bridge Vertical.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Bridge Vertical.png-f130cb131fed44fdb3ff91f6a3710046.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hfwyakfn1thx"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Castle Round.png-ef69113faa3d523cb9e08ef68afbf0cb.ctex"
+uid="uid://if7losvdub14"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Castle Round.png-ac512edc502720ada96c00b370766145.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Castle Round.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Castle Round.png-ef69113faa3d523cb9e08ef68afbf0cb.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Castle Round.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Castle Round.png-ac512edc502720ada96c00b370766145.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://coh1elxbg82fl"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Treasure Chest.png-5927e863f449761107acdf475c36639f.ctex"
+uid="uid://d38funimcc6au"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Treasure Chest.png-43842dc564137a0739ab54c5ef79260e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Treasure Chest.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Treasure Chest.png-5927e863f449761107acdf475c36639f.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Treasure Chest.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Treasure Chest.png-43842dc564137a0739ab54c5ef79260e.ctex"]
 
 [params]
 

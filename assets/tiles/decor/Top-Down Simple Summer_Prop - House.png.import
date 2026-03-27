@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ch7a3jfechx5v"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - House.png-c92fcda15c7a5e9c872aefccd77b6841.ctex"
+uid="uid://di6oju1dpu7w8"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - House.png-5a3b8577d8d33f1b89394fd8f703816f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - House.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - House.png-c92fcda15c7a5e9c872aefccd77b6841.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - House.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - House.png-5a3b8577d8d33f1b89394fd8f703816f.ctex"]
 
 [params]
 

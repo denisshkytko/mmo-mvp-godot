@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6jb1ne1lmmm4"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Windmill.png-9437fe829fbc32ea878cd962c77e09a1.ctex"
+uid="uid://n85563qi6jwl"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Windmill.png-806283ff4e546768d4b6da52637bbb8a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Windmill.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Windmill.png-9437fe829fbc32ea878cd962c77e09a1.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Windmill.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Windmill.png-806283ff4e546768d4b6da52637bbb8a.ctex"]
 
 [params]
 

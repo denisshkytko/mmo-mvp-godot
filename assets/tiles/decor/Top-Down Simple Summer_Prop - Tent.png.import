@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b177oy8tmv0lt"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Tent.png-0659b8b0ba6a139dcbdb0633db6f73f2.ctex"
+uid="uid://7mjkiogocbuu"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Tent.png-0f1bc62e96214e52ccb147c94d01e168.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Tent.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Tent.png-0659b8b0ba6a139dcbdb0633db6f73f2.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Tent.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Tent.png-0f1bc62e96214e52ccb147c94d01e168.ctex"]
 
 [params]
 

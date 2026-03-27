@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vfh76u4yylmy"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Barrel.png-e86910c6b0f66638313605596d073422.ctex"
+uid="uid://cn2eaf5yqi2r8"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Barrel.png-a2eeb9de7e4df8b22613d90cc033832d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Wooden Barrel.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Barrel.png-e86910c6b0f66638313605596d073422.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Barrel.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Wooden Barrel.png-a2eeb9de7e4df8b22613d90cc033832d.ctex"]
 
 [params]
 

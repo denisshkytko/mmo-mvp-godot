@@ -1,0 +1,64 @@
+[gd_resource type="TileSet" load_steps=15 format=3 uid="uid://dv8i1t8aquq0t"]
+
+[ext_resource type="Texture2D" uid="uid://cim8muh5ythob" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Rock 01.png" id="1_s788d"]
+[ext_resource type="Texture2D" uid="uid://dpsii735ycxic" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Rock 02.png" id="2_7f42l"]
+[ext_resource type="Texture2D" uid="uid://csij1ula3iib6" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Rock 03.png" id="3_mgiet"]
+[ext_resource type="Texture2D" uid="uid://if7losvdub14" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Castle Round.png" id="4_oymqk"]
+[ext_resource type="Texture2D" uid="uid://dabyiku0reruq" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Castle Square.png" id="5_tjpwd"]
+[ext_resource type="Texture2D" uid="uid://b7kvm4mq2vl4" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Bridge Horizontal.png" id="6_exc2x"]
+[ext_resource type="Texture2D" uid="uid://cv51cw3djc2fo" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Bridge Vertical.png" id="7_dcovm"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dcsao"]
+texture = ExtResource("1_s788d")
+texture_region_size = Vector2i(120, 100)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(14, 6)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ekl3f"]
+texture = ExtResource("2_7f42l")
+texture_region_size = Vector2i(100, 60)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(10, -15)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e0ws4"]
+texture = ExtResource("3_mgiet")
+texture_region_size = Vector2i(100, 60)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(9, -15)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dje1l"]
+texture = ExtResource("4_oymqk")
+texture_region_size = Vector2i(320, 480)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(-1, 180)
+0:0/0/y_sort_origin = -100
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5m5vr"]
+texture = ExtResource("5_tjpwd")
+texture_region_size = Vector2i(360, 400)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(5, 145)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xlc7m"]
+texture = ExtResource("6_exc2x")
+texture_region_size = Vector2i(480, 320)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 108)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_baa30"]
+texture = ExtResource("7_dcovm")
+texture_region_size = Vector2i(240, 320)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 100)
+
+[resource]
+tile_size = Vector2i(64, 64)
+uv_clipping = true
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_dcsao")
+sources/1 = SubResource("TileSetAtlasSource_ekl3f")
+sources/2 = SubResource("TileSetAtlasSource_e0ws4")
+sources/5 = SubResource("TileSetAtlasSource_dje1l")
+sources/6 = SubResource("TileSetAtlasSource_5m5vr")
+sources/7 = SubResource("TileSetAtlasSource_xlc7m")
+sources/8 = SubResource("TileSetAtlasSource_baa30")

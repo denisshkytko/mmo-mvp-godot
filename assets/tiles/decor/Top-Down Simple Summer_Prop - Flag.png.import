@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpt8apv4fbihc"
-path="res://.godot/imported/Top-Down Simple Summer_Prop - Flag.png-fa23dbe019cd5061a6f0d5bc56011a8c.ctex"
+uid="uid://dvanvttcoucyx"
+path="res://.godot/imported/Top-Down Simple Summer_Prop - Flag.png-3226914fb12004d1815c56ad3e4b52ed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/decor/Top-Down Simple Summer_Prop - Flag.png"
-dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Flag.png-fa23dbe019cd5061a6f0d5bc56011a8c.ctex"]
+source_file="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Flag.png"
+dest_files=["res://.godot/imported/Top-Down Simple Summer_Prop - Flag.png-3226914fb12004d1815c56ad3e4b52ed.ctex"]
 
 [params]
 
