@@ -365,6 +365,16 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = true
 	visual_root.z_index = 0
+	var parent_2d := get_parent() as Node2D
+	if parent_2d != null and parent_2d.y_sort_enabled:
+		z_as_relative = true
+		_apply_overlay_layer_offsets(0)
+		if z_index != 0:
+			z_index = 0
+			emit_signal("visual_layer_changed", 0)
+		else:
+			z_index = 0
+		return
 	var resolved_z: int = _resolve_map_space_sort_z()
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
 	z_as_relative = false
