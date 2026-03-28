@@ -7,7 +7,6 @@ signal carrier_effects_stop()
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
-const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
@@ -298,7 +297,6 @@ func _ready() -> void:
 
 	_apply_spellbook_passives()
 	_apply_class_visual()
-	Y_SORTING.refresh_local_overlap_around(self, 0)
 	if cast_bar != null:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)

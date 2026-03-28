@@ -9,7 +9,6 @@ signal carrier_effects_stop()
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
-const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const BANDIT_HUNTER_RANGED_PROJECTILE_SCENE: PackedScene = preload("res://game/characters/mobs/projectiles/BanditHunterRangeAutoAttackProjectile.tscn")
@@ -175,7 +174,6 @@ func _ready() -> void:
 	player = NodeCache.get_player(get_tree()) as Node2D
 	if not _spawn_initialized:
 		_apply_model_visual()
-	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 	if c_ai != null and c_ai.has_signal("leash_return_started"):
 		var cb := Callable(self, "_on_leash_return_started")
@@ -324,8 +322,8 @@ func _physics_process(delta: float) -> void:
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
-	visual_root.z_as_relative = false
-	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	visual_root.z_as_relative = true
+	var resolved_z: int = 0
 	_apply_overlay_layer_offsets(resolved_z)
 	if visual_root.z_index != resolved_z:
 		visual_root.z_index = resolved_z

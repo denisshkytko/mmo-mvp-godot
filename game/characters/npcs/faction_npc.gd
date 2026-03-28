@@ -9,7 +9,6 @@ signal carrier_effects_stop()
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
-const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/MerchantModel.tscn")
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
@@ -193,7 +192,6 @@ func _ready() -> void:
 	_apply_interaction_visual()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 	c_spell_caster.setup(self)
-	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 
 func _roll_evade(snap: Dictionary) -> bool:
@@ -829,8 +827,8 @@ func _apply_hp_overlay_style(_hp_profile: Dictionary) -> void:
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
-	visual_root.z_as_relative = false
-	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	visual_root.z_as_relative = true
+	var resolved_z: int = 0
 	_apply_overlay_layer_offsets(resolved_z)
 	if visual_root.z_index != resolved_z:
 		visual_root.z_index = resolved_z
