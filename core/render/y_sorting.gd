@@ -7,10 +7,10 @@ const Y_DEADZONE: float = 6.0
 const IDLE_RECHECK_INTERVAL_MSEC: int = 250
 const MOVEMENT_EPSILON: float = 1.5
 const ACTIVE_KEEPALIVE_MSEC: int = 450
-const BASE_WORLD_Z_LAYER: int = 50
+const BASE_WORLD_Z_LAYER: int = 0
 const WORLD_Y_TO_Z_FACTOR: float = 1.0
-const WORLD_Y_TO_Z_CLAMP_MIN: int = RenderingServer.CANVAS_ITEM_Z_MIN + 16
-const WORLD_Y_TO_Z_CLAMP_MAX: int = RenderingServer.CANVAS_ITEM_Z_MAX - 16
+const WORLD_Y_TO_Z_CLAMP_MIN: int = RenderingServer.CANVAS_ITEM_Z_MIN + 8
+const WORLD_Y_TO_Z_CLAMP_MAX: int = RenderingServer.CANVAS_ITEM_Z_MAX - 8
 
 static var _state_by_owner_id: Dictionary = {}
 static var _world_y_origin: float = 0.0
