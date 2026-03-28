@@ -321,8 +321,7 @@ func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:
 	var bounds: Rect2 = _collect_zone_world_bounds(zone_root)
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
-	if Y_SORTING != null and Y_SORTING.has_method("configure_world_y_origin"):
-		Y_SORTING.call("configure_world_y_origin", bounds.position.y)
+	Y_SORTING.configure_world_y_origin(bounds.position.y)
 	camera.limit_left = int(floor(bounds.position.x))
 	camera.limit_top = int(floor(bounds.position.y))
 	camera.limit_right = int(ceil(bounds.position.x + bounds.size.x))
