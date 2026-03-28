@@ -124,6 +124,10 @@ func _apply_layer_from_target(target: Variant) -> void:
 func _resolve_follow_target_base_z(target: Variant) -> int:
 	if target == null or not is_instance_valid(target):
 		return 0
+	if target is CanvasItem:
+		var target_item: CanvasItem = target as CanvasItem
+		if target_item != null and is_instance_valid(target_item):
+			return int(target_item.z_index)
 	if target is Node:
 		var target_node: Node = target as Node
 		if target_node != null:
@@ -133,10 +137,6 @@ func _resolve_follow_target_base_z(target: Variant) -> int:
 			var direct_visual := target_node.get_node_or_null("Visual")
 			if direct_visual is CanvasItem and is_instance_valid(direct_visual):
 				return int((direct_visual as CanvasItem).z_index)
-	if target is CanvasItem:
-		var target_item: CanvasItem = target as CanvasItem
-		if target_item != null and is_instance_valid(target_item):
-			return int(target_item.z_index)
 	return 0
 
 func _apply_layer_from_z_index(base_z_index: int) -> void:

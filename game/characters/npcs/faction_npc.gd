@@ -828,10 +828,13 @@ func _update_visual_render_order() -> void:
 	else:
 		visual_root.z_index = resolved_z
 
-func _apply_overlay_layer_offsets(base_visual_z: int) -> void:
+func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
-		target_marker.z_as_relative = false
-		target_marker.z_index = base_visual_z - 2
+		target_marker.z_as_relative = true
+		target_marker.z_index = -2
+	if overlay_bars_widget != null and is_instance_valid(overlay_bars_widget):
+		overlay_bars_widget.z_as_relative = true
+		overlay_bars_widget.z_index = 1
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()

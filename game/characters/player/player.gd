@@ -400,11 +400,13 @@ func _resolve_map_space_sort_z() -> int:
 	return int(floor(global_position.y / 64.0))
 
 
-func _apply_overlay_layer_offsets(base_visual_z: int) -> void:
+func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
-		target_marker.z_as_relative = false
-		var marker_z := clampi(base_visual_z - 2, RenderingServer.CANVAS_ITEM_Z_MIN, RenderingServer.CANVAS_ITEM_Z_MAX)
-		target_marker.z_index = marker_z
+		target_marker.z_as_relative = true
+		target_marker.z_index = -2
+	if overlay_bars_widget != null and is_instance_valid(overlay_bars_widget):
+		overlay_bars_widget.z_as_relative = true
+		overlay_bars_widget.z_index = 1
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()
