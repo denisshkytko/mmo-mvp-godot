@@ -363,15 +363,17 @@ func _physics_process(_delta: float) -> void:
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
-	visual_root.z_as_relative = false
+	visual_root.z_as_relative = true
+	visual_root.z_index = 0
 	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
+	z_as_relative = false
 	_apply_overlay_layer_offsets(resolved_z)
-	if visual_root.z_index != resolved_z:
-		visual_root.z_index = resolved_z
+	if z_index != resolved_z:
+		z_index = resolved_z
 		emit_signal("visual_layer_changed", resolved_z)
 	else:
-		visual_root.z_index = resolved_z
+		z_index = resolved_z
 
 func _apply_overlay_layer_offsets(base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
