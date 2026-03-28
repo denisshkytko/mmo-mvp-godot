@@ -359,6 +359,9 @@ func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
 			if layer.get_parent() != runtime:
 				layer.reparent(runtime, true)
 		host.set_meta("__y_sort_runtime_flattened", true)
+	var cb := Callable(self, "_on_sort_host_child_entered").bind(host)
+	if not host.child_entered_tree.is_connected(cb):
+		host.child_entered_tree.connect(cb)
 	return runtime
 
 
@@ -372,6 +375,39 @@ func _collect_tile_layers_for_runtime(node: Node, runtime: Node2D, out_layers: A
 			out_layers.append(child as TileMapLayer)
 		elif child is Node:
 			_collect_tile_layers_for_runtime(child as Node, runtime, out_layers)
+
+
+func _on_sort_host_child_entered(node: Node, host: Node2D) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	var runtime := host.get_node_or_null("__y_sort_runtime") as Node2D
+	if runtime == null:
+		return
+	_maybe_promote_node_to_runtime(node, runtime)
+
+
+func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
+	if node == runtime:
+		return
+	if node is TileMapLayer:
+		if node.get_parent() != runtime:
+			(node as TileMapLayer).reparent(runtime, true)
+		return
+	if not (node is Node2D):
+		return
+	var n2d := node as Node2D
+	var node_name := String(n2d.name).to_lower()
+	if node_name == "decor" or node_name == "spawner groups" or node_name == "__y_sort_runtime":
+		return
+	var should_promote: bool = false
+	if n2d.has_method("get_sort_anchor_global"):
+		should_promote = true
+	elif n2d.is_in_group("y_sort_entities"):
+		should_promote = true
+	elif node_name == "player":
+		should_promote = true
+	if should_promote and n2d.get_parent() != runtime:
+		n2d.reparent(runtime, true)
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
