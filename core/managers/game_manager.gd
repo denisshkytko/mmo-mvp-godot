@@ -302,9 +302,62 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 		player.global_position = _pending_override_pos
 		_has_override_pos = false
 
+	# Sync camera limits with the loaded zone so large maps keep player visible.
+	_apply_camera_limits_from_zone(new_zone)
+
 	# Optional: target becomes invalid when changing zones
 	clear_target()
 
+
+
+
+func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var camera := player.get_node_or_null("Camera") as Camera2D
+	if camera == null:
+		return
+	var bounds: Rect2 = _collect_zone_world_bounds(zone_root)
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		return
+	camera.limit_left = int(floor(bounds.position.x))
+	camera.limit_top = int(floor(bounds.position.y))
+	camera.limit_right = int(ceil(bounds.position.x + bounds.size.x))
+	camera.limit_bottom = int(ceil(bounds.position.y + bounds.size.y))
+
+
+func _collect_zone_world_bounds(zone_root: Node) -> Rect2:
+	if zone_root == null:
+		return Rect2()
+	var has_bounds := false
+	var min_pos := Vector2.ZERO
+	var max_pos := Vector2.ZERO
+	var stack: Array[Node] = [zone_root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is TileMapLayer:
+			var tile_layer := current as TileMapLayer
+			var used: Rect2i = tile_layer.get_used_rect()
+			if used.size.x > 0 and used.size.y > 0:
+				var start_local: Vector2 = tile_layer.map_to_local(used.position)
+				var end_local: Vector2 = tile_layer.map_to_local(used.position + used.size)
+				var top_left: Vector2 = tile_layer.to_global(start_local)
+				var bottom_right: Vector2 = tile_layer.to_global(end_local)
+				if not has_bounds:
+					min_pos = Vector2(min(top_left.x, bottom_right.x), min(top_left.y, bottom_right.y))
+					max_pos = Vector2(max(top_left.x, bottom_right.x), max(top_left.y, bottom_right.y))
+					has_bounds = true
+				else:
+					min_pos.x = min(min_pos.x, top_left.x, bottom_right.x)
+					min_pos.y = min(min_pos.y, top_left.y, bottom_right.y)
+					max_pos.x = max(max_pos.x, top_left.x, bottom_right.x)
+					max_pos.y = max(max_pos.y, top_left.y, bottom_right.y)
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	if not has_bounds:
+		return Rect2()
+	return Rect2(min_pos, max_pos - min_pos).grow(256.0)
 
 func _resolve_spawn_marker(zone_root: Node, requested_spawn_name: String) -> Marker2D:
 	if zone_root == null:
