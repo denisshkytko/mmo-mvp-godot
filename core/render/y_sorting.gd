@@ -8,11 +8,12 @@ const IDLE_RECHECK_INTERVAL_MSEC: int = 250
 const MOVEMENT_EPSILON: float = 1.5
 const ACTIVE_KEEPALIVE_MSEC: int = 450
 const BASE_WORLD_Z_LAYER: int = 50
-const WORLD_Y_TO_Z_FACTOR: float = 0.1
+const WORLD_Y_TO_Z_FACTOR: float = 1.0
 const WORLD_Y_TO_Z_CLAMP_MIN: int = RenderingServer.CANVAS_ITEM_Z_MIN + 16
 const WORLD_Y_TO_Z_CLAMP_MAX: int = RenderingServer.CANVAS_ITEM_Z_MAX - 16
 
 static var _state_by_owner_id: Dictionary = {}
+static var _world_y_origin: float = 0.0
 
 # Keeps a shared base layer for all actors and changes order only when they are
 # visually close/overlapping. This prevents huge per-entity z-index spread.
@@ -75,7 +76,7 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 		# simultaneously intersecting actors.
 		relative += 1
 
-	var world_y_base: int = _world_y_base_z(self_anchor.y)
+	var world_y_base: int = _world_y_base_z(self_anchor.y - _world_y_origin)
 	var base_z: int = BASE_WORLD_Z_LAYER + default_z + world_y_base
 	var resolved_z: int = base_z if relative <= 0 else base_z + relative
 	resolved_z = clampi(resolved_z, WORLD_Y_TO_Z_CLAMP_MIN, WORLD_Y_TO_Z_CLAMP_MAX)
@@ -85,6 +86,9 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 	state["active_until_msec"] = now_msec + ACTIVE_KEEPALIVE_MSEC if has_close_neighbors else now_msec
 	_state_by_owner_id[owner_id] = state
 	return resolved_z
+
+static func configure_world_y_origin(origin_y: float) -> void:
+	_world_y_origin = origin_y
 
 static func _world_y_base_z(world_y: float) -> int:
 	var scaled := int(floor(world_y * WORLD_Y_TO_Z_FACTOR))
