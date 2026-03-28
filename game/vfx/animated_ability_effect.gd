@@ -16,6 +16,7 @@ signal carrier_layer_changed(new_z_index: int)
 @onready var _anim: AnimatedSprite2D = $AnimatedSprite2D as AnimatedSprite2D
 
 var _connected_follow_target: Variant = null
+var _layer_host: Node2D = null
 
 func _ready() -> void:
 	if _anim == null:
@@ -52,7 +53,11 @@ func _update_follow_position() -> void:
 		queue_free()
 		return
 	var anchor: Vector2 = _resolve_target_anchor(follow_target)
-	global_position = anchor + follow_offset
+	var world_anchor: Vector2 = anchor + follow_offset
+	if _layer_host != null and is_instance_valid(_layer_host):
+		position = _layer_host.to_local(world_anchor)
+	else:
+		global_position = world_anchor
 
 func _resolve_target_anchor(target: Node2D) -> Vector2:
 	if target == null or not is_instance_valid(target):
@@ -76,12 +81,39 @@ func _exit_tree() -> void:
 
 func _sync_follow_target_connections() -> void:
 	if follow_target == _connected_follow_target:
+		if _layer_host == null or not is_instance_valid(_layer_host):
+			_sync_layer_host(_connected_follow_target)
 		return
 	_disconnect_follow_target_signals(_connected_follow_target)
 	_connected_follow_target = follow_target
+	_sync_layer_host(_connected_follow_target)
 	_connect_follow_target_signals(_connected_follow_target)
 	if _connected_follow_target != null:
 		_apply_layer_from_target(_connected_follow_target)
+
+func _sync_layer_host(target: Variant) -> void:
+	_layer_host = _resolve_layer_host(target)
+	if _layer_host == null or not is_instance_valid(_layer_host):
+		return
+	if get_parent() == _layer_host:
+		return
+	var keep_world: bool = true
+	reparent(_layer_host, keep_world)
+
+func _resolve_layer_host(target: Variant) -> Node2D:
+	if not keep_layer_offset_from_target:
+		return null
+	if not (target is Node):
+		return null
+	var target_node: Node = target as Node
+	if target_node == null or not is_instance_valid(target_node):
+		return null
+	var visual_v: Variant = target_node.get("visual_root")
+	if visual_v is Node2D and is_instance_valid(visual_v):
+		return visual_v as Node2D
+	if target_node is Node2D:
+		return target_node as Node2D
+	return null
 
 func _connect_follow_target_signals(target: Variant) -> void:
 	if not (target is Node2D):
@@ -124,6 +156,10 @@ func _apply_layer_from_target(target: Variant) -> void:
 func _resolve_follow_target_base_z(target: Variant) -> int:
 	if target == null or not is_instance_valid(target):
 		return 0
+	if target is CanvasItem:
+		var target_item: CanvasItem = target as CanvasItem
+		if target_item != null and is_instance_valid(target_item):
+			return int(target_item.z_index)
 	if target is Node:
 		var target_node: Node = target as Node
 		if target_node != null:
@@ -133,14 +169,15 @@ func _resolve_follow_target_base_z(target: Variant) -> int:
 			var direct_visual := target_node.get_node_or_null("Visual")
 			if direct_visual is CanvasItem and is_instance_valid(direct_visual):
 				return int((direct_visual as CanvasItem).z_index)
-	if target is CanvasItem:
-		var target_item: CanvasItem = target as CanvasItem
-		if target_item != null and is_instance_valid(target_item):
-			return int(target_item.z_index)
 	return 0
 
 func _apply_layer_from_z_index(base_z_index: int) -> void:
 	if not keep_layer_offset_from_target:
+		return
+	if _layer_host != null and is_instance_valid(_layer_host):
+		z_as_relative = true
+		z_index = layer_offset_from_target
+		emit_signal("carrier_layer_changed", base_z_index + layer_offset_from_target)
 		return
 	z_as_relative = false
 	z_index = base_z_index + layer_offset_from_target

@@ -1,8 +1,10 @@
 extends Node
 
 const FIRST_ENTRY_SPAWN_POINT := preload("res://game/world/spawn/first_entry_spawn_point.gd")
+const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 @onready var zone_container: Node = $"../ZoneContainer"
+@onready var world_root: Node = $".."
 
 var player: Node2D
 var current_target: Node = null
@@ -10,6 +12,7 @@ var current_target: Node = null
 @export var use_cam_screen_center_for_world_math: bool = true
 @export var debug_targeting_clicks: bool = false
 @export var allow_corpse_targeting: bool = true
+@export var debug_world_probe_under_mouse: bool = true
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -283,6 +286,7 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 		return
 
 	# Clear previous zone
+	_detach_player_from_zone_for_reload()
 	for child in zone_container.get_children():
 		child.queue_free()
 
@@ -302,9 +306,120 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 		player.global_position = _pending_override_pos
 		_has_override_pos = false
 
+	# Sync camera limits with the loaded zone so large maps keep player visible.
+	_apply_camera_limits_from_zone(new_zone)
+	_attach_player_to_zone_sort_host(new_zone)
+
 	# Optional: target becomes invalid when changing zones
 	clear_target()
 
+
+
+
+func _detach_player_from_zone_for_reload() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if world_root == null:
+		return
+	if player.get_parent() == world_root:
+		return
+	player.reparent(world_root, true)
+
+
+func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if zone_root == null:
+		return
+	var host: Node2D = _find_zone_sort_host(zone_root)
+	if host == null:
+		return
+	host.y_sort_enabled = true
+	if player.get_parent() != host:
+		player.reparent(host, true)
+
+
+func _find_zone_sort_host(zone_root: Node) -> Node2D:
+	if zone_root == null:
+		return null
+	var best: Node2D = null
+	var stack: Array[Node] = [zone_root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is Node2D and String(current.name).to_lower() == "decor":
+			var node2d := current as Node2D
+			for child in node2d.get_children():
+				if child is TileMapLayer and (child as TileMapLayer).y_sort_enabled:
+					best = node2d
+					break
+		if best != null:
+			return best
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	return null
+
+
+func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var camera := player.get_node_or_null("Camera") as Camera2D
+	if camera == null:
+		return
+	var bounds: Rect2 = _collect_zone_world_bounds(zone_root)
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		return
+	var sort_bounds: Rect2 = _collect_zone_world_bounds(zone_root, true)
+	if sort_bounds.size.x <= 0.0 or sort_bounds.size.y <= 0.0:
+		sort_bounds = bounds
+	var sort_origin_y: float = sort_bounds.position.y + (sort_bounds.size.y * 0.5)
+	var sort_factor: float = 1.0
+	if sort_bounds.size.y > 1.0:
+		sort_factor = min(1.0, 3000.0 / sort_bounds.size.y)
+	Y_SORTING.configure_world_y_mapping(sort_origin_y, sort_factor)
+	camera.limit_left = int(floor(bounds.position.x))
+	camera.limit_top = int(floor(bounds.position.y))
+	camera.limit_right = int(ceil(bounds.position.x + bounds.size.x))
+	camera.limit_bottom = int(ceil(bounds.position.y + bounds.size.y))
+
+
+func _collect_zone_world_bounds(zone_root: Node, only_y_sorted_layers: bool = false) -> Rect2:
+	if zone_root == null:
+		return Rect2()
+	var has_bounds := false
+	var min_pos := Vector2.ZERO
+	var max_pos := Vector2.ZERO
+	var stack: Array[Node] = [zone_root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is TileMapLayer:
+			var tile_layer := current as TileMapLayer
+			if only_y_sorted_layers and not tile_layer.y_sort_enabled:
+				for child in current.get_children():
+					if child is Node:
+						stack.append(child)
+				continue
+			var used: Rect2i = tile_layer.get_used_rect()
+			if used.size.x > 0 and used.size.y > 0:
+				var start_local: Vector2 = tile_layer.map_to_local(used.position)
+				var end_local: Vector2 = tile_layer.map_to_local(used.position + used.size)
+				var top_left: Vector2 = tile_layer.to_global(start_local)
+				var bottom_right: Vector2 = tile_layer.to_global(end_local)
+				if not has_bounds:
+					min_pos = Vector2(min(top_left.x, bottom_right.x), min(top_left.y, bottom_right.y))
+					max_pos = Vector2(max(top_left.x, bottom_right.x), max(top_left.y, bottom_right.y))
+					has_bounds = true
+				else:
+					min_pos.x = min(min_pos.x, top_left.x, bottom_right.x)
+					min_pos.y = min(min_pos.y, top_left.y, bottom_right.y)
+					max_pos.x = max(max_pos.x, top_left.x, bottom_right.x)
+					max_pos.y = max(max_pos.y, top_left.y, bottom_right.y)
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	if not has_bounds:
+		return Rect2()
+	return Rect2(min_pos, max_pos - min_pos).grow(256.0)
 
 func _resolve_spawn_marker(zone_root: Node, requested_spawn_name: String) -> Marker2D:
 	if zone_root == null:
@@ -396,6 +511,10 @@ func _input(event: InputEvent) -> void:
 	# Mouse click
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_MIDDLE and mb.pressed:
+			if debug_world_probe_under_mouse:
+				_debug_probe_under_mouse(mb.position)
+			return
 		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			screen_pos = mb.position
 			pressed = true
@@ -572,6 +691,52 @@ func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
 			node = node.get_parent()
 
 	return null
+
+
+func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
+	var world_pos: Vector2 = _screen_to_world(screen_pos)
+	print("[SortProbe] screen=", screen_pos, " world=", world_pos)
+	if player != null and is_instance_valid(player):
+		var p_z: int = int((player as CanvasItem).z_index) if player is CanvasItem else 0
+		print("[SortProbe] player pos=", player.global_position, " y=", player.global_position.y, " z=", p_z, " parent=", player.get_parent().get_path() if player.get_parent() != null else "<null>")
+	var y_map: Dictionary = Y_SORTING.get_world_y_mapping_debug()
+	print("[SortProbe] y_map origin=", float(y_map.get("origin_y", 0.0)), " factor=", float(y_map.get("factor", 0.0)))
+
+	var zone_root: Node = null
+	if zone_container != null and zone_container.get_child_count() > 0:
+		zone_root = zone_container.get_child(0)
+	if zone_root == null:
+		print("[SortProbe] no zone root in ZoneContainer")
+		return
+
+	var layers: Array[TileMapLayer] = []
+	var stack: Array[Node] = [zone_root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is TileMapLayer:
+			layers.append(current as TileMapLayer)
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+
+	for layer in layers:
+		var cell: Vector2i = layer.local_to_map(layer.to_local(world_pos))
+		var source_id: int = layer.get_cell_source_id(cell)
+		if source_id == -1:
+			continue
+		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id)
+
+	var entities := get_tree().get_nodes_in_group("y_sort_entities")
+	for e in entities:
+		if not (e is Node2D):
+			continue
+		var n := e as Node2D
+		if not is_instance_valid(n):
+			continue
+		if n.global_position.distance_to(world_pos) > 260.0:
+			continue
+		var ez: int = int((n as CanvasItem).z_index) if n is CanvasItem else 0
+		print("[SortProbe][Entity] node=", n.get_path(), " y=", n.global_position.y, " z=", ez, " pos=", n.global_position)
 
 
 func _is_world_pos_visible(world_pos: Vector2) -> bool:

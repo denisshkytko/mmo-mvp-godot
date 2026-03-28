@@ -7,9 +7,14 @@ const Y_DEADZONE: float = 6.0
 const IDLE_RECHECK_INTERVAL_MSEC: int = 250
 const MOVEMENT_EPSILON: float = 1.5
 const ACTIVE_KEEPALIVE_MSEC: int = 450
-const BASE_WORLD_Z_LAYER: int = 50
+const BASE_WORLD_Z_LAYER: int = 0
+const WORLD_Y_TO_Z_FACTOR: float = 1.0
+const WORLD_Y_TO_Z_CLAMP_MIN: int = RenderingServer.CANVAS_ITEM_Z_MIN + 8
+const WORLD_Y_TO_Z_CLAMP_MAX: int = RenderingServer.CANVAS_ITEM_Z_MAX - 8
 
 static var _state_by_owner_id: Dictionary = {}
+static var _world_y_origin: float = 0.0
+static var _world_y_to_z_factor: float = WORLD_Y_TO_Z_FACTOR
 
 # Keeps a shared base layer for all actors and changes order only when they are
 # visually close/overlapping. This prevents huge per-entity z-index spread.
@@ -72,14 +77,30 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 		# simultaneously intersecting actors.
 		relative += 1
 
-	var base_z: int = BASE_WORLD_Z_LAYER + default_z
+	var world_y_base: int = _world_y_base_z(self_anchor.y - _world_y_origin)
+	var base_z: int = BASE_WORLD_Z_LAYER + default_z + world_y_base
 	var resolved_z: int = base_z if relative <= 0 else base_z + relative
+	resolved_z = clampi(resolved_z, WORLD_Y_TO_Z_CLAMP_MIN, WORLD_Y_TO_Z_CLAMP_MAX)
 	state["last_anchor"] = self_anchor
 	state["last_check_msec"] = now_msec
 	state["last_z"] = resolved_z
 	state["active_until_msec"] = now_msec + ACTIVE_KEEPALIVE_MSEC if has_close_neighbors else now_msec
 	_state_by_owner_id[owner_id] = state
 	return resolved_z
+
+static func configure_world_y_mapping(origin_y: float, factor: float = WORLD_Y_TO_Z_FACTOR) -> void:
+	_world_y_origin = origin_y
+	_world_y_to_z_factor = clampf(factor, 0.0001, 10.0)
+
+static func get_world_y_mapping_debug() -> Dictionary:
+	return {
+		"origin_y": _world_y_origin,
+		"factor": _world_y_to_z_factor,
+	}
+
+static func _world_y_base_z(world_y: float) -> int:
+	var scaled := int(floor(world_y * _world_y_to_z_factor))
+	return clampi(scaled, WORLD_Y_TO_Z_CLAMP_MIN, WORLD_Y_TO_Z_CLAMP_MAX)
 
 static func _get_sort_candidates(tree: SceneTree) -> Array:
 	var preferred := tree.get_nodes_in_group("y_sort_entities")

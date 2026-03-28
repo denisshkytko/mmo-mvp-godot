@@ -363,19 +363,50 @@ func _physics_process(_delta: float) -> void:
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
-	visual_root.z_as_relative = false
-	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	visual_root.z_as_relative = true
+	visual_root.z_index = 0
+	var parent_2d := get_parent() as Node2D
+	if parent_2d != null and parent_2d.y_sort_enabled:
+		z_as_relative = true
+		_apply_overlay_layer_offsets(0)
+		if z_index != 0:
+			z_index = 0
+			emit_signal("visual_layer_changed", 0)
+		else:
+			z_index = 0
+		return
+	var resolved_z: int = _resolve_map_space_sort_z()
+	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
+	z_as_relative = false
 	_apply_overlay_layer_offsets(resolved_z)
-	if visual_root.z_index != resolved_z:
-		visual_root.z_index = resolved_z
+	if z_index != resolved_z:
+		z_index = resolved_z
 		emit_signal("visual_layer_changed", resolved_z)
 	else:
-		visual_root.z_index = resolved_z
+		z_index = resolved_z
 
-func _apply_overlay_layer_offsets(base_visual_z: int) -> void:
+func _resolve_map_space_sort_z() -> int:
+	var host := get_parent() as Node2D
+	if host != null:
+		for child in host.get_children():
+			if child is TileMapLayer:
+				var layer := child as TileMapLayer
+				if not layer.y_sort_enabled:
+					continue
+				var cell: Vector2i = layer.local_to_map(layer.to_local(global_position))
+				if layer.get_cell_source_id(cell) != -1:
+					return int(cell.y) + int(layer.z_index)
+	# Fallback: 64px world tile step.
+	return int(floor(global_position.y / 64.0))
+
+
+func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
-		target_marker.z_as_relative = false
-		target_marker.z_index = base_visual_z - 2
+		target_marker.z_as_relative = true
+		target_marker.z_index = -2
+	if overlay_bars_widget != null and is_instance_valid(overlay_bars_widget):
+		overlay_bars_widget.z_as_relative = true
+		overlay_bars_widget.z_index = 1
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()
@@ -409,8 +440,13 @@ func get_body_hitbox_center_global() -> Vector2:
 		return body_hitbox_shape.global_position
 	return global_position
 
+func get_world_collider_center_global() -> Vector2:
+	if world_collision != null:
+		return world_collision.global_position
+	return global_position
+
 func get_sort_anchor_global() -> Vector2:
-	return get_body_hitbox_center_global()
+	return get_world_collider_center_global()
 
 
 func get_attack_damage() -> int:
