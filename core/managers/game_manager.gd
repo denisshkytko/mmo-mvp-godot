@@ -23,6 +23,8 @@ var _save_debounce: Timer
 var _autosave: Timer
 var _save_pending: bool = false
 var _has_loaded_character: bool = false
+var _active_y_sort_host: Node2D = null
+var _tree_node_added_connected: bool = false
 
 
 func _ready() -> void:
@@ -363,9 +365,12 @@ func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
 		for sortable in sortable_nodes:
 			_maybe_promote_node_to_runtime(sortable, runtime)
 		host.set_meta("__y_sort_runtime_flattened", true)
-	var cb := Callable(self, "_on_sort_host_child_entered").bind(host)
-	if not host.child_entered_tree.is_connected(cb):
-		host.child_entered_tree.connect(cb)
+	_active_y_sort_host = host
+	if not _tree_node_added_connected:
+		var cb := Callable(self, "_on_tree_node_added")
+		if not get_tree().node_added.is_connected(cb):
+			get_tree().node_added.connect(cb)
+		_tree_node_added_connected = true
 	return runtime
 
 
@@ -393,9 +398,14 @@ func _collect_sortable_nodes_for_runtime(node: Node, runtime: Node2D, out_nodes:
 			_collect_sortable_nodes_for_runtime(child as Node, runtime, out_nodes)
 
 
-func _on_sort_host_child_entered(node: Node, host: Node2D) -> void:
+func _on_tree_node_added(node: Node) -> void:
 	if node == null or not is_instance_valid(node):
 		return
+	if _active_y_sort_host == null or not is_instance_valid(_active_y_sort_host):
+		return
+	if not _active_y_sort_host.is_ancestor_of(node):
+		return
+	var host := _active_y_sort_host
 	var runtime := host.get_node_or_null("__y_sort_runtime") as Node2D
 	if runtime == null:
 		return
@@ -439,10 +449,23 @@ func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
 		world_collider = node.get_node_or_null("CollisionProfile/WorldCollider") as CollisionShape2D
 	if world_collider == null:
 		return
+	var origin_y := _compute_world_collider_sort_origin_y(world_collider)
 	for prop in node.get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
-			node.set("y_sort_origin", int(round(world_collider.position.y)))
+			node.set("y_sort_origin", int(round(origin_y)))
 			break
+
+
+func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
+	var y := float(collider.position.y)
+	if collider.shape is RectangleShape2D:
+		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
+	elif collider.shape is CircleShape2D:
+		y += float((collider.shape as CircleShape2D).radius)
+	elif collider.shape is CapsuleShape2D:
+		var cap := collider.shape as CapsuleShape2D
+		y += float(cap.height) * 0.5 + float(cap.radius)
+	return y
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
