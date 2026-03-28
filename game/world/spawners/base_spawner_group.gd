@@ -77,7 +77,8 @@ func _spawn_at(index: int) -> void:
 	if mob.has_method("_mark_spawned"):
 		mob.call("_mark_spawned")
 
-	get_parent().add_child(mob)
+	var spawn_parent := _resolve_spawn_parent()
+	spawn_parent.add_child(mob)
 	_mob_by_point[index] = mob
 
 	var lvl: int = _compute_level()
@@ -148,3 +149,21 @@ func _call_apply_spawn_init(_mob: Node, _point: SpawnPoint, _level: int) -> bool
 
 func _compute_level() -> int:
 	return 1
+
+
+func _resolve_spawn_parent() -> Node:
+	var host := get_parent()
+	if host == null:
+		return self
+	if host is Node:
+		var host_node := host as Node
+		var decor_actors := host_node.get_node_or_null("decor/actors")
+		if decor_actors != null:
+			return decor_actors
+		var actors := host_node.get_node_or_null("actors")
+		if actors != null:
+			return actors
+		var decor := host_node.get_node_or_null("decor")
+		if decor != null:
+			return decor
+	return host
