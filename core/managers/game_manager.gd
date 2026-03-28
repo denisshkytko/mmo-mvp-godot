@@ -369,10 +369,13 @@ func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:
 	var bounds: Rect2 = _collect_zone_world_bounds(zone_root)
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
-	var sort_origin_y: float = bounds.position.y + (bounds.size.y * 0.5)
+	var sort_bounds: Rect2 = _collect_zone_world_bounds(zone_root, true)
+	if sort_bounds.size.x <= 0.0 or sort_bounds.size.y <= 0.0:
+		sort_bounds = bounds
+	var sort_origin_y: float = sort_bounds.position.y + (sort_bounds.size.y * 0.5)
 	var sort_factor: float = 1.0
-	if bounds.size.y > 1.0:
-		sort_factor = min(1.0, 3000.0 / bounds.size.y)
+	if sort_bounds.size.y > 1.0:
+		sort_factor = min(1.0, 3000.0 / sort_bounds.size.y)
 	Y_SORTING.configure_world_y_mapping(sort_origin_y, sort_factor)
 	camera.limit_left = int(floor(bounds.position.x))
 	camera.limit_top = int(floor(bounds.position.y))
@@ -380,7 +383,7 @@ func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:
 	camera.limit_bottom = int(ceil(bounds.position.y + bounds.size.y))
 
 
-func _collect_zone_world_bounds(zone_root: Node) -> Rect2:
+func _collect_zone_world_bounds(zone_root: Node, only_y_sorted_layers: bool = false) -> Rect2:
 	if zone_root == null:
 		return Rect2()
 	var has_bounds := false
@@ -391,6 +394,11 @@ func _collect_zone_world_bounds(zone_root: Node) -> Rect2:
 		var current: Node = stack.pop_back() as Node
 		if current is TileMapLayer:
 			var tile_layer := current as TileMapLayer
+			if only_y_sorted_layers and not tile_layer.y_sort_enabled:
+				for child in current.get_children():
+					if child is Node:
+						stack.append(child)
+				continue
 			var used: Rect2i = tile_layer.get_used_rect()
 			if used.size.x > 0 and used.size.y > 0:
 				var start_local: Vector2 = tile_layer.map_to_local(used.position)
