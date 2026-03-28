@@ -337,8 +337,10 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 	host.y_sort_enabled = true
 	if player.get_parent() != host:
 		player.reparent(host, true)
-	player.top_level = true
-	player.z_as_relative = false
+	player.top_level = false
+	player.y_sort_enabled = true
+	player.z_as_relative = true
+	player.z_index = int(host.z_index)
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:

@@ -367,7 +367,7 @@ func _update_visual_render_order() -> void:
 	visual_root.z_as_relative = true
 	visual_root.z_index = 0
 	var parent_2d := get_parent() as Node2D
-	if parent_2d != null and parent_2d.y_sort_enabled and not top_level:
+	if parent_2d != null and parent_2d.y_sort_enabled:
 		z_as_relative = true
 		var parent_sort_z := int(parent_2d.z_index)
 		_apply_overlay_layer_offsets(parent_sort_z)
