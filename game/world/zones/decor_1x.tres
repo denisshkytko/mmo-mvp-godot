@@ -1,17 +1,17 @@
 [gd_resource type="TileSet" load_steps=25 format=3 uid="uid://5envrjdqbk3n"]
 
-[ext_resource type="Texture2D" uid="uid://d0cjr87wh3acy" path="res://assets/tiles/Decor/tree_11.png" id="1_50jev"]
-[ext_resource type="Texture2D" uid="uid://7k2jd1sxwedi" path="res://assets/tiles/Decor/Top-Down Simple Summer_prop - Tree Large.png" id="1_qknx0"]
-[ext_resource type="Texture2D" uid="uid://ck8j7t54042" path="res://assets/tiles/Decor/tree_12.png" id="2_4qwvo"]
-[ext_resource type="Texture2D" uid="uid://cebx2ja26a5k7" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Tree Medium.png" id="2_7di6n"]
-[ext_resource type="Texture2D" uid="uid://dxtwwqw5bjmep" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Tree Small.png" id="3_50jev"]
-[ext_resource type="Texture2D" uid="uid://bew0xl57s5oce" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Watchtower Short.png" id="4_4qwvo"]
-[ext_resource type="Texture2D" uid="uid://dxvsmtar6gg2h" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Watchtower Tall.png" id="5_bkf4l"]
-[ext_resource type="Texture2D" uid="uid://n85563qi6jwl" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Windmill.png" id="6_qd00f"]
-[ext_resource type="Texture2D" uid="uid://dftqrmqlig20c" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Fence Horizontal_2.png" id="7_f6ma5"]
-[ext_resource type="Texture2D" uid="uid://cgiicl7lba177" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Fence Vertical_2.png" id="8_irkrr"]
-[ext_resource type="Texture2D" uid="uid://di6oju1dpu7w8" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - House.png" id="9_bn6xf"]
-[ext_resource type="Texture2D" uid="uid://dnd6vl8w7ilb1" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Magic Stone Tower.png" id="10_xse7j"]
+[ext_resource type="Texture2D" uid="uid://d0cjr87wh3acy" path="res://assets/tiles/Decor/Tree 04.png" id="1_50jev"]
+[ext_resource type="Texture2D" uid="uid://ck8j7t54042" path="res://assets/tiles/Decor/Tree 05.png" id="2_4qwvo"]
+[ext_resource type="Texture2D" uid="uid://dxtwwqw5bjmep" path="res://assets/tiles/Decor/Tree Small.png" id="3_50jev"]
+[ext_resource type="Texture2D" uid="uid://7k2jd1sxwedi" path="res://assets/tiles/Decor/Tree Large.png" id="3_bkf4l"]
+[ext_resource type="Texture2D" uid="uid://bew0xl57s5oce" path="res://assets/tiles/Decor/Watchtower Short.png" id="4_4qwvo"]
+[ext_resource type="Texture2D" uid="uid://cebx2ja26a5k7" path="res://assets/tiles/Decor/Tree Medium.png" id="4_qd00f"]
+[ext_resource type="Texture2D" uid="uid://dxvsmtar6gg2h" path="res://assets/tiles/Decor/Watchtower Tall.png" id="5_bkf4l"]
+[ext_resource type="Texture2D" uid="uid://n85563qi6jwl" path="res://assets/tiles/Decor/Windmill.png" id="6_qd00f"]
+[ext_resource type="Texture2D" uid="uid://dftqrmqlig20c" path="res://assets/tiles/Decor/Wooden Fence Horizontal_2.png" id="7_f6ma5"]
+[ext_resource type="Texture2D" uid="uid://cgiicl7lba177" path="res://assets/tiles/Decor/Wooden Fence Vertical_2.png" id="8_irkrr"]
+[ext_resource type="Texture2D" uid="uid://di6oju1dpu7w8" path="res://assets/tiles/Decor/House.png" id="11_f6ma5"]
+[ext_resource type="Texture2D" uid="uid://dnd6vl8w7ilb1" path="res://assets/tiles/Decor/Magic Stone Tower.png" id="12_irkrr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bkf4l"]
 texture = ExtResource("1_50jev")
@@ -26,14 +26,14 @@ texture_region_size = Vector2i(220, 300)
 0:0/0/texture_origin = Vector2i(-40, 90)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o8u23"]
-texture = ExtResource("1_qknx0")
+texture = ExtResource("3_bkf4l")
 texture_region_size = Vector2i(400, 480)
 0:0/0 = 0
 0:0/0/texture_origin = Vector2i(19, 128)
 0:0/0/y_sort_origin = -40
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5fyo6"]
-texture = ExtResource("2_7di6n")
+texture = ExtResource("4_qd00f")
 texture_region_size = Vector2i(360, 400)
 0:0/0 = 0
 0:0/0/texture_origin = Vector2i(-12, 126)
@@ -75,13 +75,13 @@ texture_region_size = Vector2i(64, 192)
 0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i1smh"]
-texture = ExtResource("9_bn6xf")
+texture = ExtResource("11_f6ma5")
 texture_region_size = Vector2i(480, 640)
 0:0/0 = 0
 0:0/0/texture_origin = Vector2i(44, 270)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1rk6d"]
-texture = ExtResource("10_xse7j")
+texture = ExtResource("12_irkrr")
 texture_region_size = Vector2i(240, 400)
 0:0/0 = 0
 0:0/0/texture_origin = Vector2i(0, 150)
