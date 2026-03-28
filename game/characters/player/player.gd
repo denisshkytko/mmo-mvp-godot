@@ -309,7 +309,6 @@ func get_danger_meter() -> DangerMeterComponent:
 
 
 func _physics_process(_delta: float) -> void:
-	_sync_sort_proxy_transform()
 	_update_visual_render_order()
 	if is_dead:
 		velocity = Vector2.ZERO
@@ -368,16 +367,7 @@ func _update_visual_render_order() -> void:
 	visual_root.z_as_relative = true
 	visual_root.z_index = 0
 	var parent_2d := get_parent() as Node2D
-	if parent_2d != null and String(parent_2d.name) == "__PlayerSortProxy":
-		z_as_relative = true
-		_apply_overlay_layer_offsets(0)
-		if z_index != 0:
-			z_index = 0
-			emit_signal("visual_layer_changed", 0)
-		else:
-			z_index = 0
-		return
-	if parent_2d != null and parent_2d.y_sort_enabled:
+	if parent_2d != null and parent_2d.y_sort_enabled and not top_level:
 		z_as_relative = true
 		var parent_sort_z := int(parent_2d.z_index)
 		_apply_overlay_layer_offsets(parent_sort_z)
@@ -410,15 +400,6 @@ func _resolve_map_space_sort_z() -> int:
 					return int(cell.y) + int(layer.z_index)
 	# Fallback: 64px world tile step.
 	return int(floor(global_position.y / 64.0))
-
-func _sync_sort_proxy_transform() -> void:
-	var proxy := get_parent() as Node2D
-	if proxy == null or String(proxy.name) != "__PlayerSortProxy":
-		return
-	var sort_anchor := get_sort_anchor_global()
-	var anchor_offset := sort_anchor - global_position
-	proxy.global_position = sort_anchor
-	position = -anchor_offset
 
 
 func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
