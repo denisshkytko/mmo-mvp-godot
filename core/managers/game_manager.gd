@@ -23,6 +23,8 @@ var _save_debounce: Timer
 var _autosave: Timer
 var _save_pending: bool = false
 var _has_loaded_character: bool = false
+var _active_y_sort_host: Node2D = null
+var _tree_node_added_connected: bool = false
 
 
 func _ready() -> void:
@@ -335,29 +337,160 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 	if host == null:
 		return
 	host.y_sort_enabled = true
-	if player.get_parent() != host:
-		player.reparent(host, true)
+	var entity_host := _ensure_y_sort_runtime_layer(host)
+	if player.get_parent() != entity_host:
+		player.reparent(entity_host, true)
+	player.top_level = false
+	player.y_sort_enabled = true
+	player.z_as_relative = true
+	player.z_index = int(entity_host.z_index)
+
+
+func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
+	var runtime := host.get_node_or_null("__y_sort_runtime") as Node2D
+	if runtime == null:
+		runtime = Node2D.new()
+		runtime.name = "__y_sort_runtime"
+		runtime.y_sort_enabled = true
+		runtime.z_index = int(host.z_index)
+		host.add_child(runtime)
+	if not bool(host.get_meta("__y_sort_runtime_flattened", false)):
+		var tile_layers: Array[TileMapLayer] = []
+		_collect_tile_layers_for_runtime(host, runtime, tile_layers)
+		for layer in tile_layers:
+			if layer.get_parent() != runtime:
+				layer.reparent(runtime, true)
+		var sortable_nodes: Array[Node2D] = []
+		_collect_sortable_nodes_for_runtime(host, runtime, sortable_nodes)
+		for sortable in sortable_nodes:
+			_maybe_promote_node_to_runtime(sortable, runtime)
+		host.set_meta("__y_sort_runtime_flattened", true)
+	_active_y_sort_host = host
+	if not _tree_node_added_connected:
+		var cb := Callable(self, "_on_tree_node_added")
+		if not get_tree().node_added.is_connected(cb):
+			get_tree().node_added.connect(cb)
+		_tree_node_added_connected = true
+	return runtime
+
+
+func _collect_tile_layers_for_runtime(node: Node, runtime: Node2D, out_layers: Array[TileMapLayer]) -> void:
+	if node == runtime:
+		return
+	for child in node.get_children():
+		if child == runtime:
+			continue
+		if child is TileMapLayer:
+			out_layers.append(child as TileMapLayer)
+		elif child is Node:
+			_collect_tile_layers_for_runtime(child as Node, runtime, out_layers)
+
+
+func _collect_sortable_nodes_for_runtime(node: Node, runtime: Node2D, out_nodes: Array[Node2D]) -> void:
+	if node == runtime:
+		return
+	for child in node.get_children():
+		if child == runtime:
+			continue
+		if child is Node2D:
+			out_nodes.append(child as Node2D)
+		if child is Node:
+			_collect_sortable_nodes_for_runtime(child as Node, runtime, out_nodes)
+
+
+func _on_tree_node_added(node: Node) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	if _active_y_sort_host == null or not is_instance_valid(_active_y_sort_host):
+		return
+	if not _active_y_sort_host.is_ancestor_of(node):
+		return
+	var host := _active_y_sort_host
+	var runtime := host.get_node_or_null("__y_sort_runtime") as Node2D
+	if runtime == null:
+		return
+	_maybe_promote_node_to_runtime(node, runtime)
+
+
+func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
+	if node == runtime:
+		return
+	if node is TileMapLayer:
+		if node.get_parent() != runtime:
+			(node as TileMapLayer).reparent(runtime, true)
+		return
+	if not (node is Node2D):
+		return
+	var n2d := node as Node2D
+	var node_name := String(n2d.name).to_lower()
+	if node_name == "decor" or node_name == "spawner groups" or node_name == "__y_sort_runtime":
+		return
+	var should_promote: bool = false
+	if n2d.has_method("get_sort_anchor_global"):
+		should_promote = true
+	elif n2d.is_in_group("y_sort_entities"):
+		should_promote = true
+	elif node_name == "player":
+		should_promote = true
+	elif n2d.get_node_or_null("CollisionProfile/WorldCollider") != null:
+		should_promote = true
+	elif n2d.get_node_or_null("WorldCollider") != null:
+		should_promote = true
+	if should_promote and n2d.get_parent() != runtime:
+		n2d.reparent(runtime, true)
+	_try_sync_node_y_sort_origin_from_world_collider(n2d)
+
+
+func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	var world_collider := node.get_node_or_null("WorldCollider") as CollisionShape2D
+	if world_collider == null:
+		world_collider = node.get_node_or_null("CollisionProfile/WorldCollider") as CollisionShape2D
+	if world_collider == null:
+		return
+	var origin_y := _compute_world_collider_sort_origin_y(world_collider)
+	for prop in node.get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			node.set("y_sort_origin", int(round(origin_y)))
+			break
+
+
+func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
+	var y := float(collider.position.y)
+	if collider.shape is RectangleShape2D:
+		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
+	elif collider.shape is CircleShape2D:
+		y += float((collider.shape as CircleShape2D).radius)
+	elif collider.shape is CapsuleShape2D:
+		var cap := collider.shape as CapsuleShape2D
+		y += float(cap.height) * 0.5 + float(cap.radius)
+	return y
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
 	if zone_root == null:
 		return null
-	var best: Node2D = null
 	var stack: Array[Node] = [zone_root]
+	var fallback_z50: Node2D = null
+	var fallback_ysort: Node2D = null
 	while not stack.is_empty():
 		var current: Node = stack.pop_back() as Node
-		if current is Node2D and String(current.name).to_lower() == "decor":
+		if current is Node2D:
 			var node2d := current as Node2D
-			for child in node2d.get_children():
-				if child is TileMapLayer and (child as TileMapLayer).y_sort_enabled:
-					best = node2d
-					break
-		if best != null:
-			return best
+			var node_name := String(current.name)
+			if node_name == "z-level = 50, y-sort = true":
+				return node2d
+			if fallback_z50 == null and int(node2d.z_index) == 50:
+				fallback_z50 = node2d
+			if fallback_ysort == null and node2d.y_sort_enabled:
+				fallback_ysort = node2d
 		for child in current.get_children():
 			if child is Node:
 				stack.append(child)
-	return null
+	if fallback_z50 != null:
+		return fallback_z50
+	return fallback_ysort
 
 
 func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:

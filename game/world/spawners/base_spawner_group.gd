@@ -148,3 +148,4 @@ func _call_apply_spawn_init(_mob: Node, _point: SpawnPoint, _level: int) -> bool
 
 func _compute_level() -> int:
 	return 1
+

@@ -7,7 +7,6 @@ signal carrier_effects_stop()
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
-const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
@@ -255,6 +254,7 @@ var _corpse_spawned_for_current_death: bool = false
 func _ready() -> void:
 	add_to_group("faction_units")
 	add_to_group("y_sort_entities")
+	_sync_y_sort_origin_from_world_collider()
 	# setup components
 	# push primary tuning from Player root into Stats component
 	c_stats.base_str = base_str
@@ -297,7 +297,6 @@ func _ready() -> void:
 
 	_apply_spellbook_passives()
 	_apply_class_visual()
-	Y_SORTING.refresh_local_overlap_around(self, 0)
 	if cast_bar != null:
 		cast_bar.set_cast_visible(false)
 		cast_bar.set_progress01(0.0)
@@ -368,12 +367,13 @@ func _update_visual_render_order() -> void:
 	var parent_2d := get_parent() as Node2D
 	if parent_2d != null and parent_2d.y_sort_enabled:
 		z_as_relative = true
-		_apply_overlay_layer_offsets(0)
-		if z_index != 0:
-			z_index = 0
-			emit_signal("visual_layer_changed", 0)
+		var parent_sort_z := int(parent_2d.z_index)
+		_apply_overlay_layer_offsets(parent_sort_z)
+		if z_index != parent_sort_z:
+			z_index = parent_sort_z
+			emit_signal("visual_layer_changed", parent_sort_z)
 		else:
-			z_index = 0
+			z_index = parent_sort_z
 		return
 	var resolved_z: int = _resolve_map_space_sort_z()
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
@@ -402,9 +402,11 @@ func _resolve_map_space_sort_z() -> int:
 
 func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
+		target_marker.top_level = false
 		target_marker.z_as_relative = true
 		target_marker.z_index = -2
 	if overlay_bars_widget != null and is_instance_valid(overlay_bars_widget):
+		overlay_bars_widget.top_level = false
 		overlay_bars_widget.z_as_relative = true
 		overlay_bars_widget.z_index = 1
 
@@ -447,6 +449,26 @@ func get_world_collider_center_global() -> Vector2:
 
 func get_sort_anchor_global() -> Vector2:
 	return get_world_collider_center_global()
+
+func _sync_y_sort_origin_from_world_collider() -> void:
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	var origin_y := _compute_world_collider_sort_origin_y(world_collision)
+	for prop in get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			set("y_sort_origin", int(round(origin_y)))
+			break
+
+func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
+	var y := float(collider.position.y)
+	if collider.shape is RectangleShape2D:
+		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
+	elif collider.shape is CircleShape2D:
+		y += float((collider.shape as CircleShape2D).radius)
+	elif collider.shape is CapsuleShape2D:
+		var cap := collider.shape as CapsuleShape2D
+		y += float(cap.height) * 0.5 + float(cap.radius)
+	return y
 
 
 func get_attack_damage() -> int:
@@ -930,6 +952,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
 		if world_rot_v is float or world_rot_v is int:
 			world_collision.rotation = float(world_rot_v)
+	_sync_y_sort_origin_from_world_collider()
 
 	if body_hitbox_shape != null:
 		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)

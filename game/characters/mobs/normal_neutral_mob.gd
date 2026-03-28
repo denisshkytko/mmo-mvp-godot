@@ -10,7 +10,6 @@ const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
-const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 
@@ -175,6 +174,7 @@ func _ready() -> void:
 	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	add_to_group("y_sort_entities")
+	_sync_y_sort_origin_from_world_collider()
 	small_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	medium_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	large_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
@@ -183,7 +183,6 @@ func _ready() -> void:
 		home_position = global_position
 	if not _spawn_initialized:
 		_apply_model_visual()
-	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 	# связь с AI: начало RETURN по leash → сброс агрессии + старт регена
 	if c_ai != null:
@@ -215,6 +214,26 @@ func get_world_collider_center_global() -> Vector2:
 
 func get_sort_anchor_global() -> Vector2:
 	return get_world_collider_center_global()
+
+func _sync_y_sort_origin_from_world_collider() -> void:
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	var origin_y := _compute_world_collider_sort_origin_y(world_collision)
+	for prop in get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			set("y_sort_origin", int(round(origin_y)))
+			break
+
+func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
+	var y := float(collider.position.y)
+	if collider.shape is RectangleShape2D:
+		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
+	elif collider.shape is CircleShape2D:
+		y += float((collider.shape as CircleShape2D).radius)
+	elif collider.shape is CapsuleShape2D:
+		var cap := collider.shape as CapsuleShape2D
+		y += float(cap.height) * 0.5 + float(cap.radius)
+	return y
 
 
 func _physics_process(delta: float) -> void:
@@ -300,8 +319,8 @@ func _physics_process(delta: float) -> void:
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
-	visual_root.z_as_relative = false
-	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	visual_root.z_as_relative = true
+	var resolved_z: int = 0
 	_apply_overlay_layer_offsets(resolved_z)
 	if visual_root.z_index != resolved_z:
 		visual_root.z_index = resolved_z
@@ -805,6 +824,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
 		if world_offset_v is Vector2:
 			world_collision.position = world_offset_v
+	_sync_y_sort_origin_from_world_collider()
 	if body_hitbox_shape != null:
 		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
 		if body_shape_v is Shape2D:

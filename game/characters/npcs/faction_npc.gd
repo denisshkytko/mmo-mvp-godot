@@ -9,7 +9,6 @@ signal carrier_effects_stop()
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
-const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/MerchantModel.tscn")
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
@@ -167,6 +166,7 @@ var _threat_recheck_timer: float = 0.0
 func _ready() -> void:
 	add_to_group("faction_units")
 	add_to_group("y_sort_entities")
+	_sync_y_sort_origin_from_world_collider()
 	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	mage_base_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
@@ -192,7 +192,6 @@ func _ready() -> void:
 	_apply_interaction_visual()
 	_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 	c_spell_caster.setup(self)
-	Y_SORTING.refresh_local_overlap_around(self, 0)
 
 
 func _roll_evade(snap: Dictionary) -> bool:
@@ -411,6 +410,26 @@ func get_world_collider_center_global() -> Vector2:
 
 func get_sort_anchor_global() -> Vector2:
 	return get_world_collider_center_global()
+
+func _sync_y_sort_origin_from_world_collider() -> void:
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	var origin_y := _compute_world_collider_sort_origin_y(world_collision)
+	for prop in get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			set("y_sort_origin", int(round(origin_y)))
+			break
+
+func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
+	var y := float(collider.position.y)
+	if collider.shape is RectangleShape2D:
+		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
+	elif collider.shape is CircleShape2D:
+		y += float((collider.shape as CircleShape2D).radius)
+	elif collider.shape is CapsuleShape2D:
+		var cap := collider.shape as CapsuleShape2D
+		y += float(cap.height) * 0.5 + float(cap.radius)
+	return y
 
 
 func _physics_process(delta: float) -> void:
@@ -753,6 +772,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
 		if world_rot_v is float or world_rot_v is int:
 			world_collision.rotation = float(world_rot_v)
+	_sync_y_sort_origin_from_world_collider()
 
 	if body_hitbox_shape != null:
 		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
@@ -819,8 +839,8 @@ func _apply_hp_overlay_style(_hp_profile: Dictionary) -> void:
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
-	visual_root.z_as_relative = false
-	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	visual_root.z_as_relative = true
+	var resolved_z: int = 0
 	_apply_overlay_layer_offsets(resolved_z)
 	if visual_root.z_index != resolved_z:
 		visual_root.z_index = resolved_z

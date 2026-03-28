@@ -120,6 +120,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	var abilities_for_level := MobSpellPresetDB.resolve_ability_ids_for_level(spell_preset_id, class_id, level)
 	var preset_name_key := MobSpellPresetDB.get_preset_name_key(spell_preset_id)
 	var selected_model_id: String = _resolve_selected_model_id()
+	var effective_behavior: int = point.resolve_effective_behavior(behavior, Behavior.GUARD)
 	var effective_attack_choice: int = attack_range_choice
 	if selected_model_id == "hunter_melee":
 		effective_attack_choice = AttackRangeChoice.MELEE
@@ -128,7 +129,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 	mob.call_deferred(
 		"apply_spawn_init",
 		point.global_position,
-		behavior,
+		effective_behavior,
 		-1.0, # aggro_radius не задаём
 		-1.0, # leash_distance is defined on the mob itself
 		patrol_pause_seconds,
