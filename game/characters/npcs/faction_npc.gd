@@ -416,7 +416,10 @@ func get_sort_anchor_global() -> Vector2:
 func _sync_y_sort_origin_from_world_collider() -> void:
 	if world_collision == null or not is_instance_valid(world_collision):
 		return
-	y_sort_origin = int(round(world_collision.position.y))
+	for prop in get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			set("y_sort_origin", int(round(world_collision.position.y)))
+			break
 
 
 func _physics_process(delta: float) -> void:
