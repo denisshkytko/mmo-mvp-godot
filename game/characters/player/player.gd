@@ -365,7 +365,7 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = true
 	visual_root.z_index = 0
-	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	var resolved_z: int = _resolve_map_space_sort_z()
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
 	z_as_relative = false
 	_apply_overlay_layer_offsets(resolved_z)
@@ -374,6 +374,21 @@ func _update_visual_render_order() -> void:
 		emit_signal("visual_layer_changed", resolved_z)
 	else:
 		z_index = resolved_z
+
+func _resolve_map_space_sort_z() -> int:
+	var host := get_parent() as Node2D
+	if host != null:
+		for child in host.get_children():
+			if child is TileMapLayer:
+				var layer := child as TileMapLayer
+				if not layer.y_sort_enabled:
+					continue
+				var cell: Vector2i = layer.local_to_map(layer.to_local(global_position))
+				if layer.get_cell_source_id(cell) != -1:
+					return int(cell.y) + int(layer.z_index)
+	# Fallback: 64px world tile step.
+	return int(floor(global_position.y / 64.0))
+
 
 func _apply_overlay_layer_offsets(base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
