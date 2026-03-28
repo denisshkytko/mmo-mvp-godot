@@ -4,6 +4,7 @@ const FIRST_ENTRY_SPAWN_POINT := preload("res://game/world/spawn/first_entry_spa
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 
 @onready var zone_container: Node = $"../ZoneContainer"
+@onready var world_root: Node = $".."
 
 var player: Node2D
 var current_target: Node = null
@@ -285,6 +286,7 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 		return
 
 	# Clear previous zone
+	_detach_player_from_zone_for_reload()
 	for child in zone_container.get_children():
 		child.queue_free()
 
@@ -306,11 +308,56 @@ func _load_zone_deferred(zone_scene_path: String, spawn_name: String) -> void:
 
 	# Sync camera limits with the loaded zone so large maps keep player visible.
 	_apply_camera_limits_from_zone(new_zone)
+	_attach_player_to_zone_sort_host(new_zone)
 
 	# Optional: target becomes invalid when changing zones
 	clear_target()
 
 
+
+
+func _detach_player_from_zone_for_reload() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if world_root == null:
+		return
+	if player.get_parent() == world_root:
+		return
+	player.reparent(world_root, true)
+
+
+func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if zone_root == null:
+		return
+	var host: Node2D = _find_zone_sort_host(zone_root)
+	if host == null:
+		return
+	host.y_sort_enabled = true
+	if player.get_parent() != host:
+		player.reparent(host, true)
+
+
+func _find_zone_sort_host(zone_root: Node) -> Node2D:
+	if zone_root == null:
+		return null
+	var best: Node2D = null
+	var stack: Array[Node] = [zone_root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is Node2D and String(current.name).to_lower() == "decor":
+			var node2d := current as Node2D
+			for child in node2d.get_children():
+				if child is TileMapLayer and (child as TileMapLayer).y_sort_enabled:
+					best = node2d
+					break
+		if best != null:
+			return best
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	return null
 
 
 func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:
@@ -643,7 +690,7 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 	print("[SortProbe] screen=", screen_pos, " world=", world_pos)
 	if player != null and is_instance_valid(player):
 		var p_z: int = int((player as CanvasItem).z_index) if player is CanvasItem else 0
-		print("[SortProbe] player pos=", player.global_position, " y=", player.global_position.y, " z=", p_z)
+		print("[SortProbe] player pos=", player.global_position, " y=", player.global_position.y, " z=", p_z, " parent=", player.get_parent().get_path() if player.get_parent() != null else "<null>")
 	var y_map: Dictionary = Y_SORTING.get_world_y_mapping_debug()
 	print("[SortProbe] y_map origin=", float(y_map.get("origin_y", 0.0)), " factor=", float(y_map.get("factor", 0.0)))
 
