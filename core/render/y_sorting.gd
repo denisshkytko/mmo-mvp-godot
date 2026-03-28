@@ -14,6 +14,7 @@ const WORLD_Y_TO_Z_CLAMP_MAX: int = RenderingServer.CANVAS_ITEM_Z_MAX - 8
 
 static var _state_by_owner_id: Dictionary = {}
 static var _world_y_origin: float = 0.0
+static var _world_y_to_z_factor: float = WORLD_Y_TO_Z_FACTOR
 
 # Keeps a shared base layer for all actors and changes order only when they are
 # visually close/overlapping. This prevents huge per-entity z-index spread.
@@ -87,11 +88,18 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 	_state_by_owner_id[owner_id] = state
 	return resolved_z
 
-static func configure_world_y_origin(origin_y: float) -> void:
+static func configure_world_y_mapping(origin_y: float, factor: float = WORLD_Y_TO_Z_FACTOR) -> void:
 	_world_y_origin = origin_y
+	_world_y_to_z_factor = clampf(factor, 0.0001, 10.0)
+
+static func get_world_y_mapping_debug() -> Dictionary:
+	return {
+		"origin_y": _world_y_origin,
+		"factor": _world_y_to_z_factor,
+	}
 
 static func _world_y_base_z(world_y: float) -> int:
-	var scaled := int(floor(world_y * WORLD_Y_TO_Z_FACTOR))
+	var scaled := int(floor(world_y * _world_y_to_z_factor))
 	return clampi(scaled, WORLD_Y_TO_Z_CLAMP_MIN, WORLD_Y_TO_Z_CLAMP_MAX)
 
 static func _get_sort_candidates(tree: SceneTree) -> Array:

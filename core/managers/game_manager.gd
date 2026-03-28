@@ -322,7 +322,11 @@ func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:
 	var bounds: Rect2 = _collect_zone_world_bounds(zone_root)
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
-	Y_SORTING.configure_world_y_origin(bounds.position.y + (bounds.size.y * 0.5))
+	var sort_origin_y: float = bounds.position.y + (bounds.size.y * 0.5)
+	var sort_factor: float = 1.0
+	if bounds.size.y > 1.0:
+		sort_factor = min(1.0, 3000.0 / bounds.size.y)
+	Y_SORTING.configure_world_y_mapping(sort_origin_y, sort_factor)
 	camera.limit_left = int(floor(bounds.position.x))
 	camera.limit_top = int(floor(bounds.position.y))
 	camera.limit_right = int(ceil(bounds.position.x + bounds.size.x))
@@ -640,6 +644,8 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 	if player != null and is_instance_valid(player):
 		var p_z: int = int((player as CanvasItem).z_index) if player is CanvasItem else 0
 		print("[SortProbe] player pos=", player.global_position, " y=", player.global_position.y, " z=", p_z)
+	var y_map: Dictionary = Y_SORTING.get_world_y_mapping_debug()
+	print("[SortProbe] y_map origin=", float(y_map.get("origin_y", 0.0)), " factor=", float(y_map.get("factor", 0.0)))
 
 	var zone_root: Node = null
 	if zone_container != null and zone_container.get_child_count() > 0:
