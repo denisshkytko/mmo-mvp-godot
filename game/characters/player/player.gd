@@ -365,6 +365,7 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = false
 	var resolved_z: int = Y_SORTING.z_index_for_local_overlap(self, 0)
+	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
 	_apply_overlay_layer_offsets(resolved_z)
 	if visual_root.z_index != resolved_z:
 		visual_root.z_index = resolved_z
@@ -375,7 +376,8 @@ func _update_visual_render_order() -> void:
 func _apply_overlay_layer_offsets(base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
 		target_marker.z_as_relative = false
-		target_marker.z_index = base_visual_z - 2
+		var marker_z := clampi(base_visual_z - 2, RenderingServer.CANVAS_ITEM_Z_MIN, RenderingServer.CANVAS_ITEM_Z_MAX)
+		target_marker.z_index = marker_z
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()
