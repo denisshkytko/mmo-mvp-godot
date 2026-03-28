@@ -404,13 +404,13 @@ func _resolve_map_space_sort_z() -> int:
 
 func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
 	if target_marker != null and is_instance_valid(target_marker):
-		target_marker.top_level = true
-		target_marker.z_as_relative = false
-		target_marker.z_index = _base_visual_z + 1
+		target_marker.top_level = false
+		target_marker.z_as_relative = true
+		target_marker.z_index = -2
 	if overlay_bars_widget != null and is_instance_valid(overlay_bars_widget):
-		overlay_bars_widget.top_level = true
-		overlay_bars_widget.z_as_relative = false
-		overlay_bars_widget.z_index = _base_visual_z + 2
+		overlay_bars_widget.top_level = false
+		overlay_bars_widget.z_as_relative = true
+		overlay_bars_widget.z_index = 1
 
 func refresh_local_overlap_sorting() -> void:
 	_update_visual_render_order()

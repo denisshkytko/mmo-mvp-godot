@@ -335,12 +335,16 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 	if host == null:
 		return
 	host.y_sort_enabled = true
-	if player.get_parent() != host:
-		player.reparent(host, true)
+	var entity_host: Node2D = host
+	var decor_host := host.get_node_or_null("decor") as Node2D
+	if decor_host != null and decor_host.y_sort_enabled:
+		entity_host = decor_host
+	if player.get_parent() != entity_host:
+		player.reparent(entity_host, true)
 	player.top_level = false
 	player.y_sort_enabled = true
 	player.z_as_relative = true
-	player.z_index = int(host.z_index)
+	player.z_index = int(entity_host.z_index)
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
