@@ -358,6 +358,10 @@ func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
 		for layer in tile_layers:
 			if layer.get_parent() != runtime:
 				layer.reparent(runtime, true)
+		var sortable_nodes: Array[Node2D] = []
+		_collect_sortable_nodes_for_runtime(host, runtime, sortable_nodes)
+		for sortable in sortable_nodes:
+			_maybe_promote_node_to_runtime(sortable, runtime)
 		host.set_meta("__y_sort_runtime_flattened", true)
 	var cb := Callable(self, "_on_sort_host_child_entered").bind(host)
 	if not host.child_entered_tree.is_connected(cb):
@@ -375,6 +379,18 @@ func _collect_tile_layers_for_runtime(node: Node, runtime: Node2D, out_layers: A
 			out_layers.append(child as TileMapLayer)
 		elif child is Node:
 			_collect_tile_layers_for_runtime(child as Node, runtime, out_layers)
+
+
+func _collect_sortable_nodes_for_runtime(node: Node, runtime: Node2D, out_nodes: Array[Node2D]) -> void:
+	if node == runtime:
+		return
+	for child in node.get_children():
+		if child == runtime:
+			continue
+		if child is Node2D:
+			out_nodes.append(child as Node2D)
+		if child is Node:
+			_collect_sortable_nodes_for_runtime(child as Node, runtime, out_nodes)
 
 
 func _on_sort_host_child_entered(node: Node, host: Node2D) -> void:
@@ -406,8 +422,27 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 		should_promote = true
 	elif node_name == "player":
 		should_promote = true
+	elif n2d.get_node_or_null("CollisionProfile/WorldCollider") != null:
+		should_promote = true
+	elif n2d.get_node_or_null("WorldCollider") != null:
+		should_promote = true
 	if should_promote and n2d.get_parent() != runtime:
 		n2d.reparent(runtime, true)
+	_try_sync_node_y_sort_origin_from_world_collider(n2d)
+
+
+func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	var world_collider := node.get_node_or_null("WorldCollider") as CollisionShape2D
+	if world_collider == null:
+		world_collider = node.get_node_or_null("CollisionProfile/WorldCollider") as CollisionShape2D
+	if world_collider == null:
+		return
+	for prop in node.get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			node.set("y_sort_origin", int(round(world_collider.position.y)))
+			break
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
