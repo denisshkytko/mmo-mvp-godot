@@ -154,6 +154,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		print("[SPAWN][FNPC] type=", fighter_type, " class_id=", class_id, " profile_id=", profile_id, " lvl=", level, " point=", point.global_position)
 	var abilities_for_level := MobSpellPresetDB.resolve_ability_ids_for_level(spell_preset_id, class_id, level)
 	var preset_name_key := MobSpellPresetDB.get_preset_name_key(spell_preset_id)
+	var effective_behavior: int = point.resolve_effective_behavior(behavior, Behavior.GUARD)
 
 	mob.call_deferred(
 		"apply_spawn_init",
@@ -161,7 +162,7 @@ func _call_apply_spawn_init(mob: Node, point: SpawnPoint, level: int) -> bool:
 		faction_id,
 		fighter_type,
 		resolved_interaction,
-		behavior,
+		effective_behavior,
 		-1.0, # aggro_radius is defined on the NPC itself
 		-1.0, # leash_distance is defined on the NPC itself
 		patrol_pause_seconds,
