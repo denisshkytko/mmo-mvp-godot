@@ -438,8 +438,13 @@ func get_body_hitbox_center_global() -> Vector2:
 		return body_hitbox_shape.global_position
 	return global_position
 
+func get_world_collider_center_global() -> Vector2:
+	if world_collision != null:
+		return world_collision.global_position
+	return global_position
+
 func get_sort_anchor_global() -> Vector2:
-	return get_body_hitbox_center_global()
+	return get_world_collider_center_global()
 
 
 func get_attack_damage() -> int:
