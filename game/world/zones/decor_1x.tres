@@ -1,6 +1,8 @@
-[gd_resource type="TileSet" load_steps=21 format=3 uid="uid://5envrjdqbk3n"]
+[gd_resource type="TileSet" load_steps=25 format=3 uid="uid://5envrjdqbk3n"]
 
+[ext_resource type="Texture2D" uid="uid://d0cjr87wh3acy" path="res://assets/tiles/Decor/tree_11.png" id="1_50jev"]
 [ext_resource type="Texture2D" uid="uid://7k2jd1sxwedi" path="res://assets/tiles/Decor/Top-Down Simple Summer_prop - Tree Large.png" id="1_qknx0"]
+[ext_resource type="Texture2D" uid="uid://ck8j7t54042" path="res://assets/tiles/Decor/tree_12.png" id="2_4qwvo"]
 [ext_resource type="Texture2D" uid="uid://cebx2ja26a5k7" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Tree Medium.png" id="2_7di6n"]
 [ext_resource type="Texture2D" uid="uid://dxtwwqw5bjmep" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Tree Small.png" id="3_50jev"]
 [ext_resource type="Texture2D" uid="uid://bew0xl57s5oce" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Watchtower Short.png" id="4_4qwvo"]
@@ -10,6 +12,18 @@
 [ext_resource type="Texture2D" uid="uid://cgiicl7lba177" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Wooden Fence Vertical_2.png" id="8_irkrr"]
 [ext_resource type="Texture2D" uid="uid://di6oju1dpu7w8" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - House.png" id="9_bn6xf"]
 [ext_resource type="Texture2D" uid="uid://dnd6vl8w7ilb1" path="res://assets/tiles/Decor/Top-Down Simple Summer_Prop - Magic Stone Tower.png" id="10_xse7j"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bkf4l"]
+texture = ExtResource("1_50jev")
+texture_region_size = Vector2i(205, 365)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(30, 130)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qd00f"]
+texture = ExtResource("2_4qwvo")
+texture_region_size = Vector2i(220, 300)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(-40, 90)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o8u23"]
 texture = ExtResource("1_qknx0")
@@ -85,3 +99,5 @@ sources/24 = SubResource("TileSetAtlasSource_vrey6")
 sources/26 = SubResource("TileSetAtlasSource_jfcld")
 sources/32 = SubResource("TileSetAtlasSource_0x64a")
 sources/34 = SubResource("TileSetAtlasSource_sveg1")
+sources/0 = SubResource("TileSetAtlasSource_bkf4l")
+sources/1 = SubResource("TileSetAtlasSource_qd00f")

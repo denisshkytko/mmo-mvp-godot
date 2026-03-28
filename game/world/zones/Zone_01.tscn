@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://bxfersnuyd5an"]
+[gd_scene load_steps=21 format=4 uid="uid://bxfersnuyd5an"]
 
 [ext_resource type="Script" uid="uid://6msi1bshuvgh" path="res://game/world/portals/portal.gd" id="1_25g3u"]
 [ext_resource type="Texture2D" uid="uid://cvollajo7uurm" path="res://assets/tiles/Ground And Road/Forest/ground_road_tileset_64.png" id="1_hfd65"]
@@ -8,7 +8,6 @@
 [ext_resource type="Script" uid="uid://bxeo6tvunc012" path="res://game/world/spawners/nnm_spawner_group.gd" id="5_qbm0w"]
 [ext_resource type="PackedScene" uid="uid://6lf4c54hdjyr" path="res://game/world/spawners/SpawnPoint.tscn" id="7_82kis"]
 [ext_resource type="Script" uid="uid://ceudd21vg5y8b" path="res://game/world/spawners/fnpc_spawner_group.gd" id="7_nldw7"]
-[ext_resource type="Script" uid="uid://dr6lr07oir3cj" path="res://game/world/spawn/first_entry_spawn_point.gd" id="9_hfd65"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gbxao"]
 texture = ExtResource("1_hfd65")
@@ -604,7 +603,3 @@ class_choice = 2
 
 [node name="FNPCSpawner" parent="FNPCSpawnersGroup4" instance=ExtResource("7_82kis")]
 position = Vector2(-1575, 192)
-
-[node name="FirstEntryBlue" type="Marker2D" parent="."]
-position = Vector2(-1253, -715)
-script = ExtResource("9_hfd65")
