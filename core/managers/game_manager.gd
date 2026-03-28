@@ -335,10 +335,18 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 	if host == null:
 		return
 	host.y_sort_enabled = true
-	if player.get_parent() != host:
-		player.reparent(host, true)
+	var proxy := host.get_node_or_null("__PlayerSortProxy") as Node2D
+	if proxy == null:
+		proxy = Node2D.new()
+		proxy.name = "__PlayerSortProxy"
+		proxy.y_sort_enabled = false
+		host.add_child(proxy)
+	proxy.z_as_relative = true
+	proxy.z_index = int(host.z_index)
+	if player.get_parent() != proxy:
+		player.reparent(proxy, true)
 	player.z_as_relative = true
-	player.z_index = int(host.z_index)
+	player.z_index = 0
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
