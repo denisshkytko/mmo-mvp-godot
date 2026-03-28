@@ -175,6 +175,7 @@ func _ready() -> void:
 	aggro_radius = COMBAT_RANGES.AGGRO_RADIUS
 	leash_distance = COMBAT_RANGES.LEASH_DISTANCE
 	add_to_group("y_sort_entities")
+	_sync_y_sort_origin_from_world_collider()
 	small_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	medium_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
 	large_base_attack_range = COMBAT_RANGES.MELEE_ATTACK_RANGE
@@ -215,6 +216,11 @@ func get_world_collider_center_global() -> Vector2:
 
 func get_sort_anchor_global() -> Vector2:
 	return get_world_collider_center_global()
+
+func _sync_y_sort_origin_from_world_collider() -> void:
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	y_sort_origin = int(round(world_collision.position.y))
 
 
 func _physics_process(delta: float) -> void:
@@ -805,6 +811,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
 		if world_offset_v is Vector2:
 			world_collision.position = world_offset_v
+	_sync_y_sort_origin_from_world_collider()
 	if body_hitbox_shape != null:
 		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
 		if body_shape_v is Shape2D:

@@ -342,22 +342,26 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
 	if zone_root == null:
 		return null
-	var best: Node2D = null
 	var stack: Array[Node] = [zone_root]
+	var fallback_z50: Node2D = null
+	var fallback_ysort: Node2D = null
 	while not stack.is_empty():
 		var current: Node = stack.pop_back() as Node
-		if current is Node2D and String(current.name).to_lower() == "decor":
+		if current is Node2D:
 			var node2d := current as Node2D
-			for child in node2d.get_children():
-				if child is TileMapLayer and (child as TileMapLayer).y_sort_enabled:
-					best = node2d
-					break
-		if best != null:
-			return best
+			var node_name := String(current.name)
+			if node_name == "z-level = 50, y-sort = true":
+				return node2d
+			if fallback_z50 == null and int(node2d.z_index) == 50:
+				fallback_z50 = node2d
+			if fallback_ysort == null and node2d.y_sort_enabled:
+				fallback_ysort = node2d
 		for child in current.get_children():
 			if child is Node:
 				stack.append(child)
-	return null
+	if fallback_z50 != null:
+		return fallback_z50
+	return fallback_ysort
 
 
 func _apply_camera_limits_from_zone(zone_root: Node2D) -> void:

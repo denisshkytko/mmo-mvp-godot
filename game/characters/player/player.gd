@@ -255,6 +255,7 @@ var _corpse_spawned_for_current_death: bool = false
 func _ready() -> void:
 	add_to_group("faction_units")
 	add_to_group("y_sort_entities")
+	_sync_y_sort_origin_from_world_collider()
 	# setup components
 	# push primary tuning from Player root into Stats component
 	c_stats.base_str = base_str
@@ -447,6 +448,11 @@ func get_world_collider_center_global() -> Vector2:
 
 func get_sort_anchor_global() -> Vector2:
 	return get_world_collider_center_global()
+
+func _sync_y_sort_origin_from_world_collider() -> void:
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	y_sort_origin = int(round(world_collision.position.y))
 
 
 func get_attack_damage() -> int:
@@ -930,6 +936,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
 		if world_rot_v is float or world_rot_v is int:
 			world_collision.rotation = float(world_rot_v)
+	_sync_y_sort_origin_from_world_collider()
 
 	if body_hitbox_shape != null:
 		var body_shape_v: Variant = profile.get("body_hitbox_shape", null)
