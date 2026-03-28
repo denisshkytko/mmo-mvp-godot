@@ -11,6 +11,7 @@ var current_target: Node = null
 @export var use_cam_screen_center_for_world_math: bool = true
 @export var debug_targeting_clicks: bool = false
 @export var allow_corpse_targeting: bool = true
+@export var debug_world_probe_under_mouse: bool = true
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -451,6 +452,10 @@ func _input(event: InputEvent) -> void:
 	# Mouse click
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_MIDDLE and mb.pressed:
+			if debug_world_probe_under_mouse:
+				_debug_probe_under_mouse(mb.position)
+			return
 		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			screen_pos = mb.position
 			pressed = true
@@ -627,6 +632,50 @@ func _pick_mob_at_world_pos(world_pos: Vector2) -> Node:
 			node = node.get_parent()
 
 	return null
+
+
+func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
+	var world_pos: Vector2 = _screen_to_world(screen_pos)
+	print("[SortProbe] screen=", screen_pos, " world=", world_pos)
+	if player != null and is_instance_valid(player):
+		var p_z: int = int((player as CanvasItem).z_index) if player is CanvasItem else 0
+		print("[SortProbe] player pos=", player.global_position, " y=", player.global_position.y, " z=", p_z)
+
+	var zone_root: Node = null
+	if zone_container != null and zone_container.get_child_count() > 0:
+		zone_root = zone_container.get_child(0)
+	if zone_root == null:
+		print("[SortProbe] no zone root in ZoneContainer")
+		return
+
+	var layers: Array[TileMapLayer] = []
+	var stack: Array[Node] = [zone_root]
+	while not stack.is_empty():
+		var current: Node = stack.pop_back() as Node
+		if current is TileMapLayer:
+			layers.append(current as TileMapLayer)
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+
+	for layer in layers:
+		var cell: Vector2i = layer.local_to_map(layer.to_local(world_pos))
+		var source_id: int = layer.get_cell_source_id(cell)
+		if source_id == -1:
+			continue
+		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id)
+
+	var entities := get_tree().get_nodes_in_group("y_sort_entities")
+	for e in entities:
+		if not (e is Node2D):
+			continue
+		var n := e as Node2D
+		if not is_instance_valid(n):
+			continue
+		if n.global_position.distance_to(world_pos) > 260.0:
+			continue
+		var ez: int = int((n as CanvasItem).z_index) if n is CanvasItem else 0
+		print("[SortProbe][Entity] node=", n.get_path(), " y=", n.global_position.y, " z=", ez, " pos=", n.global_position)
 
 
 func _is_world_pos_visible(world_pos: Vector2) -> bool:
