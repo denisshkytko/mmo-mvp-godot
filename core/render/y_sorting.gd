@@ -8,6 +8,9 @@ const IDLE_RECHECK_INTERVAL_MSEC: int = 250
 const MOVEMENT_EPSILON: float = 1.5
 const ACTIVE_KEEPALIVE_MSEC: int = 450
 const BASE_WORLD_Z_LAYER: int = 50
+const WORLD_Y_TO_Z_FACTOR: float = 1.0
+const WORLD_Y_TO_Z_CLAMP_MIN: int = -2000000
+const WORLD_Y_TO_Z_CLAMP_MAX: int = 2000000
 
 static var _state_by_owner_id: Dictionary = {}
 
@@ -72,7 +75,8 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 		# simultaneously intersecting actors.
 		relative += 1
 
-	var base_z: int = BASE_WORLD_Z_LAYER + default_z
+	var world_y_base: int = _world_y_base_z(self_anchor.y)
+	var base_z: int = BASE_WORLD_Z_LAYER + default_z + world_y_base
 	var resolved_z: int = base_z if relative <= 0 else base_z + relative
 	state["last_anchor"] = self_anchor
 	state["last_check_msec"] = now_msec
@@ -80,6 +84,10 @@ static func z_index_for_local_overlap(owner: Node2D, default_z: int = 0) -> int:
 	state["active_until_msec"] = now_msec + ACTIVE_KEEPALIVE_MSEC if has_close_neighbors else now_msec
 	_state_by_owner_id[owner_id] = state
 	return resolved_z
+
+static func _world_y_base_z(world_y: float) -> int:
+	var scaled := int(floor(world_y * WORLD_Y_TO_Z_FACTOR))
+	return clampi(scaled, WORLD_Y_TO_Z_CLAMP_MIN, WORLD_Y_TO_Z_CLAMP_MAX)
 
 static func _get_sort_candidates(tree: SceneTree) -> Array:
 	var preferred := tree.get_nodes_in_group("y_sort_entities")
