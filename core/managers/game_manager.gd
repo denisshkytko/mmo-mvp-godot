@@ -335,23 +335,43 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 	if host == null:
 		return
 	host.y_sort_enabled = true
-	var entity_host: Node2D = host
-	var decor_host := host.get_node_or_null("decor") as Node2D
-	if decor_host != null and decor_host.y_sort_enabled:
-		var actors_host := decor_host.get_node_or_null("actors") as Node2D
-		if actors_host == null:
-			actors_host = Node2D.new()
-			actors_host.name = "actors"
-			actors_host.y_sort_enabled = true
-			actors_host.z_index = int(decor_host.z_index)
-			decor_host.add_child(actors_host)
-		entity_host = actors_host
+	var entity_host := _ensure_y_sort_runtime_layer(host)
 	if player.get_parent() != entity_host:
 		player.reparent(entity_host, true)
 	player.top_level = false
 	player.y_sort_enabled = true
 	player.z_as_relative = true
 	player.z_index = int(entity_host.z_index)
+
+
+func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
+	var runtime := host.get_node_or_null("__y_sort_runtime") as Node2D
+	if runtime == null:
+		runtime = Node2D.new()
+		runtime.name = "__y_sort_runtime"
+		runtime.y_sort_enabled = true
+		runtime.z_index = int(host.z_index)
+		host.add_child(runtime)
+	if not bool(host.get_meta("__y_sort_runtime_flattened", false)):
+		var tile_layers: Array[TileMapLayer] = []
+		_collect_tile_layers_for_runtime(host, runtime, tile_layers)
+		for layer in tile_layers:
+			if layer.get_parent() != runtime:
+				layer.reparent(runtime, true)
+		host.set_meta("__y_sort_runtime_flattened", true)
+	return runtime
+
+
+func _collect_tile_layers_for_runtime(node: Node, runtime: Node2D, out_layers: Array[TileMapLayer]) -> void:
+	if node == runtime:
+		return
+	for child in node.get_children():
+		if child == runtime:
+			continue
+		if child is TileMapLayer:
+			out_layers.append(child as TileMapLayer)
+		elif child is Node:
+			_collect_tile_layers_for_runtime(child as Node, runtime, out_layers)
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:

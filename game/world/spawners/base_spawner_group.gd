@@ -157,6 +157,9 @@ func _resolve_spawn_parent() -> Node:
 		return self
 	if host is Node:
 		var host_node := host as Node
+		var runtime := host_node.get_node_or_null("__y_sort_runtime")
+		if runtime != null:
+			return runtime
 		var decor_actors := host_node.get_node_or_null("decor/actors")
 		if decor_actors != null:
 			return decor_actors
