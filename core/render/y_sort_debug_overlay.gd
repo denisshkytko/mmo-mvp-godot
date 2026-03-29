@@ -55,7 +55,7 @@ func _draw_tile_markers() -> void:
 	var layers: Array[TileMapLayer] = []
 	var stack: Array[Node] = [zone_root]
 	while not stack.is_empty():
-		var cur := stack.pop_back()
+		var cur: Node = stack.pop_back() as Node
 		if cur is TileMapLayer:
 			var layer := cur as TileMapLayer
 			if layer.y_sort_enabled:
