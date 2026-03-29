@@ -543,6 +543,28 @@ func _apply_node_y_sort_origin(node: Node2D, origin_y: float) -> void:
 	node.set_meta("__debug_y_sort_origin_local", origin_i)
 
 
+func _read_node_y_sort_origin_local(node: Node2D) -> Dictionary:
+	var result := {
+		"has_origin": false,
+		"origin": 0.0,
+	}
+	if node == null or not is_instance_valid(node):
+		return result
+	if node.has_method("get_y_sort_origin"):
+		result["has_origin"] = true
+		result["origin"] = float(node.call("get_y_sort_origin"))
+		return result
+	for prop in node.get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			result["has_origin"] = true
+			result["origin"] = float(node.get("y_sort_origin"))
+			return result
+	if node.has_meta("__debug_y_sort_origin_local"):
+		result["has_origin"] = true
+		result["origin"] = float(node.get_meta("__debug_y_sort_origin_local"))
+	return result
+
+
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
 	if zone_root == null:
 		return null
@@ -920,23 +942,15 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 				wc_global = wc_v as Vector2
 		var has_y_sort_origin := false
 		var y_sort_origin_v: Variant = null
-		if player.has_method("get_y_sort_origin"):
-			has_y_sort_origin = true
-			y_sort_origin_v = player.call("get_y_sort_origin")
-		else:
-			for prop in player.get_property_list():
-				if String(prop.get("name", "")) == "y_sort_origin":
-					has_y_sort_origin = true
-					y_sort_origin_v = player.get("y_sort_origin")
-					break
-		if not has_y_sort_origin and player.has_meta("__debug_y_sort_origin_local"):
-			has_y_sort_origin = true
-			y_sort_origin_v = player.get_meta("__debug_y_sort_origin_local")
+		var player_origin_info := _read_node_y_sort_origin_local(player)
+		has_y_sort_origin = bool(player_origin_info.get("has_origin", false))
+		y_sort_origin_v = player_origin_info.get("origin", 0.0)
 		var parent_path: String = str(player.get_parent().get_path()) if player.get_parent() != null else "<null>"
 		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
 		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
 		if has_y_sort_origin:
-			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " computed_global_y=", root_y + float(y_sort_origin_v))
+			var computed_y := root_y + float(y_sort_origin_v)
+			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " computed_global_y=", computed_y, " anchor_delta=", float(anchor_global.y) - computed_y)
 		else:
 			print("[SortProbe][Player] y_sort_origin(local)=<missing on Player node>")
 	var y_map: Dictionary = Y_SORTING.get_world_y_mapping_debug()
@@ -976,7 +990,11 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		if n.global_position.distance_to(world_pos) > 260.0:
 			continue
 		var ez: int = int((n as CanvasItem).z_index) if n is CanvasItem else 0
-		print("[SortProbe][Entity] node=", n.get_path(), " y=", n.global_position.y, " z=", ez, " pos=", n.global_position)
+		var origin_info := _read_node_y_sort_origin_local(n)
+		var has_origin := bool(origin_info.get("has_origin", false))
+		var local_origin_y := float(origin_info.get("origin", 0.0))
+		var effective_sort_y := float(n.global_position.y) + local_origin_y if has_origin else float(n.global_position.y)
+		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", local_origin_y if has_origin else "<none>", " z=", ez, " pos=", n.global_position)
 
 
 func _is_world_pos_visible(world_pos: Vector2) -> bool:

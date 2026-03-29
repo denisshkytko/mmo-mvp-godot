@@ -367,14 +367,17 @@ func _update_visual_render_order() -> void:
 	visual_root.z_index = 0
 	var parent_2d := get_parent() as Node2D
 	if parent_2d != null and parent_2d.y_sort_enabled:
-		z_as_relative = true
-		var parent_sort_z := int(parent_2d.z_index)
-		_apply_overlay_layer_offsets(parent_sort_z)
-		if z_index != parent_sort_z:
-			z_index = parent_sort_z
-			emit_signal("visual_layer_changed", parent_sort_z)
+		# Runtime host can be y-sorted, but this entity must still follow its
+		# collider anchor for stable draw order.
+		var resolved_z_runtime: int = _resolve_map_space_sort_z()
+		resolved_z_runtime = clampi(resolved_z_runtime, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
+		z_as_relative = false
+		_apply_overlay_layer_offsets(resolved_z_runtime)
+		if z_index != resolved_z_runtime:
+			z_index = resolved_z_runtime
+			emit_signal("visual_layer_changed", resolved_z_runtime)
 		else:
-			z_index = parent_sort_z
+			z_index = resolved_z_runtime
 		return
 	var resolved_z: int = _resolve_map_space_sort_z()
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
