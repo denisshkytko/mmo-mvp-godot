@@ -227,15 +227,8 @@ func _sync_y_sort_origin_from_world_collider() -> void:
 			break
 
 func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
-	var y := float(collider.position.y)
-	if collider.shape is RectangleShape2D:
-		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
-	elif collider.shape is CircleShape2D:
-		y += float((collider.shape as CircleShape2D).radius)
-	elif collider.shape is CapsuleShape2D:
-		var cap := collider.shape as CapsuleShape2D
-		y += float(cap.height) * 0.5 + float(cap.radius)
-	return y
+	# Keep y-sort anchor exactly at collider center to match visual/debug expectation.
+	return float(collider.position.y)
 
 
 func _physics_process(delta: float) -> void:
