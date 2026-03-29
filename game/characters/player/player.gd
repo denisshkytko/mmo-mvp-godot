@@ -366,16 +366,14 @@ func _update_visual_render_order() -> void:
 	visual_root.z_index = 0
 	var parent_2d := get_parent() as Node2D
 	if parent_2d != null and parent_2d.y_sort_enabled:
-		var anchor_y := get_sort_anchor_global().y
-		var resolved_parent_sort_z := int(round(anchor_y)) + int(parent_2d.z_index)
-		resolved_parent_sort_z = clampi(resolved_parent_sort_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
-		z_as_relative = false
-		_apply_overlay_layer_offsets(resolved_parent_sort_z)
-		if z_index != resolved_parent_sort_z:
-			z_index = resolved_parent_sort_z
-			emit_signal("visual_layer_changed", resolved_parent_sort_z)
+		z_as_relative = true
+		var parent_sort_z := int(parent_2d.z_index)
+		_apply_overlay_layer_offsets(parent_sort_z)
+		if z_index != parent_sort_z:
+			z_index = parent_sort_z
+			emit_signal("visual_layer_changed", parent_sort_z)
 		else:
-			z_index = resolved_parent_sort_z
+			z_index = parent_sort_z
 		return
 	var resolved_z: int = _resolve_map_space_sort_z()
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
@@ -462,8 +460,8 @@ func _sync_y_sort_origin_from_world_collider() -> void:
 			break
 
 func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
-	# Keep y-sort anchor exactly at collider center to match visual/debug expectation.
-	return float(collider.position.y)
+	# Match debug green-diamond logic: collider center in global space, converted to this node local.
+	return float(to_local(collider.global_position).y)
 
 
 func get_attack_damage() -> int:

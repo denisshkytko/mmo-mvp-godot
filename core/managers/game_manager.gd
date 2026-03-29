@@ -505,16 +505,18 @@ func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
 		world_collider = node.get_node_or_null("CollisionProfile/WorldCollider") as CollisionShape2D
 	if world_collider == null:
 		return
-	var origin_y := _compute_world_collider_sort_origin_y(world_collider)
+	var origin_y := _compute_world_collider_sort_origin_y(node, world_collider)
 	for prop in node.get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
 			node.set("y_sort_origin", int(round(origin_y)))
 			break
 
 
-func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
-	# Keep y-sort anchor exactly at collider center to match visual/debug expectation.
-	return float(collider.position.y)
+func _compute_world_collider_sort_origin_y(owner: Node2D, collider: CollisionShape2D) -> float:
+	# Match debug green-diamond logic: collider center in global space, converted to owner local.
+	if owner == null or not is_instance_valid(owner):
+		return float(collider.position.y)
+	return float(owner.to_local(collider.global_position).y)
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
