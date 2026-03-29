@@ -1191,13 +1191,13 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var local_origin_y := float(origin_info.get("origin", 0.0))
 		var origin_source := String(origin_info.get("source", "none"))
 		var effective_sort_y := float(n.global_position.y) + local_origin_y if has_origin else float(n.global_position.y)
+		var origin_print: String = str(local_origin_y) if has_origin else "<none>"
 		if player != null and is_instance_valid(player) and n == player:
 			var p_parent := n.get_parent()
 			if p_parent is Node2D and String((p_parent as Node).name) == "__player_sort_pivot":
 				effective_sort_y = float((p_parent as Node2D).global_position.y)
-			var origin_print: String = str(local_origin_y) if has_origin else "<none>"
-			if origin_source == "meta" and not has_origin:
-				origin_print = "<meta-only %s>" % str(local_origin_y)
+		if origin_source == "meta" and not has_origin:
+			origin_print = "<meta-only %s>" % str(local_origin_y)
 		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", origin_print, " source=", origin_source, " z=", ez, " pos=", n.global_position)
 
 
