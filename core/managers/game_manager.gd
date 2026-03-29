@@ -455,6 +455,8 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	if not (node is Node2D):
 		return
 	var n2d := node as Node2D
+	if _has_y_sort_entity_ancestor(n2d):
+		return
 	if _should_skip_nested_runtime_promotion(n2d):
 		return
 	var node_name := String(n2d.name).to_lower()
@@ -465,6 +467,17 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	if should_promote and n2d.get_parent() != runtime:
 		n2d.reparent(runtime, true)
 	_try_sync_node_y_sort_origin_from_world_collider(n2d)
+
+
+func _has_y_sort_entity_ancestor(node: Node) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	var parent := node.get_parent()
+	while parent != null:
+		if parent.is_in_group("y_sort_entities"):
+			return true
+		parent = parent.get_parent()
+	return false
 
 
 func _is_runtime_promotion_candidate(node: Node2D) -> bool:

@@ -418,6 +418,7 @@ func refresh_local_overlap_sorting() -> void:
 func _process(delta: float) -> void:
 	if is_dead:
 		return
+	_ensure_model_attached_to_visual_root()
 
 	if c_buffs != null:
 		c_buffs.tick(delta)
@@ -435,6 +436,16 @@ func _process(delta: float) -> void:
 		cast_bar.set_icon_texture(c_ability_caster.get_cast_icon() if casting else null)
 	_update_model_hp_bar()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
+
+
+func _ensure_model_attached_to_visual_root() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	if _character_model.get_parent() == visual_root:
+		return
+	_character_model.reparent(visual_root, true)
 
 
 
