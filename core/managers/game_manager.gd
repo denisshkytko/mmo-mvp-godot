@@ -1045,20 +1045,6 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 			if child is Node:
 				stack.append(child)
 
-	var has_player_runtime_sort_y := false
-	var player_runtime_sort_y := 0.0
-	var best_tile_delta_abs := INF
-	var best_tile_delta := 0.0
-	var best_tile_layer := ""
-	var best_tile_source := -1
-	var best_tile_anchor := 0.0
-	if player != null and is_instance_valid(player):
-		has_player_runtime_sort_y = true
-		player_runtime_sort_y = float(player.global_position.y)
-		var p_parent := player.get_parent()
-		if p_parent is Node2D and String((p_parent as Node).name) == "__player_sort_pivot":
-			player_runtime_sort_y = float((p_parent as Node2D).global_position.y)
-
 	for layer in layers:
 		var cell: Vector2i = layer.local_to_map(layer.to_local(world_pos))
 		var source_id: int = layer.get_cell_source_id(cell)
@@ -1078,21 +1064,7 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 			elif tex_origin_v is Vector2:
 				tile_texture_origin_y = float((tex_origin_v as Vector2).y)
 		var tile_anchor_world := layer.to_global(layer.map_to_local(cell) + Vector2(0.0, tile_y_sort_origin))
-		var tile_anchor_world_with_tex := layer.to_global(layer.map_to_local(cell) + Vector2(0.0, tile_y_sort_origin + tile_texture_origin_y))
-		var active_anchor_y := float(tile_anchor_world_with_tex.y)
-		var player_delta_v: Variant = "<n/a>"
-		if has_player_runtime_sort_y:
-			player_delta_v = player_runtime_sort_y - active_anchor_y
-			var delta_abs := absf(float(player_delta_v))
-			if layer.y_sort_enabled and delta_abs < best_tile_delta_abs:
-				best_tile_delta_abs = delta_abs
-				best_tile_delta = float(player_delta_v)
-				best_tile_layer = str(layer.get_path())
-				best_tile_source = source_id
-				best_tile_anchor = active_anchor_y
-		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id, " texture_origin_y=", tile_texture_origin_y, " y_sort_origin=", tile_y_sort_origin, " anchor_y=", float(tile_anchor_world.y), " anchor_y_with_tex=", float(tile_anchor_world_with_tex.y), " active_anchor_mode=with_tex", " active_anchor_y=", active_anchor_y, " player_sort_delta=", player_delta_v)
-	if has_player_runtime_sort_y and best_tile_source != -1:
-		print("[SortProbe][TileBest] layer=", best_tile_layer, " source=", best_tile_source, " active_anchor_y=", best_tile_anchor, " player_runtime_sort_y=", player_runtime_sort_y, " delta=", best_tile_delta)
+		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id, " texture_origin_y=", tile_texture_origin_y, " y_sort_origin=", tile_y_sort_origin, " anchor_y=", float(tile_anchor_world.y))
 
 	var entities := get_tree().get_nodes_in_group("y_sort_entities")
 	for e in entities:

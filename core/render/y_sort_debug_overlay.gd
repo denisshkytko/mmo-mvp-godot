@@ -93,21 +93,14 @@ func _draw_tile_markers() -> void:
 				var cell := Vector2i(x, y)
 				if layer.get_cell_source_id(cell) == -1:
 					continue
-					var tile_data := layer.get_cell_tile_data(cell)
-					var y_sort_origin := 0.0
-					var texture_origin_y := 0.0
-					if tile_data != null and tile_data.has_method("get_y_sort_origin"):
-						y_sort_origin = float(tile_data.call("get_y_sort_origin"))
-					if tile_data != null and tile_data.has_method("get_texture_origin"):
-						var tex_origin_v: Variant = tile_data.call("get_texture_origin")
-						if tex_origin_v is Vector2i:
-							texture_origin_y = float((tex_origin_v as Vector2i).y)
-						elif tex_origin_v is Vector2:
-							texture_origin_y = float((tex_origin_v as Vector2).y)
-					var local_anchor := layer.map_to_local(cell) + Vector2(0.0, y_sort_origin + texture_origin_y)
-					var world_anchor := layer.to_global(local_anchor)
-					_draw_cross_marker(world_anchor, TILE_COLOR, 3.0)
-					drawn += 1
+				var tile_data := layer.get_cell_tile_data(cell)
+				var y_sort_origin := 0.0
+				if tile_data != null and tile_data.has_method("get_y_sort_origin"):
+					y_sort_origin = float(tile_data.call("get_y_sort_origin"))
+				var local_anchor := layer.map_to_local(cell) + Vector2(0.0, y_sort_origin)
+				var world_anchor := layer.to_global(local_anchor)
+				_draw_cross_marker(world_anchor, TILE_COLOR, 3.0)
+				drawn += 1
 
 
 func _draw_cross_marker(world_pos: Vector2, color: Color, half_size: float) -> void:
