@@ -308,6 +308,7 @@ func get_danger_meter() -> DangerMeterComponent:
 
 
 func _physics_process(_delta: float) -> void:
+	_ensure_root_at_sort_anchor()
 	_update_visual_render_order()
 	if is_dead:
 		velocity = Vector2.ZERO
@@ -359,6 +360,25 @@ func _physics_process(_delta: float) -> void:
 	velocity = input_dir * move_speed * move_mult
 	_update_model_motion(input_dir)
 	move_and_slide()
+
+
+func _ensure_root_at_sort_anchor() -> void:
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	var anchor_global := get_sort_anchor_global()
+	var delta := anchor_global - global_position
+	if delta.length_squared() <= 0.0001:
+		return
+	# Keep root/pivot exactly at sort-anchor while preserving current world placement
+	# of visual and gameplay colliders.
+	global_position += delta
+	world_collision.position -= delta
+	if visual_root != null and is_instance_valid(visual_root):
+		visual_root.position -= delta
+	if body_hitbox_shape != null and is_instance_valid(body_hitbox_shape):
+		body_hitbox_shape.position -= delta
+	if interaction_shape != null and is_instance_valid(interaction_shape):
+		interaction_shape.position -= delta
 
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
