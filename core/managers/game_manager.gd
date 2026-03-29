@@ -612,6 +612,12 @@ func _sync_entity_sort_pivots() -> void:
 		if node.get_parent() != pivot:
 			node.reparent(pivot, true)
 		var desired_node_global := node.global_position
+		if pivot.has_meta("__last_node_global"):
+			var last_node_global_v: Variant = pivot.get_meta("__last_node_global")
+			if last_node_global_v is Vector2:
+				var last_node_global := last_node_global_v as Vector2
+				if last_node_global.is_equal_approx(desired_node_global):
+					continue
 		var anchor_global := desired_node_global
 		var anchor_v: Variant = node.call("get_sort_anchor_global")
 		if anchor_v is Vector2:
@@ -619,6 +625,7 @@ func _sync_entity_sort_pivots() -> void:
 		pivot.global_position = anchor_global
 		if node.global_position != desired_node_global:
 			node.global_position = desired_node_global
+		pivot.set_meta("__last_node_global", desired_node_global)
 	for stale in stale_keys:
 		_entity_sort_pivots.erase(stale)
 
