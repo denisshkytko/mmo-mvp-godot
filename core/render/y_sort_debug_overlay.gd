@@ -3,6 +3,7 @@ extends Node2D
 var manager: Node = null
 
 const ENTITY_COLOR := Color(1.0, 0.2, 0.2, 0.95)
+const ENTITY_COLLIDER_CENTER_COLOR := Color(0.2, 1.0, 0.35, 0.95)
 const TILE_COLOR := Color(0.2, 0.9, 1.0, 0.85)
 const LABEL_COLOR := Color(1.0, 1.0, 1.0, 0.9)
 const MAX_TILE_MARKERS := 512
@@ -43,6 +44,9 @@ func _draw_entity_markers() -> void:
 			continue
 		var p := _resolve_node_sort_origin_global(n)
 		_draw_cross_marker(p, ENTITY_COLOR, 5.0)
+		var collider_center := _resolve_world_collider_center_global(n)
+		if collider_center != null:
+			_draw_diamond_marker(collider_center, ENTITY_COLLIDER_CENTER_COLOR, 4.0)
 		var label_pos := _world_to_overlay_pos(p) + Vector2(6, -6)
 		draw_string(ThemeDB.fallback_font, label_pos, String(n.name), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, LABEL_COLOR)
 
@@ -127,8 +131,38 @@ func _resolve_node_sort_origin_global(node: Node2D) -> Vector2:
 	return node.global_position + Vector2(0.0, y_origin)
 
 
+func _resolve_world_collider_center_global(node: Node2D) -> Variant:
+	if node == null or not is_instance_valid(node):
+		return null
+	if node.has_method("get_world_collider_center_global"):
+		return node.call("get_world_collider_center_global")
+	var wc := node.get_node_or_null("WorldCollider") as CollisionShape2D
+	if wc == null:
+		wc = node.get_node_or_null("CollisionProfile/WorldCollider") as CollisionShape2D
+	if wc != null:
+		return wc.global_position
+	return null
+
+
 func _world_to_overlay_pos(world_pos: Vector2) -> Vector2:
 	var vp := get_viewport()
 	if vp == null:
 		return world_pos
 	return vp.get_canvas_transform() * world_pos
+
+
+func _draw_diamond_marker(world_pos: Vector2, color: Color, half_size: float) -> void:
+	var local := _world_to_overlay_pos(world_pos)
+	var outline := Color(0.0, 0.0, 0.0, color.a)
+	var a := local + Vector2(0, -half_size)
+	var b := local + Vector2(half_size, 0)
+	var c := local + Vector2(0, half_size)
+	var d := local + Vector2(-half_size, 0)
+	draw_line(a, b, outline, 3.0)
+	draw_line(b, c, outline, 3.0)
+	draw_line(c, d, outline, 3.0)
+	draw_line(d, a, outline, 3.0)
+	draw_line(a, b, color, 1.5)
+	draw_line(b, c, color, 1.5)
+	draw_line(c, d, color, 1.5)
+	draw_line(d, a, color, 1.5)
