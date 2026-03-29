@@ -4,6 +4,7 @@ var manager: Node = null
 
 const ENTITY_COLOR := Color(1.0, 0.2, 0.2, 0.95)
 const ENTITY_COLLIDER_CENTER_COLOR := Color(0.2, 1.0, 0.35, 0.95)
+const ENTITY_ROOT_COLOR := Color(0.25, 0.55, 1.0, 0.95)
 const TILE_COLOR := Color(0.2, 0.9, 1.0, 0.85)
 const LABEL_COLOR := Color(1.0, 1.0, 1.0, 0.9)
 const MAX_TILE_MARKERS := 512
@@ -44,6 +45,7 @@ func _draw_entity_markers() -> void:
 			continue
 		var p := _resolve_node_sort_origin_global(n)
 		_draw_cross_marker(p, ENTITY_COLOR, 5.0)
+		_draw_square_marker(n.global_position, ENTITY_ROOT_COLOR, 3.5)
 		var collider_center_v: Variant = _resolve_world_collider_center_global(n)
 		if collider_center_v is Vector2:
 			_draw_diamond_marker(collider_center_v as Vector2, ENTITY_COLLIDER_CENTER_COLOR, 4.0)
@@ -177,3 +179,11 @@ func _draw_diamond_marker(world_pos: Vector2, color: Color, half_size: float) ->
 	draw_line(b, c, color, 1.5)
 	draw_line(c, d, color, 1.5)
 	draw_line(d, a, color, 1.5)
+
+
+func _draw_square_marker(world_pos: Vector2, color: Color, half_size: float) -> void:
+	var local := _world_to_overlay_pos(world_pos)
+	var outline := Color(0.0, 0.0, 0.0, color.a)
+	var rect := Rect2(local - Vector2(half_size, half_size), Vector2(half_size * 2.0, half_size * 2.0))
+	draw_rect(rect, outline, false, 3.0)
+	draw_rect(rect, color, false, 1.5)
