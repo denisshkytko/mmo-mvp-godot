@@ -2,6 +2,7 @@ extends Node
 
 const FIRST_ENTRY_SPAWN_POINT := preload("res://game/world/spawn/first_entry_spawn_point.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const Y_SORT_DEBUG_OVERLAY := preload("res://core/render/y_sort_debug_overlay.gd")
 
 @onready var zone_container: Node = $"../ZoneContainer"
 @onready var world_root: Node = $".."
@@ -13,6 +14,8 @@ var current_target: Node = null
 @export var debug_targeting_clicks: bool = false
 @export var allow_corpse_targeting: bool = true
 @export var debug_world_probe_under_mouse: bool = true
+@export var debug_draw_y_sort_markers: bool = false
+@export var debug_draw_tilemap_y_sort_markers: bool = true
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -25,6 +28,7 @@ var _save_pending: bool = false
 var _has_loaded_character: bool = false
 var _active_y_sort_host: Node2D = null
 var _tree_node_added_connected: bool = false
+var _y_sort_debug_overlay: Node2D = null
 
 
 func _ready() -> void:
@@ -51,6 +55,7 @@ func _ready() -> void:
 	_load_character_into_world()
 	if _has_loaded_character:
 		call_deferred("_emit_player_spawned")
+	_ensure_y_sort_debug_overlay()
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -58,6 +63,17 @@ func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if use_cam_screen_center_for_world_math:
 		return cam.get_screen_center_position()
 	return cam.global_position
+
+
+func _ensure_y_sort_debug_overlay() -> void:
+	if world_root == null:
+		return
+	if _y_sort_debug_overlay != null and is_instance_valid(_y_sort_debug_overlay):
+		return
+	_y_sort_debug_overlay = Y_SORT_DEBUG_OVERLAY.new()
+	_y_sort_debug_overlay.name = "__y_sort_debug_overlay"
+	_y_sort_debug_overlay.set("manager", self)
+	world_root.add_child(_y_sort_debug_overlay)
 
 
 
