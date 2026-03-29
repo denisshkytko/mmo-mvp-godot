@@ -9,10 +9,7 @@ const MAX_TILE_MARKERS := 512
 
 
 func _ready() -> void:
-	top_level = true
 	y_sort_enabled = false
-	z_as_relative = false
-	z_index = 100000
 
 
 func _process(_delta: float) -> void:
@@ -46,7 +43,8 @@ func _draw_entity_markers() -> void:
 			continue
 		var p := _resolve_node_sort_origin_global(n)
 		_draw_cross_marker(p, ENTITY_COLOR, 5.0)
-		draw_string(ThemeDB.fallback_font, p + Vector2(6, -6), String(n.name), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, LABEL_COLOR)
+		var label_pos := _world_to_overlay_pos(p) + Vector2(6, -6)
+		draw_string(ThemeDB.fallback_font, label_pos, String(n.name), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, LABEL_COLOR)
 
 
 func _draw_tile_markers() -> void:
@@ -108,7 +106,7 @@ func _draw_tile_markers() -> void:
 
 
 func _draw_cross_marker(world_pos: Vector2, color: Color, half_size: float) -> void:
-	var local := to_local(world_pos)
+	var local := _world_to_overlay_pos(world_pos)
 	var outline := Color(0.0, 0.0, 0.0, color.a)
 	draw_line(local + Vector2(-half_size - 1.0, 0), local + Vector2(half_size + 1.0, 0), outline, 3.0)
 	draw_line(local + Vector2(0, -half_size - 1.0), local + Vector2(0, half_size + 1.0), outline, 3.0)
@@ -127,3 +125,10 @@ func _resolve_node_sort_origin_global(node: Node2D) -> Vector2:
 			y_origin = float(node.get("y_sort_origin"))
 			break
 	return node.global_position + Vector2(0.0, y_origin)
+
+
+func _world_to_overlay_pos(world_pos: Vector2) -> Vector2:
+	var vp := get_viewport()
+	if vp == null:
+		return world_pos
+	return vp.get_canvas_transform() * world_pos

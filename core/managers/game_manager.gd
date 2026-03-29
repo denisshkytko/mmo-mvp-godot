@@ -29,6 +29,7 @@ var _has_loaded_character: bool = false
 var _active_y_sort_host: Node2D = null
 var _tree_node_added_connected: bool = false
 var _y_sort_debug_overlay: Node2D = null
+var _y_sort_debug_canvas: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -70,10 +71,15 @@ func _ensure_y_sort_debug_overlay() -> void:
 		return
 	if _y_sort_debug_overlay != null and is_instance_valid(_y_sort_debug_overlay):
 		return
+	if _y_sort_debug_canvas == null or not is_instance_valid(_y_sort_debug_canvas):
+		_y_sort_debug_canvas = CanvasLayer.new()
+		_y_sort_debug_canvas.name = "__y_sort_debug_canvas"
+		_y_sort_debug_canvas.layer = 100
+		world_root.add_child.call_deferred(_y_sort_debug_canvas)
 	_y_sort_debug_overlay = Y_SORT_DEBUG_OVERLAY.new()
 	_y_sort_debug_overlay.name = "__y_sort_debug_overlay"
 	_y_sort_debug_overlay.set("manager", self)
-	world_root.add_child.call_deferred(_y_sort_debug_overlay)
+	_y_sort_debug_canvas.add_child.call_deferred(_y_sort_debug_overlay)
 
 
 
