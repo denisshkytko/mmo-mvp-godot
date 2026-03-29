@@ -372,6 +372,10 @@ func _update_visual_render_order() -> void:
 		# Ordering must come from Y-sort origin/anchor only.
 		z_as_relative = true
 		var parent_sort_z := int(parent_2d.z_index)
+		if String(parent_2d.name) == "__player_sort_pivot":
+			# Pivot already carries runtime host z; player itself must stay at local z=0
+			# to avoid double z stacking against y-sorted tile layers.
+			parent_sort_z = 0
 		_apply_overlay_layer_offsets(parent_sort_z)
 		if z_index != parent_sort_z:
 			z_index = parent_sort_z

@@ -391,7 +391,7 @@ func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
 		entity_host.add_child(pivot)
 	pivot.y_sort_enabled = true
 	pivot.z_as_relative = true
-	pivot.z_index = 0
+	pivot.z_index = int(entity_host.z_index)
 	_player_sort_pivot = pivot
 	return pivot
 
@@ -1049,6 +1049,8 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var cell: Vector2i = layer.local_to_map(layer.to_local(world_pos))
 		var source_id: int = layer.get_cell_source_id(cell)
 		if source_id == -1:
+			continue
+		if layer.tile_set == null or not layer.tile_set.has_source(source_id):
 			continue
 		var tile_data := layer.get_cell_tile_data(cell)
 		var tile_y_sort_origin := 0.0
