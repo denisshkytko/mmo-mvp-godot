@@ -949,6 +949,10 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
 		if world_rot_v is float or world_rot_v is int:
 			world_collision.rotation = float(world_rot_v)
+	var anchor_delta := world_offset - _model_sort_anchor_offset
+	if anchor_delta != Vector2.ZERO:
+		# Re-anchor root in world space (Variant A): root follows feet/sort point.
+		global_position += anchor_delta
 	_model_sort_anchor_offset = world_offset
 	if visual_root != null and is_instance_valid(visual_root):
 		# Move full visual subtree up so root stays at feet/sort-anchor.
