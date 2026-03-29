@@ -31,6 +31,7 @@ var _tree_node_added_connected: bool = false
 var _y_sort_debug_overlay: Node2D = null
 var _y_sort_debug_canvas: CanvasLayer = null
 var _player_sort_pivot: Node2D = null
+var _entity_sort_pivots: Dictionary = {} # int(instance_id) -> Node2D pivot
 
 
 func _ready() -> void:
@@ -62,6 +63,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_sync_player_sort_pivot()
+	_sync_entity_sort_pivots()
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -546,7 +548,79 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	should_promote = _is_runtime_promotion_candidate(n2d)
 	if should_promote and n2d.get_parent() != runtime:
 		n2d.reparent(runtime, true)
+	if _node_requires_sort_pivot(n2d):
+		_attach_node_to_entity_sort_pivot(n2d, runtime)
 	_try_sync_node_y_sort_origin_from_world_collider(n2d)
+
+
+func _node_requires_sort_pivot(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	if player != null and is_instance_valid(player) and node == player:
+		return false
+	if not node.has_method("get_sort_anchor_global"):
+		return false
+	return not _node_has_native_y_sort_origin(node)
+
+
+func _attach_node_to_entity_sort_pivot(node: Node2D, runtime: Node2D) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	if runtime == null or not is_instance_valid(runtime):
+		return
+	if not _node_requires_sort_pivot(node):
+		return
+	var key := node.get_instance_id()
+	var pivot := _entity_sort_pivots.get(key, null) as Node2D
+	if pivot == null or not is_instance_valid(pivot):
+		pivot = Node2D.new()
+		pivot.name = "__sort_pivot_%d" % key
+		pivot.y_sort_enabled = false
+		pivot.z_as_relative = true
+		pivot.z_index = int(runtime.z_index)
+		runtime.add_child(pivot)
+		_entity_sort_pivots[key] = pivot
+	if node.get_parent() != pivot:
+		node.reparent(pivot, true)
+	node.top_level = false
+	node.y_sort_enabled = false
+	node.z_as_relative = true
+	node.z_index = 0
+
+
+func _sync_entity_sort_pivots() -> void:
+	if _entity_sort_pivots.is_empty():
+		return
+	var stale_keys: Array[int] = []
+	for key_v in _entity_sort_pivots.keys():
+		var key := int(key_v)
+		var pivot := _entity_sort_pivots.get(key, null) as Node2D
+		if pivot == null or not is_instance_valid(pivot):
+			stale_keys.append(key)
+			continue
+		var node := instance_from_id(key) as Node2D
+		if node == null or not is_instance_valid(node):
+			pivot.queue_free()
+			stale_keys.append(key)
+			continue
+		if not _node_requires_sort_pivot(node):
+			if node.get_parent() == pivot and pivot.get_parent() != null:
+				node.reparent(pivot.get_parent(), true)
+			pivot.queue_free()
+			stale_keys.append(key)
+			continue
+		if node.get_parent() != pivot:
+			node.reparent(pivot, true)
+		var desired_node_global := node.global_position
+		var anchor_global := desired_node_global
+		var anchor_v: Variant = node.call("get_sort_anchor_global")
+		if anchor_v is Vector2:
+			anchor_global = anchor_v as Vector2
+		pivot.global_position = anchor_global
+		if node.global_position != desired_node_global:
+			node.global_position = desired_node_global
+	for stale in stale_keys:
+		_entity_sort_pivots.erase(stale)
 
 
 func _has_y_sort_entity_ancestor(node: Node) -> bool:
