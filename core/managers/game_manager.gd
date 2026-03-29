@@ -1021,7 +1021,7 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var effective_sort_y := float(n.global_position.y) + local_origin_y if has_origin else float(n.global_position.y)
 		var origin_print: Variant = local_origin_y if has_origin else "<none>"
 		if origin_source == "meta" and not has_origin:
-			origin_print = "<meta-only %s>" % String(local_origin_y)
+			origin_print = "<meta-only %s>" % str(local_origin_y)
 		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", origin_print, " source=", origin_source, " z=", ez, " pos=", n.global_position)
 
 
