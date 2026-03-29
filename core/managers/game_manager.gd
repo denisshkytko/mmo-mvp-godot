@@ -536,6 +536,9 @@ func _apply_node_y_sort_origin(node: Node2D, origin_y: float) -> void:
 	if node.has_method("set_y_sort_origin"):
 		node.call("set_y_sort_origin", origin_i)
 		return
+	if node.has_method("get_y_sort_origin"):
+		node.set("y_sort_origin", origin_i)
+		return
 	for prop in node.get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
 			node.set("y_sort_origin", origin_i)
@@ -547,21 +550,26 @@ func _read_node_y_sort_origin_local(node: Node2D) -> Dictionary:
 	var result := {
 		"has_origin": false,
 		"origin": 0.0,
+		"source": "none",
 	}
 	if node == null or not is_instance_valid(node):
 		return result
 	if node.has_method("get_y_sort_origin"):
 		result["has_origin"] = true
 		result["origin"] = float(node.call("get_y_sort_origin"))
+		result["source"] = "getter"
 		return result
 	for prop in node.get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
 			result["has_origin"] = true
 			result["origin"] = float(node.get("y_sort_origin"))
+			result["source"] = "property"
 			return result
 	if node.has_meta("__debug_y_sort_origin_local"):
-		result["has_origin"] = true
+		# Debug-only fallback: not guaranteed to be used by renderer sorting.
+		result["has_origin"] = false
 		result["origin"] = float(node.get_meta("__debug_y_sort_origin_local"))
+		result["source"] = "meta"
 	return result
 
 
@@ -945,14 +953,18 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var player_origin_info := _read_node_y_sort_origin_local(player)
 		has_y_sort_origin = bool(player_origin_info.get("has_origin", false))
 		y_sort_origin_v = player_origin_info.get("origin", 0.0)
+		var origin_source := String(player_origin_info.get("source", "none"))
 		var parent_path: String = str(player.get_parent().get_path()) if player.get_parent() != null else "<null>"
 		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
 		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
 		if has_y_sort_origin:
 			var computed_y := root_y + float(y_sort_origin_v)
-			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " computed_global_y=", computed_y, " anchor_delta=", float(anchor_global.y) - computed_y)
+			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " source=", origin_source, " computed_global_y=", computed_y, " anchor_delta=", float(anchor_global.y) - computed_y)
 		else:
-			print("[SortProbe][Player] y_sort_origin(local)=<missing on Player node>")
+			if origin_source == "meta":
+				print("[SortProbe][Player] y_sort_origin(local)=<meta-only ", y_sort_origin_v, " renderer_uses_origin=false>")
+			else:
+				print("[SortProbe][Player] y_sort_origin(local)=<missing on Player node>")
 	var y_map: Dictionary = Y_SORTING.get_world_y_mapping_debug()
 	print("[SortProbe] y_map origin=", float(y_map.get("origin_y", 0.0)), " factor=", float(y_map.get("factor", 0.0)))
 
@@ -1005,8 +1017,12 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var origin_info := _read_node_y_sort_origin_local(n)
 		var has_origin := bool(origin_info.get("has_origin", false))
 		var local_origin_y := float(origin_info.get("origin", 0.0))
+		var origin_source := String(origin_info.get("source", "none"))
 		var effective_sort_y := float(n.global_position.y) + local_origin_y if has_origin else float(n.global_position.y)
-		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", local_origin_y if has_origin else "<none>", " z=", ez, " pos=", n.global_position)
+		var origin_print: Variant = local_origin_y if has_origin else "<none>"
+		if origin_source == "meta" and not has_origin:
+			origin_print = "<meta-only %s>" % String(local_origin_y)
+		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", origin_print, " source=", origin_source, " z=", ez, " pos=", n.global_position)
 
 
 func _is_world_pos_visible(world_pos: Vector2) -> bool:

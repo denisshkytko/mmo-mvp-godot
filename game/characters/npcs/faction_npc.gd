@@ -427,6 +427,9 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 	if has_method("set_y_sort_origin"):
 		call("set_y_sort_origin", origin_i)
 		return
+	if has_method("get_y_sort_origin"):
+		set("y_sort_origin", origin_i)
+		return
 	for prop in get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
 			set("y_sort_origin", origin_i)

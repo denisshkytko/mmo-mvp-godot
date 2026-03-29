@@ -24,6 +24,7 @@ const MAX_LEVEL: int = 60
 
 # Combat state (used for HP regen rule: HP regenerates only out of combat)
 var _targeters := {} # instance_id -> true
+var _y_sort_origin_meta_fallback_warned: bool = false
 
 func on_targeted_by(attacker: Node) -> void:
 	if attacker == null:
@@ -481,11 +482,17 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 	if has_method("set_y_sort_origin"):
 		call("set_y_sort_origin", origin_i)
 		return
+	if has_method("get_y_sort_origin"):
+		set("y_sort_origin", origin_i)
+		return
 	for prop in get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
 			set("y_sort_origin", origin_i)
 			return
 	set_meta("__debug_y_sort_origin_local", origin_i)
+	if not _y_sort_origin_meta_fallback_warned:
+		_y_sort_origin_meta_fallback_warned = true
+		push_warning("Player y_sort_origin is meta-only fallback; renderer may still sort by Player.global_position.")
 
 
 func get_attack_damage() -> int:
