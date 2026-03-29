@@ -380,7 +380,7 @@ func apply_spawn_init(
 	model_id_in: String = "earth"
 ) -> void:
 	home_position = spawn_pos
-	global_position = spawn_pos
+	_place_world_collider_at_spawn(spawn_pos)
 	skin_id = skin_id_in
 	if loot_profile_in != null:
 		loot_profile = loot_profile_in
@@ -389,6 +389,7 @@ func apply_spawn_init(
 	model_group_id = String(model_group_id_in).to_lower()
 	model_id = String(model_id_in).to_lower()
 	_apply_model_visual()
+	_place_world_collider_at_spawn(spawn_pos)
 	# Common params (speed/leash/aggro) are configured on the mob itself.
 	mob_level = max(1, level_in)
 	c_spell_caster.configure(abilities, mob_level)
@@ -425,6 +426,15 @@ func apply_spawn_init(
 	aggressor = null
 	regen_active = false
 	c_combat.reset_combat()
+
+
+func _place_world_collider_at_spawn(spawn_pos: Vector2) -> void:
+	global_position = spawn_pos
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	var delta := spawn_pos - world_collision.global_position
+	if not delta.is_zero_approx():
+		global_position += delta
 
 func _apply_to_components() -> void:
 	if c_ai != null:

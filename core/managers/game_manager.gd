@@ -31,6 +31,7 @@ var _tree_node_added_connected: bool = false
 var _y_sort_debug_overlay: Node2D = null
 var _y_sort_debug_canvas: CanvasLayer = null
 var _player_sort_pivot: Node2D = null
+var _entity_sort_pivots: Dictionary = {} # int(instance_id) -> Node2D pivot
 
 
 func _ready() -> void:
@@ -62,6 +63,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_sync_player_sort_pivot()
+	_sync_entity_sort_pivots()
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -371,9 +373,16 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 		return
 	host.y_sort_enabled = true
 	var entity_host := _ensure_y_sort_runtime_layer(host)
-	var sort_pivot := _ensure_player_sort_pivot(entity_host)
-	if player.get_parent() != sort_pivot:
-		player.reparent(sort_pivot, true)
+	if _node_has_native_y_sort_origin(player):
+		if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
+			_player_sort_pivot.queue_free()
+		_player_sort_pivot = null
+		if player.get_parent() != entity_host:
+			player.reparent(entity_host, true)
+	else:
+		var sort_pivot := _ensure_player_sort_pivot(entity_host)
+		if player.get_parent() != sort_pivot:
+			player.reparent(sort_pivot, true)
 	player.top_level = false
 	player.y_sort_enabled = false
 	player.z_as_relative = true
@@ -389,7 +398,10 @@ func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
 		pivot = Node2D.new()
 		pivot.name = "__player_sort_pivot"
 		entity_host.add_child(pivot)
-	pivot.y_sort_enabled = true
+	# Keep pivot as a pure anchor node.
+	# If y_sort is enabled here, renderer may re-sort its children by their own Y,
+	# which can effectively bypass the anchor semantics we need for the player branch.
+	pivot.y_sort_enabled = false
 	pivot.z_as_relative = true
 	pivot.z_index = int(entity_host.z_index)
 	_player_sort_pivot = pivot
@@ -398,6 +410,8 @@ func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
 
 func _sync_player_sort_pivot() -> void:
 	if player == null or not is_instance_valid(player):
+		return
+	if _node_has_native_y_sort_origin(player):
 		return
 	if _player_sort_pivot == null or not is_instance_valid(_player_sort_pivot):
 		return
@@ -412,6 +426,19 @@ func _sync_player_sort_pivot() -> void:
 	_player_sort_pivot.global_position = anchor_global
 	if player.global_position != desired_player_global:
 		player.global_position = desired_player_global
+
+
+func _node_has_native_y_sort_origin(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	if node.has_method("set_y_sort_origin"):
+		return true
+	if node.has_method("get_y_sort_origin"):
+		return true
+	for prop in node.get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			return true
+	return false
 
 
 func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
@@ -501,7 +528,15 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	if not (node is Node2D):
 		return
 	var n2d := node as Node2D
+	var direct_parent := n2d.get_parent() as Node2D
+	if direct_parent != null and String(direct_parent.name).begins_with("__sort_pivot_"):
+		# Node is already managed by a runtime anchor pivot; avoid re-promotion ping-pong.
+		return
 	if player != null and is_instance_valid(player) and n2d == player:
+		if _node_has_native_y_sort_origin(player):
+			if n2d.get_parent() != runtime:
+				n2d.reparent(runtime, true)
+			return
 		if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
 			if n2d.get_parent() != _player_sort_pivot:
 				n2d.reparent(_player_sort_pivot, true)
@@ -517,7 +552,86 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	should_promote = _is_runtime_promotion_candidate(n2d)
 	if should_promote and n2d.get_parent() != runtime:
 		n2d.reparent(runtime, true)
+	if _node_requires_sort_pivot(n2d):
+		_attach_node_to_entity_sort_pivot(n2d, runtime)
 	_try_sync_node_y_sort_origin_from_world_collider(n2d)
+
+
+func _node_requires_sort_pivot(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	if player != null and is_instance_valid(player) and node == player:
+		return false
+	if not node.has_method("get_sort_anchor_global"):
+		return false
+	return not _node_has_native_y_sort_origin(node)
+
+
+func _attach_node_to_entity_sort_pivot(node: Node2D, runtime: Node2D) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	if runtime == null or not is_instance_valid(runtime):
+		return
+	if not _node_requires_sort_pivot(node):
+		return
+	var key := node.get_instance_id()
+	var pivot := _entity_sort_pivots.get(key, null) as Node2D
+	if pivot == null or not is_instance_valid(pivot):
+		pivot = Node2D.new()
+		pivot.name = "__sort_pivot_%d" % key
+		pivot.y_sort_enabled = false
+		pivot.z_as_relative = true
+		pivot.z_index = int(runtime.z_index)
+		runtime.add_child(pivot)
+		_entity_sort_pivots[key] = pivot
+	if node.get_parent() != pivot:
+		node.reparent(pivot, true)
+	node.top_level = false
+	node.y_sort_enabled = false
+	node.z_as_relative = true
+	node.z_index = 0
+
+
+func _sync_entity_sort_pivots() -> void:
+	if _entity_sort_pivots.is_empty():
+		return
+	var stale_keys: Array[int] = []
+	for key_v in _entity_sort_pivots.keys():
+		var key := int(key_v)
+		var pivot := _entity_sort_pivots.get(key, null) as Node2D
+		if pivot == null or not is_instance_valid(pivot):
+			stale_keys.append(key)
+			continue
+		var node := instance_from_id(key) as Node2D
+		if node == null or not is_instance_valid(node):
+			pivot.queue_free()
+			stale_keys.append(key)
+			continue
+		if not _node_requires_sort_pivot(node):
+			if node.get_parent() == pivot and pivot.get_parent() != null:
+				node.reparent(pivot.get_parent(), true)
+			pivot.queue_free()
+			stale_keys.append(key)
+			continue
+		if node.get_parent() != pivot:
+			node.reparent(pivot, true)
+		var desired_node_global := node.global_position
+		if pivot.has_meta("__last_node_global"):
+			var last_node_global_v: Variant = pivot.get_meta("__last_node_global")
+			if last_node_global_v is Vector2:
+				var last_node_global := last_node_global_v as Vector2
+				if last_node_global.is_equal_approx(desired_node_global):
+					continue
+		var anchor_global := desired_node_global
+		var anchor_v: Variant = node.call("get_sort_anchor_global")
+		if anchor_v is Vector2:
+			anchor_global = anchor_v as Vector2
+		pivot.global_position = anchor_global
+		if node.global_position != desired_node_global:
+			node.global_position = desired_node_global
+		pivot.set_meta("__last_node_global", desired_node_global)
+	for stale in stale_keys:
+		_entity_sort_pivots.erase(stale)
 
 
 func _has_y_sort_entity_ancestor(node: Node) -> bool:
@@ -573,11 +687,11 @@ func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
 	_apply_node_y_sort_origin(node, origin_y)
 
 
-func _compute_world_collider_sort_origin_y(owner: Node2D, collider: CollisionShape2D) -> float:
+func _compute_world_collider_sort_origin_y(owner_node: Node2D, collider: CollisionShape2D) -> float:
 	# Match debug green-diamond logic: collider center in global space, converted to owner local.
-	if owner == null or not is_instance_valid(owner):
+	if owner_node == null or not is_instance_valid(owner_node):
 		return float(collider.position.y)
-	return float(owner.to_local(collider.global_position).y)
+	return float(owner_node.to_local(collider.global_position).y)
 
 
 func _apply_node_y_sort_origin(node: Node2D, origin_y: float) -> void:
@@ -1081,11 +1195,11 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var local_origin_y := float(origin_info.get("origin", 0.0))
 		var origin_source := String(origin_info.get("source", "none"))
 		var effective_sort_y := float(n.global_position.y) + local_origin_y if has_origin else float(n.global_position.y)
+		var origin_print: String = str(local_origin_y) if has_origin else "<none>"
 		if player != null and is_instance_valid(player) and n == player:
 			var p_parent := n.get_parent()
 			if p_parent is Node2D and String((p_parent as Node).name) == "__player_sort_pivot":
 				effective_sort_y = float((p_parent as Node2D).global_position.y)
-		var origin_print: Variant = local_origin_y if has_origin else "<none>"
 		if origin_source == "meta" and not has_origin:
 			origin_print = "<meta-only %s>" % str(local_origin_y)
 		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", origin_print, " source=", origin_source, " z=", ez, " pos=", n.global_position)

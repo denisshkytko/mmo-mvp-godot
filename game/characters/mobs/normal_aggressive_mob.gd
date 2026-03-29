@@ -464,7 +464,7 @@ func apply_spawn_settings(
 	_speed_in: float
 ) -> void:
 	home_position = spawn_pos
-	global_position = spawn_pos
+	_place_world_collider_at_spawn(spawn_pos)
 
 	if c_ai != null:
 		c_ai.behavior = behavior_in
@@ -478,6 +478,15 @@ func apply_spawn_settings(
 
 		c_ai.home_position = home_position
 		c_ai.reset_to_idle()
+
+
+func _place_world_collider_at_spawn(spawn_pos: Vector2) -> void:
+	global_position = spawn_pos
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	var delta := spawn_pos - world_collision.global_position
+	if not delta.is_zero_approx():
+		global_position += delta
 
 
 func set_attack_mode(mode: int) -> void:

@@ -77,7 +77,8 @@ func _spawn_at(index: int) -> void:
 	if mob.has_method("_mark_spawned"):
 		mob.call("_mark_spawned")
 
-	get_parent().add_child(mob)
+	var spawn_parent := _resolve_spawn_parent()
+	spawn_parent.add_child(mob)
 	_mob_by_point[index] = mob
 
 	var lvl: int = _compute_level()
@@ -149,3 +150,16 @@ func _call_apply_spawn_init(_mob: Node, _point: SpawnPoint, _level: int) -> bool
 func _compute_level() -> int:
 	return 1
 
+
+func _resolve_spawn_parent() -> Node:
+	# Prefer runtime y-sort container when available so spawned entities are
+	# immediately in the same sorting context as Player/other runtime entities.
+	var current: Node = self
+	while current != null:
+		var runtime := current.get_node_or_null("__y_sort_runtime")
+		if runtime != null:
+			return runtime
+		current = current.get_parent()
+	# Fallback to previous behavior.
+	var parent := get_parent()
+	return parent if parent != null else self
