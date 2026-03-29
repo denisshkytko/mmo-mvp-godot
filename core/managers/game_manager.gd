@@ -528,6 +528,10 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	if not (node is Node2D):
 		return
 	var n2d := node as Node2D
+	var direct_parent := n2d.get_parent() as Node2D
+	if direct_parent != null and String(direct_parent.name).begins_with("__sort_pivot_"):
+		# Node is already managed by a runtime anchor pivot; avoid re-promotion ping-pong.
+		return
 	if player != null and is_instance_valid(player) and n2d == player:
 		if _node_has_native_y_sort_origin(player):
 			if n2d.get_parent() != runtime:
