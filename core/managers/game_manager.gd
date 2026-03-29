@@ -388,10 +388,10 @@ func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
 	if pivot == null:
 		pivot = Node2D.new()
 		pivot.name = "__player_sort_pivot"
-		pivot.y_sort_enabled = true
-		pivot.z_as_relative = true
-		pivot.z_index = int(entity_host.z_index)
 		entity_host.add_child(pivot)
+	pivot.y_sort_enabled = true
+	pivot.z_as_relative = true
+	pivot.z_index = 0
 	_player_sort_pivot = pivot
 	return pivot
 
@@ -1007,11 +1007,16 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var origin_source := String(player_origin_info.get("source", "none"))
 		var parent_path: String = str(player.get_parent().get_path()) if player.get_parent() != null else "<null>"
 		var runtime_sort_y := root_y
+		var runtime_parent_z := 0
+		var runtime_parent_z_rel := true
 		if player.get_parent() is Node2D and String((player.get_parent() as Node).name) == "__player_sort_pivot":
-			runtime_sort_y = float((player.get_parent() as Node2D).global_position.y)
+			var pivot_parent := player.get_parent() as Node2D
+			runtime_sort_y = float(pivot_parent.global_position.y)
+			runtime_parent_z = int((pivot_parent as CanvasItem).z_index) if pivot_parent is CanvasItem else 0
+			runtime_parent_z_rel = (pivot_parent as CanvasItem).z_as_relative if pivot_parent is CanvasItem else true
 		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
 		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
-		print("[SortProbe][Player] runtime_sort_y=", runtime_sort_y)
+		print("[SortProbe][Player] runtime_sort_y=", runtime_sort_y, " runtime_parent_z=", runtime_parent_z, " runtime_parent_z_rel=", runtime_parent_z_rel)
 		if has_y_sort_origin:
 			var computed_y := root_y + float(y_sort_origin_v)
 			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " source=", origin_source, " computed_global_y=", computed_y, " anchor_delta=", float(anchor_global.y) - computed_y)
