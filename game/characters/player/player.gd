@@ -367,12 +367,13 @@ func _update_visual_render_order() -> void:
 	visual_root.z_as_relative = true
 	visual_root.z_index = 0
 	var parent_2d := get_parent() as Node2D
-	if parent_2d != null and parent_2d.y_sort_enabled:
+	var under_player_pivot := parent_2d != null and String(parent_2d.name) == "__player_sort_pivot"
+	if under_player_pivot or (parent_2d != null and parent_2d.y_sort_enabled):
 		# In y-sort runtime all physical entities must stay on the same Z layer.
 		# Ordering must come from Y-sort origin/anchor only.
 		z_as_relative = true
 		var parent_sort_z := int(parent_2d.z_index)
-		if String(parent_2d.name) == "__player_sort_pivot":
+		if under_player_pivot:
 			# Pivot already carries runtime host z; player itself must stay at local z=0
 			# to avoid double z stacking against y-sorted tile layers.
 			parent_sort_z = 0
