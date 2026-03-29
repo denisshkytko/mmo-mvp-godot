@@ -895,7 +895,32 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 	print("[SortProbe] screen=", screen_pos, " world=", world_pos)
 	if player != null and is_instance_valid(player):
 		var p_z: int = int((player as CanvasItem).z_index) if player is CanvasItem else 0
-		print("[SortProbe] player pos=", player.global_position, " y=", player.global_position.y, " z=", p_z, " parent=", player.get_parent().get_path() if player.get_parent() != null else "<null>")
+		var root_y := float(player.global_position.y)
+		var root_pos := player.global_position
+		var anchor_global := root_pos
+		if player.has_method("get_sort_anchor_global"):
+			var anchor_v: Variant = player.call("get_sort_anchor_global")
+			if anchor_v is Vector2:
+				anchor_global = anchor_v as Vector2
+		var wc_global := root_pos
+		if player.has_method("get_world_collider_center_global"):
+			var wc_v: Variant = player.call("get_world_collider_center_global")
+			if wc_v is Vector2:
+				wc_global = wc_v as Vector2
+		var has_y_sort_origin := false
+		var y_sort_origin_v: Variant = null
+		for prop in player.get_property_list():
+			if String(prop.get("name", "")) == "y_sort_origin":
+				has_y_sort_origin = true
+				y_sort_origin_v = player.get("y_sort_origin")
+				break
+		var parent_path := player.get_parent().get_path() if player.get_parent() != null else "<null>"
+		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
+		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
+		if has_y_sort_origin:
+			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " computed_global_y=", root_y + float(y_sort_origin_v))
+		else:
+			print("[SortProbe][Player] y_sort_origin(local)=<missing on Player node>")
 	var y_map: Dictionary = Y_SORTING.get_world_y_mapping_debug()
 	print("[SortProbe] y_map origin=", float(y_map.get("origin_y", 0.0)), " factor=", float(y_map.get("factor", 0.0)))
 
