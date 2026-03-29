@@ -1006,8 +1006,12 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		y_sort_origin_v = player_origin_info.get("origin", 0.0)
 		var origin_source := String(player_origin_info.get("source", "none"))
 		var parent_path: String = str(player.get_parent().get_path()) if player.get_parent() != null else "<null>"
+		var runtime_sort_y := root_y
+		if player.get_parent() is Node2D and String((player.get_parent() as Node).name) == "__player_sort_pivot":
+			runtime_sort_y = float((player.get_parent() as Node2D).global_position.y)
 		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
 		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
+		print("[SortProbe][Player] runtime_sort_y=", runtime_sort_y)
 		if has_y_sort_origin:
 			var computed_y := root_y + float(y_sort_origin_v)
 			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " source=", origin_source, " computed_global_y=", computed_y, " anchor_delta=", float(anchor_global.y) - computed_y)
@@ -1070,6 +1074,10 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var local_origin_y := float(origin_info.get("origin", 0.0))
 		var origin_source := String(origin_info.get("source", "none"))
 		var effective_sort_y := float(n.global_position.y) + local_origin_y if has_origin else float(n.global_position.y)
+		if player != null and is_instance_valid(player) and n == player:
+			var p_parent := n.get_parent()
+			if p_parent is Node2D and String((p_parent as Node).name) == "__player_sort_pivot":
+				effective_sort_y = float((p_parent as Node2D).global_position.y)
 		var origin_print: Variant = local_origin_y if has_origin else "<none>"
 		if origin_source == "meta" and not has_origin:
 			origin_print = "<meta-only %s>" % str(local_origin_y)
