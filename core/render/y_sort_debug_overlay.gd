@@ -8,6 +8,13 @@ const LABEL_COLOR := Color(1.0, 1.0, 1.0, 0.9)
 const MAX_TILE_MARKERS := 512
 
 
+func _ready() -> void:
+	top_level = true
+	y_sort_enabled = false
+	z_as_relative = false
+	z_index = 100000
+
+
 func _process(_delta: float) -> void:
 	if manager == null or not is_instance_valid(manager):
 		visible = false
@@ -102,9 +109,13 @@ func _draw_tile_markers() -> void:
 
 func _draw_cross_marker(world_pos: Vector2, color: Color, half_size: float) -> void:
 	var local := to_local(world_pos)
+	var outline := Color(0.0, 0.0, 0.0, color.a)
+	draw_line(local + Vector2(-half_size - 1.0, 0), local + Vector2(half_size + 1.0, 0), outline, 3.0)
+	draw_line(local + Vector2(0, -half_size - 1.0), local + Vector2(0, half_size + 1.0), outline, 3.0)
 	draw_line(local + Vector2(-half_size, 0), local + Vector2(half_size, 0), color, 1.5)
 	draw_line(local + Vector2(0, -half_size), local + Vector2(0, half_size), color, 1.5)
-	draw_circle(local, 1.5, color)
+	draw_arc(local, 4.0, 0.0, TAU, 20, outline, 2.0)
+	draw_arc(local, 3.0, 0.0, TAU, 20, color, 1.5)
 
 
 func _resolve_node_sort_origin_global(node: Node2D) -> Vector2:
