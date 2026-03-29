@@ -14,7 +14,7 @@ var current_target: Node = null
 @export var debug_targeting_clicks: bool = false
 @export var allow_corpse_targeting: bool = true
 @export var debug_world_probe_under_mouse: bool = true
-@export var debug_draw_y_sort_markers: bool = false
+@export var debug_draw_y_sort_markers: bool = true
 @export var debug_draw_tilemap_y_sort_markers: bool = true
 
 # --- Save/Load runtime ---
@@ -55,7 +55,7 @@ func _ready() -> void:
 	_load_character_into_world()
 	if _has_loaded_character:
 		call_deferred("_emit_player_spawned")
-	_ensure_y_sort_debug_overlay()
+	call_deferred("_ensure_y_sort_debug_overlay")
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -73,7 +73,7 @@ func _ensure_y_sort_debug_overlay() -> void:
 	_y_sort_debug_overlay = Y_SORT_DEBUG_OVERLAY.new()
 	_y_sort_debug_overlay.name = "__y_sort_debug_overlay"
 	_y_sort_debug_overlay.set("manager", self)
-	world_root.add_child(_y_sort_debug_overlay)
+	world_root.add_child.call_deferred(_y_sort_debug_overlay)
 
 
 
