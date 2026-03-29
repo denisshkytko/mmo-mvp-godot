@@ -914,7 +914,7 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 				has_y_sort_origin = true
 				y_sort_origin_v = player.get("y_sort_origin")
 				break
-		var parent_path := player.get_parent().get_path() if player.get_parent() != null else "<null>"
+		var parent_path: String = str(player.get_parent().get_path()) if player.get_parent() != null else "<null>"
 		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
 		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
 		if has_y_sort_origin:
