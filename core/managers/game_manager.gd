@@ -519,10 +519,7 @@ func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
 	if world_collider == null:
 		return
 	var origin_y := _compute_world_collider_sort_origin_y(node, world_collider)
-	for prop in node.get_property_list():
-		if String(prop.get("name", "")) == "y_sort_origin":
-			node.set("y_sort_origin", int(round(origin_y)))
-			break
+	_apply_node_y_sort_origin(node, origin_y)
 
 
 func _compute_world_collider_sort_origin_y(owner: Node2D, collider: CollisionShape2D) -> float:
@@ -530,6 +527,20 @@ func _compute_world_collider_sort_origin_y(owner: Node2D, collider: CollisionSha
 	if owner == null or not is_instance_valid(owner):
 		return float(collider.position.y)
 	return float(owner.to_local(collider.global_position).y)
+
+
+func _apply_node_y_sort_origin(node: Node2D, origin_y: float) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	var origin_i := int(round(origin_y))
+	if node.has_method("set_y_sort_origin"):
+		node.call("set_y_sort_origin", origin_i)
+		return
+	for prop in node.get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			node.set("y_sort_origin", origin_i)
+			return
+	node.set_meta("__debug_y_sort_origin_local", origin_i)
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
@@ -909,11 +920,18 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 				wc_global = wc_v as Vector2
 		var has_y_sort_origin := false
 		var y_sort_origin_v: Variant = null
-		for prop in player.get_property_list():
-			if String(prop.get("name", "")) == "y_sort_origin":
-				has_y_sort_origin = true
-				y_sort_origin_v = player.get("y_sort_origin")
-				break
+		if player.has_method("get_y_sort_origin"):
+			has_y_sort_origin = true
+			y_sort_origin_v = player.call("get_y_sort_origin")
+		else:
+			for prop in player.get_property_list():
+				if String(prop.get("name", "")) == "y_sort_origin":
+					has_y_sort_origin = true
+					y_sort_origin_v = player.get("y_sort_origin")
+					break
+		if not has_y_sort_origin and player.has_meta("__debug_y_sort_origin_local"):
+			has_y_sort_origin = true
+			y_sort_origin_v = player.get_meta("__debug_y_sort_origin_local")
 		var parent_path: String = str(player.get_parent().get_path()) if player.get_parent() != null else "<null>"
 		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
 		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
