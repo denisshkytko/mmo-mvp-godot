@@ -2,9 +2,7 @@ extends Node2D
 
 var manager: Node = null
 
-const ENTITY_COLOR := Color(1.0, 0.2, 0.2, 0.95)
-const ENTITY_COLLIDER_CENTER_COLOR := Color(0.2, 1.0, 0.35, 0.95)
-const ENTITY_ROOT_COLOR := Color(0.25, 0.55, 1.0, 0.95)
+const PLAYER_COLLIDER_COLOR := Color(0.2, 1.0, 0.35, 0.95)
 const TILE_COLOR := Color(0.2, 0.9, 1.0, 0.85)
 const LABEL_COLOR := Color(1.0, 1.0, 1.0, 0.9)
 const MAX_TILE_MARKERS := 512
@@ -36,21 +34,14 @@ func _draw_entity_markers() -> void:
 	var tree := get_tree()
 	if tree == null:
 		return
-	var entities := tree.get_nodes_in_group("y_sort_entities")
-	for e in entities:
-		if not (e is Node2D):
-			continue
-		var n := e as Node2D
-		if n == null or not is_instance_valid(n):
-			continue
-		var p := _resolve_node_sort_origin_global(n)
-		_draw_cross_marker(p, ENTITY_COLOR, 5.0)
-		_draw_square_marker(n.global_position, ENTITY_ROOT_COLOR, 3.5)
-		var collider_center_v: Variant = _resolve_world_collider_center_global(n)
-		if collider_center_v is Vector2:
-			_draw_diamond_marker(collider_center_v as Vector2, ENTITY_COLLIDER_CENTER_COLOR, 4.0)
-		var label_pos := _world_to_overlay_pos(p) + Vector2(6, -6)
-		draw_string(ThemeDB.fallback_font, label_pos, String(n.name), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, LABEL_COLOR)
+	var player := tree.get_first_node_in_group("player") as Node2D
+	if player == null or not is_instance_valid(player):
+		return
+	var collider_center_v: Variant = _resolve_world_collider_center_global(player)
+	if collider_center_v is Vector2:
+		_draw_cross_marker(collider_center_v as Vector2, PLAYER_COLLIDER_COLOR, 5.0)
+		var label_pos := _world_to_overlay_pos(collider_center_v as Vector2) + Vector2(6, -6)
+		draw_string(ThemeDB.fallback_font, label_pos, "Player.WorldCollider", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, LABEL_COLOR)
 
 
 func _draw_tile_markers() -> void:
@@ -122,28 +113,6 @@ func _draw_cross_marker(world_pos: Vector2, color: Color, half_size: float) -> v
 	draw_arc(local, 3.0, 0.0, TAU, 20, color, 1.5)
 
 
-func _resolve_node_sort_origin_global(node: Node2D) -> Vector2:
-	if node == null or not is_instance_valid(node):
-		return Vector2.ZERO
-	if node.has_method("get_sort_anchor_global"):
-		var anchor_v: Variant = node.call("get_sort_anchor_global")
-		if anchor_v is Vector2:
-			return anchor_v as Vector2
-	var y_origin := 0.0
-	var has_y_sort_origin := false
-	for prop in node.get_property_list():
-		if String(prop.get("name", "")) == "y_sort_origin":
-			has_y_sort_origin = true
-			y_origin = float(node.get("y_sort_origin"))
-			break
-	if has_y_sort_origin:
-		return node.global_position + Vector2(0.0, y_origin)
-	var wc_center_v: Variant = _resolve_world_collider_center_global(node)
-	if wc_center_v is Vector2:
-		return wc_center_v as Vector2
-	return node.global_position
-
-
 func _resolve_world_collider_center_global(node: Node2D) -> Variant:
 	if node == null or not is_instance_valid(node):
 		return null
@@ -163,27 +132,3 @@ func _world_to_overlay_pos(world_pos: Vector2) -> Vector2:
 		return world_pos
 	return vp.get_canvas_transform() * world_pos
 
-
-func _draw_diamond_marker(world_pos: Vector2, color: Color, half_size: float) -> void:
-	var local := _world_to_overlay_pos(world_pos)
-	var outline := Color(0.0, 0.0, 0.0, color.a)
-	var a := local + Vector2(0, -half_size)
-	var b := local + Vector2(half_size, 0)
-	var c := local + Vector2(0, half_size)
-	var d := local + Vector2(-half_size, 0)
-	draw_line(a, b, outline, 3.0)
-	draw_line(b, c, outline, 3.0)
-	draw_line(c, d, outline, 3.0)
-	draw_line(d, a, outline, 3.0)
-	draw_line(a, b, color, 1.5)
-	draw_line(b, c, color, 1.5)
-	draw_line(c, d, color, 1.5)
-	draw_line(d, a, color, 1.5)
-
-
-func _draw_square_marker(world_pos: Vector2, color: Color, half_size: float) -> void:
-	var local := _world_to_overlay_pos(world_pos)
-	var outline := Color(0.0, 0.0, 0.0, color.a)
-	var rect := Rect2(local - Vector2(half_size, half_size), Vector2(half_size * 2.0, half_size * 2.0))
-	draw_rect(rect, outline, false, 3.0)
-	draw_rect(rect, color, false, 1.5)
