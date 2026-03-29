@@ -683,11 +683,11 @@ func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
 	_apply_node_y_sort_origin(node, origin_y)
 
 
-func _compute_world_collider_sort_origin_y(owner: Node2D, collider: CollisionShape2D) -> float:
+func _compute_world_collider_sort_origin_y(owner_node: Node2D, collider: CollisionShape2D) -> float:
 	# Match debug green-diamond logic: collider center in global space, converted to owner local.
-	if owner == null or not is_instance_valid(owner):
+	if owner_node == null or not is_instance_valid(owner_node):
 		return float(collider.position.y)
-	return float(owner.to_local(collider.global_position).y)
+	return float(owner_node.to_local(collider.global_position).y)
 
 
 func _apply_node_y_sort_origin(node: Node2D, origin_y: float) -> void:
@@ -1195,9 +1195,9 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 			var p_parent := n.get_parent()
 			if p_parent is Node2D and String((p_parent as Node).name) == "__player_sort_pivot":
 				effective_sort_y = float((p_parent as Node2D).global_position.y)
-		var origin_print: Variant = local_origin_y if has_origin else "<none>"
-		if origin_source == "meta" and not has_origin:
-			origin_print = "<meta-only %s>" % str(local_origin_y)
+			var origin_print: String = str(local_origin_y) if has_origin else "<none>"
+			if origin_source == "meta" and not has_origin:
+				origin_print = "<meta-only %s>" % str(local_origin_y)
 		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", origin_print, " source=", origin_source, " z=", ez, " pos=", n.global_position)
 
 
