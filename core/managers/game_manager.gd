@@ -2,6 +2,7 @@ extends Node
 
 const FIRST_ENTRY_SPAWN_POINT := preload("res://game/world/spawn/first_entry_spawn_point.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
+const Y_SORT_DEBUG_OVERLAY := preload("res://core/render/y_sort_debug_overlay.gd")
 
 @onready var zone_container: Node = $"../ZoneContainer"
 @onready var world_root: Node = $".."
@@ -13,6 +14,8 @@ var current_target: Node = null
 @export var debug_targeting_clicks: bool = false
 @export var allow_corpse_targeting: bool = true
 @export var debug_world_probe_under_mouse: bool = true
+@export var debug_draw_y_sort_markers: bool = true
+@export var debug_draw_tilemap_y_sort_markers: bool = true
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -25,6 +28,9 @@ var _save_pending: bool = false
 var _has_loaded_character: bool = false
 var _active_y_sort_host: Node2D = null
 var _tree_node_added_connected: bool = false
+var _y_sort_debug_overlay: Node2D = null
+var _y_sort_debug_canvas: CanvasLayer = null
+var _player_sort_pivot: Node2D = null
 
 
 func _ready() -> void:
@@ -51,6 +57,11 @@ func _ready() -> void:
 	_load_character_into_world()
 	if _has_loaded_character:
 		call_deferred("_emit_player_spawned")
+	call_deferred("_ensure_y_sort_debug_overlay")
+
+
+func _process(_delta: float) -> void:
+	_sync_player_sort_pivot()
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -58,6 +69,22 @@ func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if use_cam_screen_center_for_world_math:
 		return cam.get_screen_center_position()
 	return cam.global_position
+
+
+func _ensure_y_sort_debug_overlay() -> void:
+	if world_root == null:
+		return
+	if _y_sort_debug_overlay != null and is_instance_valid(_y_sort_debug_overlay):
+		return
+	if _y_sort_debug_canvas == null or not is_instance_valid(_y_sort_debug_canvas):
+		_y_sort_debug_canvas = CanvasLayer.new()
+		_y_sort_debug_canvas.name = "__y_sort_debug_canvas"
+		_y_sort_debug_canvas.layer = 100
+		world_root.add_child.call_deferred(_y_sort_debug_canvas)
+	_y_sort_debug_overlay = Y_SORT_DEBUG_OVERLAY.new()
+	_y_sort_debug_overlay.name = "__y_sort_debug_overlay"
+	_y_sort_debug_overlay.set("manager", self)
+	_y_sort_debug_canvas.add_child.call_deferred(_y_sort_debug_overlay)
 
 
 
@@ -323,6 +350,12 @@ func _detach_player_from_zone_for_reload() -> void:
 		return
 	if world_root == null:
 		return
+	if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
+		if player.get_parent() == _player_sort_pivot:
+			player.reparent(world_root, true)
+		if _player_sort_pivot.get_parent() != null:
+			_player_sort_pivot.queue_free()
+		_player_sort_pivot = null
 	if player.get_parent() == world_root:
 		return
 	player.reparent(world_root, true)
@@ -338,12 +371,47 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 		return
 	host.y_sort_enabled = true
 	var entity_host := _ensure_y_sort_runtime_layer(host)
-	if player.get_parent() != entity_host:
-		player.reparent(entity_host, true)
+	var sort_pivot := _ensure_player_sort_pivot(entity_host)
+	if player.get_parent() != sort_pivot:
+		player.reparent(sort_pivot, true)
 	player.top_level = false
-	player.y_sort_enabled = true
+	player.y_sort_enabled = false
 	player.z_as_relative = true
-	player.z_index = int(entity_host.z_index)
+	player.z_index = 0
+	_sync_player_sort_pivot()
+
+
+func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
+	if entity_host == null:
+		return null
+	var pivot := entity_host.get_node_or_null("__player_sort_pivot") as Node2D
+	if pivot == null:
+		pivot = Node2D.new()
+		pivot.name = "__player_sort_pivot"
+		entity_host.add_child(pivot)
+	pivot.y_sort_enabled = true
+	pivot.z_as_relative = true
+	pivot.z_index = int(entity_host.z_index)
+	_player_sort_pivot = pivot
+	return pivot
+
+
+func _sync_player_sort_pivot() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if _player_sort_pivot == null or not is_instance_valid(_player_sort_pivot):
+		return
+	if player.get_parent() != _player_sort_pivot:
+		return
+	var desired_player_global := player.global_position
+	var anchor_global := desired_player_global
+	if player.has_method("get_sort_anchor_global"):
+		var anchor_v: Variant = player.call("get_sort_anchor_global")
+		if anchor_v is Vector2:
+			anchor_global = anchor_v as Vector2
+	_player_sort_pivot.global_position = anchor_global
+	if player.global_position != desired_player_global:
+		player.global_position = desired_player_global
 
 
 func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
@@ -405,8 +473,19 @@ func _on_tree_node_added(node: Node) -> void:
 		return
 	if not _active_y_sort_host.is_ancestor_of(node):
 		return
-	var host := _active_y_sort_host
-	var runtime := host.get_node_or_null("__y_sort_runtime") as Node2D
+	# Godot can emit node_added while the parent is still mutating children.
+	# Deferring avoids "parent is busy adding/removing children" reparent errors.
+	call_deferred("_promote_node_to_runtime_deferred", node)
+
+
+func _promote_node_to_runtime_deferred(node: Node) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	if _active_y_sort_host == null or not is_instance_valid(_active_y_sort_host):
+		return
+	if not _active_y_sort_host.is_ancestor_of(node):
+		return
+	var runtime := _active_y_sort_host.get_node_or_null("__y_sort_runtime") as Node2D
 	if runtime == null:
 		return
 	_maybe_promote_node_to_runtime(node, runtime)
@@ -422,23 +501,64 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	if not (node is Node2D):
 		return
 	var n2d := node as Node2D
+	if player != null and is_instance_valid(player) and n2d == player:
+		if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
+			if n2d.get_parent() != _player_sort_pivot:
+				n2d.reparent(_player_sort_pivot, true)
+		return
+	if _has_y_sort_entity_ancestor(n2d):
+		return
+	if _should_skip_nested_runtime_promotion(n2d):
+		return
 	var node_name := String(n2d.name).to_lower()
 	if node_name == "decor" or node_name == "spawner groups" or node_name == "__y_sort_runtime":
 		return
 	var should_promote: bool = false
-	if n2d.has_method("get_sort_anchor_global"):
-		should_promote = true
-	elif n2d.is_in_group("y_sort_entities"):
-		should_promote = true
-	elif node_name == "player":
-		should_promote = true
-	elif n2d.get_node_or_null("CollisionProfile/WorldCollider") != null:
-		should_promote = true
-	elif n2d.get_node_or_null("WorldCollider") != null:
-		should_promote = true
+	should_promote = _is_runtime_promotion_candidate(n2d)
 	if should_promote and n2d.get_parent() != runtime:
 		n2d.reparent(runtime, true)
 	_try_sync_node_y_sort_origin_from_world_collider(n2d)
+
+
+func _has_y_sort_entity_ancestor(node: Node) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	var parent := node.get_parent()
+	while parent != null:
+		if parent.is_in_group("y_sort_entities"):
+			return true
+		parent = parent.get_parent()
+	return false
+
+
+func _is_runtime_promotion_candidate(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	var node_name := String(node.name).to_lower()
+	if node.has_method("get_sort_anchor_global"):
+		return true
+	if node.is_in_group("y_sort_entities"):
+		return true
+	if node_name == "player":
+		return true
+	if node.get_node_or_null("CollisionProfile/WorldCollider") != null:
+		return true
+	if node.get_node_or_null("WorldCollider") != null:
+		return true
+	return false
+
+
+func _should_skip_nested_runtime_promotion(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return true
+	var parent := node.get_parent()
+	while parent != null:
+		if parent is Node2D and _is_runtime_promotion_candidate(parent as Node2D):
+			return true
+		if parent == _active_y_sort_host:
+			break
+		parent = parent.get_parent()
+	return false
 
 
 func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
@@ -449,23 +569,59 @@ func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
 		world_collider = node.get_node_or_null("CollisionProfile/WorldCollider") as CollisionShape2D
 	if world_collider == null:
 		return
-	var origin_y := _compute_world_collider_sort_origin_y(world_collider)
+	var origin_y := _compute_world_collider_sort_origin_y(node, world_collider)
+	_apply_node_y_sort_origin(node, origin_y)
+
+
+func _compute_world_collider_sort_origin_y(owner: Node2D, collider: CollisionShape2D) -> float:
+	# Match debug green-diamond logic: collider center in global space, converted to owner local.
+	if owner == null or not is_instance_valid(owner):
+		return float(collider.position.y)
+	return float(owner.to_local(collider.global_position).y)
+
+
+func _apply_node_y_sort_origin(node: Node2D, origin_y: float) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	var origin_i := int(round(origin_y))
+	if node.has_method("set_y_sort_origin"):
+		node.call("set_y_sort_origin", origin_i)
+		return
+	if node.has_method("get_y_sort_origin"):
+		node.set("y_sort_origin", origin_i)
+		return
 	for prop in node.get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
-			node.set("y_sort_origin", int(round(origin_y)))
-			break
+			node.set("y_sort_origin", origin_i)
+			return
+	node.set_meta("__debug_y_sort_origin_local", origin_i)
 
 
-func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
-	var y := float(collider.position.y)
-	if collider.shape is RectangleShape2D:
-		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
-	elif collider.shape is CircleShape2D:
-		y += float((collider.shape as CircleShape2D).radius)
-	elif collider.shape is CapsuleShape2D:
-		var cap := collider.shape as CapsuleShape2D
-		y += float(cap.height) * 0.5 + float(cap.radius)
-	return y
+func _read_node_y_sort_origin_local(node: Node2D) -> Dictionary:
+	var result := {
+		"has_origin": false,
+		"origin": 0.0,
+		"source": "none",
+	}
+	if node == null or not is_instance_valid(node):
+		return result
+	if node.has_method("get_y_sort_origin"):
+		result["has_origin"] = true
+		result["origin"] = float(node.call("get_y_sort_origin"))
+		result["source"] = "getter"
+		return result
+	for prop in node.get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			result["has_origin"] = true
+			result["origin"] = float(node.get("y_sort_origin"))
+			result["source"] = "property"
+			return result
+	if node.has_meta("__debug_y_sort_origin_local"):
+		# Debug-only fallback: not guaranteed to be used by renderer sorting.
+		result["has_origin"] = false
+		result["origin"] = float(node.get_meta("__debug_y_sort_origin_local"))
+		result["source"] = "meta"
+	return result
 
 
 func _find_zone_sort_host(zone_root: Node) -> Node2D:
@@ -831,7 +987,44 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 	print("[SortProbe] screen=", screen_pos, " world=", world_pos)
 	if player != null and is_instance_valid(player):
 		var p_z: int = int((player as CanvasItem).z_index) if player is CanvasItem else 0
-		print("[SortProbe] player pos=", player.global_position, " y=", player.global_position.y, " z=", p_z, " parent=", player.get_parent().get_path() if player.get_parent() != null else "<null>")
+		var root_y := float(player.global_position.y)
+		var root_pos := player.global_position
+		var anchor_global := root_pos
+		if player.has_method("get_sort_anchor_global"):
+			var anchor_v: Variant = player.call("get_sort_anchor_global")
+			if anchor_v is Vector2:
+				anchor_global = anchor_v as Vector2
+		var wc_global := root_pos
+		if player.has_method("get_world_collider_center_global"):
+			var wc_v: Variant = player.call("get_world_collider_center_global")
+			if wc_v is Vector2:
+				wc_global = wc_v as Vector2
+		var has_y_sort_origin := false
+		var y_sort_origin_v: Variant = null
+		var player_origin_info := _read_node_y_sort_origin_local(player)
+		has_y_sort_origin = bool(player_origin_info.get("has_origin", false))
+		y_sort_origin_v = player_origin_info.get("origin", 0.0)
+		var origin_source := String(player_origin_info.get("source", "none"))
+		var parent_path: String = str(player.get_parent().get_path()) if player.get_parent() != null else "<null>"
+		var runtime_sort_y := root_y
+		var runtime_parent_z := 0
+		var runtime_parent_z_rel := true
+		if player.get_parent() is Node2D and String((player.get_parent() as Node).name) == "__player_sort_pivot":
+			var pivot_parent := player.get_parent() as Node2D
+			runtime_sort_y = float(pivot_parent.global_position.y)
+			runtime_parent_z = int((pivot_parent as CanvasItem).z_index) if pivot_parent is CanvasItem else 0
+			runtime_parent_z_rel = (pivot_parent as CanvasItem).z_as_relative if pivot_parent is CanvasItem else true
+		print("[SortProbe][Player] root_pos=", root_pos, " root_y=", root_y, " z=", p_z, " parent=", parent_path)
+		print("[SortProbe][Player] anchor_global=", anchor_global, " anchor_y=", float(anchor_global.y), " wc_global=", wc_global, " wc_y=", float(wc_global.y))
+		print("[SortProbe][Player] runtime_sort_y=", runtime_sort_y, " runtime_parent_z=", runtime_parent_z, " runtime_parent_z_rel=", runtime_parent_z_rel)
+		if has_y_sort_origin:
+			var computed_y := root_y + float(y_sort_origin_v)
+			print("[SortProbe][Player] y_sort_origin(local)=", y_sort_origin_v, " source=", origin_source, " computed_global_y=", computed_y, " anchor_delta=", float(anchor_global.y) - computed_y)
+		else:
+			if origin_source == "meta":
+				print("[SortProbe][Player] y_sort_origin(local)=<meta-only ", y_sort_origin_v, " renderer_uses_origin=false>")
+			else:
+				print("[SortProbe][Player] y_sort_origin(local)=<missing on Player node>")
 	var y_map: Dictionary = Y_SORTING.get_world_y_mapping_debug()
 	print("[SortProbe] y_map origin=", float(y_map.get("origin_y", 0.0)), " factor=", float(y_map.get("factor", 0.0)))
 
@@ -857,7 +1050,21 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var source_id: int = layer.get_cell_source_id(cell)
 		if source_id == -1:
 			continue
-		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id)
+		if layer.tile_set == null or not layer.tile_set.has_source(source_id):
+			continue
+		var tile_data := layer.get_cell_tile_data(cell)
+		var tile_y_sort_origin := 0.0
+		var tile_texture_origin_y := 0.0
+		if tile_data != null and tile_data.has_method("get_y_sort_origin"):
+			tile_y_sort_origin = float(tile_data.call("get_y_sort_origin"))
+		if tile_data != null and tile_data.has_method("get_texture_origin"):
+			var tex_origin_v: Variant = tile_data.call("get_texture_origin")
+			if tex_origin_v is Vector2i:
+				tile_texture_origin_y = float((tex_origin_v as Vector2i).y)
+			elif tex_origin_v is Vector2:
+				tile_texture_origin_y = float((tex_origin_v as Vector2).y)
+		var tile_anchor_world := layer.to_global(layer.map_to_local(cell) + Vector2(0.0, tile_y_sort_origin))
+		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id, " texture_origin_y=", tile_texture_origin_y, " y_sort_origin=", tile_y_sort_origin, " anchor_y=", float(tile_anchor_world.y))
 
 	var entities := get_tree().get_nodes_in_group("y_sort_entities")
 	for e in entities:
@@ -869,7 +1076,19 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		if n.global_position.distance_to(world_pos) > 260.0:
 			continue
 		var ez: int = int((n as CanvasItem).z_index) if n is CanvasItem else 0
-		print("[SortProbe][Entity] node=", n.get_path(), " y=", n.global_position.y, " z=", ez, " pos=", n.global_position)
+		var origin_info := _read_node_y_sort_origin_local(n)
+		var has_origin := bool(origin_info.get("has_origin", false))
+		var local_origin_y := float(origin_info.get("origin", 0.0))
+		var origin_source := String(origin_info.get("source", "none"))
+		var effective_sort_y := float(n.global_position.y) + local_origin_y if has_origin else float(n.global_position.y)
+		if player != null and is_instance_valid(player) and n == player:
+			var p_parent := n.get_parent()
+			if p_parent is Node2D and String((p_parent as Node).name) == "__player_sort_pivot":
+				effective_sort_y = float((p_parent as Node2D).global_position.y)
+		var origin_print: Variant = local_origin_y if has_origin else "<none>"
+		if origin_source == "meta" and not has_origin:
+			origin_print = "<meta-only %s>" % str(local_origin_y)
+		print("[SortProbe][Entity] node=", n.get_path(), " root_y=", n.global_position.y, " sort_y=", effective_sort_y, " local_origin=", origin_print, " source=", origin_source, " z=", ez, " pos=", n.global_position)
 
 
 func _is_world_pos_visible(world_pos: Vector2) -> bool:

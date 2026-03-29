@@ -243,18 +243,24 @@ func get_collision_profile() -> Dictionary:
 		body_rotation = body_hitbox_shape.rotation
 
 	var interaction_radius := 80.0
+	var interaction_offset := body_offset
 	if interaction_radius_shape != null and interaction_radius_shape.shape is CircleShape2D:
 		interaction_radius = (interaction_radius_shape.shape as CircleShape2D).radius * model_scale.x
+		interaction_offset = Vector2(
+			interaction_radius_shape.position.x * model_scale.x,
+			interaction_radius_shape.position.y * model_scale.y
+		)
 
 	return {
 		"world_collision_shape": world_shape.duplicate(true) if world_shape != null else null,
 		"world_collision_offset": world_offset,
 		"world_collision_rotation": world_rotation,
-		"body_hitbox_shape": body_shape.duplicate(true) if body_shape != null else null,
-		"body_hitbox_offset": body_offset,
-		"body_hitbox_rotation": body_rotation,
-		"interaction_radius": interaction_radius,
-	}
+			"body_hitbox_shape": body_shape.duplicate(true) if body_shape != null else null,
+			"body_hitbox_offset": body_offset,
+			"body_hitbox_rotation": body_rotation,
+			"interaction_radius": interaction_radius,
+			"interaction_offset": interaction_offset,
+		}
 
 func get_overlay_profile() -> Dictionary:
 	var model_scale := Vector2(abs(scale.x), abs(scale.y))

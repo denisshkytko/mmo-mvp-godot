@@ -24,6 +24,7 @@ const MAX_LEVEL: int = 60
 
 # Combat state (used for HP regen rule: HP regenerates only out of combat)
 var _targeters := {} # instance_id -> true
+var _y_sort_origin_meta_fallback_warned: bool = false
 
 func on_targeted_by(attacker: Node) -> void:
 	if attacker == null:
@@ -359,6 +360,7 @@ func _physics_process(_delta: float) -> void:
 	_update_model_motion(input_dir)
 	move_and_slide()
 
+
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
 		return
@@ -366,8 +368,14 @@ func _update_visual_render_order() -> void:
 	visual_root.z_index = 0
 	var parent_2d := get_parent() as Node2D
 	if parent_2d != null and parent_2d.y_sort_enabled:
+		# In y-sort runtime all physical entities must stay on the same Z layer.
+		# Ordering must come from Y-sort origin/anchor only.
 		z_as_relative = true
 		var parent_sort_z := int(parent_2d.z_index)
+		if String(parent_2d.name) == "__player_sort_pivot":
+			# Pivot already carries runtime host z; player itself must stay at local z=0
+			# to avoid double z stacking against y-sorted tile layers.
+			parent_sort_z = 0
 		_apply_overlay_layer_offsets(parent_sort_z)
 		if z_index != parent_sort_z:
 			z_index = parent_sort_z
@@ -386,6 +394,7 @@ func _update_visual_render_order() -> void:
 		z_index = resolved_z
 
 func _resolve_map_space_sort_z() -> int:
+	var anchor := get_sort_anchor_global()
 	var host := get_parent() as Node2D
 	if host != null:
 		for child in host.get_children():
@@ -393,11 +402,11 @@ func _resolve_map_space_sort_z() -> int:
 				var layer := child as TileMapLayer
 				if not layer.y_sort_enabled:
 					continue
-				var cell: Vector2i = layer.local_to_map(layer.to_local(global_position))
+				var cell: Vector2i = layer.local_to_map(layer.to_local(anchor))
 				if layer.get_cell_source_id(cell) != -1:
 					return int(cell.y) + int(layer.z_index)
 	# Fallback: 64px world tile step.
-	return int(floor(global_position.y / 64.0))
+	return int(floor(anchor.y / 64.0))
 
 
 func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
@@ -417,6 +426,7 @@ func refresh_local_overlap_sorting() -> void:
 func _process(delta: float) -> void:
 	if is_dead:
 		return
+	_ensure_model_attached_to_visual_root()
 
 	if c_buffs != null:
 		c_buffs.tick(delta)
@@ -434,6 +444,16 @@ func _process(delta: float) -> void:
 		cast_bar.set_icon_texture(c_ability_caster.get_cast_icon() if casting else null)
 	_update_model_hp_bar()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
+
+
+func _ensure_model_attached_to_visual_root() -> void:
+	if _character_model == null or not is_instance_valid(_character_model):
+		return
+	if visual_root == null or not is_instance_valid(visual_root):
+		return
+	if _character_model.get_parent() == visual_root:
+		return
+	_character_model.reparent(visual_root, true)
 
 
 
@@ -454,21 +474,29 @@ func _sync_y_sort_origin_from_world_collider() -> void:
 	if world_collision == null or not is_instance_valid(world_collision):
 		return
 	var origin_y := _compute_world_collider_sort_origin_y(world_collision)
-	for prop in get_property_list():
-		if String(prop.get("name", "")) == "y_sort_origin":
-			set("y_sort_origin", int(round(origin_y)))
-			break
+	_apply_y_sort_origin(origin_y)
 
 func _compute_world_collider_sort_origin_y(collider: CollisionShape2D) -> float:
-	var y := float(collider.position.y)
-	if collider.shape is RectangleShape2D:
-		y += float((collider.shape as RectangleShape2D).size.y) * 0.5
-	elif collider.shape is CircleShape2D:
-		y += float((collider.shape as CircleShape2D).radius)
-	elif collider.shape is CapsuleShape2D:
-		var cap := collider.shape as CapsuleShape2D
-		y += float(cap.height) * 0.5 + float(cap.radius)
-	return y
+	# Match debug green-diamond logic: collider center in global space, converted to this node local.
+	return float(to_local(collider.global_position).y)
+
+
+func _apply_y_sort_origin(origin_y: float) -> void:
+	var origin_i := int(round(origin_y))
+	if has_method("set_y_sort_origin"):
+		call("set_y_sort_origin", origin_i)
+		return
+	if has_method("get_y_sort_origin"):
+		set("y_sort_origin", origin_i)
+		return
+	for prop in get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			set("y_sort_origin", origin_i)
+			return
+	set_meta("__debug_y_sort_origin_local", origin_i)
+	if not _y_sort_origin_meta_fallback_warned:
+		_y_sort_origin_meta_fallback_warned = true
+		push_warning("Player y_sort_origin is meta-only fallback; renderer may still sort by Player.global_position.")
 
 
 func get_attack_damage() -> int:
@@ -948,7 +976,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 			world_collision.shape = (world_shape_v as Shape2D).duplicate(true)
 		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
 		if world_offset_v is Vector2:
-			world_collision.position = world_offset_v
+			world_collision.position = world_offset_v as Vector2
 		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
 		if world_rot_v is float or world_rot_v is int:
 			world_collision.rotation = float(world_rot_v)
@@ -960,7 +988,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 			body_hitbox_shape.shape = (body_shape_v as Shape2D).duplicate(true)
 		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
 		if body_offset_v is Vector2:
-			body_hitbox_shape.position = body_offset_v
+			body_hitbox_shape.position = body_offset_v as Vector2
 		var body_rot_v: Variant = profile.get("body_hitbox_rotation", body_hitbox_shape.rotation)
 		if body_rot_v is float or body_rot_v is int:
 			body_hitbox_shape.rotation = float(body_rot_v)
@@ -968,6 +996,9 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
 		var interaction_circle := interaction_shape.shape as CircleShape2D
 		interaction_circle.radius = max(1.0, float(profile.get("interaction_radius", interaction_circle.radius)))
+		var interaction_offset_v: Variant = profile.get("interaction_offset", interaction_shape.position)
+		if interaction_offset_v is Vector2:
+			interaction_shape.position = interaction_offset_v as Vector2
 
 func _apply_overlay_profile_from_model(model: Node) -> void:
 	cast_bar = null
