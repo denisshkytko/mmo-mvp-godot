@@ -44,9 +44,9 @@ func _draw_entity_markers() -> void:
 			continue
 		var p := _resolve_node_sort_origin_global(n)
 		_draw_cross_marker(p, ENTITY_COLOR, 5.0)
-		var collider_center := _resolve_world_collider_center_global(n)
-		if collider_center != null:
-			_draw_diamond_marker(collider_center, ENTITY_COLLIDER_CENTER_COLOR, 4.0)
+		var collider_center_v: Variant = _resolve_world_collider_center_global(n)
+		if collider_center_v is Vector2:
+			_draw_diamond_marker(collider_center_v as Vector2, ENTITY_COLLIDER_CENTER_COLOR, 4.0)
 		var label_pos := _world_to_overlay_pos(p) + Vector2(6, -6)
 		draw_string(ThemeDB.fallback_font, label_pos, String(n.name), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, LABEL_COLOR)
 
