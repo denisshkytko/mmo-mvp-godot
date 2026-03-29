@@ -396,7 +396,10 @@ func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
 		pivot = Node2D.new()
 		pivot.name = "__player_sort_pivot"
 		entity_host.add_child(pivot)
-	pivot.y_sort_enabled = true
+	# Keep pivot as a pure anchor node.
+	# If y_sort is enabled here, renderer may re-sort its children by their own Y,
+	# which can effectively bypass the anchor semantics we need for the player branch.
+	pivot.y_sort_enabled = false
 	pivot.z_as_relative = true
 	pivot.z_index = int(entity_host.z_index)
 	_player_sort_pivot = pivot
