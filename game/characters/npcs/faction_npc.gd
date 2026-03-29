@@ -269,7 +269,7 @@ func apply_spawn_init(
 	model_scene_override_in: PackedScene = null
 ) -> void:
 	home_position = spawn_pos
-	global_position = spawn_pos
+	_place_world_collider_at_spawn(spawn_pos)
 
 	faction_id = faction_in
 	_update_faction_color()
@@ -277,6 +277,7 @@ func apply_spawn_init(
 	interaction_type = interaction_in
 	_model_scene_override = model_scene_override_in
 	_apply_interaction_visual()
+	_place_world_collider_at_spawn(spawn_pos)
 	npc_level = max(1, level_in)
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	loot_profile = loot_profile_in if loot_profile_in != null else default_loot_profile
@@ -305,6 +306,7 @@ func apply_spawn_init(
 		c_stats.class_id = class_id_in
 		c_stats.growth_profile_id = growth_profile_id_in
 		c_stats.mob_variant = mob_variant
+
 	_setup_resource_from_class(class_id_in)
 	c_spell_caster.configure(abilities, npc_level)
 
@@ -377,6 +379,15 @@ func apply_spawn_init(
 	c_stats.recalc(npc_level)
 	c_stats.current_hp = c_stats.max_hp
 	_update_hp()
+
+
+func _place_world_collider_at_spawn(spawn_pos: Vector2) -> void:
+	global_position = spawn_pos
+	if world_collision == null or not is_instance_valid(world_collision):
+		return
+	var delta := spawn_pos - world_collision.global_position
+	if not delta.is_zero_approx():
+		global_position += delta
 
 
 func _process(_delta: float) -> void:
