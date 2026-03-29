@@ -123,12 +123,23 @@ func _draw_cross_marker(world_pos: Vector2, color: Color, half_size: float) -> v
 func _resolve_node_sort_origin_global(node: Node2D) -> Vector2:
 	if node == null or not is_instance_valid(node):
 		return Vector2.ZERO
+	if node.has_method("get_sort_anchor_global"):
+		var anchor_v: Variant = node.call("get_sort_anchor_global")
+		if anchor_v is Vector2:
+			return anchor_v as Vector2
 	var y_origin := 0.0
+	var has_y_sort_origin := false
 	for prop in node.get_property_list():
 		if String(prop.get("name", "")) == "y_sort_origin":
+			has_y_sort_origin = true
 			y_origin = float(node.get("y_sort_origin"))
 			break
-	return node.global_position + Vector2(0.0, y_origin)
+	if has_y_sort_origin:
+		return node.global_position + Vector2(0.0, y_origin)
+	var wc_center_v: Variant = _resolve_world_collider_center_global(node)
+	if wc_center_v is Vector2:
+		return wc_center_v as Vector2
+	return node.global_position
 
 
 func _resolve_world_collider_center_global(node: Node2D) -> Variant:
