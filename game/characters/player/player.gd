@@ -247,6 +247,7 @@ var overlay_bars_widget: OverlayBarsWidget = null
 const DEFAULT_CAST_BAR_OFFSET: Vector2 = Vector2(0.0, -42.0)
 
 var _character_model: Node = null
+var _model_sort_anchor_offset: Vector2 = Vector2.ZERO
 var _pending_corpse_pose_snapshot: Dictionary = {}
 var _corpse_spawned_for_current_death: bool = false
 
@@ -935,16 +936,23 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 		return
 	var profile := profile_v as Dictionary
 
+	var world_offset := Vector2.ZERO
 	if world_collision != null:
 		var world_shape_v: Variant = profile.get("world_collision_shape", null)
 		if world_shape_v is Shape2D:
 			world_collision.shape = (world_shape_v as Shape2D).duplicate(true)
 		var world_offset_v: Variant = profile.get("world_collision_offset", world_collision.position)
 		if world_offset_v is Vector2:
-			world_collision.position = world_offset_v
+			world_offset = world_offset_v as Vector2
+			# Variant A: root node is the sort anchor (feet), so keep collider center at local zero.
+			world_collision.position = Vector2.ZERO
 		var world_rot_v: Variant = profile.get("world_collision_rotation", world_collision.rotation)
 		if world_rot_v is float or world_rot_v is int:
 			world_collision.rotation = float(world_rot_v)
+	_model_sort_anchor_offset = world_offset
+	if visual_root != null and is_instance_valid(visual_root):
+		# Move full visual subtree up so root stays at feet/sort-anchor.
+		visual_root.position = -_model_sort_anchor_offset
 	_sync_y_sort_origin_from_world_collider()
 
 	if body_hitbox_shape != null:
@@ -953,7 +961,7 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 			body_hitbox_shape.shape = (body_shape_v as Shape2D).duplicate(true)
 		var body_offset_v: Variant = profile.get("body_hitbox_offset", body_hitbox_shape.position)
 		if body_offset_v is Vector2:
-			body_hitbox_shape.position = body_offset_v
+			body_hitbox_shape.position = (body_offset_v as Vector2) - _model_sort_anchor_offset
 		var body_rot_v: Variant = profile.get("body_hitbox_rotation", body_hitbox_shape.rotation)
 		if body_rot_v is float or body_rot_v is int:
 			body_hitbox_shape.rotation = float(body_rot_v)
@@ -961,6 +969,9 @@ func _apply_collision_profile_from_model(model: Node) -> void:
 	if interaction_shape != null and interaction_shape.shape is CircleShape2D:
 		var interaction_circle := interaction_shape.shape as CircleShape2D
 		interaction_circle.radius = max(1.0, float(profile.get("interaction_radius", interaction_circle.radius)))
+		var interaction_offset_v: Variant = profile.get("interaction_offset", interaction_shape.position)
+		if interaction_offset_v is Vector2:
+			interaction_shape.position = (interaction_offset_v as Vector2) - _model_sort_anchor_offset
 
 func _apply_overlay_profile_from_model(model: Node) -> void:
 	cast_bar = null
