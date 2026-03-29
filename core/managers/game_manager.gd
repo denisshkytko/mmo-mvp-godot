@@ -978,7 +978,19 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 		var source_id: int = layer.get_cell_source_id(cell)
 		if source_id == -1:
 			continue
-		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id)
+		var tile_data := layer.get_cell_tile_data(cell)
+		var tile_y_sort_origin := 0.0
+		var tile_texture_origin_y := 0.0
+		if tile_data != null and tile_data.has_method("get_y_sort_origin"):
+			tile_y_sort_origin = float(tile_data.call("get_y_sort_origin"))
+		if tile_data != null and tile_data.has_method("get_texture_origin"):
+			var tex_origin_v: Variant = tile_data.call("get_texture_origin")
+			if tex_origin_v is Vector2i:
+				tile_texture_origin_y = float((tex_origin_v as Vector2i).y)
+			elif tex_origin_v is Vector2:
+				tile_texture_origin_y = float((tex_origin_v as Vector2).y)
+		var tile_anchor_world := layer.to_global(layer.map_to_local(cell) + Vector2(0.0, tile_texture_origin_y + tile_y_sort_origin))
+		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id, " texture_origin_y=", tile_texture_origin_y, " y_sort_origin=", tile_y_sort_origin, " anchor_y=", float(tile_anchor_world.y))
 
 	var entities := get_tree().get_nodes_in_group("y_sort_entities")
 	for e in entities:
