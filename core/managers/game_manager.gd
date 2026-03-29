@@ -1064,7 +1064,8 @@ func _debug_probe_under_mouse(screen_pos: Vector2) -> void:
 			elif tex_origin_v is Vector2:
 				tile_texture_origin_y = float((tex_origin_v as Vector2).y)
 		var tile_anchor_world := layer.to_global(layer.map_to_local(cell) + Vector2(0.0, tile_y_sort_origin))
-		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id, " texture_origin_y=", tile_texture_origin_y, " y_sort_origin=", tile_y_sort_origin, " anchor_y=", float(tile_anchor_world.y))
+		var tile_anchor_world_with_tex := layer.to_global(layer.map_to_local(cell) + Vector2(0.0, tile_y_sort_origin + tile_texture_origin_y))
+		print("[SortProbe][Tile] layer=", layer.get_path(), " y_sort=", layer.y_sort_enabled, " z=", layer.z_index, " scale=", layer.scale, " cell=", cell, " source=", source_id, " texture_origin_y=", tile_texture_origin_y, " y_sort_origin=", tile_y_sort_origin, " anchor_y=", float(tile_anchor_world.y), " anchor_y_with_tex=", float(tile_anchor_world_with_tex.y))
 
 	var entities := get_tree().get_nodes_in_group("y_sort_entities")
 	for e in entities:
