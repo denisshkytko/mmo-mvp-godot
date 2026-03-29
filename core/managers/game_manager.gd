@@ -371,9 +371,16 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 		return
 	host.y_sort_enabled = true
 	var entity_host := _ensure_y_sort_runtime_layer(host)
-	var sort_pivot := _ensure_player_sort_pivot(entity_host)
-	if player.get_parent() != sort_pivot:
-		player.reparent(sort_pivot, true)
+	if _node_has_native_y_sort_origin(player):
+		if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
+			_player_sort_pivot.queue_free()
+		_player_sort_pivot = null
+		if player.get_parent() != entity_host:
+			player.reparent(entity_host, true)
+	else:
+		var sort_pivot := _ensure_player_sort_pivot(entity_host)
+		if player.get_parent() != sort_pivot:
+			player.reparent(sort_pivot, true)
 	player.top_level = false
 	player.y_sort_enabled = false
 	player.z_as_relative = true
@@ -399,6 +406,8 @@ func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
 func _sync_player_sort_pivot() -> void:
 	if player == null or not is_instance_valid(player):
 		return
+	if _node_has_native_y_sort_origin(player):
+		return
 	if _player_sort_pivot == null or not is_instance_valid(_player_sort_pivot):
 		return
 	if player.get_parent() != _player_sort_pivot:
@@ -412,6 +421,19 @@ func _sync_player_sort_pivot() -> void:
 	_player_sort_pivot.global_position = anchor_global
 	if player.global_position != desired_player_global:
 		player.global_position = desired_player_global
+
+
+func _node_has_native_y_sort_origin(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	if node.has_method("set_y_sort_origin"):
+		return true
+	if node.has_method("get_y_sort_origin"):
+		return true
+	for prop in node.get_property_list():
+		if String(prop.get("name", "")) == "y_sort_origin":
+			return true
+	return false
 
 
 func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
@@ -502,6 +524,10 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 		return
 	var n2d := node as Node2D
 	if player != null and is_instance_valid(player) and n2d == player:
+		if _node_has_native_y_sort_origin(player):
+			if n2d.get_parent() != runtime:
+				n2d.reparent(runtime, true)
+			return
 		if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
 			if n2d.get_parent() != _player_sort_pivot:
 				n2d.reparent(_player_sort_pivot, true)
