@@ -30,6 +30,7 @@ var _active_y_sort_host: Node2D = null
 var _tree_node_added_connected: bool = false
 var _y_sort_debug_overlay: Node2D = null
 var _y_sort_debug_canvas: CanvasLayer = null
+var _player_sort_pivot: Node2D = null
 
 
 func _ready() -> void:
@@ -57,6 +58,10 @@ func _ready() -> void:
 	if _has_loaded_character:
 		call_deferred("_emit_player_spawned")
 	call_deferred("_ensure_y_sort_debug_overlay")
+
+
+func _process(_delta: float) -> void:
+	_sync_player_sort_pivot()
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -345,6 +350,12 @@ func _detach_player_from_zone_for_reload() -> void:
 		return
 	if world_root == null:
 		return
+	if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
+		if player.get_parent() == _player_sort_pivot:
+			player.reparent(world_root, true)
+		if _player_sort_pivot.get_parent() != null:
+			_player_sort_pivot.queue_free()
+		_player_sort_pivot = null
 	if player.get_parent() == world_root:
 		return
 	player.reparent(world_root, true)
@@ -360,12 +371,47 @@ func _attach_player_to_zone_sort_host(zone_root: Node2D) -> void:
 		return
 	host.y_sort_enabled = true
 	var entity_host := _ensure_y_sort_runtime_layer(host)
-	if player.get_parent() != entity_host:
-		player.reparent(entity_host, true)
+	var sort_pivot := _ensure_player_sort_pivot(entity_host)
+	if player.get_parent() != sort_pivot:
+		player.reparent(sort_pivot, true)
 	player.top_level = false
-	player.y_sort_enabled = true
+	player.y_sort_enabled = false
 	player.z_as_relative = true
-	player.z_index = int(entity_host.z_index)
+	player.z_index = 0
+	_sync_player_sort_pivot()
+
+
+func _ensure_player_sort_pivot(entity_host: Node2D) -> Node2D:
+	if entity_host == null:
+		return null
+	var pivot := entity_host.get_node_or_null("__player_sort_pivot") as Node2D
+	if pivot == null:
+		pivot = Node2D.new()
+		pivot.name = "__player_sort_pivot"
+		pivot.y_sort_enabled = true
+		pivot.z_as_relative = true
+		pivot.z_index = int(entity_host.z_index)
+		entity_host.add_child(pivot)
+	_player_sort_pivot = pivot
+	return pivot
+
+
+func _sync_player_sort_pivot() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if _player_sort_pivot == null or not is_instance_valid(_player_sort_pivot):
+		return
+	if player.get_parent() != _player_sort_pivot:
+		return
+	var desired_player_global := player.global_position
+	var anchor_global := desired_player_global
+	if player.has_method("get_sort_anchor_global"):
+		var anchor_v: Variant = player.call("get_sort_anchor_global")
+		if anchor_v is Vector2:
+			anchor_global = anchor_v as Vector2
+	_player_sort_pivot.global_position = anchor_global
+	if player.global_position != desired_player_global:
+		player.global_position = desired_player_global
 
 
 func _ensure_y_sort_runtime_layer(host: Node2D) -> Node2D:
