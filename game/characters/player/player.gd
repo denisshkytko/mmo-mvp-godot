@@ -368,13 +368,13 @@ func _update_visual_render_order() -> void:
 	var parent_2d := get_parent() as Node2D
 	if parent_2d != null and parent_2d.y_sort_enabled:
 		z_as_relative = true
-		var parent_sort_z := int(parent_2d.z_index)
-		_apply_overlay_layer_offsets(parent_sort_z)
-		if z_index != parent_sort_z:
-			z_index = parent_sort_z
-			emit_signal("visual_layer_changed", parent_sort_z)
+		var local_sort_z := 0
+		_apply_overlay_layer_offsets(local_sort_z)
+		if z_index != local_sort_z:
+			z_index = local_sort_z
+			emit_signal("visual_layer_changed", int(parent_2d.z_index) + local_sort_z)
 		else:
-			z_index = parent_sort_z
+			z_index = local_sort_z
 		return
 	var resolved_z: int = _resolve_map_space_sort_z()
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)
@@ -387,6 +387,7 @@ func _update_visual_render_order() -> void:
 		z_index = resolved_z
 
 func _resolve_map_space_sort_z() -> int:
+	var anchor := get_sort_anchor_global()
 	var host := get_parent() as Node2D
 	if host != null:
 		for child in host.get_children():
@@ -394,11 +395,11 @@ func _resolve_map_space_sort_z() -> int:
 				var layer := child as TileMapLayer
 				if not layer.y_sort_enabled:
 					continue
-				var cell: Vector2i = layer.local_to_map(layer.to_local(global_position))
+				var cell: Vector2i = layer.local_to_map(layer.to_local(anchor))
 				if layer.get_cell_source_id(cell) != -1:
 					return int(cell.y) + int(layer.z_index)
 	# Fallback: 64px world tile step.
-	return int(floor(global_position.y / 64.0))
+	return int(floor(anchor.y / 64.0))
 
 
 func _apply_overlay_layer_offsets(_base_visual_z: int) -> void:
