@@ -367,13 +367,13 @@ func _update_visual_render_order() -> void:
 	var parent_2d := get_parent() as Node2D
 	if parent_2d != null and parent_2d.y_sort_enabled:
 		z_as_relative = true
-		var parent_sort_z := int(parent_2d.z_index)
-		_apply_overlay_layer_offsets(parent_sort_z)
-		if z_index != parent_sort_z:
-			z_index = parent_sort_z
-			emit_signal("visual_layer_changed", parent_sort_z)
+		var sort_delta := int(round(get_sort_anchor_global().y - global_position.y))
+		_apply_overlay_layer_offsets(sort_delta)
+		if z_index != sort_delta:
+			z_index = sort_delta
+			emit_signal("visual_layer_changed", int(parent_2d.z_index) + sort_delta)
 		else:
-			z_index = parent_sort_z
+			z_index = sort_delta
 		return
 	var resolved_z: int = _resolve_map_space_sort_z()
 	resolved_z = clampi(resolved_z, RenderingServer.CANVAS_ITEM_Z_MIN + 2, RenderingServer.CANVAS_ITEM_Z_MAX)

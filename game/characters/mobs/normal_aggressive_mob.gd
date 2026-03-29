@@ -329,6 +329,12 @@ func _update_visual_render_order() -> void:
 		return
 	visual_root.z_as_relative = true
 	var resolved_z: int = 0
+	var parent_2d := get_parent() as Node2D
+	if parent_2d != null and parent_2d.y_sort_enabled:
+		z_as_relative = true
+		var sort_delta := int(round(get_sort_anchor_global().y - global_position.y))
+		if z_index != sort_delta:
+			z_index = sort_delta
 	_apply_overlay_layer_offsets(resolved_z)
 	if visual_root.z_index != resolved_z:
 		visual_root.z_index = resolved_z
