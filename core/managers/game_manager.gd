@@ -405,8 +405,19 @@ func _on_tree_node_added(node: Node) -> void:
 		return
 	if not _active_y_sort_host.is_ancestor_of(node):
 		return
-	var host := _active_y_sort_host
-	var runtime := host.get_node_or_null("__y_sort_runtime") as Node2D
+	# Godot can emit node_added while the parent is still mutating children.
+	# Deferring avoids "parent is busy adding/removing children" reparent errors.
+	call_deferred("_promote_node_to_runtime_deferred", node)
+
+
+func _promote_node_to_runtime_deferred(node: Node) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	if _active_y_sort_host == null or not is_instance_valid(_active_y_sort_host):
+		return
+	if not _active_y_sort_host.is_ancestor_of(node):
+		return
+	var runtime := _active_y_sort_host.get_node_or_null("__y_sort_runtime") as Node2D
 	if runtime == null:
 		return
 	_maybe_promote_node_to_runtime(node, runtime)
@@ -422,23 +433,46 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	if not (node is Node2D):
 		return
 	var n2d := node as Node2D
+	if _should_skip_nested_runtime_promotion(n2d):
+		return
 	var node_name := String(n2d.name).to_lower()
 	if node_name == "decor" or node_name == "spawner groups" or node_name == "__y_sort_runtime":
 		return
 	var should_promote: bool = false
-	if n2d.has_method("get_sort_anchor_global"):
-		should_promote = true
-	elif n2d.is_in_group("y_sort_entities"):
-		should_promote = true
-	elif node_name == "player":
-		should_promote = true
-	elif n2d.get_node_or_null("CollisionProfile/WorldCollider") != null:
-		should_promote = true
-	elif n2d.get_node_or_null("WorldCollider") != null:
-		should_promote = true
+	should_promote = _is_runtime_promotion_candidate(n2d)
 	if should_promote and n2d.get_parent() != runtime:
 		n2d.reparent(runtime, true)
 	_try_sync_node_y_sort_origin_from_world_collider(n2d)
+
+
+func _is_runtime_promotion_candidate(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return false
+	var node_name := String(node.name).to_lower()
+	if node.has_method("get_sort_anchor_global"):
+		return true
+	if node.is_in_group("y_sort_entities"):
+		return true
+	if node_name == "player":
+		return true
+	if node.get_node_or_null("CollisionProfile/WorldCollider") != null:
+		return true
+	if node.get_node_or_null("WorldCollider") != null:
+		return true
+	return false
+
+
+func _should_skip_nested_runtime_promotion(node: Node2D) -> bool:
+	if node == null or not is_instance_valid(node):
+		return true
+	var parent := node.get_parent()
+	while parent != null:
+		if parent is Node2D and _is_runtime_promotion_candidate(parent as Node2D):
+			return true
+		if parent == _active_y_sort_host:
+			break
+		parent = parent.get_parent()
+	return false
 
 
 func _try_sync_node_y_sort_origin_from_world_collider(node: Node2D) -> void:
