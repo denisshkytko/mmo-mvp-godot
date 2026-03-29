@@ -501,6 +501,11 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 	if not (node is Node2D):
 		return
 	var n2d := node as Node2D
+	if player != null and is_instance_valid(player) and n2d == player:
+		if _player_sort_pivot != null and is_instance_valid(_player_sort_pivot):
+			if n2d.get_parent() != _player_sort_pivot:
+				n2d.reparent(_player_sort_pivot, true)
+		return
 	if _has_y_sort_entity_ancestor(n2d):
 		return
 	if _should_skip_nested_runtime_promotion(n2d):
