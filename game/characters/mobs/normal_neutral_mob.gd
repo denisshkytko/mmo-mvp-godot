@@ -12,6 +12,7 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const DEFAULT_RANGED_PROJECTILE_SCENE := preload("res://game/characters/mobs/projectiles/HomingProjectile.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 const MODEL_SCENE_PATHS := {
 	"golems": {
@@ -302,14 +303,20 @@ func _physics_process(delta: float) -> void:
 
 	# AI
 	var target: Node2D = aggressor if is_aggressive else null
+	var t_ai_tick := Time.get_ticks_usec()
 	c_ai.tick(delta, self, target, c_combat, is_aggressive)
+	FRAME_PROFILER.add_usec("mob_neutral.physics.ai_tick", Time.get_ticks_usec() - t_ai_tick)
 
 	# атака только если агрессивен
 	if is_aggressive and aggressor != null and is_instance_valid(aggressor):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		if not c_spell_caster.should_block_auto_attack():
+			var t_combat_tick := Time.get_ticks_usec()
 			c_combat.tick(delta, self, aggressor, snap)
+			FRAME_PROFILER.add_usec("mob_neutral.physics.combat_tick", Time.get_ticks_usec() - t_combat_tick)
+		var t_spell_tick := Time.get_ticks_usec()
 		c_spell_caster.tick(delta, aggressor)
+		FRAME_PROFILER.add_usec("mob_neutral.physics.spell_tick", Time.get_ticks_usec() - t_spell_tick)
 
 	if (aggressor == null or not is_instance_valid(aggressor)) and c_spell_caster != null and c_spell_caster.is_casting():
 		c_spell_caster.interrupt_cast("lost_target")

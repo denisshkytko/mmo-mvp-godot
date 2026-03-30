@@ -8,6 +8,7 @@ const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 ## NodeCache is a global helper (class_name). Avoid shadowing.
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
@@ -319,7 +320,9 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
+		var t_move_dead := Time.get_ticks_usec()
 		move_and_slide()
+		FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_dead)
 		return
 	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
 		_set_model_stunned(true)
@@ -332,7 +335,9 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
+		var t_move_stunned := Time.get_ticks_usec()
 		move_and_slide()
+		FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_stunned)
 		return
 	_set_model_stunned(false)
 
@@ -354,7 +359,9 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
+		var t_move_casting := Time.get_ticks_usec()
 		move_and_slide()
+		FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_casting)
 		return
 
 	if input_dir.length() > 0.0:
@@ -369,7 +376,9 @@ func _physics_process(_delta: float) -> void:
 	velocity = input_dir * move_speed * move_mult
 	current_move_speed = velocity.length()
 	_update_model_motion(input_dir)
+	var t_move_normal := Time.get_ticks_usec()
 	move_and_slide()
+	FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_normal)
 
 
 func _get_road_move_speed_multiplier() -> float:

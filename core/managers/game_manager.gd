@@ -3,6 +3,7 @@ extends Node
 const FIRST_ENTRY_SPAWN_POINT := preload("res://game/world/spawn/first_entry_spawn_point.gd")
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const Y_SORT_DEBUG_OVERLAY := preload("res://core/render/y_sort_debug_overlay.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 @onready var zone_container: Node = $"../ZoneContainer"
 @onready var world_root: Node = $".."
@@ -55,6 +56,7 @@ var _perf_last_player_nodes_count: int = 0
 var _perf_last_mob_nodes_count: int = 0
 var _perf_last_npc_nodes_count: int = 0
 var _perf_last_projectile_nodes_count: int = 0
+var _perf_last_runtime_breakdown_line: String = "script=n/a"
 
 
 func _ready() -> void:
@@ -116,6 +118,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
 	_perf_last_entities_count = total_entities
 	_perf_last_pivots_count = pivot_count
+	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(FRAME_PROFILER.consume_average_ms())
 	if debug_perf_metrics_enabled:
 		print(
 			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
@@ -180,6 +183,31 @@ func _collect_runtime_node_breakdown() -> void:
 	_perf_last_projectile_nodes_count = projectile_nodes
 
 
+func _build_runtime_breakdown_line(samples_ms: Dictionary) -> String:
+	if samples_ms.is_empty():
+		return "script=n/a"
+	var keys := [
+		"player.physics.move_and_slide",
+		"mob_aggressive.physics.ai_tick",
+		"mob_aggressive.physics.combat_tick",
+		"mob_neutral.physics.ai_tick",
+		"mob_neutral.physics.combat_tick",
+		"npc.physics.ai_tick",
+		"npc.physics.combat_tick",
+	]
+	var parts: Array[String] = []
+	for key in keys:
+		if not samples_ms.has(key):
+			continue
+		var short_name := key.replace(".physics.", ".")
+		parts.append("%s=%.3fms" % [short_name, float(samples_ms[key])])
+		if parts.size() >= 3:
+			break
+	if parts.is_empty():
+		return "script=n/a"
+	return "script " + ", ".join(parts)
+
+
 func _ensure_runtime_profiler_overlay() -> void:
 	if world_root == null:
 		return
@@ -237,6 +265,7 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
 		+ "proc_nodes=%d phys_nodes=%d\n" % [_perf_last_process_nodes_count, _perf_last_physics_nodes_count]
 		+ "players=%d mobs=%d npcs=%d proj=%d\n" % [_perf_last_player_nodes_count, _perf_last_mob_nodes_count, _perf_last_npc_nodes_count, _perf_last_projectile_nodes_count]
+		+ "%s\n" % _perf_last_runtime_breakdown_line
 		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
 		+ "target=%s" % target_state
 	)

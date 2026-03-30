@@ -13,6 +13,7 @@ const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/Merchan
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 signal died(corpse: Corpse)
 
@@ -545,14 +546,20 @@ func _physics_process(delta: float) -> void:
 		_clear_direct_attackers()
 
 	# AI tick
+	var t_ai_tick := Time.get_ticks_usec()
 	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
+	FRAME_PROFILER.add_usec("npc.physics.ai_tick", Time.get_ticks_usec() - t_ai_tick)
 
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		if not c_spell_caster.should_block_auto_attack():
+			var t_combat_tick := Time.get_ticks_usec()
 			c_combat.tick(delta, self, current_target, snap)
+			FRAME_PROFILER.add_usec("npc.physics.combat_tick", Time.get_ticks_usec() - t_combat_tick)
+		var t_spell_tick := Time.get_ticks_usec()
 		c_spell_caster.tick(delta, current_target)
+		FRAME_PROFILER.add_usec("npc.physics.spell_tick", Time.get_ticks_usec() - t_spell_tick)
 
 	if (current_target == null or not is_instance_valid(current_target)) and c_spell_caster != null and c_spell_caster.is_casting():
 		c_spell_caster.interrupt_cast("lost_target")
