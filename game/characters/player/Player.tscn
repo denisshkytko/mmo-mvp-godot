@@ -29,6 +29,16 @@ script = ExtResource("1_p0vlq")
 
 [node name="Visual" type="Node2D" parent="."]
 
+[node name="SpeedDebugLabel" type="Label" parent="."]
+offset_left = -36.0
+offset_top = -120.0
+offset_right = 36.0
+offset_bottom = -97.0
+theme_override_colors/font_color = Color(0.35, 1, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+text = "SPD 0.0"
+
 [node name="WorldCollider" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_world")
 

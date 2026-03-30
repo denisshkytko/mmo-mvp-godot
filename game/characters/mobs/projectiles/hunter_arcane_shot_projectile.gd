@@ -15,10 +15,12 @@ var _done: bool = false
 func setup(target: Node2D, source: Node2D = null) -> void:
 	_target = target
 	_source = source
+	_sync_sort_layer()
 
 func _physics_process(delta: float) -> void:
 	if _done:
 		return
+	_sync_sort_layer()
 
 	_life += delta
 	if _life >= max_lifetime:
@@ -50,3 +52,21 @@ func _resolve_target_anchor() -> Vector2:
 		if v is Vector2:
 			return v as Vector2
 	return _target.global_position
+
+
+func _sync_sort_layer() -> void:
+	var layer_source: Node2D = _source if _source != null and is_instance_valid(_source) else _target
+	if layer_source == null or not is_instance_valid(layer_source):
+		return
+	var base_z: int = 0
+	var visual_v: Variant = layer_source.get("visual_root")
+	if visual_v is CanvasItem and is_instance_valid(visual_v):
+		base_z = int((visual_v as CanvasItem).z_index)
+	elif layer_source is CanvasItem:
+		base_z = int((layer_source as CanvasItem).z_index)
+	z_as_relative = false
+	z_index = base_z
+	if has_method("set_y_sort_origin"):
+		call("set_y_sort_origin", 0)
+	else:
+		set("y_sort_origin", 0)
