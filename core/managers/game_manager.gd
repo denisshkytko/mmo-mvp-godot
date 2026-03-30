@@ -118,7 +118,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
 	_perf_last_entities_count = total_entities
 	_perf_last_pivots_count = pivot_count
-	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(FRAME_PROFILER.consume_average_ms())
+	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(FRAME_PROFILER.consume_stats())
 	if debug_perf_metrics_enabled:
 		print(
 			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
@@ -183,29 +183,44 @@ func _collect_runtime_node_breakdown() -> void:
 	_perf_last_projectile_nodes_count = projectile_nodes
 
 
-func _build_runtime_breakdown_line(samples_ms: Dictionary) -> String:
-	if samples_ms.is_empty():
+func _build_runtime_breakdown_line(samples: Dictionary) -> String:
+	if samples.is_empty():
 		return "script=n/a"
-	var keys := [
-		"player.physics.move_and_slide",
-		"mob_aggressive.physics.ai_tick",
-		"mob_aggressive.physics.combat_tick",
-		"mob_neutral.physics.ai_tick",
-		"mob_neutral.physics.combat_tick",
-		"npc.physics.ai_tick",
-		"npc.physics.combat_tick",
-	]
+	var entries: Array[Dictionary] = []
+	for key_v in samples.keys():
+		var key: String = String(key_v)
+		var entry_v: Variant = samples.get(key, {})
+		if not (entry_v is Dictionary):
+			continue
+		var entry: Dictionary = entry_v as Dictionary
+		entries.append(
+			{
+				"key": key,
+				"total_ms": float(entry.get("total_ms", 0.0)),
+				"avg_ms": float(entry.get("avg_ms", 0.0)),
+				"samples": int(entry.get("samples", 0)),
+			}
+		)
+	entries.sort_custom(_sort_runtime_breakdown_desc)
 	var parts: Array[String] = []
-	for key: String in keys:
-		if not samples_ms.has(key):
+	for item in entries:
+		var key: String = String(item.get("key", ""))
+		if key == "":
 			continue
 		var short_name: String = key.replace(".physics.", ".")
-		parts.append("%s=%.3fms" % [short_name, float(samples_ms[key])])
+		var total_ms: float = float(item.get("total_ms", 0.0))
+		var avg_ms: float = float(item.get("avg_ms", 0.0))
+		var samples_count: int = int(item.get("samples", 0))
+		parts.append("%s=%.3fms(avg %.3f x%d)" % [short_name, total_ms, avg_ms, samples_count])
 		if parts.size() >= 3:
 			break
 	if parts.is_empty():
 		return "script=n/a"
 	return "script " + ", ".join(parts)
+
+
+func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
+	return float(a.get("total_ms", 0.0)) > float(b.get("total_ms", 0.0))
 
 
 func _ensure_runtime_profiler_overlay() -> void:
