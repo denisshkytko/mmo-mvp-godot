@@ -192,6 +192,8 @@ func _build_runtime_breakdown_line(samples: Dictionary, frames: int) -> String:
 	var entries: Array[Dictionary] = []
 	for key_v in samples.keys():
 		var key: String = String(key_v)
+		if not _is_runtime_breakdown_key_visible(key):
+			continue
 		var entry_v: Variant = samples.get(key, {})
 		if not (entry_v is Dictionary):
 			continue
@@ -226,6 +228,13 @@ func _build_runtime_breakdown_line(samples: Dictionary, frames: int) -> String:
 
 func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
 	return float(a.get("frame_ms", 0.0)) > float(b.get("frame_ms", 0.0))
+
+
+func _is_runtime_breakdown_key_visible(key: String) -> bool:
+	# Temporarily keep overlay focused on AI decomposition only.
+	# Less-informative keys (player move, combat/spell wrappers, etc.) remain collected
+	# but are hidden from the compact on-screen summary.
+	return key.begins_with("mob_aggressive.ai.") or key.begins_with("mob_neutral.ai.") or key.begins_with("npc.ai.")
 
 
 func _ensure_runtime_profiler_overlay() -> void:

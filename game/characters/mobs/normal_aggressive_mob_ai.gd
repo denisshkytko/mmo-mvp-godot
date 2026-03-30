@@ -4,6 +4,7 @@ class_name NormalAggresiveMobAI
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const COMBAT_SPACING_BUFFER: float = 32.0
 const PATROL_SEPARATION_DISTANCE: float = 28.0
 const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
@@ -54,29 +55,39 @@ func is_returning() -> bool:
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	# выключение CHASE по leash_distance
+	var t_leash := Time.get_ticks_usec()
 	var dist_to_home: float = actor.global_position.distance_to(home_position)
 	if _state == AIState.CHASE and dist_to_home > leash_distance:
 		_state = AIState.RETURN
 		emit_signal("leash_return_started")
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.leash_check", Time.get_ticks_usec() - t_leash)
 
 	# RETURN
 	if _state == AIState.RETURN:
+		var t_return := Time.get_ticks_usec()
 		_do_return(delta, actor)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.return", Time.get_ticks_usec() - t_return)
 		return
 
 	# включаем CHASE только если цель вошла в агро-радиус
+	var t_aggro_gate := Time.get_ticks_usec()
 	if _state != AIState.CHASE and target != null and is_instance_valid(target):
 		var dist_to_target: float = actor.global_position.distance_to(target.global_position)
 		if dist_to_target <= aggro_radius:
 			_state = AIState.CHASE
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.aggro_gate", Time.get_ticks_usec() - t_aggro_gate)
 
 	# CHASE
 	if _state == AIState.CHASE:
+		var t_chase := Time.get_ticks_usec()
 		_do_chase(actor, target, combat)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.chase", Time.get_ticks_usec() - t_chase)
 		return
 
 	# IDLE
+	var t_idle := Time.get_ticks_usec()
 	_do_idle(delta, actor)
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.idle", Time.get_ticks_usec() - t_idle)
 
 func on_took_damage(attacker: Node2D) -> void:
 	if attacker == null or not is_instance_valid(attacker):

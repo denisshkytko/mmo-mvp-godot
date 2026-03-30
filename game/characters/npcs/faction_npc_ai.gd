@@ -7,6 +7,7 @@ enum State { IDLE, CHASE, RETURN }
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const COMBAT_SPACING_BUFFER: float = 32.0
 const PATROL_SEPARATION_DISTANCE: float = 28.0
 const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
@@ -57,26 +58,36 @@ func on_took_damage(attacker: Node2D) -> void:
 	state = State.CHASE
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat, proactive: bool) -> void:
+	var t_leash := Time.get_ticks_usec()
 	var dist_home: float = actor.global_position.distance_to(home_position)
 	if state == State.CHASE and dist_home > leash_distance:
 		state = State.RETURN
 		emit_signal("leash_return_started")
+	FRAME_PROFILER.add_usec("npc.ai.leash_check", Time.get_ticks_usec() - t_leash)
 
 	if state == State.RETURN:
+		var t_return := Time.get_ticks_usec()
 		_do_return(delta, actor)
+		FRAME_PROFILER.add_usec("npc.ai.return", Time.get_ticks_usec() - t_return)
 		return
 
+	var t_proactive_gate := Time.get_ticks_usec()
 	if proactive:
 		if state != State.CHASE and target != null and is_instance_valid(target):
 			var d: float = actor.global_position.distance_to(target.global_position)
 			if d <= aggro_radius:
 				state = State.CHASE
+	FRAME_PROFILER.add_usec("npc.ai.proactive_gate", Time.get_ticks_usec() - t_proactive_gate)
 
 	if state == State.CHASE:
+		var t_chase := Time.get_ticks_usec()
 		_do_chase(actor, target, combat)
+		FRAME_PROFILER.add_usec("npc.ai.chase", Time.get_ticks_usec() - t_chase)
 		return
 
+	var t_idle := Time.get_ticks_usec()
 	_do_idle(delta, actor)
+	FRAME_PROFILER.add_usec("npc.ai.idle", Time.get_ticks_usec() - t_idle)
 
 func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 	if behavior == Behavior.PATROL:
