@@ -7,7 +7,7 @@ const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const COMBAT_SPACING_BUFFER: float = 32.0
 const PATROL_SEPARATION_DISTANCE: float = 28.0
-const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
+const PATROL_SEPARATION_REFRESH_SEC: float = 0.30
 const OBSTACLE_AVOID_LOOKAHEAD: float = 18.0
 const OBSTACLE_AVOID_ANGLES := [0.35, -0.35, 0.7, -0.7, 1.2, -1.2]
 const PATROL_SOFT_STUCK_SEC: float = 0.8
@@ -107,9 +107,7 @@ func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 		actor.velocity = Vector2.ZERO
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
-		var t_idle_guard_move := Time.get_ticks_usec()
-		actor.move_and_slide()
-		FRAME_PROFILER.add_usec("mob_neutral.ai.idle_guard_move", Time.get_ticks_usec() - t_idle_guard_move)
+		return
 
 func _pick_new_patrol_target() -> void:
 	_has_patrol_target = true
@@ -180,6 +178,7 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	FRAME_PROFILER.add_usec("mob_neutral.ai.patrol_steer", Time.get_ticks_usec() - t_patrol_steer)
 	if final_dir.length_squared() <= 0.0001:
 		actor.velocity = Vector2.ZERO
+		return
 	else:
 		actor.velocity = final_dir * patrol_speed
 	if actor.has_method("update_movement_animation"):
