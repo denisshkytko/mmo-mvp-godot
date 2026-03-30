@@ -57,6 +57,7 @@ var _perf_last_mob_nodes_count: int = 0
 var _perf_last_npc_nodes_count: int = 0
 var _perf_last_projectile_nodes_count: int = 0
 var _perf_last_runtime_breakdown_line: String = "script=n/a"
+var _perf_last_frames_count: int = 0
 
 
 func _ready() -> void:
@@ -114,11 +115,12 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	var pivot_count := _entity_sort_pivots.size()
 	_collect_runtime_node_breakdown()
 	_perf_last_interval_sec = _perf_metrics_elapsed
+	_perf_last_frames_count = frames
 	_perf_last_avg_sync_player_ms = avg_sync_player_ms
 	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
 	_perf_last_entities_count = total_entities
 	_perf_last_pivots_count = pivot_count
-	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(FRAME_PROFILER.consume_stats())
+	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(FRAME_PROFILER.consume_stats(), frames)
 	if debug_perf_metrics_enabled:
 		print(
 			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
@@ -183,9 +185,10 @@ func _collect_runtime_node_breakdown() -> void:
 	_perf_last_projectile_nodes_count = projectile_nodes
 
 
-func _build_runtime_breakdown_line(samples: Dictionary) -> String:
+func _build_runtime_breakdown_line(samples: Dictionary, frames: int) -> String:
 	if samples.is_empty():
 		return "script=n/a"
+	var frame_count: int = max(1, frames)
 	var entries: Array[Dictionary] = []
 	for key_v in samples.keys():
 		var key: String = String(key_v)
@@ -196,6 +199,7 @@ func _build_runtime_breakdown_line(samples: Dictionary) -> String:
 		entries.append(
 			{
 				"key": key,
+				"frame_ms": float(entry.get("total_ms", 0.0)) / float(frame_count),
 				"total_ms": float(entry.get("total_ms", 0.0)),
 				"avg_ms": float(entry.get("avg_ms", 0.0)),
 				"samples": int(entry.get("samples", 0)),
@@ -208,10 +212,11 @@ func _build_runtime_breakdown_line(samples: Dictionary) -> String:
 		if key == "":
 			continue
 		var short_name: String = key.replace(".physics.", ".")
+		var frame_ms: float = float(item.get("frame_ms", 0.0))
 		var total_ms: float = float(item.get("total_ms", 0.0))
 		var avg_ms: float = float(item.get("avg_ms", 0.0))
 		var samples_count: int = int(item.get("samples", 0))
-		parts.append("%s=%.3fms(avg %.3f x%d)" % [short_name, total_ms, avg_ms, samples_count])
+		parts.append("%s=%.3fms/f(avg %.3f x%d)" % [short_name, frame_ms, avg_ms, samples_count])
 		if parts.size() >= 3:
 			break
 	if parts.is_empty():
@@ -220,7 +225,7 @@ func _build_runtime_breakdown_line(samples: Dictionary) -> String:
 
 
 func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
-	return float(a.get("total_ms", 0.0)) > float(b.get("total_ms", 0.0))
+	return float(a.get("frame_ms", 0.0)) > float(b.get("frame_ms", 0.0))
 
 
 func _ensure_runtime_profiler_overlay() -> void:
@@ -272,7 +277,7 @@ func _update_runtime_profiler_overlay() -> void:
 		physics_ms_per_node = physics_ms / float(_perf_last_physics_nodes_count)
 	_runtime_profiler_label.text = (
 		"[Runtime Profiler]\n"
-		+ "fps=%d interval=%.2fs\n" % [fps, _perf_last_interval_sec]
+		+ "fps=%d interval=%.2fs frames=%d\n" % [fps, _perf_last_interval_sec, _perf_last_frames_count]
 		+ "process=%.2fms physics=%.2fms\n" % [process_ms, physics_ms]
 		+ "proc/node=%.3fms phys/node=%.3fms\n" % [process_ms_per_node, physics_ms_per_node]
 		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
