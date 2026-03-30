@@ -144,7 +144,9 @@ func _ensure_runtime_profiler_overlay() -> void:
 	if _runtime_profiler_label == null or not is_instance_valid(_runtime_profiler_label):
 		_runtime_profiler_label = Label.new()
 		_runtime_profiler_label.name = "__runtime_profiler_label"
-		_runtime_profiler_label.position = Vector2(16.0, 16.0)
+		_runtime_profiler_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+		_runtime_profiler_label.offset_left = 16.0
+		_runtime_profiler_label.offset_bottom = -16.0
 		_runtime_profiler_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_runtime_profiler_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		_runtime_profiler_label.add_theme_font_size_override("font_size", 14)
@@ -172,6 +174,9 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
 		+ "scene_nodes=%d target=%s" % [tree_nodes, target_state]
 	)
+	var line_count: int = _runtime_profiler_label.text.count("\n") + 1
+	var estimated_height: float = float(line_count) * 18.0
+	_runtime_profiler_label.offset_top = -16.0 - estimated_height
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
