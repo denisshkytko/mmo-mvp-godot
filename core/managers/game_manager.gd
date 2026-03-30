@@ -164,15 +164,21 @@ func _update_runtime_profiler_overlay() -> void:
 	var fps: int = int(round(Engine.get_frames_per_second()))
 	var tree_nodes: int = get_tree().get_node_count()
 	var target_state: String = "none"
+	var process_ms: float = float(Performance.get_monitor(Performance.TIME_PROCESS)) * 1000.0
+	var physics_ms: float = float(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0
+	var node_count_monitor: int = int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
+	var draw_calls: int = int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
 	if current_target != null and is_instance_valid(current_target):
 		target_state = String(current_target.name)
 	_runtime_profiler_label.text = (
 		"[Runtime Profiler]\n"
 		+ "fps=%d interval=%.2fs\n" % [fps, _perf_last_interval_sec]
+		+ "process=%.2fms physics=%.2fms\n" % [process_ms, physics_ms]
 		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
 		+ "gm.sync_entities=%.3fms\n" % _perf_last_avg_sync_entities_ms
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
-		+ "scene_nodes=%d target=%s" % [tree_nodes, target_state]
+		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
+		+ "target=%s" % target_state
 	)
 	var min_size: Vector2 = _runtime_profiler_label.get_minimum_size()
 	_runtime_profiler_label.offset_top = _runtime_profiler_label.offset_bottom - min_size.y
