@@ -16,9 +16,9 @@ var current_target: Node = null
 @export var debug_world_probe_under_mouse: bool = false
 @export var debug_draw_y_sort_markers: bool = false
 @export var debug_draw_tilemap_y_sort_markers: bool = false
-@export var debug_perf_metrics_enabled: bool = false
-@export var debug_perf_metrics_interval_sec: float = 1.0
-@export var debug_runtime_profiler_overlay_enabled: bool = false
+@export var debug_perf_metrics_enabled: bool = true
+@export var debug_perf_metrics_interval_sec: float = 0.5
+@export var debug_runtime_profiler_overlay_enabled: bool = true
 @export var debug_runtime_profiler_interval_sec: float = 0.5
 
 # --- Save/Load runtime ---
