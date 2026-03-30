@@ -234,7 +234,9 @@ func _is_runtime_breakdown_key_visible(key: String) -> bool:
 	# Temporarily keep overlay focused on AI decomposition only.
 	# Less-informative keys (player move, combat/spell wrappers, etc.) remain collected
 	# but are hidden from the compact on-screen summary.
-	return key.begins_with("mob_aggressive.ai.") or key.begins_with("mob_neutral.ai.") or key.begins_with("npc.ai.")
+	if not (key.begins_with("mob_aggressive.ai.") or key.begins_with("mob_neutral.ai.") or key.begins_with("npc.ai.")):
+		return false
+	return key.find(".ai.idle") != -1 or key.find(".ai.patrol_") != -1
 
 
 func _ensure_runtime_profiler_overlay() -> void:

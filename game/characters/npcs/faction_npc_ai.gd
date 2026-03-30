@@ -91,12 +91,16 @@ func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: FactionN
 
 func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 	if behavior == Behavior.PATROL:
+		var t_idle_patrol := Time.get_ticks_usec()
 		_do_patrol(delta, actor)
+		FRAME_PROFILER.add_usec("npc.ai.idle_patrol", Time.get_ticks_usec() - t_idle_patrol)
 	else:
 		actor.velocity = Vector2.ZERO
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
+		var t_idle_guard_move := Time.get_ticks_usec()
 		actor.move_and_slide()
+		FRAME_PROFILER.add_usec("npc.ai.idle_guard_move", Time.get_ticks_usec() - t_idle_guard_move)
 
 func _pick_patrol_target() -> void:
 	_has_patrol_target = true
@@ -112,7 +116,9 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		_patrol_stuck_time = 0.0
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
+		var t_patrol_wait_move := Time.get_ticks_usec()
 		actor.move_and_slide()
+		FRAME_PROFILER.add_usec("npc.ai.patrol_move", Time.get_ticks_usec() - t_patrol_wait_move)
 		return
 
 	if not _has_patrol_target:
@@ -145,20 +151,26 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	_patrol_has_last_position = true
 
 	var patrol_dir: Vector2 = (_patrol_target - actor.global_position).normalized()
+	var t_patrol_separation := Time.get_ticks_usec()
 	var separation_dir: Vector2 = _get_patrol_separation_vector(delta, actor)
+	FRAME_PROFILER.add_usec("npc.ai.patrol_separation", Time.get_ticks_usec() - t_patrol_separation)
 	var final_dir: Vector2 = patrol_dir + separation_dir
 	if final_dir.length_squared() > 0.0001:
 		final_dir = final_dir.normalized()
 	else:
 		final_dir = patrol_dir
+	var t_patrol_steer := Time.get_ticks_usec()
 	final_dir = _steer_around_obstacles(actor, final_dir)
+	FRAME_PROFILER.add_usec("npc.ai.patrol_steer", Time.get_ticks_usec() - t_patrol_steer)
 	if final_dir.length_squared() <= 0.0001:
 		actor.velocity = Vector2.ZERO
 	else:
 		actor.velocity = final_dir * patrol_speed
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, true)
+	var t_patrol_move := Time.get_ticks_usec()
 	actor.move_and_slide()
+	FRAME_PROFILER.add_usec("npc.ai.patrol_move", Time.get_ticks_usec() - t_patrol_move)
 
 func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vector2:
 	_patrol_separation_refresh -= delta
