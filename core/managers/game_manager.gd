@@ -13,9 +13,11 @@ var current_target: Node = null
 @export var use_cam_screen_center_for_world_math: bool = true
 @export var debug_targeting_clicks: bool = false
 @export var allow_corpse_targeting: bool = true
-@export var debug_world_probe_under_mouse: bool = true
-@export var debug_draw_y_sort_markers: bool = true
-@export var debug_draw_tilemap_y_sort_markers: bool = true
+@export var debug_world_probe_under_mouse: bool = false
+@export var debug_draw_y_sort_markers: bool = false
+@export var debug_draw_tilemap_y_sort_markers: bool = false
+@export var debug_perf_metrics_enabled: bool = false
+@export var debug_perf_metrics_interval_sec: float = 1.0
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -32,6 +34,10 @@ var _y_sort_debug_overlay: Node2D = null
 var _y_sort_debug_canvas: CanvasLayer = null
 var _player_sort_pivot: Node2D = null
 var _entity_sort_pivots: Dictionary = {} # int(instance_id) -> Node2D pivot
+var _perf_metrics_elapsed: float = 0.0
+var _perf_frames_collected: int = 0
+var _perf_sync_player_usec_accum: int = 0
+var _perf_sync_entities_usec_accum: int = 0
 
 
 func _ready() -> void:
@@ -61,9 +67,46 @@ func _ready() -> void:
 	call_deferred("_ensure_y_sort_debug_overlay")
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	var t0 := Time.get_ticks_usec()
 	_sync_player_sort_pivot()
+	var t1 := Time.get_ticks_usec()
 	_sync_entity_sort_pivots()
+	var t2 := Time.get_ticks_usec()
+	if debug_perf_metrics_enabled:
+		_collect_perf_metrics(delta, t1 - t0, t2 - t1)
+
+
+func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_usec: int) -> void:
+	_perf_metrics_elapsed += max(0.0, delta)
+	_perf_frames_collected += 1
+	_perf_sync_player_usec_accum += max(0, sync_player_usec)
+	_perf_sync_entities_usec_accum += max(0, sync_entities_usec)
+	var interval := max(0.25, debug_perf_metrics_interval_sec)
+	if _perf_metrics_elapsed < interval:
+		return
+	var frames := max(1, _perf_frames_collected)
+	var avg_sync_player_ms := float(_perf_sync_player_usec_accum) / 1000.0 / float(frames)
+	var avg_sync_entities_ms := float(_perf_sync_entities_usec_accum) / 1000.0 / float(frames)
+	var total_entities := get_tree().get_nodes_in_group("y_sort_entities").size()
+	var pivot_count := _entity_sort_pivots.size()
+	print(
+		"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d y_sort_dbg=%s tile_dbg=%s"
+		% [
+			_perf_metrics_elapsed,
+			frames,
+			avg_sync_player_ms,
+			avg_sync_entities_ms,
+			total_entities,
+			pivot_count,
+			str(debug_draw_y_sort_markers),
+			str(debug_draw_tilemap_y_sort_markers),
+		]
+	)
+	_perf_metrics_elapsed = 0.0
+	_perf_frames_collected = 0
+	_perf_sync_player_usec_accum = 0
+	_perf_sync_entities_usec_accum = 0
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
