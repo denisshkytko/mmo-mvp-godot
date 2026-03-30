@@ -17,14 +17,26 @@ const CORPSE_SCENE: PackedScene = preload("res://game/world/corpses/Corpse.tscn"
 # 6) вернуть corpse для сигнала died
 # ------------------------------------------------------------
 
-static func spawn_corpse(parent: Node, world_pos: Vector2) -> Corpse:
+static func _resolve_corpse_parent(parent: Node) -> Node:
 	if parent == null or not is_instance_valid(parent):
+		return null
+	var parent_name := String(parent.name)
+	if parent_name.begins_with("__sort_pivot_") or parent_name == "__player_sort_pivot":
+		var runtime_parent := parent.get_parent()
+		if runtime_parent != null and is_instance_valid(runtime_parent):
+			return runtime_parent
+	return parent
+
+
+static func spawn_corpse(parent: Node, world_pos: Vector2) -> Corpse:
+	var resolved_parent := _resolve_corpse_parent(parent)
+	if resolved_parent == null:
 		return null
 	var inst := CORPSE_SCENE.instantiate()
 	var corpse := inst as Corpse
 	if corpse == null:
 		return null
-	parent.add_child(corpse)
+	resolved_parent.add_child(corpse)
 	corpse.global_position = world_pos
 	return corpse
 

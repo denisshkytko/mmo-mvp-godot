@@ -13,9 +13,13 @@ var current_target: Node = null
 @export var use_cam_screen_center_for_world_math: bool = true
 @export var debug_targeting_clicks: bool = false
 @export var allow_corpse_targeting: bool = true
-@export var debug_world_probe_under_mouse: bool = true
-@export var debug_draw_y_sort_markers: bool = true
-@export var debug_draw_tilemap_y_sort_markers: bool = true
+@export var debug_world_probe_under_mouse: bool = false
+@export var debug_draw_y_sort_markers: bool = false
+@export var debug_draw_tilemap_y_sort_markers: bool = false
+@export var debug_perf_metrics_enabled: bool = true
+@export var debug_perf_metrics_interval_sec: float = 0.5
+@export var debug_runtime_profiler_overlay_enabled: bool = true
+@export var debug_runtime_profiler_interval_sec: float = 0.5
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -30,8 +34,21 @@ var _active_y_sort_host: Node2D = null
 var _tree_node_added_connected: bool = false
 var _y_sort_debug_overlay: Node2D = null
 var _y_sort_debug_canvas: CanvasLayer = null
+var _runtime_profiler_canvas: CanvasLayer = null
+var _runtime_profiler_label: Label = null
 var _player_sort_pivot: Node2D = null
 var _entity_sort_pivots: Dictionary = {} # int(instance_id) -> Node2D pivot
+var _node_requires_sort_pivot_cache: Dictionary = {} # int(instance_id) -> bool
+var _entity_pivot_last_node_global: Dictionary = {} # int(instance_id) -> Vector2
+var _perf_metrics_elapsed: float = 0.0
+var _perf_frames_collected: int = 0
+var _perf_sync_player_usec_accum: int = 0
+var _perf_sync_entities_usec_accum: int = 0
+var _perf_last_interval_sec: float = 0.0
+var _perf_last_avg_sync_player_ms: float = 0.0
+var _perf_last_avg_sync_entities_ms: float = 0.0
+var _perf_last_entities_count: int = 0
+var _perf_last_pivots_count: int = 0
 
 
 func _ready() -> void:
@@ -59,11 +76,114 @@ func _ready() -> void:
 	if _has_loaded_character:
 		call_deferred("_emit_player_spawned")
 	call_deferred("_ensure_y_sort_debug_overlay")
+	call_deferred("_ensure_runtime_profiler_overlay")
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	var t0 := Time.get_ticks_usec()
 	_sync_player_sort_pivot()
+	var t1 := Time.get_ticks_usec()
 	_sync_entity_sort_pivots()
+	var t2 := Time.get_ticks_usec()
+	if debug_perf_metrics_enabled or debug_runtime_profiler_overlay_enabled:
+		_collect_perf_metrics(delta, t1 - t0, t2 - t1)
+
+
+func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_usec: int) -> void:
+	_perf_metrics_elapsed += max(0.0, delta)
+	_perf_frames_collected += 1
+	_perf_sync_player_usec_accum += max(0, sync_player_usec)
+	_perf_sync_entities_usec_accum += max(0, sync_entities_usec)
+	var interval: float = max(0.25, debug_perf_metrics_interval_sec)
+	if debug_runtime_profiler_overlay_enabled:
+		interval = min(interval, max(0.25, debug_runtime_profiler_interval_sec))
+	if _perf_metrics_elapsed < interval:
+		return
+	var frames: int = max(1, _perf_frames_collected)
+	var avg_sync_player_ms := float(_perf_sync_player_usec_accum) / 1000.0 / float(frames)
+	var avg_sync_entities_ms := float(_perf_sync_entities_usec_accum) / 1000.0 / float(frames)
+	var total_entities := get_tree().get_nodes_in_group("y_sort_entities").size()
+	var pivot_count := _entity_sort_pivots.size()
+	_perf_last_interval_sec = _perf_metrics_elapsed
+	_perf_last_avg_sync_player_ms = avg_sync_player_ms
+	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
+	_perf_last_entities_count = total_entities
+	_perf_last_pivots_count = pivot_count
+	if debug_perf_metrics_enabled:
+		print(
+			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d y_sort_dbg=%s tile_dbg=%s"
+			% [
+				_perf_metrics_elapsed,
+				frames,
+				avg_sync_player_ms,
+				avg_sync_entities_ms,
+				total_entities,
+				pivot_count,
+				str(debug_draw_y_sort_markers),
+				str(debug_draw_tilemap_y_sort_markers),
+			]
+		)
+	if debug_runtime_profiler_overlay_enabled:
+		_update_runtime_profiler_overlay()
+	_perf_metrics_elapsed = 0.0
+	_perf_frames_collected = 0
+	_perf_sync_player_usec_accum = 0
+	_perf_sync_entities_usec_accum = 0
+
+
+func _ensure_runtime_profiler_overlay() -> void:
+	if world_root == null:
+		return
+	if not debug_runtime_profiler_overlay_enabled:
+		if _runtime_profiler_canvas != null and is_instance_valid(_runtime_profiler_canvas):
+			_runtime_profiler_canvas.visible = false
+		return
+	if _runtime_profiler_canvas == null or not is_instance_valid(_runtime_profiler_canvas):
+		_runtime_profiler_canvas = CanvasLayer.new()
+		_runtime_profiler_canvas.name = "__runtime_profiler_canvas"
+		_runtime_profiler_canvas.layer = 110
+		world_root.add_child.call_deferred(_runtime_profiler_canvas)
+	if _runtime_profiler_label == null or not is_instance_valid(_runtime_profiler_label):
+		_runtime_profiler_label = Label.new()
+		_runtime_profiler_label.name = "__runtime_profiler_label"
+		_runtime_profiler_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+		_runtime_profiler_label.offset_left = 16.0
+		_runtime_profiler_label.offset_bottom = -16.0
+		_runtime_profiler_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		_runtime_profiler_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		_runtime_profiler_label.add_theme_font_size_override("font_size", 14)
+		_runtime_profiler_label.add_theme_color_override("font_color", Color(0.9, 1.0, 0.9, 0.95))
+		_runtime_profiler_canvas.add_child.call_deferred(_runtime_profiler_label)
+	_runtime_profiler_canvas.visible = true
+	_update_runtime_profiler_overlay()
+
+
+func _update_runtime_profiler_overlay() -> void:
+	if not debug_runtime_profiler_overlay_enabled:
+		return
+	if _runtime_profiler_label == null or not is_instance_valid(_runtime_profiler_label):
+		return
+	var fps: int = int(round(Engine.get_frames_per_second()))
+	var tree_nodes: int = get_tree().get_node_count()
+	var target_state: String = "none"
+	var process_ms: float = float(Performance.get_monitor(Performance.TIME_PROCESS)) * 1000.0
+	var physics_ms: float = float(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0
+	var node_count_monitor: int = int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
+	var draw_calls: int = int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+	if current_target != null and is_instance_valid(current_target):
+		target_state = String(current_target.name)
+	_runtime_profiler_label.text = (
+		"[Runtime Profiler]\n"
+		+ "fps=%d interval=%.2fs\n" % [fps, _perf_last_interval_sec]
+		+ "process=%.2fms physics=%.2fms\n" % [process_ms, physics_ms]
+		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
+		+ "gm.sync_entities=%.3fms\n" % _perf_last_avg_sync_entities_ms
+		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
+		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
+		+ "target=%s" % target_state
+	)
+	var min_size: Vector2 = _runtime_profiler_label.get_minimum_size()
+	_runtime_profiler_label.offset_top = _runtime_profiler_label.offset_bottom - min_size.y
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
@@ -560,11 +680,18 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 func _node_requires_sort_pivot(node: Node2D) -> bool:
 	if node == null or not is_instance_valid(node):
 		return false
+	var key := node.get_instance_id()
+	if _node_requires_sort_pivot_cache.has(key):
+		return bool(_node_requires_sort_pivot_cache[key])
 	if player != null and is_instance_valid(player) and node == player:
+		_node_requires_sort_pivot_cache[key] = false
 		return false
 	if not node.has_method("get_sort_anchor_global"):
+		_node_requires_sort_pivot_cache[key] = false
 		return false
-	return not _node_has_native_y_sort_origin(node)
+	var requires_pivot := not _node_has_native_y_sort_origin(node)
+	_node_requires_sort_pivot_cache[key] = requires_pivot
+	return requires_pivot
 
 
 func _attach_node_to_entity_sort_pivot(node: Node2D, runtime: Node2D) -> void:
@@ -606,18 +733,20 @@ func _sync_entity_sort_pivots() -> void:
 		if node == null or not is_instance_valid(node):
 			pivot.queue_free()
 			stale_keys.append(key)
+			_node_requires_sort_pivot_cache.erase(key)
 			continue
 		if not _node_requires_sort_pivot(node):
 			if node.get_parent() == pivot and pivot.get_parent() != null:
 				node.reparent(pivot.get_parent(), true)
 			pivot.queue_free()
 			stale_keys.append(key)
+			_node_requires_sort_pivot_cache.erase(key)
 			continue
 		if node.get_parent() != pivot:
 			node.reparent(pivot, true)
 		var desired_node_global := node.global_position
-		if pivot.has_meta("__last_node_global"):
-			var last_node_global_v: Variant = pivot.get_meta("__last_node_global")
+		if _entity_pivot_last_node_global.has(key):
+			var last_node_global_v: Variant = _entity_pivot_last_node_global.get(key)
 			if last_node_global_v is Vector2:
 				var last_node_global := last_node_global_v as Vector2
 				if last_node_global.is_equal_approx(desired_node_global):
@@ -629,9 +758,11 @@ func _sync_entity_sort_pivots() -> void:
 		pivot.global_position = anchor_global
 		if node.global_position != desired_node_global:
 			node.global_position = desired_node_global
-		pivot.set_meta("__last_node_global", desired_node_global)
+		_entity_pivot_last_node_global[key] = desired_node_global
 	for stale in stale_keys:
 		_entity_sort_pivots.erase(stale)
+		_node_requires_sort_pivot_cache.erase(stale)
+		_entity_pivot_last_node_global.erase(stale)
 
 
 func _has_y_sort_entity_ancestor(node: Node) -> bool:
