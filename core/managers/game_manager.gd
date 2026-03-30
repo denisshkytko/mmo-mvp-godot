@@ -174,9 +174,8 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
 		+ "scene_nodes=%d target=%s" % [tree_nodes, target_state]
 	)
-	var line_count: int = _runtime_profiler_label.text.count("\n") + 1
-	var estimated_height: float = float(line_count) * 18.0
-	_runtime_profiler_label.offset_top = -16.0 - estimated_height
+	var min_size: Vector2 = _runtime_profiler_label.get_minimum_size()
+	_runtime_profiler_label.offset_top = _runtime_profiler_label.offset_bottom - min_size.y
 
 func _get_world_screen_center(cam: Camera2D) -> Vector2:
 	if cam == null:
