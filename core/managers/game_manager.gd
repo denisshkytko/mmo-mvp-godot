@@ -82,10 +82,10 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_frames_collected += 1
 	_perf_sync_player_usec_accum += max(0, sync_player_usec)
 	_perf_sync_entities_usec_accum += max(0, sync_entities_usec)
-	var interval := max(0.25, debug_perf_metrics_interval_sec)
+	var interval: float = max(0.25, debug_perf_metrics_interval_sec)
 	if _perf_metrics_elapsed < interval:
 		return
-	var frames := max(1, _perf_frames_collected)
+	var frames: int = max(1, _perf_frames_collected)
 	var avg_sync_player_ms := float(_perf_sync_player_usec_accum) / 1000.0 / float(frames)
 	var avg_sync_entities_ms := float(_perf_sync_entities_usec_accum) / 1000.0 / float(frames)
 	var total_entities := get_tree().get_nodes_in_group("y_sort_entities").size()

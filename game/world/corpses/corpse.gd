@@ -12,6 +12,7 @@ signal despawned
 @export var interact_radius: float = 60.0
 @export var despawn_seconds: float = 30.0
 @export var owner_is_player: bool = false
+@export var y_sort_anchor_offset_y: float = 310.0
 
 var _life_timer: float = 0.0
 var _player_in_range: Node = null
@@ -182,6 +183,10 @@ func _ready() -> void:
 func refresh_local_overlap_sorting() -> void:
 	z_as_relative = true
 	z_index = 0
+
+
+func get_sort_anchor_global() -> Vector2:
+	return global_position + Vector2(0.0, y_sort_anchor_offset_y)
 
 func set_loot_owner_player(player_node: Node) -> void:
 	if player_node == null:
