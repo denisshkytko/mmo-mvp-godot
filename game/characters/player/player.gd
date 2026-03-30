@@ -480,24 +480,40 @@ func refresh_local_overlap_sorting() -> void:
 func _process(delta: float) -> void:
 	if is_dead:
 		return
+	var t_process_total := Time.get_ticks_usec()
 	_ensure_model_attached_to_visual_root()
 
 	if c_buffs != null:
+		var t_buffs := Time.get_ticks_usec()
 		c_buffs.tick(delta)
+		FRAME_PROFILER.add_usec("process.player.buffs_tick", Time.get_ticks_usec() - t_buffs)
 	if c_stats != null:
+		var t_stats := Time.get_ticks_usec()
 		c_stats.tick(delta)
+		FRAME_PROFILER.add_usec("process.player.stats_tick", Time.get_ticks_usec() - t_stats)
 	if c_ability_caster != null:
+		var t_caster := Time.get_ticks_usec()
 		c_ability_caster.tick(delta)
+		FRAME_PROFILER.add_usec("process.player.ability_tick", Time.get_ticks_usec() - t_caster)
 	if c_combat != null and not (c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned"))):
+		var t_combat := Time.get_ticks_usec()
 		c_combat.tick(delta)
+		FRAME_PROFILER.add_usec("process.player.combat_tick", Time.get_ticks_usec() - t_combat)
 
 	if cast_bar != null and c_ability_caster != null:
+		var t_castbar := Time.get_ticks_usec()
 		var casting := c_ability_caster.is_casting()
 		cast_bar.set_cast_visible(casting)
 		cast_bar.set_progress01(c_ability_caster.get_cast_progress() if casting else 0.0)
 		cast_bar.set_icon_texture(c_ability_caster.get_cast_icon() if casting else null)
+		FRAME_PROFILER.add_usec("process.player.castbar_update", Time.get_ticks_usec() - t_castbar)
+	var t_hpbar := Time.get_ticks_usec()
 	_update_model_hp_bar()
+	FRAME_PROFILER.add_usec("process.player.hpbar_update", Time.get_ticks_usec() - t_hpbar)
+	var t_marker := Time.get_ticks_usec()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
+	FRAME_PROFILER.add_usec("process.player.target_marker", Time.get_ticks_usec() - t_marker)
+	FRAME_PROFILER.add_usec("process.player.total", Time.get_ticks_usec() - t_process_total)
 
 
 func _ensure_model_attached_to_visual_root() -> void:

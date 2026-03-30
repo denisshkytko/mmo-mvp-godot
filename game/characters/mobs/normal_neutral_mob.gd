@@ -200,7 +200,9 @@ func _ready() -> void:
 		c_stats.update_hp_bar(hp_bar)
 
 func _process(_delta: float) -> void:
+	var t_marker := Time.get_ticks_usec()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
+	FRAME_PROFILER.add_usec("process.mob_neutral.target_marker", Time.get_ticks_usec() - t_marker)
 
 
 func get_body_hitbox_center_global() -> Vector2:

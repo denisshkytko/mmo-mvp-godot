@@ -89,11 +89,15 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
 	var t0 := Time.get_ticks_usec()
 	_sync_player_sort_pivot()
 	var t1 := Time.get_ticks_usec()
 	_sync_entity_sort_pivots()
 	var t2 := Time.get_ticks_usec()
+	FRAME_PROFILER.add_usec("process.gm.sync_player_sort", t1 - t0)
+	FRAME_PROFILER.add_usec("process.gm.sync_entity_sorts", t2 - t1)
+	FRAME_PROFILER.add_usec("process.gm.total", Time.get_ticks_usec() - t_process_total)
 	if debug_perf_metrics_enabled or debug_runtime_profiler_overlay_enabled:
 		_collect_perf_metrics(delta, t1 - t0, t2 - t1)
 
@@ -231,12 +235,8 @@ func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
 
 
 func _is_runtime_breakdown_key_visible(key: String) -> bool:
-	# Temporarily keep overlay focused on AI decomposition only.
-	# Less-informative keys (player move, combat/spell wrappers, etc.) remain collected
-	# but are hidden from the compact on-screen summary.
-	if not (key.begins_with("mob_aggressive.ai.") or key.begins_with("mob_neutral.ai.") or key.begins_with("npc.ai.")):
-		return false
-	return key.find(".ai.idle") != -1 or key.find(".ai.patrol_") != -1
+	# Temporarily focus compact overlay on _process hotspots.
+	return key.begins_with("process.")
 
 
 func _ensure_runtime_profiler_overlay() -> void:

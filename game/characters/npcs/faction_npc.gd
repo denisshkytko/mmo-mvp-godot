@@ -392,9 +392,15 @@ func _place_world_collider_at_spawn(spawn_pos: Vector2) -> void:
 
 
 func _process(_delta: float) -> void:
+	var t_marker := Time.get_ticks_usec()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
+	FRAME_PROFILER.add_usec("process.npc.target_marker", Time.get_ticks_usec() - t_marker)
+	var t_highlight := Time.get_ticks_usec()
 	_refresh_model_highlight_visual()
+	FRAME_PROFILER.add_usec("process.npc.highlight", Time.get_ticks_usec() - t_highlight)
+	var t_interaction := Time.get_ticks_usec()
 	_update_interaction()
+	FRAME_PROFILER.add_usec("process.npc.interaction", Time.get_ticks_usec() - t_interaction)
 
 func _refresh_model_highlight_visual() -> void:
 	if model_highlight == null or not is_instance_valid(model_highlight):
