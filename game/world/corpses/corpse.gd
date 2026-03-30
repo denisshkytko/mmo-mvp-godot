@@ -12,7 +12,9 @@ signal despawned
 @export var interact_radius: float = 60.0
 @export var despawn_seconds: float = 30.0
 @export var owner_is_player: bool = false
-@export var y_sort_anchor_offset_y: float = 310.0
+# Expected corpse sort anchor is built relative to the original WorldCollider profile:
+# world_collider_y(255) + y_sort_point_delta(55) = 310.
+@export var y_sort_anchor_offset_y: float = 55.0
 
 var _life_timer: float = 0.0
 var _player_in_range: Node = null

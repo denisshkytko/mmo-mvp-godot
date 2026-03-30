@@ -250,7 +250,6 @@ var overlay_bars_widget: OverlayBarsWidget = null
 @onready var interaction_shape: CollisionShape2D = $InteractionDetector/InteractionRadius as CollisionShape2D
 
 @onready var visual_root: Node2D = $Visual as Node2D
-@onready var speed_debug_label: Label = $SpeedDebugLabel as Label
 
 const DEFAULT_CAST_BAR_OFFSET: Vector2 = Vector2(0.0, -42.0)
 
@@ -320,7 +319,6 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
-		_update_speed_debug_label()
 		move_and_slide()
 		return
 	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
@@ -334,7 +332,6 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
-		_update_speed_debug_label()
 		move_and_slide()
 		return
 	_set_model_stunned(false)
@@ -357,7 +354,6 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
-		_update_speed_debug_label()
 		move_and_slide()
 		return
 
@@ -373,7 +369,6 @@ func _physics_process(_delta: float) -> void:
 	velocity = input_dir * move_speed * move_mult
 	current_move_speed = velocity.length()
 	_update_model_motion(input_dir)
-	_update_speed_debug_label()
 	move_and_slide()
 
 
@@ -408,12 +403,6 @@ func _get_cached_road_layer() -> TileMapLayer:
 					stack.append(child)
 		host = host.get_parent()
 	return null
-
-
-func _update_speed_debug_label() -> void:
-	if speed_debug_label == null or not is_instance_valid(speed_debug_label):
-		return
-	speed_debug_label.text = "SPD %.1f" % current_move_speed
 
 
 func _update_visual_render_order() -> void:
