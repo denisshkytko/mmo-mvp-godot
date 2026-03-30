@@ -38,6 +38,8 @@ var _runtime_profiler_canvas: CanvasLayer = null
 var _runtime_profiler_label: Label = null
 var _player_sort_pivot: Node2D = null
 var _entity_sort_pivots: Dictionary = {} # int(instance_id) -> Node2D pivot
+var _node_requires_sort_pivot_cache: Dictionary = {} # int(instance_id) -> bool
+var _entity_pivot_last_node_global: Dictionary = {} # int(instance_id) -> Vector2
 var _perf_metrics_elapsed: float = 0.0
 var _perf_frames_collected: int = 0
 var _perf_sync_player_usec_accum: int = 0
@@ -678,11 +680,18 @@ func _maybe_promote_node_to_runtime(node: Node, runtime: Node2D) -> void:
 func _node_requires_sort_pivot(node: Node2D) -> bool:
 	if node == null or not is_instance_valid(node):
 		return false
+	var key := node.get_instance_id()
+	if _node_requires_sort_pivot_cache.has(key):
+		return bool(_node_requires_sort_pivot_cache[key])
 	if player != null and is_instance_valid(player) and node == player:
+		_node_requires_sort_pivot_cache[key] = false
 		return false
 	if not node.has_method("get_sort_anchor_global"):
+		_node_requires_sort_pivot_cache[key] = false
 		return false
-	return not _node_has_native_y_sort_origin(node)
+	var requires_pivot := not _node_has_native_y_sort_origin(node)
+	_node_requires_sort_pivot_cache[key] = requires_pivot
+	return requires_pivot
 
 
 func _attach_node_to_entity_sort_pivot(node: Node2D, runtime: Node2D) -> void:
@@ -724,18 +733,20 @@ func _sync_entity_sort_pivots() -> void:
 		if node == null or not is_instance_valid(node):
 			pivot.queue_free()
 			stale_keys.append(key)
+			_node_requires_sort_pivot_cache.erase(key)
 			continue
 		if not _node_requires_sort_pivot(node):
 			if node.get_parent() == pivot and pivot.get_parent() != null:
 				node.reparent(pivot.get_parent(), true)
 			pivot.queue_free()
 			stale_keys.append(key)
+			_node_requires_sort_pivot_cache.erase(key)
 			continue
 		if node.get_parent() != pivot:
 			node.reparent(pivot, true)
 		var desired_node_global := node.global_position
-		if pivot.has_meta("__last_node_global"):
-			var last_node_global_v: Variant = pivot.get_meta("__last_node_global")
+		if _entity_pivot_last_node_global.has(key):
+			var last_node_global_v: Variant = _entity_pivot_last_node_global.get(key)
 			if last_node_global_v is Vector2:
 				var last_node_global := last_node_global_v as Vector2
 				if last_node_global.is_equal_approx(desired_node_global):
@@ -747,9 +758,11 @@ func _sync_entity_sort_pivots() -> void:
 		pivot.global_position = anchor_global
 		if node.global_position != desired_node_global:
 			node.global_position = desired_node_global
-		pivot.set_meta("__last_node_global", desired_node_global)
+		_entity_pivot_last_node_global[key] = desired_node_global
 	for stale in stale_keys:
 		_entity_sort_pivots.erase(stale)
+		_node_requires_sort_pivot_cache.erase(stale)
+		_entity_pivot_last_node_global.erase(stale)
 
 
 func _has_y_sort_entity_ancestor(node: Node) -> bool:
