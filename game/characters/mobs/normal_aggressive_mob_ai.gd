@@ -305,6 +305,9 @@ func _should_run_idle_patrol_tick(actor: CharacterBody2D) -> bool:
 		return true
 	if behavior != Behavior.PATROL:
 		return true
+	# Keep nearby/on-camera mobs visually smooth; stagger only at minimal LOD.
+	if _current_lod_level <= 1:
+		return true
 	if _idle_stagger_offset < 0:
 		_idle_stagger_offset = int(abs(actor.get_instance_id())) % IDLE_STAGGER_DIVISOR
 	return (_idle_tick_counter % IDLE_STAGGER_DIVISOR) == _idle_stagger_offset
