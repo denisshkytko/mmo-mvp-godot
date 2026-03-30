@@ -19,12 +19,17 @@ const PRIEST_MODEL_SCENE := preload("res://game/characters/player/models/PriestM
 const SHAMAN_MODEL_SCENE := preload("res://game/characters/player/models/ShamanModel.tscn")
 const HUNTER_MODEL_SCENE := preload("res://game/characters/player/models/HunterModel.tscn")
 const MAX_LEVEL: int = 60
+const ROAD_LAYER_NAME: StringName = &"road"
+const ROAD_MOVE_SPEED_MULT: float = 1.2
+const ROAD_LAYER_RESCAN_SEC: float = 1.0
 
 @export var move_speed: float = MOVE_SPEED.PLAYER_BASE
 
 # Combat state (used for HP regen rule: HP regenerates only out of combat)
 var _targeters := {} # instance_id -> true
 var _y_sort_origin_meta_fallback_warned: bool = false
+var _road_tile_layer: TileMapLayer = null
+var _next_road_layer_scan_sec: float = 0.0
 
 func on_targeted_by(attacker: Node) -> void:
 	if attacker == null:
@@ -354,11 +359,45 @@ func _physics_process(_delta: float) -> void:
 	var move_mult: float = 1.0
 	if c_buffs != null and c_buffs.has_method("get_move_speed_multiplier"):
 		move_mult = float(c_buffs.call("get_move_speed_multiplier"))
+	move_mult *= _get_road_move_speed_multiplier()
 	if move_mult <= 0.0:
 		move_mult = 1.0
 	velocity = input_dir * move_speed * move_mult
 	_update_model_motion(input_dir)
 	move_and_slide()
+
+
+func _get_road_move_speed_multiplier() -> float:
+	var road_layer := _get_cached_road_layer()
+	if road_layer == null:
+		return 1.0
+	var world_pos: Vector2 = get_world_collider_center_global()
+	var cell: Vector2i = road_layer.local_to_map(road_layer.to_local(world_pos))
+	return ROAD_MOVE_SPEED_MULT if road_layer.get_cell_source_id(cell) != -1 else 1.0
+
+
+func _get_cached_road_layer() -> TileMapLayer:
+	if _road_tile_layer != null and is_instance_valid(_road_tile_layer):
+		return _road_tile_layer
+	var now_sec: float = float(Time.get_ticks_msec()) / 1000.0
+	if now_sec < _next_road_layer_scan_sec:
+		return null
+	_next_road_layer_scan_sec = now_sec + ROAD_LAYER_RESCAN_SEC
+	var host := get_parent()
+	if host == null:
+		return null
+	var stack: Array[Node] = [host]
+	while not stack.is_empty():
+		var current := stack.pop_back() as Node
+		if current is TileMapLayer:
+			var layer := current as TileMapLayer
+			if String(layer.name).to_lower() == String(ROAD_LAYER_NAME):
+				_road_tile_layer = layer
+				return _road_tile_layer
+		for child in current.get_children():
+			if child is Node:
+				stack.append(child)
+	return null
 
 
 func _update_visual_render_order() -> void:
