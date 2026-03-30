@@ -147,8 +147,8 @@ func _ensure_runtime_profiler_overlay() -> void:
 		_runtime_profiler_label.position = Vector2(16.0, 16.0)
 		_runtime_profiler_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_runtime_profiler_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-		_runtime_profiler_label.theme_override_font_sizes.set("font_size", 14)
-		_runtime_profiler_label.theme_override_colors.set("font_color", Color(0.9, 1.0, 0.9, 0.95))
+		_runtime_profiler_label.add_theme_font_size_override("font_size", 14)
+		_runtime_profiler_label.add_theme_color_override("font_color", Color(0.9, 1.0, 0.9, 0.95))
 		_runtime_profiler_canvas.add_child.call_deferred(_runtime_profiler_label)
 	_runtime_profiler_canvas.visible = true
 	_update_runtime_profiler_overlay()
