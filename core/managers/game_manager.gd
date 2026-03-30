@@ -196,10 +196,10 @@ func _build_runtime_breakdown_line(samples_ms: Dictionary) -> String:
 		"npc.physics.combat_tick",
 	]
 	var parts: Array[String] = []
-	for key in keys:
+	for key: String in keys:
 		if not samples_ms.has(key):
 			continue
-		var short_name := key.replace(".physics.", ".")
+		var short_name: String = key.replace(".physics.", ".")
 		parts.append("%s=%.3fms" % [short_name, float(samples_ms[key])])
 		if parts.size() >= 3:
 			break
