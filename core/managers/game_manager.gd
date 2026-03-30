@@ -49,6 +49,12 @@ var _perf_last_avg_sync_player_ms: float = 0.0
 var _perf_last_avg_sync_entities_ms: float = 0.0
 var _perf_last_entities_count: int = 0
 var _perf_last_pivots_count: int = 0
+var _perf_last_process_nodes_count: int = 0
+var _perf_last_physics_nodes_count: int = 0
+var _perf_last_player_nodes_count: int = 0
+var _perf_last_mob_nodes_count: int = 0
+var _perf_last_npc_nodes_count: int = 0
+var _perf_last_projectile_nodes_count: int = 0
 
 
 func _ready() -> void:
@@ -104,6 +110,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	var avg_sync_entities_ms := float(_perf_sync_entities_usec_accum) / 1000.0 / float(frames)
 	var total_entities := get_tree().get_nodes_in_group("y_sort_entities").size()
 	var pivot_count := _entity_sort_pivots.size()
+	_collect_runtime_node_breakdown()
 	_perf_last_interval_sec = _perf_metrics_elapsed
 	_perf_last_avg_sync_player_ms = avg_sync_player_ms
 	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
@@ -111,7 +118,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_last_pivots_count = pivot_count
 	if debug_perf_metrics_enabled:
 		print(
-			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d y_sort_dbg=%s tile_dbg=%s"
+			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
 			% [
 				_perf_metrics_elapsed,
 				frames,
@@ -119,6 +126,12 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 				avg_sync_entities_ms,
 				total_entities,
 				pivot_count,
+				_perf_last_process_nodes_count,
+				_perf_last_physics_nodes_count,
+				_perf_last_player_nodes_count,
+				_perf_last_mob_nodes_count,
+				_perf_last_npc_nodes_count,
+				_perf_last_projectile_nodes_count,
 				str(debug_draw_y_sort_markers),
 				str(debug_draw_tilemap_y_sort_markers),
 			]
@@ -129,6 +142,42 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_frames_collected = 0
 	_perf_sync_player_usec_accum = 0
 	_perf_sync_entities_usec_accum = 0
+
+
+func _collect_runtime_node_breakdown() -> void:
+	var process_nodes := 0
+	var physics_nodes := 0
+	var player_nodes := 0
+	var mob_nodes := 0
+	var npc_nodes := 0
+	var projectile_nodes := 0
+	var y_sort_entities := get_tree().get_nodes_in_group("y_sort_entities")
+	for entity in y_sort_entities:
+		if entity == null or not is_instance_valid(entity) or not (entity is Node):
+			continue
+		var node := entity as Node
+		if node.is_processing():
+			process_nodes += 1
+		if node.is_physics_processing():
+			physics_nodes += 1
+		var script: Script = node.get_script()
+		if script == null:
+			continue
+		var script_path := String(script.resource_path)
+		if script_path.ends_with("game/characters/player/player.gd"):
+			player_nodes += 1
+		elif script_path.find("game/characters/mobs/") != -1:
+			mob_nodes += 1
+		elif script_path.find("game/characters/npcs/") != -1:
+			npc_nodes += 1
+		elif script_path.find("projectiles/") != -1:
+			projectile_nodes += 1
+	_perf_last_process_nodes_count = process_nodes
+	_perf_last_physics_nodes_count = physics_nodes
+	_perf_last_player_nodes_count = player_nodes
+	_perf_last_mob_nodes_count = mob_nodes
+	_perf_last_npc_nodes_count = npc_nodes
+	_perf_last_projectile_nodes_count = projectile_nodes
 
 
 func _ensure_runtime_profiler_overlay() -> void:
@@ -172,13 +221,22 @@ func _update_runtime_profiler_overlay() -> void:
 	var draw_calls: int = int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
 	if current_target != null and is_instance_valid(current_target):
 		target_state = String(current_target.name)
+	var process_ms_per_node: float = 0.0
+	if _perf_last_process_nodes_count > 0:
+		process_ms_per_node = process_ms / float(_perf_last_process_nodes_count)
+	var physics_ms_per_node: float = 0.0
+	if _perf_last_physics_nodes_count > 0:
+		physics_ms_per_node = physics_ms / float(_perf_last_physics_nodes_count)
 	_runtime_profiler_label.text = (
 		"[Runtime Profiler]\n"
 		+ "fps=%d interval=%.2fs\n" % [fps, _perf_last_interval_sec]
 		+ "process=%.2fms physics=%.2fms\n" % [process_ms, physics_ms]
+		+ "proc/node=%.3fms phys/node=%.3fms\n" % [process_ms_per_node, physics_ms_per_node]
 		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
 		+ "gm.sync_entities=%.3fms\n" % _perf_last_avg_sync_entities_ms
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
+		+ "proc_nodes=%d phys_nodes=%d\n" % [_perf_last_process_nodes_count, _perf_last_physics_nodes_count]
+		+ "players=%d mobs=%d npcs=%d proj=%d\n" % [_perf_last_player_nodes_count, _perf_last_mob_nodes_count, _perf_last_npc_nodes_count, _perf_last_projectile_nodes_count]
 		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
 		+ "target=%s" % target_state
 	)
