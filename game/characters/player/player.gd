@@ -30,6 +30,7 @@ var _targeters := {} # instance_id -> true
 var _y_sort_origin_meta_fallback_warned: bool = false
 var _road_tile_layer: TileMapLayer = null
 var _next_road_layer_scan_sec: float = 0.0
+var current_move_speed: float = 0.0
 
 func on_targeted_by(attacker: Node) -> void:
 	if attacker == null:
@@ -249,6 +250,7 @@ var overlay_bars_widget: OverlayBarsWidget = null
 @onready var interaction_shape: CollisionShape2D = $InteractionDetector/InteractionRadius as CollisionShape2D
 
 @onready var visual_root: Node2D = $Visual as Node2D
+@onready var speed_debug_label: Label = $SpeedDebugLabel as Label
 
 const DEFAULT_CAST_BAR_OFFSET: Vector2 = Vector2(0.0, -42.0)
 
@@ -316,7 +318,9 @@ func _physics_process(_delta: float) -> void:
 	_update_visual_render_order()
 	if is_dead:
 		velocity = Vector2.ZERO
+		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
+		_update_speed_debug_label()
 		move_and_slide()
 		return
 	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
@@ -328,7 +332,9 @@ func _physics_process(_delta: float) -> void:
 			cast_bar.set_progress01(0.0)
 			cast_bar.set_icon_texture(null)
 		velocity = Vector2.ZERO
+		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
+		_update_speed_debug_label()
 		move_and_slide()
 		return
 	_set_model_stunned(false)
@@ -349,7 +355,9 @@ func _physics_process(_delta: float) -> void:
 		c_ability_caster.interrupt_cast("movement")
 	if c_ability_caster != null and c_ability_caster.is_casting():
 		velocity = Vector2.ZERO
+		current_move_speed = 0.0
 		_update_model_motion(Vector2.ZERO)
+		_update_speed_debug_label()
 		move_and_slide()
 		return
 
@@ -363,7 +371,9 @@ func _physics_process(_delta: float) -> void:
 	if move_mult <= 0.0:
 		move_mult = 1.0
 	velocity = input_dir * move_speed * move_mult
+	current_move_speed = velocity.length()
 	_update_model_motion(input_dir)
+	_update_speed_debug_label()
 	move_and_slide()
 
 
@@ -383,21 +393,27 @@ func _get_cached_road_layer() -> TileMapLayer:
 	if now_sec < _next_road_layer_scan_sec:
 		return null
 	_next_road_layer_scan_sec = now_sec + ROAD_LAYER_RESCAN_SEC
-	var host := get_parent()
-	if host == null:
-		return null
-	var stack: Array[Node] = [host]
-	while not stack.is_empty():
-		var current := stack.pop_back() as Node
-		if current is TileMapLayer:
-			var layer := current as TileMapLayer
-			if String(layer.name).to_lower() == String(ROAD_LAYER_NAME):
-				_road_tile_layer = layer
-				return _road_tile_layer
-		for child in current.get_children():
-			if child is Node:
-				stack.append(child)
+	var host: Node = get_parent()
+	while host != null:
+		var stack: Array[Node] = [host]
+		while not stack.is_empty():
+			var current := stack.pop_back() as Node
+			if current is TileMapLayer:
+				var layer := current as TileMapLayer
+				if String(layer.name).to_lower() == String(ROAD_LAYER_NAME):
+					_road_tile_layer = layer
+					return _road_tile_layer
+			for child in current.get_children():
+				if child is Node:
+					stack.append(child)
+		host = host.get_parent()
 	return null
+
+
+func _update_speed_debug_label() -> void:
+	if speed_debug_label == null or not is_instance_valid(speed_debug_label):
+		return
+	speed_debug_label.text = "SPD %.1f" % current_move_speed
 
 
 func _update_visual_render_order() -> void:

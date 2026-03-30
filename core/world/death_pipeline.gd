@@ -71,18 +71,32 @@ static func die_and_spawn(
 	if self_node == null or not is_instance_valid(self_node):
 		return null
 
+	var resolved_owner_player_id := loot_owner_player_id
+	if resolved_owner_player_id == 0:
+		var fallback_player := NODE_CACHE.get_player(self_node.get_tree())
+		if fallback_player != null and fallback_player.is_in_group("player"):
+			resolved_owner_player_id = fallback_player.get_instance_id()
+
 	var corpse := spawn_corpse(self_node.get_parent(), self_node.global_position)
 	if corpse != null:
+		var corpse_layer_z: int = 0
+		var visual_v: Variant = self_node.get("visual_root")
+		if visual_v is CanvasItem and is_instance_valid(visual_v):
+			corpse_layer_z = int((visual_v as CanvasItem).z_index)
+		elif self_node is CanvasItem:
+			corpse_layer_z = int((self_node as CanvasItem).z_index)
+		corpse.z_as_relative = false
+		corpse.z_index = corpse_layer_z
 		corpse.setup_owner_snapshot(self_node)
 		corpse.owner_is_player = false
 		# 1) Назначаем owner-игрока (любой узел из группы "player").
-		LOOT_RIGHTS.apply_owner_to_corpse(corpse, loot_owner_player_id)
+		LOOT_RIGHTS.apply_owner_to_corpse(corpse, resolved_owner_player_id)
 		# 2) Если owner НЕ игрок (owner id не соответствует ни одному игроку) —
 		#    лут не генерируем вообще (экономим ресурсы и избегаем "мертвого" лута).
-		var owner_node: Node = LOOT_RIGHTS.get_player_by_instance_id(self_node.get_tree(), loot_owner_player_id)
+		var owner_node: Node = LOOT_RIGHTS.get_player_by_instance_id(self_node.get_tree(), resolved_owner_player_id)
 		if owner_node != null:
 			apply_loot_to_corpse(corpse, level, loot_profile, loot_context)
 
-	grant_xp_if_owner(loot_owner_player_id, xp_amount, self_node.get_tree())
+	grant_xp_if_owner(resolved_owner_player_id, xp_amount, self_node.get_tree())
 	clear_if_targeted(self_node)
 	return corpse

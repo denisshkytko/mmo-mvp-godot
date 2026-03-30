@@ -25,6 +25,7 @@ func setup(target: Node2D, damage: int, source: Node2D = null, texture_override:
 	_target = target
 	_damage = damage
 	_source = source
+	_sync_sort_layer()
 	if _sprite != null:
 		_sprite.scale = default_visual_scale
 	if _animated_sprite != null:
@@ -39,6 +40,7 @@ func setup(target: Node2D, damage: int, source: Node2D = null, texture_override:
 func _physics_process(delta: float) -> void:
 	if _hit:
 		return
+	_sync_sort_layer()
 
 	_life += delta
 	if _life >= max_lifetime:
@@ -111,3 +113,21 @@ func _apply_hit() -> void:
 	impacted_with_result.emit(_target, dealt, "physical")
 
 	queue_free()
+
+
+func _sync_sort_layer() -> void:
+	var layer_source: Node2D = _source if _source != null and is_instance_valid(_source) else _target
+	if layer_source == null or not is_instance_valid(layer_source):
+		return
+	var base_z: int = 0
+	var visual_v: Variant = layer_source.get("visual_root")
+	if visual_v is CanvasItem and is_instance_valid(visual_v):
+		base_z = int((visual_v as CanvasItem).z_index)
+	elif layer_source is CanvasItem:
+		base_z = int((layer_source as CanvasItem).z_index)
+	z_as_relative = false
+	z_index = base_z
+	if has_method("set_y_sort_origin"):
+		call("set_y_sort_origin", 0)
+	else:
+		set("y_sort_origin", 0)

@@ -34,6 +34,7 @@ func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
 	_target = target
 	_damage = damage
 	_source = source
+	_sync_sort_layer()
 	if _animated_sprite != null:
 		if _animated_sprite.sprite_frames != null and _animated_sprite.sprite_frames.has_animation(StringName("default")):
 			_animated_sprite.play("default")
@@ -45,6 +46,7 @@ func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
 func _physics_process(delta: float) -> void:
 	if _hit:
 		return
+	_sync_sort_layer()
 
 	_life += delta
 	if _life >= max_lifetime:
@@ -166,3 +168,21 @@ func _is_target_dead(target: Node) -> bool:
 		if stats_v != null and is_instance_valid(stats_v) and "is_dead" in stats_v and bool(stats_v.get("is_dead")):
 			return true
 	return false
+
+
+func _sync_sort_layer() -> void:
+	var layer_source: Node2D = _source if _source != null and is_instance_valid(_source) else _target
+	if layer_source == null or not is_instance_valid(layer_source):
+		return
+	var base_z: int = 0
+	var visual_v: Variant = layer_source.get("visual_root")
+	if visual_v is CanvasItem and is_instance_valid(visual_v):
+		base_z = int((visual_v as CanvasItem).z_index)
+	elif layer_source is CanvasItem:
+		base_z = int((layer_source as CanvasItem).z_index)
+	z_as_relative = false
+	z_index = base_z
+	if has_method("set_y_sort_origin"):
+		call("set_y_sort_origin", 0)
+	else:
+		set("y_sort_origin", 0)
