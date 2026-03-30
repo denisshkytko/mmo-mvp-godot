@@ -1,5 +1,4 @@
 extends Node
-class_name MobProximityCache
 
 const CACHE_REFRESH_SEC: float = 0.25
 const CELL_SIZE: float = 64.0
