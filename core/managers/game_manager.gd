@@ -21,6 +21,7 @@ var current_target: Node = null
 @export var debug_perf_metrics_interval_sec: float = 0.5
 @export var debug_runtime_profiler_overlay_enabled: bool = true
 @export var debug_runtime_profiler_interval_sec: float = 0.5
+@export var debug_runtime_profiler_draw_on_screen: bool = false
 
 # --- Save/Load runtime ---
 var current_zone_path: String = ""
@@ -365,7 +366,7 @@ func _ensure_runtime_profiler_overlay() -> void:
 		_runtime_profiler_label.add_theme_font_size_override("font_size", 14)
 		_runtime_profiler_label.add_theme_color_override("font_color", Color(0.9, 1.0, 0.9, 0.95))
 		_runtime_profiler_canvas.add_child.call_deferred(_runtime_profiler_label)
-	_runtime_profiler_canvas.visible = true
+	_runtime_profiler_canvas.visible = debug_runtime_profiler_draw_on_screen
 	_update_runtime_profiler_overlay()
 
 

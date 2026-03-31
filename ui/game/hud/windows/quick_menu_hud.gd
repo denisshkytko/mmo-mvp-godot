@@ -81,7 +81,7 @@ func _on_character_pressed() -> void:
 func _on_profiler_pressed() -> void:
 	if _performance_window == null or not is_instance_valid(_performance_window):
 		_performance_window = PERFORMANCE_PROFILER_WINDOW.instantiate() as Control
-		get_parent().add_child(_performance_window)
+		get_parent().get_parent().add_child(_performance_window)
 		if _performance_window.has_signal("closed"):
 			_performance_window.closed.connect(_on_profiler_closed)
 	_show_profiler_window(true)
@@ -96,9 +96,9 @@ func _show_profiler_window(is_visible: bool) -> void:
 		return
 	if is_visible:
 		_hidden_ui_nodes.clear()
-		var root := get_parent()
-		for child in root.get_children():
-			if child == self or child == _performance_window:
+		var ui_container := get_parent().get_parent()
+		for child in ui_container.get_children():
+			if child == _performance_window:
 				continue
 			if child is CanvasItem and (child as CanvasItem).visible:
 				_hidden_ui_nodes.append(child as CanvasItem)
