@@ -64,9 +64,11 @@ var _perf_last_runtime_process_line: String = "script.process=n/a"
 var _perf_last_runtime_physics_line: String = "script.physics=n/a"
 var _perf_last_runtime_ai_line: String = "script.ai=n/a"
 var _perf_last_frames_count: int = 0
+var _perf_last_physics_frames_count: int = 0
 var _perf_last_tracked_process_ms_f: float = 0.0
 var _perf_last_tracked_physics_ms_f: float = 0.0
 var _perf_last_tracked_ai_ms_f: float = 0.0
+var _perf_interval_physics_frame_cursor: int = -1
 
 
 func _ready() -> void:
@@ -118,6 +120,8 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_sync_entities_usec_accum += max(0, sync_entities_usec)
 	_perf_process_ms_accum += float(Performance.get_monitor(Performance.TIME_PROCESS)) * 1000.0
 	_perf_physics_ms_accum += float(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0
+	if _perf_interval_physics_frame_cursor < 0:
+		_perf_interval_physics_frame_cursor = Engine.get_physics_frames()
 	var interval: float = max(0.25, debug_perf_metrics_interval_sec)
 	if debug_runtime_profiler_overlay_enabled:
 		interval = min(interval, max(0.25, debug_runtime_profiler_interval_sec))
@@ -128,11 +132,14 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	var avg_sync_entities_ms := float(_perf_sync_entities_usec_accum) / 1000.0 / float(frames)
 	var avg_process_ms := _perf_process_ms_accum / float(frames)
 	var avg_physics_ms := _perf_physics_ms_accum / float(frames)
+	var current_physics_frames: int = Engine.get_physics_frames()
+	var physics_frames: int = max(1, current_physics_frames - max(0, _perf_interval_physics_frame_cursor))
 	var total_entities := get_tree().get_nodes_in_group("y_sort_entities").size()
 	var pivot_count := _entity_sort_pivots.size()
 	_collect_runtime_node_breakdown()
 	_perf_last_interval_sec = _perf_metrics_elapsed
 	_perf_last_frames_count = frames
+	_perf_last_physics_frames_count = physics_frames
 	_perf_last_avg_sync_player_ms = avg_sync_player_ms
 	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
 	_perf_last_avg_process_ms = avg_process_ms
@@ -140,13 +147,14 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_last_entities_count = total_entities
 	_perf_last_pivots_count = pivot_count
 	var runtime_samples: Dictionary = FRAME_PROFILER.consume_stats()
-	_update_runtime_tracking_totals(runtime_samples, frames)
+	_update_runtime_tracking_totals(runtime_samples, frames, physics_frames)
 	_perf_last_runtime_process_line = _build_runtime_breakdown_line(
 		runtime_samples,
 		frames,
 		"script.process",
 		func(key: String) -> bool:
 			return key.begins_with("process."),
+		frames,
 		6
 	)
 	_perf_last_runtime_physics_line = _build_runtime_breakdown_line(
@@ -155,6 +163,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 		"script.physics",
 		func(key: String) -> bool:
 			return key.find(".physics.") != -1,
+		physics_frames,
 		5
 	)
 	_perf_last_runtime_ai_line = _build_runtime_breakdown_line(
@@ -163,6 +172,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 		"script.ai",
 		func(key: String) -> bool:
 			return key.find(".ai.") != -1,
+		physics_frames,
 		5
 	)
 	if debug_perf_metrics_enabled:
@@ -193,6 +203,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_sync_entities_usec_accum = 0
 	_perf_process_ms_accum = 0.0
 	_perf_physics_ms_accum = 0.0
+	_perf_interval_physics_frame_cursor = current_physics_frames
 
 
 func _collect_runtime_node_breakdown() -> void:
@@ -236,6 +247,7 @@ func _build_runtime_breakdown_line(
 	frames: int,
 	label: String,
 	key_filter: Callable,
+	frame_divisor: int,
 	max_parts: int
 ) -> String:
 	if samples.is_empty():
@@ -253,7 +265,7 @@ func _build_runtime_breakdown_line(
 		entries.append(
 			{
 				"key": key,
-				"frame_ms": float(entry.get("total_ms", 0.0)) / float(frame_count),
+				"frame_ms": float(entry.get("total_ms", 0.0)) / float(max(1, frame_divisor)),
 				"total_ms": float(entry.get("total_ms", 0.0)),
 				"avg_ms": float(entry.get("avg_ms", 0.0)),
 				"samples": int(entry.get("samples", 0)),
@@ -282,8 +294,9 @@ func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
 	return float(a.get("frame_ms", 0.0)) > float(b.get("frame_ms", 0.0))
 
 
-func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
-	var frame_count: int = max(1, frames)
+func _update_runtime_tracking_totals(samples: Dictionary, frames: int, physics_frames: int) -> void:
+	var process_frame_count: int = max(1, frames)
+	var physics_frame_count: int = max(1, physics_frames)
 	var process_total: float = 0.0
 	var physics_total: float = 0.0
 	var ai_total: float = 0.0
@@ -295,18 +308,19 @@ func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
 		if not (entry_v is Dictionary):
 			continue
 		var entry: Dictionary = entry_v as Dictionary
-		var total_ms_f: float = float(entry.get("total_ms", 0.0)) / float(frame_count)
+		var total_ms_process_f: float = float(entry.get("total_ms", 0.0)) / float(process_frame_count)
+		var total_ms_physics_f: float = float(entry.get("total_ms", 0.0)) / float(physics_frame_count)
 		if key.begins_with("process."):
-			process_total += total_ms_f
+			process_total += total_ms_process_f
 		elif key.find(".physics.") != -1:
 			var physics_ns: String = _extract_physics_namespace(key)
 			if key.ends_with(".physics.total"):
-				physics_totals_by_ns[physics_ns] = total_ms_f
+				physics_totals_by_ns[physics_ns] = total_ms_physics_f
 			else:
 				var prev_subtotal: float = float(physics_subtotals_by_ns.get(physics_ns, 0.0))
-				physics_subtotals_by_ns[physics_ns] = prev_subtotal + total_ms_f
+				physics_subtotals_by_ns[physics_ns] = prev_subtotal + total_ms_physics_f
 		elif key.find(".ai.") != -1:
-			ai_total += total_ms_f
+			ai_total += total_ms_physics_f
 	for ns_v in physics_subtotals_by_ns.keys():
 		var ns: String = String(ns_v)
 		if physics_totals_by_ns.has(ns):
@@ -394,7 +408,7 @@ func _update_runtime_profiler_overlay() -> void:
 		tracked_physics_with_ai_coverage_pct = clamp((tracked_physics_with_ai_ms / physics_ms) * 100.0, 0.0, 100.0)
 	_runtime_profiler_label.text = (
 		"[Runtime Profiler]\n"
-		+ "fps=%d interval=%.2fs frames=%d\n" % [fps, _perf_last_interval_sec, _perf_last_frames_count]
+		+ "fps=%d interval=%.2fs frames=%d phys_frames=%d\n" % [fps, _perf_last_interval_sec, _perf_last_frames_count, _perf_last_physics_frames_count]
 		+ "process=%.2fms physics=%.2fms\n" % [process_ms, physics_ms]
 		+ "proc/node=%.3fms phys/node=%.3fms\n" % [process_ms_per_node, physics_ms_per_node]
 		+ "tracked proc=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_process_ms_f, untracked_process_ms]
