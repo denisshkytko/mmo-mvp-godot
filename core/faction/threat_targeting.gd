@@ -64,13 +64,14 @@ static func pick_target_by_threat(
 	var scanned_units: int = 0
 	for u in units:
 		scanned_units += 1
-		if u == actor:
+		var obj: Object = u as Object
+		if obj == null or not is_instance_valid(obj):
 			continue
-		if not (u is Node2D):
+		if obj == actor:
 			continue
-		var candidate := u as Node2D
-		if not is_instance_valid(candidate):
+		if not (obj is Node2D):
 			continue
+		var candidate := obj as Node2D
 		if "is_dead" in candidate and bool(candidate.get("is_dead")):
 			continue
 		if not candidate.has_method("is_in_combat"):
@@ -109,7 +110,14 @@ static func _get_cached_faction_units(tree: SceneTree, now_sec: float) -> Array:
 	if tree == null:
 		return []
 	if now_sec >= _cached_units_until_sec:
-		_cached_units = tree.get_nodes_in_group("faction_units")
+		var raw := tree.get_nodes_in_group("faction_units")
+		var sanitized: Array = []
+		for item in raw:
+			var obj: Object = item as Object
+			if obj == null or not is_instance_valid(obj):
+				continue
+			sanitized.append(obj)
+		_cached_units = sanitized
 		_cached_units_until_sec = now_sec + FACTION_UNITS_CACHE_REFRESH_SEC
 	return _cached_units
 
