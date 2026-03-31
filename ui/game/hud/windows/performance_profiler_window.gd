@@ -11,6 +11,11 @@ signal closed
 
 var _refresh_timer: float = 0.0
 const REFRESH_SEC: float = 0.5
+var _group_collapsed: Dictionary = {
+	"Process": false,
+	"Physics": false,
+	"AI": false,
+}
 
 func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
@@ -52,26 +57,29 @@ func _refresh_from_runtime_overlay() -> void:
 		_build_tree({}, 0.0, 0.0, 0.0)
 		return
 	var parsed: Dictionary = _parse_runtime_text(label.text)
+	_remember_group_collapsed_state()
 	var process_ms: float = float(parsed.get("process_ms", 0.0))
 	var physics_ms: float = float(parsed.get("physics_ms", 0.0))
 	var tracked_process_ms: float = float(parsed.get("tracked_process_ms", 0.0))
 	var tracked_physics_ms: float = float(parsed.get("tracked_physics_ms", 0.0))
+	var tracked_ai_ms: float = float(parsed.get("tracked_ai_ms", 0.0))
 	var total_ms: float = max(0.001, process_ms + physics_ms)
 	summary_label.text = (
 		"[b]Runtime summary[/b]\n"
 		+ "process=%.2fms (tracked %.2fms, %.1f%%)\n" % [process_ms, tracked_process_ms, (tracked_process_ms / max(0.001, process_ms)) * 100.0]
 		+ "physics=%.2fms (tracked %.2fms, %.1f%%)\n" % [physics_ms, tracked_physics_ms, (tracked_physics_ms / max(0.001, physics_ms)) * 100.0]
+		+ "ai=%.2fms (%.1f%% of physics)\n" % [tracked_ai_ms, (tracked_ai_ms / max(0.001, physics_ms)) * 100.0]
 		+ "combined tracked influence=%.1f%%" % [((tracked_process_ms + tracked_physics_ms) / total_ms) * 100.0]
 	)
-	_build_tree(parsed, process_ms, physics_ms, total_ms)
+	_build_tree(parsed, process_ms, physics_ms, tracked_ai_ms, total_ms)
 
 
-func _build_tree(parsed: Dictionary, process_ms: float, physics_ms: float, total_ms: float) -> void:
+func _build_tree(parsed: Dictionary, process_ms: float, physics_ms: float, ai_ms: float, total_ms: float) -> void:
 	tree.clear()
 	var root: TreeItem = tree.create_item()
 	_add_group(root, "Process", parsed.get("process_items", []), process_ms, total_ms)
 	_add_group(root, "Physics", parsed.get("physics_items", []), physics_ms, total_ms)
-	_add_group(root, "AI", parsed.get("ai_items", []), physics_ms, total_ms)
+	_add_group(root, "AI", parsed.get("ai_items", []), ai_ms, total_ms)
 
 
 func _add_group(root: TreeItem, group_name: String, items_v: Variant, group_total_ms: float, total_ms: float) -> void:
@@ -80,7 +88,7 @@ func _add_group(root: TreeItem, group_name: String, items_v: Variant, group_tota
 	group.set_text(1, "%.3f" % group_total_ms)
 	group.set_text(2, "100%")
 	group.set_text(3, "%.1f%%" % ((group_total_ms / max(0.001, total_ms)) * 100.0))
-	group.collapsed = false
+	group.collapsed = bool(_group_collapsed.get(group_name, false))
 	if not (items_v is Array):
 		return
 	var items: Array = items_v
@@ -105,11 +113,12 @@ func _parse_runtime_text(text: String) -> Dictionary:
 	var result: Dictionary = {
 		"process_ms": 0.0,
 		"physics_ms": 0.0,
-		"tracked_process_ms": 0.0,
-		"tracked_physics_ms": 0.0,
-		"process_items": [],
-		"physics_items": [],
-		"ai_items": [],
+			"tracked_process_ms": 0.0,
+			"tracked_physics_ms": 0.0,
+			"tracked_ai_ms": 0.0,
+			"process_items": [],
+			"physics_items": [],
+			"ai_items": [],
 	}
 	for raw_line in text.split("\n"):
 		var line := raw_line.strip_edges()
@@ -120,6 +129,8 @@ func _parse_runtime_text(text: String) -> Dictionary:
 			result["tracked_process_ms"] = _extract_float_after(line, "tracked proc=")
 		elif line.begins_with("tracked phys="):
 			result["tracked_physics_ms"] = _extract_float_after(line, "tracked phys=")
+		elif line.begins_with("tracked ai="):
+			result["tracked_ai_ms"] = _extract_float_after(line, "tracked ai=")
 		elif line.begins_with("script.process "):
 			result["process_items"] = _parse_metric_items(line.trim_prefix("script.process "))
 		elif line.begins_with("script.physics "):
@@ -158,3 +169,14 @@ func _extract_float_before(text: String, token: String) -> float:
 	var number_str := text if idx < 0 else text.substr(0, idx)
 	number_str = number_str.strip_edges()
 	return float(number_str) if number_str.is_valid_float() else 0.0
+
+
+func _remember_group_collapsed_state() -> void:
+	var root: TreeItem = tree.get_root()
+	if root == null:
+		return
+	var child: TreeItem = root.get_first_child()
+	while child != null:
+		var name: String = child.get_text(0)
+		_group_collapsed[name] = child.collapsed
+		child = child.get_next()

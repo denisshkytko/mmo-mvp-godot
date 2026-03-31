@@ -17,7 +17,7 @@ var _character_hud: Node = null
 var _collapsed_toggle_pos: Vector2 = Vector2.ZERO
 var _collapsed_panel_pos: Vector2 = Vector2.ZERO
 var _performance_window: Control = null
-var _hidden_ui_nodes: Array[CanvasItem] = []
+var _hidden_ui_nodes: Array[Node] = []
 
 func _ready() -> void:
 	menu_button.pressed.connect(_on_menu_pressed)
@@ -100,13 +100,36 @@ func _show_profiler_window(is_visible: bool) -> void:
 		for child in ui_container.get_children():
 			if child == _performance_window:
 				continue
-			if child is CanvasItem and (child as CanvasItem).visible:
-				_hidden_ui_nodes.append(child as CanvasItem)
-				(child as CanvasItem).visible = false
+			_hide_visible_subtree(child)
 		_performance_window.visible = true
 	else:
 		_performance_window.visible = false
 		for node in _hidden_ui_nodes:
 			if node != null and is_instance_valid(node):
-				node.visible = true
+				_set_node_visible(node, true)
 		_hidden_ui_nodes.clear()
+
+
+func _hide_visible_subtree(node: Node) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	if _set_node_visible(node, false):
+		_hidden_ui_nodes.append(node)
+	for child in node.get_children():
+		_hide_visible_subtree(child)
+
+
+func _set_node_visible(node: Node, visible_value: bool) -> bool:
+	if node is CanvasItem:
+		var canvas_item := node as CanvasItem
+		if canvas_item.visible == visible_value:
+			return false
+		canvas_item.visible = visible_value
+		return true
+	if node is CanvasLayer:
+		var canvas_layer := node as CanvasLayer
+		if canvas_layer.visible == visible_value:
+			return false
+		canvas_layer.visible = visible_value
+		return true
+	return false
