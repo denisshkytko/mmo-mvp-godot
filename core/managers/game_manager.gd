@@ -62,6 +62,7 @@ var _perf_last_runtime_ai_line: String = "script.ai=n/a"
 var _perf_last_frames_count: int = 0
 var _perf_last_tracked_process_ms_f: float = 0.0
 var _perf_last_tracked_physics_ms_f: float = 0.0
+var _perf_last_tracked_ai_ms_f: float = 0.0
 
 
 func _ready() -> void:
@@ -273,6 +274,7 @@ func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
 	var frame_count: int = max(1, frames)
 	var process_total: float = 0.0
 	var physics_total: float = 0.0
+	var ai_total: float = 0.0
 	for key_v in samples.keys():
 		var key: String = String(key_v)
 		var entry_v: Variant = samples.get(key, {})
@@ -284,8 +286,11 @@ func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
 			process_total += total_ms_f
 		elif key.find(".physics.") != -1:
 			physics_total += total_ms_f
+		elif key.find(".ai.") != -1:
+			ai_total += total_ms_f
 	_perf_last_tracked_process_ms_f = process_total
 	_perf_last_tracked_physics_ms_f = physics_total
+	_perf_last_tracked_ai_ms_f = ai_total
 
 
 func _ensure_runtime_profiler_overlay() -> void:
@@ -341,12 +346,18 @@ func _update_runtime_profiler_overlay() -> void:
 		physics_ms_per_node = physics_ms / float(_perf_last_physics_nodes_count)
 	var untracked_process_ms: float = max(0.0, process_ms - _perf_last_tracked_process_ms_f)
 	var untracked_physics_ms: float = max(0.0, physics_ms - _perf_last_tracked_physics_ms_f)
+	# Most AI timers are emitted from mob/NPC physics ticks.
+	var tracked_physics_with_ai_ms: float = _perf_last_tracked_physics_ms_f + _perf_last_tracked_ai_ms_f
+	var untracked_physics_with_ai_ms: float = max(0.0, physics_ms - tracked_physics_with_ai_ms)
 	var tracked_process_coverage_pct: float = 0.0
 	if process_ms > 0.0:
 		tracked_process_coverage_pct = clamp((_perf_last_tracked_process_ms_f / process_ms) * 100.0, 0.0, 100.0)
 	var tracked_physics_coverage_pct: float = 0.0
 	if physics_ms > 0.0:
 		tracked_physics_coverage_pct = clamp((_perf_last_tracked_physics_ms_f / physics_ms) * 100.0, 0.0, 100.0)
+	var tracked_physics_with_ai_coverage_pct: float = 0.0
+	if physics_ms > 0.0:
+		tracked_physics_with_ai_coverage_pct = clamp((tracked_physics_with_ai_ms / physics_ms) * 100.0, 0.0, 100.0)
 	_runtime_profiler_label.text = (
 		"[Runtime Profiler]\n"
 		+ "fps=%d interval=%.2fs frames=%d\n" % [fps, _perf_last_interval_sec, _perf_last_frames_count]
@@ -354,7 +365,8 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "proc/node=%.3fms phys/node=%.3fms\n" % [process_ms_per_node, physics_ms_per_node]
 		+ "tracked proc=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_process_ms_f, untracked_process_ms]
 		+ "tracked phys=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_physics_ms_f, untracked_physics_ms]
-		+ "coverage proc=%.1f%% phys=%.1f%%\n" % [tracked_process_coverage_pct, tracked_physics_coverage_pct]
+		+ "tracked ai=%.2fms/f phys(+ai)=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_ai_ms_f, tracked_physics_with_ai_ms, untracked_physics_with_ai_ms]
+		+ "coverage proc=%.1f%% phys=%.1f%% phys(+ai)=%.1f%%\n" % [tracked_process_coverage_pct, tracked_physics_coverage_pct, tracked_physics_with_ai_coverage_pct]
 		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
 		+ "gm.sync_entities=%.3fms\n" % _perf_last_avg_sync_entities_ms
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
