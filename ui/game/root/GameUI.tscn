@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://csbowtuv1xh0o"]
+[gd_scene load_steps=18 format=3 uid="uid://csbowtuv1xh0o"]
 
 [ext_resource type="PackedScene" uid="uid://167bw0aqye6e" path="res://ui/game/hud/core/XpHUD.tscn" id="1_rs8we"]
 [ext_resource type="PackedScene" uid="uid://t455gf4vm737" path="res://ui/game/hud/core/BuffsHUD.tscn" id="3_wemh1"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://c4q0bn4cdut8e" path="res://ui/game/overlays/ability_tooltip.tscn" id="14_8p6r6"]
 [ext_resource type="PackedScene" uid="uid://hbn3bq3q4n0fk" path="res://ui/game/hud/auras/BuffsAuraHUD.tscn" id="15_8s0mq"]
 [ext_resource type="Script" path="res://ui/game/root/game_ui.gd" id="16_o81ri"]
+[ext_resource type="PackedScene" path="res://ui/game/hud/core/MinimapHUD.tscn" id="17_4mmap"]
 
 [node name="GameUI" type="CanvasLayer"]
 script = ExtResource("16_o81ri")
@@ -60,3 +61,5 @@ layer = 200
 [node name="AbilityTooltip" parent="AbilityTooltipLayer" instance=ExtResource("14_8p6r6")]
 
 [node name="BuffsAuraHUD" parent="Root" instance=ExtResource("15_8s0mq")]
+
+[node name="MinimapHUD" parent="Root" instance=ExtResource("17_4mmap")]
