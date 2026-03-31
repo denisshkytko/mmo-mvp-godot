@@ -275,6 +275,8 @@ func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
 	var process_total: float = 0.0
 	var physics_total: float = 0.0
 	var ai_total: float = 0.0
+	var physics_totals_by_ns: Dictionary = {}
+	var physics_subtotals_by_ns: Dictionary = {}
 	for key_v in samples.keys():
 		var key: String = String(key_v)
 		var entry_v: Variant = samples.get(key, {})
@@ -285,12 +287,32 @@ func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
 		if key.begins_with("process."):
 			process_total += total_ms_f
 		elif key.find(".physics.") != -1:
-			physics_total += total_ms_f
+			var physics_ns: String = _extract_physics_namespace(key)
+			if key.ends_with(".physics.total"):
+				physics_totals_by_ns[physics_ns] = total_ms_f
+			else:
+				var prev_subtotal: float = float(physics_subtotals_by_ns.get(physics_ns, 0.0))
+				physics_subtotals_by_ns[physics_ns] = prev_subtotal + total_ms_f
 		elif key.find(".ai.") != -1:
 			ai_total += total_ms_f
+	for ns_v in physics_subtotals_by_ns.keys():
+		var ns: String = String(ns_v)
+		if physics_totals_by_ns.has(ns):
+			continue
+		physics_total += float(physics_subtotals_by_ns.get(ns, 0.0))
+	for ns_v in physics_totals_by_ns.keys():
+		var ns: String = String(ns_v)
+		physics_total += float(physics_totals_by_ns.get(ns, 0.0))
 	_perf_last_tracked_process_ms_f = process_total
 	_perf_last_tracked_physics_ms_f = physics_total
 	_perf_last_tracked_ai_ms_f = ai_total
+
+
+func _extract_physics_namespace(key: String) -> String:
+	var split_parts: PackedStringArray = key.split(".physics.")
+	if split_parts.is_empty():
+		return key
+	return String(split_parts[0])
 
 
 func _ensure_runtime_profiler_overlay() -> void:
