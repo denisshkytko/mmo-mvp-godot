@@ -68,6 +68,7 @@ var _perf_last_runtime_ai_line: String = "script.ai=n/a"
 var _perf_last_runtime_combat_line: String = "script.combat=n/a"
 var _perf_last_runtime_count_line: String = "script.count=n/a"
 var _perf_last_engine_process_line: String = "engine.process=n/a"
+var _perf_last_engine_physics_line: String = "engine.physics=n/a"
 var _perf_last_frames_count: int = 0
 var _perf_last_physics_frames_count: int = 0
 var _perf_last_tracked_process_ms_f: float = 0.0
@@ -192,6 +193,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	var runtime_counts: Dictionary = FRAME_PROFILER.consume_counts()
 	_perf_last_runtime_count_line = _build_runtime_counts_line(runtime_counts, frames, "script.count", 6)
 	_perf_last_engine_process_line = _build_engine_process_monitors_line()
+	_perf_last_engine_physics_line = _build_engine_physics_monitors_line()
 	if debug_perf_metrics_enabled:
 		print(
 			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
@@ -417,6 +419,32 @@ func _build_engine_process_monitors_line() -> String:
 	return "engine.process " + ", ".join(parts)
 
 
+func _build_engine_physics_monitors_line() -> String:
+	var monitor_names: Array[String] = []
+	for const_name_v in ClassDB.class_get_integer_constant_list("Performance", true):
+		var const_name := String(const_name_v)
+		if not const_name.begins_with("TIME_"):
+			continue
+		if not const_name.ends_with("_PROCESS"):
+			continue
+		if const_name == "TIME_PHYSICS_PROCESS":
+			continue
+		if const_name.find("_PHYSICS_") == -1:
+			continue
+		monitor_names.append(const_name)
+	monitor_names.sort()
+	var parts: Array[String] = []
+	for monitor_name in monitor_names:
+		var value_ms: float = _read_performance_monitor_ms(monitor_name)
+		if value_ms < 0.0:
+			continue
+		var short_name := monitor_name.to_lower().replace("time_", "").replace("_process", "")
+		parts.append("%s=%.3fms" % [short_name, value_ms])
+	if parts.is_empty():
+		return "engine.physics=n/a"
+	return "engine.physics " + ", ".join(parts)
+
+
 func _read_performance_monitor_ms(const_name: String) -> float:
 	if not ClassDB.class_has_integer_constant("Performance", const_name):
 		return -1.0
@@ -510,6 +538,7 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "%s\n" % _perf_last_runtime_combat_line
 		+ "%s\n" % _perf_last_runtime_count_line
 		+ "%s\n" % _perf_last_engine_process_line
+		+ "%s\n" % _perf_last_engine_physics_line
 		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
 		+ "target=%s" % target_state
 	)
@@ -712,26 +741,35 @@ func _find_first_entry_marker_in_tree(root: Node, faction_id: String) -> Marker2
 # Save API (debounced)
 # ---------------------------
 func request_save(_reason: String) -> void:
+	FRAME_PROFILER.add_count("gm.save.requested", 1.0)
 	_save_pending = true
 	_save_debounce.start()
 
 func _flush_save() -> void:
+	FRAME_PROFILER.add_count("gm.save.flush_tick", 1.0)
 	if not _save_pending:
+		FRAME_PROFILER.add_count("gm.save.flush_skipped", 1.0)
 		return
 	_save_pending = false
 	_do_save_now()
 
 func _autosave_tick() -> void:
+	FRAME_PROFILER.add_count("gm.save.autosave_tick", 1.0)
 	request_save("autosave")
 
 func _do_save_now() -> void:
+	var t_save := Time.get_ticks_usec()
 	if not has_node("/root/AppState"):
+		FRAME_PROFILER.add_usec("process.gm.save.do_save", Time.get_ticks_usec() - t_save)
 		return
 	if AppState.selected_character_id == "":
+		FRAME_PROFILER.add_usec("process.gm.save.do_save", Time.get_ticks_usec() - t_save)
 		return
 	if player == null or not is_instance_valid(player):
+		FRAME_PROFILER.add_usec("process.gm.save.do_save", Time.get_ticks_usec() - t_save)
 		return
 	if not player.has_method("export_character_data"):
+		FRAME_PROFILER.add_usec("process.gm.save.do_save", Time.get_ticks_usec() - t_save)
 		return
 
 	var data: Dictionary = player.call("export_character_data")
@@ -744,6 +782,7 @@ func _do_save_now() -> void:
 	data["last_world_pos"] = {"x": float(player.global_position.x), "y": float(player.global_position.y)}
 
 	AppState.save_selected_character(data)
+	FRAME_PROFILER.add_usec("process.gm.save.do_save", Time.get_ticks_usec() - t_save)
 
 
 # ---------------------------
