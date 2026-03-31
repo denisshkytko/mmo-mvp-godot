@@ -2,7 +2,7 @@ extends Control
 
 const MINIMAP_BUILDER := preload("res://ui/game/hud/core/minimap_builder.gd")
 
-@export var zoom_levels: PackedFloat32Array = PackedFloat32Array([1.0, 0.5, 0.25])
+@export var zoom_levels: PackedFloat32Array = PackedFloat32Array([1.0, 0.5, 0.25, 2.0])
 @export var follow_player: bool = true
 @export var zone_refresh_sec: float = 0.4
 @export var default_world_rect: Rect2 = Rect2(Vector2(-2000, -1200), Vector2(4000, 2400))
@@ -10,6 +10,7 @@ const MINIMAP_BUILDER := preload("res://ui/game/hud/core/minimap_builder.gd")
 @export var player_marker_base_world_size: Vector2 = Vector2(32.0, 32.0)
 @export var player_marker_min_px: float = 3.0
 @export var player_marker_max_px: float = 18.0
+@export var player_marker_x1_scale_boost: float = 4.0
 
 @onready var map_mask: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask
 @onready var map_stack: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack
@@ -202,19 +203,25 @@ func _apply_zoom_and_focus() -> void:
 			maxf(0.001, player_marker_base_world_size.x * player_scale.x),
 			maxf(0.001, player_marker_base_world_size.y * player_scale.y)
 		)
-		var px_per_world_marker := px_per_world
+		var px_per_world_marker_x1 := Vector2(
+			mask_size.x / maxf(1.0, camera_world_size.x),
+			mask_size.y / maxf(1.0, camera_world_size.y)
+		)
 		var marker_px_size := Vector2(
-			clampf(marker_world_size.x * px_per_world_marker.x, player_marker_min_px, player_marker_max_px),
-			clampf(marker_world_size.y * px_per_world_marker.y, player_marker_min_px, player_marker_max_px)
+			clampf(marker_world_size.x * px_per_world_marker_x1.x * player_marker_x1_scale_boost, player_marker_min_px, player_marker_max_px),
+			clampf(marker_world_size.y * px_per_world_marker_x1.y * player_marker_x1_scale_boost, player_marker_min_px, player_marker_max_px)
 		)
 		player_marker.custom_minimum_size = marker_px_size
 		player_marker.size = marker_px_size
 		if follow_player:
 			player_marker.position = (mask_size * 0.5) - (marker_px_size * 0.5)
 		else:
+			var marker_world := focus_world
+			if _player != null and is_instance_valid(_player):
+				marker_world = _player.global_position
 			var marker_pos := Vector2(
-				(focus_world.x - _active_world_min.x) * px_per_world_marker.x,
-				(focus_world.y - _active_world_min.y) * px_per_world_marker.y
+				(marker_world.x - _active_world_min.x) * px_per_world.x,
+				(marker_world.y - _active_world_min.y) * px_per_world.y
 			)
 			player_marker.position = marker_pos - (marker_px_size * 0.5)
 
