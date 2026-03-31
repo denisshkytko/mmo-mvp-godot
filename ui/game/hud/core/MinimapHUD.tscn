@@ -1,4 +1,6 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/game/hud/core/minimap_hud.gd" id="1_0mm"]
 
 [node name="MinimapHUD" type="Control"]
 layout_mode = 3
@@ -8,6 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("1_0mm")
 
 [node name="TopRightAnchor" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -19,10 +22,6 @@ offset_top = 24.0
 offset_right = -24.0
 offset_bottom = 300.0
 grow_horizontal = 0
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 0
-theme_override_constants/margin_bottom = 0
 
 [node name="MapPanel" type="Panel" parent="TopRightAnchor"]
 custom_minimum_size = Vector2(460, 236)
@@ -41,10 +40,6 @@ offset_right = -8.0
 offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 0
-theme_override_constants/margin_bottom = 0
 
 [node name="MapAspect" type="AspectRatioContainer" parent="TopRightAnchor/MapPanel/Padding"]
 layout_mode = 2
@@ -57,14 +52,24 @@ stretch_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-mouse_filter = 2
 clip_contents = true
+mouse_filter = 2
 
 [node name="MapStack" type="StackContainer" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-metadata/_editor_description_ = "Переключение карты локации: оставить активной нужную TextureRect для текущей зоны."
+
+[node name="Scene1Map" type="TextureRect" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+metadata/zone_path = "res://game/world/zones/1.tscn"
+metadata/world_min = Vector2(-2000, -1200)
+metadata/world_size = Vector2(4000, 2400)
 
 [node name="Zone01Map" type="TextureRect" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack"]
 visible = false
@@ -74,27 +79,9 @@ size_flags_vertical = 3
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 2
-self_modulate = Color(1, 1, 1, 0.95)
-
-[node name="Zone02Map" type="TextureRect" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 5
-mouse_filter = 2
-self_modulate = Color(1, 1, 1, 0.95)
-
-[node name="Zone03Map" type="TextureRect" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack"]
-visible = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 5
-mouse_filter = 2
-self_modulate = Color(1, 1, 1, 0.95)
+metadata/zone_path = "res://game/world/zones/Zone_01.tscn"
+metadata/world_min = Vector2(-2000, -1200)
+metadata/world_size = Vector2(4000, 2400)
 
 [node name="TapZone" type="Button" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask"]
 layout_mode = 1
@@ -104,43 +91,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-mouse_default_cursor_shape = 2
 flat = true
 text = ""
-metadata/_editor_description_ = "Тап по миникарте. Подключить pressed для циклического переключения ZoomModes вручную через редактор."
-
-[node name="ZoomModes" type="HBoxContainer" parent="TopRightAnchor/MapPanel"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -126.0
-offset_top = -34.0
-offset_right = 126.0
-offset_bottom = -8.0
-grow_horizontal = 2
-theme_override_constants/separation = 8
-
-[node name="ZoomX1" type="Button" parent="TopRightAnchor/MapPanel/ZoomModes"]
-custom_minimum_size = Vector2(76, 24)
-layout_mode = 2
-size_flags_horizontal = 3
-toggle_mode = true
-button_pressed = true
-text = "x1"
-
-[node name="ZoomX05" type="Button" parent="TopRightAnchor/MapPanel/ZoomModes"]
-custom_minimum_size = Vector2(76, 24)
-layout_mode = 2
-size_flags_horizontal = 3
-toggle_mode = true
-text = "x0.5"
-
-[node name="ZoomX025" type="Button" parent="TopRightAnchor/MapPanel/ZoomModes"]
-custom_minimum_size = Vector2(76, 24)
-layout_mode = 2
-size_flags_horizontal = 3
-toggle_mode = true
-text = "x0.25"
+mouse_default_cursor_shape = 2
