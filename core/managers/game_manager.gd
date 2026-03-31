@@ -316,7 +316,6 @@ func _ensure_runtime_profiler_overlay() -> void:
 		_runtime_profiler_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_runtime_profiler_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		_runtime_profiler_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		_runtime_profiler_label.clip_text = true
 		_runtime_profiler_label.add_theme_font_size_override("font_size", 14)
 		_runtime_profiler_label.add_theme_color_override("font_color", Color(0.9, 1.0, 0.9, 0.95))
 		_runtime_profiler_canvas.add_child.call_deferred(_runtime_profiler_label)
@@ -331,7 +330,7 @@ func _update_runtime_profiler_overlay() -> void:
 		return
 	var viewport_size: Vector2i = get_viewport().get_visible_rect().size
 	var max_overlay_width: float = clamp(float(viewport_size.x) * 0.60, 540.0, 1280.0)
-	_runtime_profiler_label.size.x = max_overlay_width
+	_runtime_profiler_label.custom_minimum_size.x = max_overlay_width
 	var fps: int = int(round(Engine.get_frames_per_second()))
 	var tree_nodes: int = get_tree().get_node_count()
 	var target_state: String = "none"
