@@ -175,7 +175,7 @@ static func _blit_tile_texture(
 		var cached_stamp: Image = cached_item.get("image", null) as Image
 		var cached_offset: Vector2i = cached_item.get("offset", Vector2i.ZERO) as Vector2i
 		if cached_stamp != null and not cached_stamp.is_empty():
-			image.blit_rect(cached_stamp, Rect2i(Vector2i.ZERO, cached_stamp.get_size()), Vector2i(px, py) + cached_offset)
+			_blend_stamp(image, cached_stamp, Vector2i(px, py) + cached_offset)
 			return true
 
 	var src := tile_set.get_source(source_id)
@@ -196,13 +196,9 @@ static func _blit_tile_texture(
 
 	var region := Rect2i()
 	if atlas_src.has_method("get_tile_texture_region"):
-		var rr: Variant = atlas_src.call("get_tile_texture_region", atlas, alternative)
+		var rr: Variant = atlas_src.call("get_tile_texture_region", atlas)
 		if rr is Rect2i:
 			region = rr as Rect2i
-	if (region.size.x <= 0 or region.size.y <= 0) and atlas_src.has_method("get_tile_texture_region"):
-		var rr1: Variant = atlas_src.call("get_tile_texture_region", atlas)
-		if rr1 is Rect2i:
-			region = rr1 as Rect2i
 	if region.size.x <= 0 or region.size.y <= 0:
 		return false
 
@@ -216,9 +212,13 @@ static func _blit_tile_texture(
 	var scale_y := float(step_px) / maxf(1.0, float(tile_size.y))
 	var stamp_w := maxi(1, int(round(float(region.size.x) * scale_x)))
 	var stamp_h := maxi(1, int(round(float(region.size.y) * scale_y)))
+	var anchor_offset := Vector2i(
+		-int(round(float(stamp_w - step_px) * 0.5)),
+		-(stamp_h - step_px)
+	)
 	var draw_offset := Vector2i(
-		int(round(float(tile_origin.x) * scale_x)),
-		int(round(float(tile_origin.y) * scale_y))
+		anchor_offset.x + int(round(float(tile_origin.x) * scale_x)),
+		anchor_offset.y + int(round(float(tile_origin.y) * scale_y))
 	)
 
 	var stamp := Image.create(stamp_w, stamp_h, false, Image.FORMAT_RGBA8)
@@ -232,8 +232,26 @@ static func _blit_tile_texture(
 			stamp.set_pixel(xx, yy, tex_img.get_pixel(src_x, src_y))
 
 	tile_stamp_cache[stamp_key] = {"image": stamp, "offset": draw_offset}
-	image.blit_rect(stamp, Rect2i(Vector2i.ZERO, stamp.get_size()), Vector2i(px, py) + draw_offset)
+	_blend_stamp(image, stamp, Vector2i(px, py) + draw_offset)
 	return true
+
+
+static func _blend_stamp(dst: Image, stamp: Image, pos: Vector2i) -> void:
+	var w := dst.get_width()
+	var h := dst.get_height()
+	for sy in range(stamp.get_height()):
+		var dy := pos.y + sy
+		if dy < 0 or dy >= h:
+			continue
+		for sx in range(stamp.get_width()):
+			var dx := pos.x + sx
+			if dx < 0 or dx >= w:
+				continue
+			var src_col := stamp.get_pixel(sx, sy)
+			if src_col.a <= 0.001:
+				continue
+			var base_col := dst.get_pixel(dx, dy)
+			dst.set_pixel(dx, dy, base_col.blend(src_col))
 
 
 static func _collect_tile_layers(root: Node, out_layers: Array[TileMapLayer]) -> void:

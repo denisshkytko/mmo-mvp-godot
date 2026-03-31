@@ -11,6 +11,16 @@ const MINIMAP_BUILDER := preload("res://ui/game/hud/core/minimap_builder.gd")
 @export var player_marker_min_px: float = 3.0
 @export var player_marker_max_px: float = 18.0
 @export var player_marker_x1_scale_boost: float = 4.0
+@export var entity_dot_refresh_sec: float = 0.15
+@export var entity_dot_buffer_mul: float = 1.25
+@export var entity_dot_friendly_color: Color = Color(0.15, 0.55, 0.15, 1.0)
+@export var entity_dot_hostile_color: Color = Color(0.65, 0.15, 0.15, 1.0)
+@export var entity_dot_neutral_color: Color = Color(0.65, 0.55, 0.15, 1.0)
+@export var corpse_dot_empty_color: Color = Color(0.45, 0.45, 0.45, 1.0)
+@export var corpse_dot_loot_blink_a: Color = Color(0.50, 0.50, 0.50, 1.0)
+@export var corpse_dot_loot_blink_b: Color = Color(0.72, 0.62, 0.25, 1.0)
+@export var entity_dot_outline_color: Color = Color(0, 0, 0, 1.0)
+@export var corpse_blink_hz: float = 2.6
 
 @onready var map_mask: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask
 @onready var map_stack: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack
@@ -24,6 +34,10 @@ var _active_map: TextureRect = null
 var _active_world_min: Vector2 = Vector2.ZERO
 var _active_world_size: Vector2 = Vector2.ONE
 var _player: Node2D = null
+var _last_player_marker_size_px: float = 8.0
+var _dot_refresh_timer: float = 0.0
+var _tracked_units: Array[Node2D] = []
+var _tracked_corpses: Array[Node2D] = []
 
 
 func _ready() -> void:
@@ -36,12 +50,17 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_zone_refresh_timer = max(0.0, _zone_refresh_timer - max(0.0, delta))
+	_dot_refresh_timer = max(0.0, _dot_refresh_timer - max(0.0, delta))
 	if _zone_refresh_timer <= 0.0:
 		_zone_refresh_timer = zone_refresh_sec
 		var zone_path := _get_current_zone_path()
 		if zone_path != _current_zone_path:
 			_select_map_for_zone(zone_path)
+	if _dot_refresh_timer <= 0.0:
+		_dot_refresh_timer = entity_dot_refresh_sec
+		_refresh_entity_tracking_cache()
 	_apply_zoom_and_focus()
+	queue_redraw()
 
 
 func _on_tap_pressed() -> void:
@@ -211,6 +230,7 @@ func _apply_zoom_and_focus() -> void:
 			clampf(marker_world_size.x * px_per_world_marker_x1.x * player_marker_x1_scale_boost, player_marker_min_px, player_marker_max_px),
 			clampf(marker_world_size.y * px_per_world_marker_x1.y * player_marker_x1_scale_boost, player_marker_min_px, player_marker_max_px)
 		)
+		_last_player_marker_size_px = (marker_px_size.x + marker_px_size.y) * 0.5
 		player_marker.custom_minimum_size = marker_px_size
 		player_marker.size = marker_px_size
 		if follow_player:
@@ -224,6 +244,112 @@ func _apply_zoom_and_focus() -> void:
 				(marker_world.y - _active_world_min.y) * px_per_world.y
 			)
 			player_marker.position = marker_pos - (marker_px_size * 0.5)
+
+
+func _draw() -> void:
+	if _active_map == null or not is_instance_valid(_active_map):
+		return
+	var mask_global := map_mask.global_position
+	var root_global := global_position
+	var mask_origin := mask_global - root_global
+	var mask_size := map_mask.size
+	var dot_radius := maxf(1.0, _last_player_marker_size_px * 0.25)
+	var outline_radius := dot_radius + 1.0
+	var t_sec := float(Time.get_ticks_msec()) * 0.001
+	var blink_on := sin(t_sec * TAU * corpse_blink_hz) >= 0.0
+
+	for unit in _tracked_units:
+		if unit == null or not is_instance_valid(unit):
+			continue
+		var p := _world_to_mask_pos(unit.global_position)
+		if p.x < -8.0 or p.y < -8.0 or p.x > mask_size.x + 8.0 or p.y > mask_size.y + 8.0:
+			continue
+		var c := _pick_unit_dot_color(unit)
+		var draw_p := mask_origin + p
+		draw_circle(draw_p, outline_radius, entity_dot_outline_color)
+		draw_circle(draw_p, dot_radius, c)
+
+	for corpse in _tracked_corpses:
+		if corpse == null or not is_instance_valid(corpse):
+			continue
+		var cp := _world_to_mask_pos(corpse.global_position)
+		if cp.x < -8.0 or cp.y < -8.0 or cp.x > mask_size.x + 8.0 or cp.y > mask_size.y + 8.0:
+			continue
+		var corpse_color := corpse_dot_empty_color
+		var can_loot := false
+		if corpse.has_method("has_loot") and bool(corpse.call("has_loot")):
+			if _player != null and is_instance_valid(_player) and corpse.has_method("_can_be_looted_by"):
+				can_loot = bool(corpse.call("_can_be_looted_by", _player))
+		if can_loot:
+			corpse_color = corpse_dot_loot_blink_a if blink_on else corpse_dot_loot_blink_b
+		var corpse_draw_p := mask_origin + cp
+		draw_circle(corpse_draw_p, outline_radius, entity_dot_outline_color)
+		draw_circle(corpse_draw_p, dot_radius, corpse_color)
+
+
+func _refresh_entity_tracking_cache() -> void:
+	_tracked_units.clear()
+	_tracked_corpses.clear()
+	if _player == null or not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group("player") as Node2D
+	if _player == null or not is_instance_valid(_player):
+		return
+
+	var max_view := _get_camera_world_view_size() / 0.125
+	var max_radius := maxf(max_view.x, max_view.y) * entity_dot_buffer_mul
+	var center := _player.global_position
+
+	var units := get_tree().get_nodes_in_group("faction_units")
+	for n in units:
+		if not (n is Node2D):
+			continue
+		var u := n as Node2D
+		if u == _player:
+			continue
+		if center.distance_to(u.global_position) > max_radius:
+			continue
+		_tracked_units.append(u)
+
+	var ys := get_tree().get_nodes_in_group("y_sort_entities")
+	for n in ys:
+		if not (n is Node2D):
+			continue
+		if not n.has_method("has_loot"):
+			continue
+		var c := n as Node2D
+		if center.distance_to(c.global_position) > max_radius:
+			continue
+		_tracked_corpses.append(c)
+
+
+func _pick_unit_dot_color(unit: Node2D) -> Color:
+	var player_faction: String = "blue"
+	if _player != null and is_instance_valid(_player) and _player.has_method("get_faction_id"):
+		player_faction = String(_player.call("get_faction_id"))
+	var target_faction: String = ""
+	if unit.has_method("get_faction_id"):
+		target_faction = String(unit.call("get_faction_id"))
+	if target_faction == "":
+		if unit.get("mob_id") != null:
+			target_faction = "aggressive_mob"
+		elif unit.get("npc_id") != null:
+			target_faction = "neutral_mob"
+	var rel := FactionRules.relation(player_faction, target_faction)
+	if rel == FactionRules.Relation.FRIENDLY:
+		return entity_dot_friendly_color
+	if rel == FactionRules.Relation.HOSTILE:
+		return entity_dot_hostile_color
+	return entity_dot_neutral_color
+
+
+func _world_to_mask_pos(world_pos: Vector2) -> Vector2:
+	if _active_map == null or not is_instance_valid(_active_map):
+		return Vector2.ZERO
+	var uv := Vector2(
+		(world_pos.x - _active_world_min.x) / maxf(1.0, _active_world_size.x),
+		(world_pos.y - _active_world_min.y) / maxf(1.0, _active_world_size.y)
+	)
+	return _active_map.position + Vector2(uv.x * _active_map.size.x, uv.y * _active_map.size.y)
 
 
 func _get_camera_world_view_size() -> Vector2:
