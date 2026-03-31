@@ -1,6 +1,7 @@
 extends Node2D
 class_name BaseSpawnerGroup
 
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 ## SpawnPoint is a global class (class_name). Avoid shadowing.
 
 @export_group("Respawn")
@@ -20,6 +21,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	for i in range(_points.size()):
 		if _waiting_corpse[i]:
 			continue
@@ -28,6 +30,7 @@ func _process(delta: float) -> void:
 			if _respawn_timer[i] <= 0.0:
 				_waiting_respawn[i] = false
 				_spawn_at(i)
+	FRAME_PROFILER.add_usec("process.spawner_group.total", Time.get_ticks_usec() - t_total)
 
 
 func _collect_points() -> void:

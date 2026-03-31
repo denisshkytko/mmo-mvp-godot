@@ -1,6 +1,7 @@
 extends Control
 class_name PerformanceProfilerWindow
 
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 signal closed
 
 @onready var close_button: Button = $Margin/Panel/VBox/Header/CloseButton
@@ -29,11 +30,14 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	_refresh_timer += max(0.0, delta)
 	if _refresh_timer < REFRESH_SEC:
+		FRAME_PROFILER.add_usec("process.hud.performance_profiler_window.total", Time.get_ticks_usec() - t_total)
 		return
 	_refresh_timer = 0.0
 	_refresh_from_runtime_overlay()
+	FRAME_PROFILER.add_usec("process.hud.performance_profiler_window.total", Time.get_ticks_usec() - t_total)
 
 
 func _on_close_pressed() -> void:
@@ -252,7 +256,14 @@ func _extract_float_after(text: String, token: String) -> float:
 	if idx < 0:
 		return 0.0
 	var tail := text.substr(idx + token.length())
-	return _extract_float_before(tail, "ms")
+	var num := ""
+	for i in range(tail.length()):
+		var ch := tail[i]
+		if ch == "-" or ch == "+" or ch == "." or (ch >= "0" and ch <= "9"):
+			num += ch
+			continue
+		break
+	return float(num) if num.is_valid_float() else 0.0
 
 
 func _extract_float_before(text: String, token: String) -> float:

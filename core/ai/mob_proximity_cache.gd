@@ -1,5 +1,6 @@
 extends Node
 
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const CACHE_REFRESH_SEC: float = 0.25
 const CELL_SIZE: float = 64.0
 
@@ -8,11 +9,14 @@ var _spatial_hash: Dictionary = {}
 
 
 func _physics_process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	_cache_timer -= delta
 	if _cache_timer > 0.0:
+		FRAME_PROFILER.add_usec("mob_cache.physics.total", Time.get_ticks_usec() - t_total)
 		return
 	_cache_timer = CACHE_REFRESH_SEC
 	_rebuild_cache()
+	FRAME_PROFILER.add_usec("mob_cache.physics.total", Time.get_ticks_usec() - t_total)
 
 
 func _rebuild_cache() -> void:
