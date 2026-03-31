@@ -143,43 +143,54 @@ func _add_metric_row(parent: TreeItem, metric: String, ms: float, group_ms: floa
 
 func _build_process_hierarchy(process_group: TreeItem, process_items: Array[Dictionary], process_ms: float, total_ms: float) -> void:
 	var parent_rows: Dictionary = {}
+	var parent_totals_ms: Dictionary = {}
 	for item in process_items:
 		var metric := String(item.get("metric", ""))
 		if metric.ends_with(".total"):
-			var row := _add_metric_row(process_group, metric, float(item.get("ms", 0.0)), process_ms, total_ms, "Process")
-			parent_rows[_process_parent_key(metric)] = row
+			var metric_ms := float(item.get("ms", 0.0))
+			var parent_key := _process_parent_key(metric)
+			var row := _add_metric_row(process_group, metric, metric_ms, process_ms, total_ms, "Process")
+			parent_rows[parent_key] = row
+			parent_totals_ms[parent_key] = metric_ms
 	for item in process_items:
 		var metric := String(item.get("metric", ""))
 		if metric.ends_with(".total"):
 			continue
 		var parent_key := _process_parent_key(metric)
 		if parent_rows.has(parent_key):
-			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), process_ms, total_ms, "Process/%s" % parent_key)
+			var parent_ms := max(0.001, float(parent_totals_ms.get(parent_key, process_ms)))
+			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), parent_ms, total_ms, "Process/%s" % parent_key)
 		else:
 			_add_metric_row(process_group, metric, float(item.get("ms", 0.0)), process_ms, total_ms, "Process")
 
 
 func _build_physics_hierarchy(physics_group: TreeItem, physics_items: Array[Dictionary], ai_items: Array[Dictionary], physics_ms: float, total_ms: float) -> void:
 	var parent_rows: Dictionary = {}
+	var parent_totals_ms: Dictionary = {}
 	for item in physics_items:
 		var metric := String(item.get("metric", ""))
 		if metric.ends_with(".total"):
-			var row := _add_metric_row(physics_group, metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics")
-			parent_rows[_physics_parent_key(metric)] = row
+			var metric_ms := float(item.get("ms", 0.0))
+			var parent_key := _physics_parent_key(metric)
+			var row := _add_metric_row(physics_group, metric, metric_ms, physics_ms, total_ms, "Physics")
+			parent_rows[parent_key] = row
+			parent_totals_ms[parent_key] = metric_ms
 	for item in physics_items:
 		var metric := String(item.get("metric", ""))
 		if metric.ends_with(".total"):
 			continue
 		var parent_key := _physics_parent_key(metric)
 		if parent_rows.has(parent_key):
-			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics/%s" % parent_key)
+			var parent_ms := max(0.001, float(parent_totals_ms.get(parent_key, physics_ms)))
+			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), parent_ms, total_ms, "Physics/%s" % parent_key)
 		else:
 			_add_metric_row(physics_group, metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics")
 	for item in ai_items:
 		var metric := String(item.get("metric", ""))
 		var parent_key := _physics_parent_key(metric)
 		if parent_rows.has(parent_key):
-			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics/%s" % parent_key)
+			var parent_ms := max(0.001, float(parent_totals_ms.get(parent_key, physics_ms)))
+			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), parent_ms, total_ms, "Physics/%s" % parent_key)
 		else:
 			_add_metric_row(physics_group, metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics")
 

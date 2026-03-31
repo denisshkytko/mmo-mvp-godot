@@ -250,9 +250,11 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	var t_physics_total := Time.get_ticks_usec()
+	var t_precheck := Time.get_ticks_usec()
 	_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
+		FRAME_PROFILER.add_usec("mob_aggressive.physics.precheck", Time.get_ticks_usec() - t_precheck)
 		FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 
@@ -260,6 +262,7 @@ func _physics_process(delta: float) -> void:
 		c_stats.call("tick_status_effects", delta)
 	if not c_stats.is_dead and c_stats.current_hp <= 0:
 		_die()
+		FRAME_PROFILER.add_usec("mob_aggressive.physics.precheck", Time.get_ticks_usec() - t_precheck)
 		FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
@@ -273,10 +276,13 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 		move_and_slide()
 		c_combat.reset_combat()
+		FRAME_PROFILER.add_usec("mob_aggressive.physics.precheck", Time.get_ticks_usec() - t_precheck)
 		FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	_set_model_stunned(false)
+	FRAME_PROFILER.add_usec("mob_aggressive.physics.precheck", Time.get_ticks_usec() - t_precheck)
 
+	var t_targeting := Time.get_ticks_usec()
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 
 	if current_target == null or not is_instance_valid(current_target):
@@ -314,18 +320,23 @@ func _physics_process(delta: float) -> void:
 			regen_active = true
 		_notify_target_change(_prev_target, current_target)
 		_prev_target = current_target
+	FRAME_PROFILER.add_usec("mob_aggressive.physics.targeting", Time.get_ticks_usec() - t_targeting)
 
 	# реген после leash-return, продолжается пока HP не станет full
+	var t_regen := Time.get_ticks_usec()
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
 		c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
 		c_stats.update_hp_bar(hp_bar)
 		if c_stats.current_hp >= c_stats.max_hp:
 			regen_active = false
+	FRAME_PROFILER.add_usec("mob_aggressive.physics.regen", Time.get_ticks_usec() - t_regen)
 
 	if player == null or not is_instance_valid(player):
 		player = NodeCache.get_player(get_tree()) as Node2D
 
+	var t_mode_sync := Time.get_ticks_usec()
 	_apply_mode_to_components()
+	FRAME_PROFILER.add_usec("mob_aggressive.physics.mode_sync", Time.get_ticks_usec() - t_mode_sync)
 
 	var t_ai_tick := Time.get_ticks_usec()
 	c_ai.tick(delta, self, current_target, c_combat)
@@ -344,12 +355,14 @@ func _physics_process(delta: float) -> void:
 	if (current_target == null or not is_instance_valid(current_target)) and c_spell_caster != null and c_spell_caster.is_casting():
 		c_spell_caster.interrupt_cast("lost_target")
 
+	var t_cast_bar := Time.get_ticks_usec()
 	if cast_bar != null:
 		var casting := c_spell_caster.is_casting()
 		var show_cast: bool = casting and _is_combat_visible_for_player()
 		cast_bar.set_cast_visible(show_cast)
 		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if show_cast else 0.0)
 		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if show_cast else null)
+	FRAME_PROFILER.add_usec("mob_aggressive.physics.cast_bar", Time.get_ticks_usec() - t_cast_bar)
 	FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 
 func _update_visual_render_order() -> void:

@@ -345,11 +345,17 @@ func _extract_physics_namespace(key: String) -> String:
 
 
 func _build_engine_process_monitors_line() -> String:
-	var monitor_names: Array[String] = [
-		"TIME_NAVIGATION_PROCESS",
-		"TIME_ANIMATION_PROCESS",
-		"TIME_AUDIO_PROCESS",
-	]
+	var monitor_names: Array[String] = []
+	for const_name_v in ClassDB.class_get_integer_constant_list("Performance", true):
+		var const_name := String(const_name_v)
+		if not const_name.begins_with("TIME_"):
+			continue
+		if not const_name.ends_with("_PROCESS"):
+			continue
+		if const_name == "TIME_PROCESS" or const_name == "TIME_PHYSICS_PROCESS":
+			continue
+		monitor_names.append(const_name)
+	monitor_names.sort()
 	var parts: Array[String] = []
 	for monitor_name in monitor_names:
 		var value_ms: float = _read_performance_monitor_ms(monitor_name)
