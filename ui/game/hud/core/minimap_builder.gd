@@ -66,17 +66,16 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 			var step_y := maxf(0.001, (world_py - world_p).length())
 			var world_step := maxf(0.001, minf(step_x, step_y))
 			var half_step := world_step * 0.5
-
-				included_cells.append({
-					"world_pos": world_p,
-					"world_step": world_step,
-					"color": layer_color,
-					"layer": layer,
-					"layer_name": layer_name,
-					"source_id": source_id,
-					"atlas": atlas,
-					"alternative": layer.get_cell_alternative_tile(cell),
-				})
+			included_cells.append({
+				"world_pos": world_p,
+				"world_step": world_step,
+				"color": layer_color,
+				"layer": layer,
+				"layer_name": layer_name,
+				"source_id": source_id,
+				"atlas": atlas,
+				"alternative": layer.get_cell_alternative_tile(cell),
+			})
 			min_world_step = minf(min_world_step, world_step)
 
 			if not has_world_bounds:
