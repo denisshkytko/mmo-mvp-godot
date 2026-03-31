@@ -71,6 +71,10 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 				"world_pos": world_p,
 				"world_step": world_step,
 				"color": layer_color,
+				"layer": layer,
+				"source_id": source_id,
+				"atlas": atlas,
+				"alternative": layer.get_cell_alternative_tile(cell),
 			})
 			min_world_step = minf(min_world_step, world_step)
 
@@ -102,6 +106,7 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 	var image := Image.create(img_w, img_h, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0.0))
 
+	var draw_real_tiles := bool(config.get("draw_tile_textures", true))
 	for item in included_cells:
 		var world_p: Vector2 = item["world_pos"] as Vector2
 		var world_step: float = float(item["world_step"])
@@ -109,13 +114,14 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 		var px := int(floor((world_p.x - world_min.x) * px_per_world))
 		var py := int(floor((world_p.y - world_min.y) * px_per_world))
 		var step_px := maxi(1, int(round(world_step * px_per_world)))
-		for yy in range(py, py + step_px):
-			if yy < 0 or yy >= img_h:
+		if draw_real_tiles:
+			var layer_ref: TileMapLayer = item["layer"] as TileMapLayer
+			var source_id_ref := int(item["source_id"])
+			var atlas_ref: Vector2i = item["atlas"] as Vector2i
+			var alt_ref := int(item["alternative"])
+			if _blit_tile_texture(image, px, py, step_px, layer_ref, source_id_ref, atlas_ref, alt_ref):
 				continue
-			for xx in range(px, px + step_px):
-				if xx < 0 or xx >= img_w:
-					continue
-				image.set_pixel(xx, yy, col)
+		_fill_rect(image, px, py, step_px, img_w, img_h, col)
 
 	var tex := ImageTexture.create_from_image(image)
 	var world_rect := Rect2(world_min, world_max - world_min)
@@ -131,6 +137,75 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 	}
 	_zone_cache[zone_path] = result
 	return result
+
+
+static func _fill_rect(image: Image, px: int, py: int, step_px: int, img_w: int, img_h: int, col: Color) -> void:
+	for yy in range(py, py + step_px):
+		if yy < 0 or yy >= img_h:
+			continue
+		for xx in range(px, px + step_px):
+			if xx < 0 or xx >= img_w:
+				continue
+			image.set_pixel(xx, yy, col)
+
+
+static func _blit_tile_texture(
+		image: Image,
+		px: int,
+		py: int,
+		step_px: int,
+		layer: TileMapLayer,
+		source_id: int,
+		atlas: Vector2i,
+		alternative: int
+	) -> bool:
+	if layer == null or source_id < 0:
+		return false
+	var tile_set := layer.tile_set
+	if tile_set == null:
+		return false
+	var src := tile_set.get_source(source_id)
+	if src == null:
+		return false
+	if not (src is TileSetAtlasSource):
+		return false
+	var atlas_src := src as TileSetAtlasSource
+	var tex := atlas_src.texture
+	if tex == null:
+		return false
+	var tex_img := tex.get_image()
+	if tex_img == null or tex_img.is_empty():
+		return false
+	var region := Rect2i()
+	if atlas_src.has_method("get_tile_texture_region"):
+		var rr: Variant = atlas_src.call("get_tile_texture_region", atlas, alternative)
+		if rr is Rect2i:
+			region = rr as Rect2i
+	if (region.size.x <= 0 or region.size.y <= 0) and atlas_src.has_method("get_tile_texture_region"):
+		var rr1: Variant = atlas_src.call("get_tile_texture_region", atlas)
+		if rr1 is Rect2i:
+			region = rr1 as Rect2i
+	if region.size.x <= 0 or region.size.y <= 0:
+		return false
+	var max_w := image.get_width()
+	var max_h := image.get_height()
+	for yy in range(step_px):
+		var dst_y := py + yy
+		if dst_y < 0 or dst_y >= max_h:
+			continue
+		var src_v := int(floor((float(yy) / maxf(1.0, float(step_px))) * float(region.size.y)))
+		var src_y := region.position.y + clampi(src_v, 0, region.size.y - 1)
+		for xx in range(step_px):
+			var dst_x := px + xx
+			if dst_x < 0 or dst_x >= max_w:
+				continue
+			var src_u := int(floor((float(xx) / maxf(1.0, float(step_px))) * float(region.size.x)))
+			var src_x := region.position.x + clampi(src_u, 0, region.size.x - 1)
+			var s_col := tex_img.get_pixel(src_x, src_y)
+			if s_col.a <= 0.001:
+				continue
+			image.set_pixel(dst_x, dst_y, s_col)
+	return true
 
 
 static func _collect_tile_layers(root: Node, out_layers: Array[TileMapLayer]) -> void:
