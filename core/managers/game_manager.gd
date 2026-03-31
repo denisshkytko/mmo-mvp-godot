@@ -56,7 +56,9 @@ var _perf_last_player_nodes_count: int = 0
 var _perf_last_mob_nodes_count: int = 0
 var _perf_last_npc_nodes_count: int = 0
 var _perf_last_projectile_nodes_count: int = 0
-var _perf_last_runtime_breakdown_line: String = "script=n/a"
+var _perf_last_runtime_process_line: String = "script.process=n/a"
+var _perf_last_runtime_physics_line: String = "script.physics=n/a"
+var _perf_last_runtime_ai_line: String = "script.ai=n/a"
 var _perf_last_frames_count: int = 0
 var _perf_last_tracked_process_ms_f: float = 0.0
 var _perf_last_tracked_physics_ms_f: float = 0.0
@@ -128,7 +130,30 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_last_pivots_count = pivot_count
 	var runtime_samples: Dictionary = FRAME_PROFILER.consume_stats()
 	_update_runtime_tracking_totals(runtime_samples, frames)
-	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(runtime_samples, frames)
+	_perf_last_runtime_process_line = _build_runtime_breakdown_line(
+		runtime_samples,
+		frames,
+		"script.process",
+		func(key: String) -> bool:
+			return key.begins_with("process."),
+		8
+	)
+	_perf_last_runtime_physics_line = _build_runtime_breakdown_line(
+		runtime_samples,
+		frames,
+		"script.physics",
+		func(key: String) -> bool:
+			return key.find(".physics.") != -1,
+		6
+	)
+	_perf_last_runtime_ai_line = _build_runtime_breakdown_line(
+		runtime_samples,
+		frames,
+		"script.ai",
+		func(key: String) -> bool:
+			return key.find(".ai.") != -1,
+		6
+	)
 	if debug_perf_metrics_enabled:
 		print(
 			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
@@ -193,14 +218,20 @@ func _collect_runtime_node_breakdown() -> void:
 	_perf_last_projectile_nodes_count = projectile_nodes
 
 
-func _build_runtime_breakdown_line(samples: Dictionary, frames: int) -> String:
+func _build_runtime_breakdown_line(
+	samples: Dictionary,
+	frames: int,
+	label: String,
+	key_filter: Callable,
+	max_parts: int
+) -> String:
 	if samples.is_empty():
-		return "script=n/a"
+		return "%s=n/a" % label
 	var frame_count: int = max(1, frames)
 	var entries: Array[Dictionary] = []
 	for key_v in samples.keys():
 		var key: String = String(key_v)
-		if not _is_runtime_breakdown_key_visible(key):
+		if not key_filter.call(key):
 			continue
 		var entry_v: Variant = samples.get(key, {})
 		if not (entry_v is Dictionary):
@@ -227,11 +258,11 @@ func _build_runtime_breakdown_line(samples: Dictionary, frames: int) -> String:
 		var avg_ms: float = float(item.get("avg_ms", 0.0))
 		var samples_count: int = int(item.get("samples", 0))
 		parts.append("%s=%.3fms/f(avg %.3f x%d)" % [short_name, frame_ms, avg_ms, samples_count])
-		if parts.size() >= 3:
+		if parts.size() >= max(1, max_parts):
 			break
 	if parts.is_empty():
-		return "script=n/a"
-	return "script " + ", ".join(parts)
+		return "%s=n/a" % label
+	return "%s %s" % [label, ", ".join(parts)]
 
 
 func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
@@ -255,11 +286,6 @@ func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
 			physics_total += total_ms_f
 	_perf_last_tracked_process_ms_f = process_total
 	_perf_last_tracked_physics_ms_f = physics_total
-
-
-func _is_runtime_breakdown_key_visible(key: String) -> bool:
-	# Temporarily focus compact overlay on _process hotspots.
-	return key.begins_with("process.")
 
 
 func _ensure_runtime_profiler_overlay() -> void:
@@ -323,7 +349,9 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
 		+ "proc_nodes=%d phys_nodes=%d\n" % [_perf_last_process_nodes_count, _perf_last_physics_nodes_count]
 		+ "players=%d mobs=%d npcs=%d proj=%d\n" % [_perf_last_player_nodes_count, _perf_last_mob_nodes_count, _perf_last_npc_nodes_count, _perf_last_projectile_nodes_count]
-		+ "%s\n" % _perf_last_runtime_breakdown_line
+		+ "%s\n" % _perf_last_runtime_process_line
+		+ "%s\n" % _perf_last_runtime_physics_line
+		+ "%s\n" % _perf_last_runtime_ai_line
 		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
 		+ "target=%s" % target_state
 	)
