@@ -83,8 +83,10 @@ var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
 const THREAT_RECHECK_SEC: float = 0.25
 const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
+const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
 var _threat_recheck_timer: float = 0.0
 var _target_acquire_timer: float = 0.0
+var _target_validate_timer: float = 0.0
 
 # -----------------------------
 # Inspector (Common)
@@ -496,6 +498,7 @@ func _physics_process(delta: float) -> void:
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 	_target_acquire_timer = max(0.0, _target_acquire_timer - delta)
+	_target_validate_timer = max(0.0, _target_validate_timer - delta)
 
 	# regen after combat reset (2%/sec)
 	var t_regen := Time.get_ticks_usec()
@@ -508,39 +511,42 @@ func _physics_process(delta: float) -> void:
 
 	# validate current target
 	var t_targeting := Time.get_ticks_usec()
-	if current_target != null and is_instance_valid(current_target):
-		# dead targets are invalid
-		if "is_dead" in current_target and bool(current_target.get("is_dead")):
-			current_target = null
-			_target_acquire_timer = 0.0
-			retaliation_active = false
-			retaliation_target_id = 0
-		else:
-			# get target faction
-			var tf: String = ""
-			if current_target.has_method("get_faction_id"):
-				tf = String(current_target.call("get_faction_id"))
-
-			# default rule: NPC can fight only HOSTILE factions
-			var rel: int = FactionRules.relation(faction_id, tf)
-			var allowed: bool = (rel == FactionRules.Relation.HOSTILE)
-
-			# exception: YELLOW fights only the attacker that hit it (retaliation)
-			if not allowed and faction_id == "yellow" and retaliation_active:
-				if current_target.get_instance_id() == retaliation_target_id:
-					allowed = true
-
-			if not allowed:
-				current_target = null
-				_target_acquire_timer = 0.0
-				retaliation_active = false
-				retaliation_target_id = 0
-	else:
+	var need_full_validate: bool = (_target_validate_timer <= 0.0)
+	if current_target == null or not is_instance_valid(current_target):
 		current_target = null
 		_target_acquire_timer = 0.0
+		_target_validate_timer = 0.0
 		# если потеряли цель — чистим retaliation (иначе yellow будет "залипать")
 		retaliation_active = false
 		retaliation_target_id = 0
+	elif "is_dead" in current_target and bool(current_target.get("is_dead")):
+		current_target = null
+		_target_acquire_timer = 0.0
+		_target_validate_timer = 0.0
+		retaliation_active = false
+		retaliation_target_id = 0
+	elif need_full_validate:
+		_target_validate_timer = TARGET_VALIDATE_RECHECK_SEC
+		# get target faction
+		var tf: String = ""
+		if current_target.has_method("get_faction_id"):
+			tf = String(current_target.call("get_faction_id"))
+
+		# default rule: NPC can fight only HOSTILE factions
+		var rel: int = FactionRules.relation(faction_id, tf)
+		var allowed: bool = (rel == FactionRules.Relation.HOSTILE)
+
+		# exception: YELLOW fights only the attacker that hit it (retaliation)
+		if not allowed and faction_id == "yellow" and retaliation_active:
+			if current_target.get_instance_id() == retaliation_target_id:
+				allowed = true
+
+		if not allowed:
+			current_target = null
+			_target_acquire_timer = 0.0
+			_target_validate_timer = 0.0
+			retaliation_active = false
+			retaliation_target_id = 0
 
 	# pick target only if proactive aggro is enabled
 	# (yellow is non-proactive by design)
@@ -550,10 +556,12 @@ func _physics_process(delta: float) -> void:
 		if should_force_retarget or _target_acquire_timer <= 0.0:
 			current_target = _pick_target()
 			_target_acquire_timer = TARGET_ACQUIRE_RECHECK_SEC
+			_target_validate_timer = 0.0
 	if current_target != null and is_instance_valid(current_target):
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
 			current_target = null
 			_target_acquire_timer = 0.0
+			_target_validate_timer = 0.0
 			regen_active = true
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
