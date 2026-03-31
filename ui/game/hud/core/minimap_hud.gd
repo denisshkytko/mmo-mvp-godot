@@ -5,7 +5,7 @@ extends Control
 @export var zone_refresh_sec: float = 0.4
 
 @onready var map_mask: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask
-@onready var map_stack: StackContainer = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack
+@onready var map_stack: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack
 @onready var tap_zone: Button = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/TapZone
 
 var _zoom_index: int = 0
