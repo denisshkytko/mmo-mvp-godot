@@ -220,6 +220,10 @@ static func _blit_tile_texture(
 		anchor_offset.x + int(round(float(tile_origin.x) * scale_x)),
 		anchor_offset.y + int(round(float(tile_origin.y) * scale_y))
 	)
+	# Extra artist-tuned anchor shift:
+	# move from current anchor point 50% sprite-height up and 15% sprite-width left.
+	draw_offset.x -= int(round(float(stamp_w) * 0.15))
+	draw_offset.y -= int(round(float(stamp_h) * 0.50))
 
 	var stamp := tex_img.get_region(region)
 	stamp.resize(stamp_w, stamp_h, Image.INTERPOLATE_LANCZOS)
