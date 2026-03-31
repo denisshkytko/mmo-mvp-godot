@@ -58,6 +58,8 @@ var _perf_last_npc_nodes_count: int = 0
 var _perf_last_projectile_nodes_count: int = 0
 var _perf_last_runtime_breakdown_line: String = "script=n/a"
 var _perf_last_frames_count: int = 0
+var _perf_last_tracked_process_ms_f: float = 0.0
+var _perf_last_tracked_physics_ms_f: float = 0.0
 
 
 func _ready() -> void:
@@ -124,7 +126,9 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
 	_perf_last_entities_count = total_entities
 	_perf_last_pivots_count = pivot_count
-	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(FRAME_PROFILER.consume_stats(), frames)
+	var runtime_samples: Dictionary = FRAME_PROFILER.consume_stats()
+	_update_runtime_tracking_totals(runtime_samples, frames)
+	_perf_last_runtime_breakdown_line = _build_runtime_breakdown_line(runtime_samples, frames)
 	if debug_perf_metrics_enabled:
 		print(
 			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
@@ -234,6 +238,25 @@ func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
 	return float(a.get("frame_ms", 0.0)) > float(b.get("frame_ms", 0.0))
 
 
+func _update_runtime_tracking_totals(samples: Dictionary, frames: int) -> void:
+	var frame_count: int = max(1, frames)
+	var process_total: float = 0.0
+	var physics_total: float = 0.0
+	for key_v in samples.keys():
+		var key: String = String(key_v)
+		var entry_v: Variant = samples.get(key, {})
+		if not (entry_v is Dictionary):
+			continue
+		var entry: Dictionary = entry_v as Dictionary
+		var total_ms_f: float = float(entry.get("total_ms", 0.0)) / float(frame_count)
+		if key.begins_with("process."):
+			process_total += total_ms_f
+		elif key.find(".physics.") != -1:
+			physics_total += total_ms_f
+	_perf_last_tracked_process_ms_f = process_total
+	_perf_last_tracked_physics_ms_f = physics_total
+
+
 func _is_runtime_breakdown_key_visible(key: String) -> bool:
 	# Temporarily focus compact overlay on _process hotspots.
 	return key.begins_with("process.")
@@ -286,11 +309,15 @@ func _update_runtime_profiler_overlay() -> void:
 	var physics_ms_per_node: float = 0.0
 	if _perf_last_physics_nodes_count > 0:
 		physics_ms_per_node = physics_ms / float(_perf_last_physics_nodes_count)
+	var untracked_process_ms: float = max(0.0, process_ms - _perf_last_tracked_process_ms_f)
+	var untracked_physics_ms: float = max(0.0, physics_ms - _perf_last_tracked_physics_ms_f)
 	_runtime_profiler_label.text = (
 		"[Runtime Profiler]\n"
 		+ "fps=%d interval=%.2fs frames=%d\n" % [fps, _perf_last_interval_sec, _perf_last_frames_count]
 		+ "process=%.2fms physics=%.2fms\n" % [process_ms, physics_ms]
 		+ "proc/node=%.3fms phys/node=%.3fms\n" % [process_ms_per_node, physics_ms_per_node]
+		+ "tracked proc=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_process_ms_f, untracked_process_ms]
+		+ "tracked phys=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_physics_ms_f, untracked_physics_ms]
 		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
 		+ "gm.sync_entities=%.3fms\n" % _perf_last_avg_sync_entities_ms
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
