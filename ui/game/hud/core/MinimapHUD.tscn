@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://ui/game/hud/core/minimap_hud.gd" id="1_0mm"]
-[ext_resource type="Texture2D" uid="uid://c837eo233xlcq" path="res://assets/tiles/Ground And Road/Forest/ground_river_tileset_64.png" id="2_s1map"]
 
 [node name="MinimapHUD" type="Control"]
 layout_mode = 3
@@ -68,8 +67,8 @@ size_flags_vertical = 3
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 2
-texture = ExtResource("2_s1map")
 metadata/zone_path = "res://game/world/zones/1.tscn"
+metadata/use_zone_snapshot = true
 metadata/world_min = Vector2(-2000, -1200)
 metadata/world_size = Vector2(4000, 2400)
 
