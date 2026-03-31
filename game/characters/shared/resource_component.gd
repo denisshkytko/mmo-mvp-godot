@@ -1,6 +1,7 @@
 extends Node
 class_name ResourceComponent
 
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const PROG := preload("res://core/stats/progression.gd")
 
 var owner_entity: Node = null
@@ -122,21 +123,28 @@ func get_text() -> String:
 	return "%s %d/%d" % [label_name, resource, max_resource]
 
 func _process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if resource_type != "rage":
+		FRAME_PROFILER.add_usec("process.resource_component.total", Time.get_ticks_usec() - t_total)
 		return
 	if resource <= 0:
+		FRAME_PROFILER.add_usec("process.resource_component.total", Time.get_ticks_usec() - t_total)
 		return
 	if _is_in_combat():
+		FRAME_PROFILER.add_usec("process.resource_component.total", Time.get_ticks_usec() - t_total)
 		return
 	var now_sec: float = float(Time.get_ticks_msec()) / 1000.0
 	if (now_sec - _last_combat_time_sec) < rage_decay_delay_sec:
+		FRAME_PROFILER.add_usec("process.resource_component.total", Time.get_ticks_usec() - t_total)
 		return
 	_rage_decay_accum += rage_decay_per_sec * delta
 	var decay_amount: int = int(floor(_rage_decay_accum))
 	if decay_amount <= 0:
+		FRAME_PROFILER.add_usec("process.resource_component.total", Time.get_ticks_usec() - t_total)
 		return
 	resource = max(0, resource - decay_amount)
 	_rage_decay_accum -= float(decay_amount)
+	FRAME_PROFILER.add_usec("process.resource_component.total", Time.get_ticks_usec() - t_total)
 
 func _is_in_combat() -> bool:
 	if owner_entity == null:

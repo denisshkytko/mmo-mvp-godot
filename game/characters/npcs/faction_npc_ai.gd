@@ -7,9 +7,10 @@ enum State { IDLE, CHASE, RETURN }
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const COMBAT_SPACING_BUFFER: float = 32.0
 const PATROL_SEPARATION_DISTANCE: float = 28.0
-const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
+const PATROL_SEPARATION_REFRESH_SEC: float = 0.30
 const OBSTACLE_AVOID_LOOKAHEAD: float = 18.0
 const OBSTACLE_AVOID_ANGLES := [0.35, -0.35, 0.7, -0.7, 1.2, -1.2]
 const PATROL_SOFT_STUCK_SEC: float = 0.8
@@ -57,35 +58,47 @@ func on_took_damage(attacker: Node2D) -> void:
 	state = State.CHASE
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat, proactive: bool) -> void:
+	var t_leash := Time.get_ticks_usec()
 	var dist_home: float = actor.global_position.distance_to(home_position)
 	if state == State.CHASE and dist_home > leash_distance:
 		state = State.RETURN
 		emit_signal("leash_return_started")
+	FRAME_PROFILER.add_usec("npc.ai.leash_check", Time.get_ticks_usec() - t_leash)
 
 	if state == State.RETURN:
+		var t_return := Time.get_ticks_usec()
 		_do_return(delta, actor)
+		FRAME_PROFILER.add_usec("npc.ai.return", Time.get_ticks_usec() - t_return)
 		return
 
+	var t_proactive_gate := Time.get_ticks_usec()
 	if proactive:
 		if state != State.CHASE and target != null and is_instance_valid(target):
 			var d: float = actor.global_position.distance_to(target.global_position)
 			if d <= aggro_radius:
 				state = State.CHASE
+	FRAME_PROFILER.add_usec("npc.ai.proactive_gate", Time.get_ticks_usec() - t_proactive_gate)
 
 	if state == State.CHASE:
+		var t_chase := Time.get_ticks_usec()
 		_do_chase(actor, target, combat)
+		FRAME_PROFILER.add_usec("npc.ai.chase", Time.get_ticks_usec() - t_chase)
 		return
 
+	var t_idle := Time.get_ticks_usec()
 	_do_idle(delta, actor)
+	FRAME_PROFILER.add_usec("npc.ai.idle", Time.get_ticks_usec() - t_idle)
 
 func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 	if behavior == Behavior.PATROL:
+		var t_idle_patrol := Time.get_ticks_usec()
 		_do_patrol(delta, actor)
+		FRAME_PROFILER.add_usec("npc.ai.idle_patrol", Time.get_ticks_usec() - t_idle_patrol)
 	else:
 		actor.velocity = Vector2.ZERO
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
-		actor.move_and_slide()
+		return
 
 func _pick_patrol_target() -> void:
 	_has_patrol_target = true
@@ -101,7 +114,9 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		_patrol_stuck_time = 0.0
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
+		var t_patrol_wait_move := Time.get_ticks_usec()
 		actor.move_and_slide()
+		FRAME_PROFILER.add_usec("npc.ai.patrol_move", Time.get_ticks_usec() - t_patrol_wait_move)
 		return
 
 	if not _has_patrol_target:
@@ -134,20 +149,27 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	_patrol_has_last_position = true
 
 	var patrol_dir: Vector2 = (_patrol_target - actor.global_position).normalized()
+	var t_patrol_separation := Time.get_ticks_usec()
 	var separation_dir: Vector2 = _get_patrol_separation_vector(delta, actor)
+	FRAME_PROFILER.add_usec("npc.ai.patrol_separation", Time.get_ticks_usec() - t_patrol_separation)
 	var final_dir: Vector2 = patrol_dir + separation_dir
 	if final_dir.length_squared() > 0.0001:
 		final_dir = final_dir.normalized()
 	else:
 		final_dir = patrol_dir
+	var t_patrol_steer := Time.get_ticks_usec()
 	final_dir = _steer_around_obstacles(actor, final_dir)
+	FRAME_PROFILER.add_usec("npc.ai.patrol_steer", Time.get_ticks_usec() - t_patrol_steer)
 	if final_dir.length_squared() <= 0.0001:
 		actor.velocity = Vector2.ZERO
+		return
 	else:
 		actor.velocity = final_dir * patrol_speed
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, true)
+	var t_patrol_move := Time.get_ticks_usec()
 	actor.move_and_slide()
+	FRAME_PROFILER.add_usec("npc.ai.patrol_move", Time.get_ticks_usec() - t_patrol_move)
 
 func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vector2:
 	_patrol_separation_refresh -= delta

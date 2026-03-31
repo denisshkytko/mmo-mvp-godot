@@ -4,14 +4,19 @@ class_name NormalAggresiveMobAI
 signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const COMBAT_SPACING_BUFFER: float = 32.0
 const PATROL_SEPARATION_DISTANCE: float = 28.0
-const PATROL_SEPARATION_REFRESH_SEC: float = 0.15
+const PATROL_SEPARATION_REFRESH_SEC: float = 0.30
 const OBSTACLE_AVOID_LOOKAHEAD: float = 18.0
 const OBSTACLE_AVOID_ANGLES := [0.35, -0.35, 0.7, -0.7, 1.2, -1.2]
 const PATROL_SOFT_STUCK_SEC: float = 0.8
 const PATROL_HARD_STUCK_SEC: float = 1.6
 const PATROL_UNSTUCK_STEP_OPTIONS := [16.0, 24.0, 32.0]
+const IDLE_STAGGER_DIVISOR: int = 3
+const LOD_FULL_DISTANCE: float = 450.0
+const LOD_REDUCED_DISTANCE: float = 900.0
+const LOD_MINIMAL_DISTANCE: float = 1300.0
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -35,6 +40,9 @@ var _patrol_has_last_position: bool = false
 var _patrol_stuck_time: float = 0.0
 var _patrol_separation_refresh: float = 0.0
 var _patrol_separation_vector: Vector2 = Vector2.ZERO
+var _idle_tick_counter: int = 0
+var _idle_stagger_offset: int = -1
+var _current_lod_level: int = 0
 
 func reset_to_idle() -> void:
 	_state = AIState.IDLE
@@ -53,30 +61,46 @@ func is_returning() -> bool:
 	return _state == AIState.RETURN
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
+	_current_lod_level = _resolve_lod_level(actor, target)
 	# выключение CHASE по leash_distance
+	var t_leash := Time.get_ticks_usec()
 	var dist_to_home: float = actor.global_position.distance_to(home_position)
 	if _state == AIState.CHASE and dist_to_home > leash_distance:
 		_state = AIState.RETURN
 		emit_signal("leash_return_started")
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.leash_check", Time.get_ticks_usec() - t_leash)
 
 	# RETURN
 	if _state == AIState.RETURN:
+		var t_return := Time.get_ticks_usec()
 		_do_return(delta, actor)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.return", Time.get_ticks_usec() - t_return)
 		return
 
 	# включаем CHASE только если цель вошла в агро-радиус
+	var t_aggro_gate := Time.get_ticks_usec()
 	if _state != AIState.CHASE and target != null and is_instance_valid(target):
 		var dist_to_target: float = actor.global_position.distance_to(target.global_position)
 		if dist_to_target <= aggro_radius:
 			_state = AIState.CHASE
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.aggro_gate", Time.get_ticks_usec() - t_aggro_gate)
 
 	# CHASE
 	if _state == AIState.CHASE:
+		var t_chase := Time.get_ticks_usec()
 		_do_chase(actor, target, combat)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.chase", Time.get_ticks_usec() - t_chase)
 		return
 
 	# IDLE
+	if not _should_run_idle_patrol_tick(actor):
+		_idle_tick_counter += 1
+		_idle_noop(actor)
+		return
+	_idle_tick_counter += 1
+	var t_idle := Time.get_ticks_usec()
 	_do_idle(delta, actor)
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.idle", Time.get_ticks_usec() - t_idle)
 
 func on_took_damage(attacker: Node2D) -> void:
 	if attacker == null or not is_instance_valid(attacker):
@@ -90,12 +114,13 @@ func on_took_damage(attacker: Node2D) -> void:
 
 func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 	if behavior == Behavior.PATROL:
+		var t_idle_patrol := Time.get_ticks_usec()
 		_do_patrol(delta, actor)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.idle_patrol", Time.get_ticks_usec() - t_idle_patrol)
 	else:
 		actor.velocity = Vector2.ZERO
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
-		actor.move_and_slide()
 
 func _pick_new_patrol_target() -> void:
 	_has_patrol_target = true
@@ -105,6 +130,9 @@ func _pick_new_patrol_target() -> void:
 	_patrol_target = home_position + Vector2(cos(angle), sin(angle)) * r
 
 func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
+	if _current_lod_level >= 2:
+		actor.velocity = Vector2.ZERO
+		return
 	if _patrol_wait > 0.0:
 		_patrol_wait -= delta
 		actor.velocity = Vector2.ZERO
@@ -112,7 +140,6 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		_patrol_stuck_time = 0.0
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
-		actor.move_and_slide()
 		return
 
 	if not _has_patrol_target:
@@ -127,7 +154,6 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		_patrol_stuck_time = 0.0
 		if actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
-		actor.move_and_slide()
 		return
 
 	if _patrol_has_last_position:
@@ -149,20 +175,30 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	_patrol_has_last_position = true
 
 	var patrol_dir: Vector2 = (_patrol_target - actor.global_position).normalized()
-	var separation_dir: Vector2 = _get_patrol_separation_vector(delta, actor)
+	var separation_dir: Vector2 = Vector2.ZERO
+	if _current_lod_level == 0:
+		var t_patrol_separation := Time.get_ticks_usec()
+		separation_dir = _get_patrol_separation_vector(delta, actor)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.patrol_separation", Time.get_ticks_usec() - t_patrol_separation)
 	var final_dir: Vector2 = patrol_dir + separation_dir
 	if final_dir.length_squared() > 0.0001:
 		final_dir = final_dir.normalized()
 	else:
 		final_dir = patrol_dir
-	final_dir = _steer_around_obstacles(actor, final_dir)
+	if _current_lod_level == 0:
+		var t_patrol_steer := Time.get_ticks_usec()
+		final_dir = _steer_around_obstacles(actor, final_dir)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.patrol_steer", Time.get_ticks_usec() - t_patrol_steer)
 	if final_dir.length_squared() <= 0.0001:
 		actor.velocity = Vector2.ZERO
+		return
 	else:
 		actor.velocity = final_dir * patrol_speed
 	if actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, true)
+	var t_patrol_move := Time.get_ticks_usec()
 	actor.move_and_slide()
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.patrol_move", Time.get_ticks_usec() - t_patrol_move)
 
 func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vector2:
 	_patrol_separation_refresh -= delta
@@ -173,6 +209,39 @@ func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vect
 	return _patrol_separation_vector
 
 func _compute_patrol_separation(actor: CharacterBody2D) -> Vector2:
+	var cache := _get_proximity_cache(actor)
+	if cache != null and cache.has_method("get_nearby_mobs"):
+		return _compute_patrol_separation_cached(actor, cache)
+	return _compute_patrol_separation_legacy(actor)
+
+
+func _compute_patrol_separation_cached(actor: CharacterBody2D, cache: Node) -> Vector2:
+	var nearby_v: Variant = cache.call("get_nearby_mobs", actor, PATROL_SEPARATION_DISTANCE, "mobs")
+	if not (nearby_v is Array):
+		return Vector2.ZERO
+	var nearby: Array = nearby_v as Array
+	var repel := Vector2.ZERO
+	var nearby_count: int = 0
+	for other in nearby:
+		if other == actor or not is_instance_valid(other):
+			continue
+		if not _is_patrol_friendly(actor, other):
+			continue
+		var offset: Vector2 = actor.global_position - other.global_position
+		var dist: float = offset.length()
+		if dist <= 0.001 or dist >= PATROL_SEPARATION_DISTANCE:
+			continue
+		var strength: float = (PATROL_SEPARATION_DISTANCE - dist) / PATROL_SEPARATION_DISTANCE
+		repel += (offset / dist) * strength
+		nearby_count += 1
+		if nearby_count >= 6:
+			break
+	if repel.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	return repel.normalized() * min(1.0, repel.length())
+
+
+func _compute_patrol_separation_legacy(actor: CharacterBody2D) -> Vector2:
 	if actor == null or not is_instance_valid(actor):
 		return Vector2.ZERO
 	var tree := actor.get_tree()
@@ -200,6 +269,57 @@ func _compute_patrol_separation(actor: CharacterBody2D) -> Vector2:
 	if repel.length_squared() <= 0.0001:
 		return Vector2.ZERO
 	return repel.normalized() * min(1.0, repel.length())
+
+
+func _get_proximity_cache(actor: CharacterBody2D) -> Node:
+	if actor == null or not is_instance_valid(actor):
+		return null
+	var root := actor.get_tree().root
+	if root == null:
+		return null
+	return root.get_node_or_null("MobProximityCache")
+
+
+func _resolve_lod_level(actor: CharacterBody2D, target: Node2D) -> int:
+	var ref: Node2D = null
+	if target != null and is_instance_valid(target) and target is Node2D:
+		ref = target as Node2D
+	else:
+		var p := actor.get_tree().get_first_node_in_group("player")
+		if p is Node2D:
+			ref = p as Node2D
+	if ref == null:
+		return 2
+	var dist := actor.global_position.distance_to(ref.global_position)
+	if dist <= LOD_FULL_DISTANCE:
+		return 0
+	if dist <= LOD_REDUCED_DISTANCE:
+		return 1
+	if dist <= LOD_MINIMAL_DISTANCE:
+		return 2
+	return 2
+
+
+func _should_run_idle_patrol_tick(actor: CharacterBody2D) -> bool:
+	if _state != AIState.IDLE:
+		return true
+	if behavior != Behavior.PATROL:
+		return true
+	# Keep nearby/on-camera mobs visually smooth; stagger only at minimal LOD.
+	if _current_lod_level <= 1:
+		return true
+	if _idle_stagger_offset < 0:
+		_idle_stagger_offset = int(abs(actor.get_instance_id())) % IDLE_STAGGER_DIVISOR
+	return (_idle_tick_counter % IDLE_STAGGER_DIVISOR) == _idle_stagger_offset
+
+
+func _idle_noop(actor: CharacterBody2D) -> void:
+	if actor == null or not is_instance_valid(actor):
+		return
+	if actor.velocity.length_squared() > 0.0001:
+		actor.velocity = Vector2.ZERO
+		if actor.has_method("update_movement_animation"):
+			actor.call("update_movement_animation", Vector2.ZERO, false)
 
 func _is_patrol_friendly(actor: CharacterBody2D, other: Node2D) -> bool:
 	if actor.has_method("get_faction_id") and other.has_method("get_faction_id"):

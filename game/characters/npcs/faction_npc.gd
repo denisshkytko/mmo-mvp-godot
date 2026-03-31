@@ -13,6 +13,7 @@ const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/Merchan
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 signal died(corpse: Corpse)
 
@@ -391,9 +392,17 @@ func _place_world_collider_at_spawn(spawn_pos: Vector2) -> void:
 
 
 func _process(_delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
+	var t_marker := Time.get_ticks_usec()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
+	FRAME_PROFILER.add_usec("process.npc.target_marker", Time.get_ticks_usec() - t_marker)
+	var t_highlight := Time.get_ticks_usec()
 	_refresh_model_highlight_visual()
+	FRAME_PROFILER.add_usec("process.npc.highlight", Time.get_ticks_usec() - t_highlight)
+	var t_interaction := Time.get_ticks_usec()
 	_update_interaction()
+	FRAME_PROFILER.add_usec("process.npc.interaction", Time.get_ticks_usec() - t_interaction)
+	FRAME_PROFILER.add_usec("process.npc.total", Time.get_ticks_usec() - t_process_total)
 
 func _refresh_model_highlight_visual() -> void:
 	if model_highlight == null or not is_instance_valid(model_highlight):
@@ -449,15 +458,21 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	var t_physics_total := Time.get_ticks_usec()
+	var t_precheck := Time.get_ticks_usec()
 	_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
+		FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
+		FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
 		c_stats.call("tick_status_effects", delta)
 	if not c_stats.is_dead and c_stats.current_hp <= 0:
 		_die()
+		FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
+		FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
 		_set_model_stunned(true)
@@ -471,19 +486,25 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		if c_combat != null:
 			c_combat.reset()
+		FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
+		FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	_set_model_stunned(false)
+	FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 
 	# regen after combat reset (2%/sec)
+	var t_regen := Time.get_ticks_usec()
 	if regen_active and c_stats.current_hp < c_stats.max_hp:
 		c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
 		_update_hp()
 		if c_stats.current_hp >= c_stats.max_hp:
 			regen_active = false
+	FRAME_PROFILER.add_usec("npc.physics.regen", Time.get_ticks_usec() - t_regen)
 
 	# validate current target
+	var t_targeting := Time.get_ticks_usec()
 	if current_target != null and is_instance_valid(current_target):
 		# dead targets are invalid
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
@@ -543,26 +564,36 @@ func _physics_process(delta: float) -> void:
 
 	if current_target == null and c_ai != null and c_ai.state != FactionNPCAI.State.RETURN:
 		_clear_direct_attackers()
+	FRAME_PROFILER.add_usec("npc.physics.targeting", Time.get_ticks_usec() - t_targeting)
 
 	# AI tick
+	var t_ai_tick := Time.get_ticks_usec()
 	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
+	FRAME_PROFILER.add_usec("npc.physics.ai_tick", Time.get_ticks_usec() - t_ai_tick)
 
 	# combat tick
 	if current_target != null and is_instance_valid(current_target):
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		if not c_spell_caster.should_block_auto_attack():
+			var t_combat_tick := Time.get_ticks_usec()
 			c_combat.tick(delta, self, current_target, snap)
+			FRAME_PROFILER.add_usec("npc.physics.combat_tick", Time.get_ticks_usec() - t_combat_tick)
+		var t_spell_tick := Time.get_ticks_usec()
 		c_spell_caster.tick(delta, current_target)
+		FRAME_PROFILER.add_usec("npc.physics.spell_tick", Time.get_ticks_usec() - t_spell_tick)
 
 	if (current_target == null or not is_instance_valid(current_target)) and c_spell_caster != null and c_spell_caster.is_casting():
 		c_spell_caster.interrupt_cast("lost_target")
 
+	var t_cast_bar := Time.get_ticks_usec()
 	if cast_bar != null:
 		var casting := c_spell_caster.is_casting()
 		var show_cast: bool = casting and _is_combat_visible_for_player()
 		cast_bar.set_cast_visible(show_cast)
 		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if show_cast else 0.0)
 		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if show_cast else null)
+	FRAME_PROFILER.add_usec("npc.physics.cast_bar", Time.get_ticks_usec() - t_cast_bar)
+	FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
 
 
 func _pick_target() -> Node2D:

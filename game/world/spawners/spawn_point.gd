@@ -1,6 +1,7 @@
 @tool
 extends Node2D
 class_name SpawnPoint
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 
 # Единая точка спавна для всех типов групп.
@@ -44,8 +45,10 @@ func _ready() -> void:
 		set_process(true)
 
 func _process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if Engine.is_editor_hint() or show_patrol_marker_in_game:
 		queue_redraw()
+	FRAME_PROFILER.add_usec("process.spawn_point.total", Time.get_ticks_usec() - t_total)
 
 func resolve_effective_behavior(group_behavior: int, guard_behavior_value: int = 0) -> int:
 	if override_group_patrol_to_guard:

@@ -14,6 +14,7 @@ var _fixed_offset_right: float = 0.0
 var _fixed_offset_top: float = 0.0
 
 const FALLBACK_ICON_SIZE: Vector2 = Vector2(40.0, 40.0)
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
@@ -24,12 +25,16 @@ func _ready() -> void:
 	_capture_panel_anchor()
 
 func _process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
 		return
 	if not _player.has_method("get_buffs_snapshot"):
 		return
+	var t_sync := Time.get_ticks_usec()
 	_sync_icons(_player.call("get_buffs_snapshot") as Array)
+	FRAME_PROFILER.add_usec("process.hud.buffs.sync_icons", Time.get_ticks_usec() - t_sync)
+	FRAME_PROFILER.add_usec("process.hud.buffs.total", Time.get_ticks_usec() - t_total)
 
 func _apply_columns() -> void:
 	var cols: int = maxi(1, buffs_per_row)

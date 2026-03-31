@@ -1,4 +1,5 @@
 extends CanvasLayer
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 @onready var fill: ColorRect = $Root/BarPanel/XpBar/Fill
 @onready var xp_text: Label = $Root/BarPanel/XpBar/XpText
@@ -13,6 +14,7 @@ func _ready() -> void:
 	_full_width = xp_bar.size.x
 
 func _process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player")
 		visible = false
@@ -35,3 +37,4 @@ func _process(_delta: float) -> void:
 
 	var ratio: float = clamp(float(cur) / float(need), 0.0, 1.0)
 	fill.size.x = _full_width * ratio
+	FRAME_PROFILER.add_usec("process.hud.xp.total", Time.get_ticks_usec() - t_total)

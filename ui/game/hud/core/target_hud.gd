@@ -12,6 +12,7 @@ extends CanvasLayer
 @onready var buff_grid: GridContainer = $Root/Effects/BuffGrid
 @onready var debuff_grid: GridContainer = $Root/Effects/DebuffGrid
 const BUFF_ICON_SCENE := preload("res://ui/game/hud/shared/BuffIcon.tscn")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 var _gm: Node = null
 var _player: Node = null
@@ -65,6 +66,7 @@ func _apply_resource_bar_color(resource_type: String) -> void:
 		mana_bar.add_theme_stylebox_override("fill", sb2)
 
 func _process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if _gm == null or not is_instance_valid(_gm):
 		_gm = get_tree().get_first_node_in_group("game_manager")
 		if _gm == null:
@@ -87,9 +89,16 @@ func _process(_delta: float) -> void:
 		_update_relation_color()
 
 	_fit_identity_row()
+	var t_hp := Time.get_ticks_usec()
 	_update_hp()
+	FRAME_PROFILER.add_usec("process.hud.target.hp", Time.get_ticks_usec() - t_hp)
+	var t_resource := Time.get_ticks_usec()
 	_update_resource()
+	FRAME_PROFILER.add_usec("process.hud.target.resource", Time.get_ticks_usec() - t_resource)
+	var t_effects := Time.get_ticks_usec()
 	_update_effects()
+	FRAME_PROFILER.add_usec("process.hud.target.effects", Time.get_ticks_usec() - t_effects)
+	FRAME_PROFILER.add_usec("process.hud.target.total", Time.get_ticks_usec() - t_total)
 
 
 func _hide_effects_panel() -> void:

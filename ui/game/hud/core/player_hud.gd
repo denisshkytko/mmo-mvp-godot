@@ -1,4 +1,5 @@
 extends CanvasLayer
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 @onready var name_label: Label = $Root/Panel/Margin/VBox/Header/NameLabel
 @onready var level_label: Label = $Root/Panel/Margin/VBox/Header/LevelLabel
@@ -32,10 +33,12 @@ func _apply_resource_bar_color(resource_type: String) -> void:
 		mana_bar.add_theme_stylebox_override("fill", sb2)
 
 func _process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
 		return
 
+	var t_name := Time.get_ticks_usec()
 	var n: String = ""
 	if has_node("/root/AppState"):
 		var d: Dictionary = get_node("/root/AppState").get("selected_character_data")
@@ -44,6 +47,7 @@ func _process(_delta: float) -> void:
 	if n == "" and _player.has_method("get_display_name"):
 		n = String(_player.call("get_display_name")).strip_edges()
 	name_label.text = n
+	FRAME_PROFILER.add_usec("process.hud.player.name", Time.get_ticks_usec() - t_name)
 
 	# Level
 	var lvl_v: Variant = _player.get("level")
@@ -53,6 +57,7 @@ func _process(_delta: float) -> void:
 		level_label.text = ""
 
 	# HP
+	var t_hp := Time.get_ticks_usec()
 	var cur_hp_v: Variant = _player.get("current_hp")
 	var mx_hp_v: Variant = _player.get("max_hp")
 	if cur_hp_v != null and mx_hp_v != null:
@@ -66,8 +71,10 @@ func _process(_delta: float) -> void:
 		hp_text.text = ""
 		hp_bar.max_value = 1
 		hp_bar.value = 1
+	FRAME_PROFILER.add_usec("process.hud.player.hp", Time.get_ticks_usec() - t_hp)
 
 	# Resource
+	var t_resource := Time.get_ticks_usec()
 	if _player.has_node("Components/Resource"):
 		var r: Node = _player.get_node("Components/Resource")
 		if r != null:
@@ -83,6 +90,8 @@ func _process(_delta: float) -> void:
 			var cur_r: int = int(r.get("resource"))
 			mana_bar.max_value = mx_r
 			mana_bar.value = cur_r
+			FRAME_PROFILER.add_usec("process.hud.player.resource", Time.get_ticks_usec() - t_resource)
+			FRAME_PROFILER.add_usec("process.hud.player.total", Time.get_ticks_usec() - t_total)
 			return
 
 	var cur_m_v: Variant = _player.get("mana")
@@ -104,3 +113,5 @@ func _process(_delta: float) -> void:
 		mana_text.text = ""
 		mana_bar.max_value = 1
 		mana_bar.value = 1
+	FRAME_PROFILER.add_usec("process.hud.player.resource", Time.get_ticks_usec() - t_resource)
+	FRAME_PROFILER.add_usec("process.hud.player.total", Time.get_ticks_usec() - t_total)

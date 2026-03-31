@@ -1,5 +1,6 @@
 extends CanvasLayer
 class_name RespawnHUD
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 @onready var panel: Panel = $Root/Panel
 @onready var title_label: Label = $Root/Panel/VBox/TitleLabel
@@ -38,13 +39,19 @@ func close() -> void:
 func _process(delta: float) -> void:
 	if not _active:
 		return
+	var t_total := Time.get_ticks_usec()
 
 	_time_left = max(0.0, _time_left - delta)
+	var t_label := Time.get_ticks_usec()
 	_update_timer_label()
+	FRAME_PROFILER.add_usec("process.hud.respawn.label", Time.get_ticks_usec() - t_label)
+	var t_button := Time.get_ticks_usec()
 	_refresh_spirits_aid_button()
+	FRAME_PROFILER.add_usec("process.hud.respawn.button", Time.get_ticks_usec() - t_button)
 
 	if _time_left <= 0.0:
 		_force_respawn()
+	FRAME_PROFILER.add_usec("process.hud.respawn.total", Time.get_ticks_usec() - t_total)
 
 func _update_timer_label() -> void:
 	timer_label.text = tr("Respawn in %.1f") % _time_left
