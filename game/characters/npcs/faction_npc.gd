@@ -624,11 +624,12 @@ func _pick_target() -> Node2D:
 		home_position,
 		COMBAT_RANGES.LEASH_DISTANCE,
 		radius,
-		direct_attackers
+		direct_attackers,
+		"npc.physics"
 	)
 	if threat_target != null:
 		return threat_target
-	return FactionTargeting.pick_hostile_target(self, faction_id, radius)
+	return FactionTargeting.pick_hostile_target(self, faction_id, radius, "npc.physics")
 
 func take_damage(raw_damage: int) -> void:
 	take_damage_from_typed(raw_damage, null, "physical")
@@ -994,7 +995,8 @@ func _refresh_threat_target() -> void:
 		home_position,
 		COMBAT_RANGES.LEASH_DISTANCE,
 		COMBAT_RANGES.AGGRO_RADIUS,
-		direct_attackers
+		direct_attackers,
+		"npc.physics"
 	)
 	if threat_target != null and threat_target != current_target:
 		current_target = threat_target

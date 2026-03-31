@@ -803,11 +803,12 @@ func _pick_target() -> Node2D:
 		home_position,
 		COMBAT_RANGES.LEASH_DISTANCE,
 		COMBAT_RANGES.AGGRO_RADIUS,
-		direct_attackers
+		direct_attackers,
+		"mob_aggressive.physics"
 	)
 	if threat_target != null:
 		return threat_target
-	return FactionTargeting.pick_hostile_target(self, faction_id, COMBAT_RANGES.AGGRO_RADIUS)
+	return FactionTargeting.pick_hostile_target(self, faction_id, COMBAT_RANGES.AGGRO_RADIUS, "mob_aggressive.physics")
 
 func _notify_target_change(old_t, new_t) -> void:
 	if old_t != null and is_instance_valid(old_t):
@@ -846,7 +847,8 @@ func _refresh_threat_target() -> void:
 		home_position,
 		COMBAT_RANGES.LEASH_DISTANCE,
 		COMBAT_RANGES.AGGRO_RADIUS,
-		direct_attackers
+		direct_attackers,
+		"mob_aggressive.physics"
 	)
 	if threat_target != null and threat_target != current_target:
 		current_target = threat_target
