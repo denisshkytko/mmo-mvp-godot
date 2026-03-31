@@ -82,7 +82,9 @@ var _death_sequence_started: bool = false
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
 const THREAT_RECHECK_SEC: float = 0.25
+const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
 var _threat_recheck_timer: float = 0.0
+var _target_acquire_timer: float = 0.0
 
 # -----------------------------
 # Inspector (Common)
@@ -493,6 +495,7 @@ func _physics_process(delta: float) -> void:
 	FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
+	_target_acquire_timer = max(0.0, _target_acquire_timer - delta)
 
 	# regen after combat reset (2%/sec)
 	var t_regen := Time.get_ticks_usec()
@@ -509,6 +512,7 @@ func _physics_process(delta: float) -> void:
 		# dead targets are invalid
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
 			current_target = null
+			_target_acquire_timer = 0.0
 			retaliation_active = false
 			retaliation_target_id = 0
 		else:
@@ -528,10 +532,12 @@ func _physics_process(delta: float) -> void:
 
 			if not allowed:
 				current_target = null
+				_target_acquire_timer = 0.0
 				retaliation_active = false
 				retaliation_target_id = 0
 	else:
 		current_target = null
+		_target_acquire_timer = 0.0
 		# если потеряли цель — чистим retaliation (иначе yellow будет "залипать")
 		retaliation_active = false
 		retaliation_target_id = 0
@@ -540,10 +546,14 @@ func _physics_process(delta: float) -> void:
 	# (yellow is non-proactive by design)
 	var is_returning := (c_ai != null and c_ai.state == FactionNPCAI.State.RETURN)
 	if current_target == null and proactive_aggro and not is_returning:
-		current_target = _pick_target()
+		var should_force_retarget: bool = direct_attackers.size() > 0
+		if should_force_retarget or _target_acquire_timer <= 0.0:
+			current_target = _pick_target()
+			_target_acquire_timer = TARGET_ACQUIRE_RECHECK_SEC
 	if current_target != null and is_instance_valid(current_target):
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
 			current_target = null
+			_target_acquire_timer = 0.0
 			regen_active = true
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
