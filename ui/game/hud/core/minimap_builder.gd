@@ -212,18 +212,16 @@ static func _blit_tile_texture(
 	var scale_y := float(step_px) / maxf(1.0, float(tile_size.y))
 	var stamp_w := maxi(1, int(round(float(region.size.x) * scale_x)))
 	var stamp_h := maxi(1, int(round(float(region.size.y) * scale_y)))
+	# `map_to_local(cell)` is treated as cell-center anchor.
+	# Place sprite by bottom-center relative to that anchor, then apply texture_origin.
 	var anchor_offset := Vector2i(
-		-int(round(float(stamp_w - step_px) * 0.5)),
-		-(stamp_h - step_px)
+		-int(round(float(stamp_w) * 0.5)),
+		-int(round(float(stamp_h)))
 	)
 	var draw_offset := Vector2i(
 		anchor_offset.x + int(round(float(tile_origin.x) * scale_x)),
 		anchor_offset.y + int(round(float(tile_origin.y) * scale_y))
 	)
-	# Extra artist-tuned anchor shift:
-	# move from current anchor point 50% sprite-height up and 15% sprite-width left.
-	draw_offset.x -= int(round(float(stamp_w) * 0.15))
-	draw_offset.y -= int(round(float(stamp_h) * 0.50))
 
 	var stamp := tex_img.get_region(region)
 	stamp.resize(stamp_w, stamp_h, Image.INTERPOLATE_LANCZOS)
