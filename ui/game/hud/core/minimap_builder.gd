@@ -212,11 +212,12 @@ static func _blit_tile_texture(
 	var scale_y := float(step_px) / maxf(1.0, float(tile_size.y))
 	var stamp_w := maxi(1, int(round(float(region.size.x) * scale_x)))
 	var stamp_h := maxi(1, int(round(float(region.size.y) * scale_y)))
-	# Use pure texture-origin offset from tileset data (scaled to minimap pixels).
-	# This avoids per-layer drift for mixed grids/sources where custom anchoring can over-shift.
+	# Place sprite center into tile center and then apply texture_origin as center shift.
+	# (tile center) = (sprite center) + texture_origin_scaled
+	# => top-left = tile_center - sprite_half_size - texture_origin_scaled
 	var draw_offset := Vector2i(
-		int(round(float(tile_origin.x) * scale_x)),
-		int(round(float(tile_origin.y) * scale_y))
+		-int(round(float(stamp_w) * 0.5)) - int(round(float(tile_origin.x) * scale_x)),
+		-int(round(float(stamp_h) * 0.5)) - int(round(float(tile_origin.y) * scale_y))
 	)
 
 	var stamp := tex_img.get_region(region)
