@@ -162,6 +162,7 @@ var loot_owner_player_id: int = 0
 
 const THREAT_RECHECK_SEC: float = 0.25
 const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
+const TARGET_ACQUIRE_IDLE_RECHECK_SEC: float = 0.45
 const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
 var _threat_recheck_timer: float = 0.0
 var _target_acquire_timer: float = 0.0
@@ -295,8 +296,12 @@ func _physics_process(delta: float) -> void:
 		var should_force_retarget: bool = direct_attackers.size() > 0
 		if should_force_retarget or _target_acquire_timer <= 0.0:
 			FRAME_PROFILER.add_count("mob_aggressive.physics.targeting.acquire_attempts", 1.0)
+			if should_force_retarget:
+				FRAME_PROFILER.add_count("mob_aggressive.physics.targeting.acquire_attempts_forced", 1.0)
+			else:
+				FRAME_PROFILER.add_count("mob_aggressive.physics.targeting.acquire_attempts_idle", 1.0)
 			current_target = _pick_target()
-			_target_acquire_timer = TARGET_ACQUIRE_RECHECK_SEC
+			_target_acquire_timer = TARGET_ACQUIRE_RECHECK_SEC if should_force_retarget else TARGET_ACQUIRE_IDLE_RECHECK_SEC
 			_target_validate_timer = 0.0
 			if current_target != null and is_instance_valid(current_target):
 				FRAME_PROFILER.add_count("mob_aggressive.physics.targeting.acquire_success", 1.0)
