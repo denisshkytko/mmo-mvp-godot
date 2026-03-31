@@ -6,7 +6,9 @@ class_name QuickMenuHUD
 @onready var menu_button: Button = $Root/Panel/ButtonStack/MenuButton
 @onready var inventory_button: Button = $Root/Panel/ButtonStack/InventoryButton
 @onready var character_button: Button = $Root/Panel/ButtonStack/CharacterButton
+@onready var profiler_button: Button = $Root/Panel/ButtonStack/ProfilerButton
 @onready var toggle_button: Button = $Root/ToggleButton
+const PERFORMANCE_PROFILER_WINDOW := preload("res://ui/game/hud/windows/PerformanceProfilerWindow.tscn")
 
 var _expanded: bool = false
 var _menu_hud: Node = null
@@ -14,11 +16,14 @@ var _inventory_hud: Node = null
 var _character_hud: Node = null
 var _collapsed_toggle_pos: Vector2 = Vector2.ZERO
 var _collapsed_panel_pos: Vector2 = Vector2.ZERO
+var _performance_window: Control = null
+var _hidden_ui_nodes: Array[CanvasItem] = []
 
 func _ready() -> void:
 	menu_button.pressed.connect(_on_menu_pressed)
 	inventory_button.pressed.connect(_on_inventory_pressed)
 	character_button.pressed.connect(_on_character_pressed)
+	profiler_button.pressed.connect(_on_profiler_pressed)
 	toggle_button.pressed.connect(_on_toggle_pressed)
 	_resolve_targets()
 	await get_tree().process_frame
@@ -71,3 +76,37 @@ func _on_inventory_pressed() -> void:
 func _on_character_pressed() -> void:
 	if _character_hud != null and _character_hud.has_method("toggle_character"):
 		_character_hud.call("toggle_character")
+
+
+func _on_profiler_pressed() -> void:
+	if _performance_window == null or not is_instance_valid(_performance_window):
+		_performance_window = PERFORMANCE_PROFILER_WINDOW.instantiate() as Control
+		get_parent().add_child(_performance_window)
+		if _performance_window.has_signal("closed"):
+			_performance_window.closed.connect(_on_profiler_closed)
+	_show_profiler_window(true)
+
+
+func _on_profiler_closed() -> void:
+	_show_profiler_window(false)
+
+
+func _show_profiler_window(is_visible: bool) -> void:
+	if _performance_window == null or not is_instance_valid(_performance_window):
+		return
+	if is_visible:
+		_hidden_ui_nodes.clear()
+		var root := get_parent()
+		for child in root.get_children():
+			if child == self or child == _performance_window:
+				continue
+			if child is CanvasItem and (child as CanvasItem).visible:
+				_hidden_ui_nodes.append(child as CanvasItem)
+				(child as CanvasItem).visible = false
+		_performance_window.visible = true
+	else:
+		_performance_window.visible = false
+		for node in _hidden_ui_nodes:
+			if node != null and is_instance_valid(node):
+				node.visible = true
+		_hidden_ui_nodes.clear()
