@@ -171,9 +171,11 @@ static func _blit_tile_texture(
 	var tile_set_id := str(tile_set.get_instance_id())
 	var stamp_key := "%s|%d|%d:%d|%d|%d" % [tile_set_id, source_id, atlas.x, atlas.y, alternative, step_px]
 	if tile_stamp_cache.has(stamp_key):
-		var cached_stamp: Image = tile_stamp_cache[stamp_key] as Image
+		var cached_item: Dictionary = tile_stamp_cache[stamp_key] as Dictionary
+		var cached_stamp: Image = cached_item.get("image", null) as Image
+		var cached_offset: Vector2i = cached_item.get("offset", Vector2i.ZERO) as Vector2i
 		if cached_stamp != null and not cached_stamp.is_empty():
-			image.blit_rect(cached_stamp, Rect2i(Vector2i.ZERO, cached_stamp.get_size()), Vector2i(px, py))
+			image.blit_rect(cached_stamp, Rect2i(Vector2i.ZERO, cached_stamp.get_size()), Vector2i(px, py) + cached_offset)
 			return true
 
 	var src := tile_set.get_source(source_id)
@@ -204,18 +206,33 @@ static func _blit_tile_texture(
 	if region.size.x <= 0 or region.size.y <= 0:
 		return false
 
-	var stamp := Image.create(step_px, step_px, false, Image.FORMAT_RGBA8)
+	var tile_data := atlas_src.get_tile_data(atlas, alternative)
+	var tile_origin := Vector2i.ZERO
+	if tile_data != null:
+		tile_origin = tile_data.texture_origin
+
+	var tile_size := tile_set.tile_size
+	var scale_x := float(step_px) / maxf(1.0, float(tile_size.x))
+	var scale_y := float(step_px) / maxf(1.0, float(tile_size.y))
+	var stamp_w := maxi(1, int(round(float(region.size.x) * scale_x)))
+	var stamp_h := maxi(1, int(round(float(region.size.y) * scale_y)))
+	var draw_offset := Vector2i(
+		int(round(float(tile_origin.x) * scale_x)),
+		int(round(float(tile_origin.y) * scale_y))
+	)
+
+	var stamp := Image.create(stamp_w, stamp_h, false, Image.FORMAT_RGBA8)
 	stamp.fill(Color(0, 0, 0, 0))
-	for yy in range(step_px):
-		var src_v := int(floor((float(yy) / maxf(1.0, float(step_px))) * float(region.size.y)))
+	for yy in range(stamp_h):
+		var src_v := int(floor((float(yy) / maxf(1.0, float(stamp_h))) * float(region.size.y)))
 		var src_y := region.position.y + clampi(src_v, 0, region.size.y - 1)
-		for xx in range(step_px):
-			var src_u := int(floor((float(xx) / maxf(1.0, float(step_px))) * float(region.size.x)))
+		for xx in range(stamp_w):
+			var src_u := int(floor((float(xx) / maxf(1.0, float(stamp_w))) * float(region.size.x)))
 			var src_x := region.position.x + clampi(src_u, 0, region.size.x - 1)
 			stamp.set_pixel(xx, yy, tex_img.get_pixel(src_x, src_y))
 
-	tile_stamp_cache[stamp_key] = stamp
-	image.blit_rect(stamp, Rect2i(Vector2i.ZERO, stamp.get_size()), Vector2i(px, py))
+	tile_stamp_cache[stamp_key] = {"image": stamp, "offset": draw_offset}
+	image.blit_rect(stamp, Rect2i(Vector2i.ZERO, stamp.get_size()), Vector2i(px, py) + draw_offset)
 	return true
 
 
