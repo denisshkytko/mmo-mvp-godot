@@ -56,17 +56,19 @@ layout_mode = 2
 [node name="Title" type="Label" parent="Margin/Panel/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 text = "Performance Profiler"
 
 [node name="CopyButton" type="Button" parent="Margin/Panel/VBox/Header"]
-custom_minimum_size = Vector2(140, 36)
+custom_minimum_size = Vector2(200, 48)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Copy to Clipboard"
 
 [node name="CloseButton" type="Button" parent="Margin/Panel/VBox/Header"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(80, 48)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "✕"
 
 [node name="Summary" type="RichTextLabel" parent="Margin/Panel/VBox"]
