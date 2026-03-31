@@ -341,6 +341,12 @@ func _update_runtime_profiler_overlay() -> void:
 		physics_ms_per_node = physics_ms / float(_perf_last_physics_nodes_count)
 	var untracked_process_ms: float = max(0.0, process_ms - _perf_last_tracked_process_ms_f)
 	var untracked_physics_ms: float = max(0.0, physics_ms - _perf_last_tracked_physics_ms_f)
+	var tracked_process_coverage_pct: float = 0.0
+	if process_ms > 0.0:
+		tracked_process_coverage_pct = clamp((_perf_last_tracked_process_ms_f / process_ms) * 100.0, 0.0, 100.0)
+	var tracked_physics_coverage_pct: float = 0.0
+	if physics_ms > 0.0:
+		tracked_physics_coverage_pct = clamp((_perf_last_tracked_physics_ms_f / physics_ms) * 100.0, 0.0, 100.0)
 	_runtime_profiler_label.text = (
 		"[Runtime Profiler]\n"
 		+ "fps=%d interval=%.2fs frames=%d\n" % [fps, _perf_last_interval_sec, _perf_last_frames_count]
@@ -348,6 +354,7 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "proc/node=%.3fms phys/node=%.3fms\n" % [process_ms_per_node, physics_ms_per_node]
 		+ "tracked proc=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_process_ms_f, untracked_process_ms]
 		+ "tracked phys=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_physics_ms_f, untracked_physics_ms]
+		+ "coverage proc=%.1f%% phys=%.1f%%\n" % [tracked_process_coverage_pct, tracked_physics_coverage_pct]
 		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
 		+ "gm.sync_entities=%.3fms\n" % _perf_last_avg_sync_entities_ms
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]
