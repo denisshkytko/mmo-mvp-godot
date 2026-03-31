@@ -315,6 +315,7 @@ func get_danger_meter() -> DangerMeterComponent:
 
 
 func _physics_process(_delta: float) -> void:
+	var t_physics_total := Time.get_ticks_usec()
 	_update_visual_render_order()
 	if is_dead:
 		velocity = Vector2.ZERO
@@ -323,6 +324,7 @@ func _physics_process(_delta: float) -> void:
 		var t_move_dead := Time.get_ticks_usec()
 		move_and_slide()
 		FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_dead)
+		FRAME_PROFILER.add_usec("player.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	if c_buffs != null and c_buffs.has_method("is_stunned") and bool(c_buffs.call("is_stunned")):
 		_set_model_stunned(true)
@@ -338,6 +340,7 @@ func _physics_process(_delta: float) -> void:
 		var t_move_stunned := Time.get_ticks_usec()
 		move_and_slide()
 		FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_stunned)
+		FRAME_PROFILER.add_usec("player.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	_set_model_stunned(false)
 
@@ -362,6 +365,7 @@ func _physics_process(_delta: float) -> void:
 		var t_move_casting := Time.get_ticks_usec()
 		move_and_slide()
 		FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_casting)
+		FRAME_PROFILER.add_usec("player.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 
 	if input_dir.length() > 0.0:
@@ -379,6 +383,7 @@ func _physics_process(_delta: float) -> void:
 	var t_move_normal := Time.get_ticks_usec()
 	move_and_slide()
 	FRAME_PROFILER.add_usec("player.physics.move_and_slide", Time.get_ticks_usec() - t_move_normal)
+	FRAME_PROFILER.add_usec("player.physics.total", Time.get_ticks_usec() - t_physics_total)
 
 
 func _get_road_move_speed_multiplier() -> float:

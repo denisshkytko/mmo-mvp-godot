@@ -247,15 +247,18 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	var t_physics_total := Time.get_ticks_usec()
 	_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
+		FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
 		c_stats.call("tick_status_effects", delta)
 	if not c_stats.is_dead and c_stats.current_hp <= 0:
 		_die()
+		FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	if c_stats != null and c_stats.has_method("is_stunned") and bool(c_stats.call("is_stunned")):
 		_set_model_stunned(true)
@@ -268,6 +271,7 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 		move_and_slide()
 		c_combat.reset_combat()
+		FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 	_set_model_stunned(false)
 
@@ -344,6 +348,7 @@ func _physics_process(delta: float) -> void:
 		cast_bar.set_cast_visible(show_cast)
 		cast_bar.set_progress01(c_spell_caster.get_cast_progress() if show_cast else 0.0)
 		cast_bar.set_icon_texture(c_spell_caster.get_cast_icon() if show_cast else null)
+	FRAME_PROFILER.add_usec("mob_aggressive.physics.total", Time.get_ticks_usec() - t_physics_total)
 
 func _update_visual_render_order() -> void:
 	if visual_root == null or not is_instance_valid(visual_root):
