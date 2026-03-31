@@ -20,15 +20,22 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 	if zone_root == null:
 		return {}
 
-	var source_root: Node = zone_root
-	var root_path := String(config.get("root_node_path", ""))
-	if root_path != "":
-		var found := zone_root.get_node_or_null(root_path)
-		if found != null:
-			source_root = found
-
 	var tile_layers: Array[TileMapLayer] = []
-	_collect_tile_layers(source_root, tile_layers)
+	var root_paths: Array = config.get("root_node_paths", []) as Array
+	if root_paths.is_empty():
+		var root_path := String(config.get("root_node_path", ""))
+		if root_path != "":
+			root_paths.append(root_path)
+	if root_paths.is_empty():
+		_collect_tile_layers(zone_root, tile_layers)
+	else:
+		for path_v in root_paths:
+			var path_s := String(path_v)
+			if path_s == "":
+				continue
+			var found := zone_root.get_node_or_null(path_s)
+			if found != null:
+				_collect_tile_layers(found, tile_layers)
 	if tile_layers.is_empty():
 		zone_root.queue_free()
 		return {}
