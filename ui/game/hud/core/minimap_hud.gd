@@ -138,6 +138,8 @@ func _build_config_for_zone(_zone_path: String) -> Dictionary:
 			"World/z-level = 50, y-sort = true/decor",
 		],
 		"pixels_per_tile": 2,
+		"high_quality_sampling_decor_only": true,
+		"decor_layer_name_pattern": "decor",
 		"default_color": Color(0.24, 0.36, 0.22, 1.0),
 		"exclude_name_prefixes": ["fire"],
 		"layer_rules": {

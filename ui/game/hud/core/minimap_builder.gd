@@ -67,15 +67,16 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 			var world_step := maxf(0.001, minf(step_x, step_y))
 			var half_step := world_step * 0.5
 
-			included_cells.append({
-				"world_pos": world_p,
-				"world_step": world_step,
-				"color": layer_color,
-				"layer": layer,
-				"source_id": source_id,
-				"atlas": atlas,
-				"alternative": layer.get_cell_alternative_tile(cell),
-			})
+				included_cells.append({
+					"world_pos": world_p,
+					"world_step": world_step,
+					"color": layer_color,
+					"layer": layer,
+					"layer_name": layer_name,
+					"source_id": source_id,
+					"atlas": atlas,
+					"alternative": layer.get_cell_alternative_tile(cell),
+				})
 			min_world_step = minf(min_world_step, world_step)
 
 			if not has_world_bounds:
@@ -118,10 +119,12 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 		var step_px := maxi(1, int(round(world_step * px_per_world)))
 		if draw_real_tiles:
 			var layer_ref: TileMapLayer = item["layer"] as TileMapLayer
+			var layer_name_ref := String(item.get("layer_name", ""))
 			var source_id_ref := int(item["source_id"])
 			var atlas_ref: Vector2i = item["atlas"] as Vector2i
 			var alt_ref := int(item["alternative"])
-			if _blit_tile_texture(image, px, py, step_px, layer_ref, source_id_ref, atlas_ref, alt_ref, atlas_image_cache, tile_stamp_cache):
+			var use_hq := _use_high_quality_sampling_for_layer(layer_name_ref, config)
+			if _blit_tile_texture(image, px, py, step_px, layer_ref, source_id_ref, atlas_ref, alt_ref, use_hq, atlas_image_cache, tile_stamp_cache):
 				continue
 		_fill_rect(image, px, py, step_px, img_w, img_h, col)
 
@@ -160,6 +163,7 @@ static func _blit_tile_texture(
 		source_id: int,
 		atlas: Vector2i,
 		alternative: int,
+		use_high_quality_sampling: bool,
 		atlas_image_cache: Dictionary,
 		tile_stamp_cache: Dictionary
 	) -> bool:
@@ -169,7 +173,7 @@ static func _blit_tile_texture(
 	if tile_set == null:
 		return false
 	var tile_set_id := str(tile_set.get_instance_id())
-	var stamp_key := "%s|%d|%d:%d|%d|%d" % [tile_set_id, source_id, atlas.x, atlas.y, alternative, step_px]
+	var stamp_key := "%s|%d|%d:%d|%d|%d|%d" % [tile_set_id, source_id, atlas.x, atlas.y, alternative, step_px, int(use_high_quality_sampling)]
 	if tile_stamp_cache.has(stamp_key):
 		var cached_item: Dictionary = tile_stamp_cache[stamp_key] as Dictionary
 		var cached_stamp: Image = cached_item.get("image", null) as Image
@@ -202,7 +206,12 @@ static func _blit_tile_texture(
 	if region.size.x <= 0 or region.size.y <= 0:
 		return false
 
-	var tile_data := atlas_src.get_tile_data(atlas, alternative)
+	var t_flip_h := _atlas_transform_flip_h(alternative)
+	var t_flip_v := _atlas_transform_flip_v(alternative)
+	var t_transpose := _atlas_transform_transpose(alternative)
+	var alt_clean := _atlas_clean_alternative(alternative)
+
+	var tile_data := atlas_src.get_tile_data(atlas, alt_clean)
 	var tile_origin := Vector2i.ZERO
 	if tile_data != null:
 		tile_origin = tile_data.texture_origin
@@ -215,17 +224,57 @@ static func _blit_tile_texture(
 	# Place sprite center into tile center and then apply texture_origin as center shift.
 	# (tile center) = (sprite center) + texture_origin_scaled
 	# => top-left = tile_center - sprite_half_size - texture_origin_scaled
+	var stamp := tex_img.get_region(region)
+	stamp.resize(stamp_w, stamp_h, Image.INTERPOLATE_LANCZOS if use_high_quality_sampling else Image.INTERPOLATE_BILINEAR)
+	if t_transpose:
+		stamp = _transpose_image(stamp)
+	if t_flip_h:
+		stamp.flip_x()
+	if t_flip_v:
+		stamp.flip_y()
+	stamp_w = stamp.get_width()
+	stamp_h = stamp.get_height()
 	var draw_offset := Vector2i(
 		-int(round(float(stamp_w) * 0.5)) - int(round(float(tile_origin.x) * scale_x)),
 		-int(round(float(stamp_h) * 0.5)) - int(round(float(tile_origin.y) * scale_y))
 	)
 
-	var stamp := tex_img.get_region(region)
-	stamp.resize(stamp_w, stamp_h, Image.INTERPOLATE_LANCZOS)
-
 	tile_stamp_cache[stamp_key] = {"image": stamp, "offset": draw_offset}
 	_blend_stamp(image, stamp, Vector2i(px, py) + draw_offset)
 	return true
+
+
+static func _use_high_quality_sampling_for_layer(layer_name: String, config: Dictionary) -> bool:
+	var decor_only := bool(config.get("high_quality_sampling_decor_only", true))
+	var decor_pattern := String(config.get("decor_layer_name_pattern", "decor")).to_lower()
+	if not decor_only:
+		return true
+	return layer_name.to_lower().find(decor_pattern) != -1
+
+
+static func _atlas_clean_alternative(alternative: int) -> int:
+	var mask := TileSetAtlasSource.TRANSFORM_FLIP_H | TileSetAtlasSource.TRANSFORM_FLIP_V | TileSetAtlasSource.TRANSFORM_TRANSPOSE
+	return alternative & (~mask)
+
+
+static func _atlas_transform_flip_h(alternative: int) -> bool:
+	return (alternative & TileSetAtlasSource.TRANSFORM_FLIP_H) != 0
+
+
+static func _atlas_transform_flip_v(alternative: int) -> bool:
+	return (alternative & TileSetAtlasSource.TRANSFORM_FLIP_V) != 0
+
+
+static func _atlas_transform_transpose(alternative: int) -> bool:
+	return (alternative & TileSetAtlasSource.TRANSFORM_TRANSPOSE) != 0
+
+
+static func _transpose_image(src: Image) -> Image:
+	var out := Image.create(src.get_height(), src.get_width(), false, src.get_format())
+	for y in range(src.get_height()):
+		for x in range(src.get_width()):
+			out.set_pixel(y, x, src.get_pixel(x, y))
+	return out
 
 
 static func _blend_stamp(dst: Image, stamp: Image, pos: Vector2i) -> void:
