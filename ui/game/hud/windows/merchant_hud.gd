@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
 signal hud_visibility_changed(is_open: bool)
@@ -146,15 +147,19 @@ func close() -> void:
 	_merchant = null
 
 func _process(delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
 	if not _is_open:
+		FRAME_PROFILER.add_usec("process.hud.merchant.total", Time.get_ticks_usec() - t_process_total)
 		return
 	if _merchant != null and not is_instance_valid(_merchant):
 		close()
+		FRAME_PROFILER.add_usec("process.hud.merchant.total", Time.get_ticks_usec() - t_process_total)
 		return
 	if _merchant != null and _player != null:
 		if _merchant.has_method("can_interact_with"):
 			if not bool(_merchant.call("can_interact_with", _player)):
 				close()
+				FRAME_PROFILER.add_usec("process.hud.merchant.total", Time.get_ticks_usec() - t_process_total)
 				return
 		elif _merchant is Node2D and _player is Node2D:
 			var dist := (_merchant as Node2D).global_position.distance_to((_player as Node2D).global_position)
@@ -163,6 +168,7 @@ func _process(delta: float) -> void:
 				radius = float(_merchant.get("merchant_interact_radius"))
 			if radius > 0.0 and dist > radius:
 				close()
+				FRAME_PROFILER.add_usec("process.hud.merchant.total", Time.get_ticks_usec() - t_process_total)
 				return
 	_sell_refresh_accum += delta
 	if _sell_refresh_accum >= 1.0:
@@ -174,6 +180,7 @@ func _process(delta: float) -> void:
 			_names_pending = false
 			_refresh_buy_grid()
 			_refresh_sell_grid()
+	FRAME_PROFILER.add_usec("process.hud.merchant.total", Time.get_ticks_usec() - t_process_total)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _is_open:

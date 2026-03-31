@@ -3,6 +3,7 @@ extends CanvasLayer
 signal hud_visibility_changed(is_open: bool)
 
 const TRAINER_ROW_SCENE := preload("res://ui/game/hud/systems/trainer/trainer_spell_row.tscn")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const TRAINER_SCROLL_TARGET_WIDTH := 664.0
 const TRAINER_ROW_HORIZONTAL_PADDING := 16.0
 const TRAINER_ROW_SCROLLBAR_RESERVE := 20.0
@@ -120,16 +121,21 @@ func is_open() -> bool:
 	return _is_open and panel != null and panel.visible
 
 func _process(_delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
 	if not _is_open:
+		FRAME_PROFILER.add_usec("process.hud.trainer.total", Time.get_ticks_usec() - t_process_total)
 		return
 	if _trainer != null and not is_instance_valid(_trainer):
 		close()
+		FRAME_PROFILER.add_usec("process.hud.trainer.total", Time.get_ticks_usec() - t_process_total)
 		return
 	if _trainer != null and _player != null:
 		if _trainer.has_method("can_interact_with"):
 			if not bool(_trainer.call("can_interact_with", _player)):
 				close()
+				FRAME_PROFILER.add_usec("process.hud.trainer.total", Time.get_ticks_usec() - t_process_total)
 				return
+	FRAME_PROFILER.add_usec("process.hud.trainer.total", Time.get_ticks_usec() - t_process_total)
 
 func _on_filter_changed(_idx: int) -> void:
 	_try_refresh_rows()

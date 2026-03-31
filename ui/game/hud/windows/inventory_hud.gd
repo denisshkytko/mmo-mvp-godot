@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const COOLDOWN_FILL_SHADER_CODE := "shader_type canvas_item;\n\nuniform float fill_pct : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tif (UV.y < (1.0 - fill_pct)) {\n\t\tdiscard;\n\t}\n\tCOLOR = vec4(0.0, 0.0, 0.0, 0.65);\n}\n"
 signal hud_visibility_changed(is_open: bool)
 @onready var panel: Control = $Root/Panel
@@ -304,11 +305,13 @@ func _set_grid_cells_visible(visible_state: bool) -> void:
 		slot_panel.visible = visible_state
 
 func _process(_delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
 	if not _is_player_ready():
 		_auto_bind_player()
 	if _is_open and not _initial_layout_done and not _initial_layout_pending and _is_player_ready():
 		call_deferred("_deferred_force_initial_layout")
 	if not _is_player_ready():
+		FRAME_PROFILER.add_usec("process.hud.inventory.total", Time.get_ticks_usec() - t_process_total)
 		return
 	# While open, keep HUD in sync (so looting updates without requiring sort).
 	if _is_open:
@@ -321,12 +324,14 @@ func _process(_delta: float) -> void:
 			var snap: Dictionary = player.get_inventory_snapshot()
 			# Cooldowns tick even if inventory content didn't change.
 			_update_visible_cooldowns(snap)
+		FRAME_PROFILER.add_usec("process.hud.inventory.total", Time.get_ticks_usec() - t_process_total)
 		return
 	# Inventory is closed: still tick quick-slot cooldown overlays.
 	_refresh_accum += _delta
 	if _refresh_accum >= COOLDOWN_VISUAL_TICK_SEC:
 		_refresh_accum = 0.0
 		_update_quick_cooldowns_only()
+	FRAME_PROFILER.add_usec("process.hud.inventory.total", Time.get_ticks_usec() - t_process_total)
 
 func _update_quick_cooldowns_only() -> void:
 	for qi in range(min(_quick_buttons.size(), _quick_refs.size())):

@@ -5,6 +5,7 @@ const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.
 const STAT_CONST := preload("res://core/stats/stat_constants.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 signal hud_visibility_changed(is_open: bool)
 
 const TOOLTIP_MIN_W: float = 260.0
@@ -145,7 +146,8 @@ func _on_equipment_changed(_snapshot: Dictionary) -> void:
 		_refresh()
 
 func _process(_delta: float) -> void:
-	pass
+	var t_process_total := Time.get_ticks_usec()
+	FRAME_PROFILER.add_usec("process.hud.character.total", Time.get_ticks_usec() - t_process_total)
 
 func _on_meta_clicked(meta) -> void:
 	if not panel.visible:

@@ -1,5 +1,6 @@
 extends CanvasLayer
 class_name MobileHUD
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 @onready var move_stick: MoveJoystick = $Root/LeftPad/MoveStick
 @onready var skill_pad: SkillPad = $Root/RightPad/SkillPad
@@ -131,6 +132,7 @@ func _on_move_dir_changed(dir: Vector2) -> void:
 		_player.call("set_mobile_move_dir", dir)
 
 func _process(_delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
 	if not _bindings_ready:
 		_try_bind_player_dependencies()
 	if _player == null or not is_instance_valid(_player):
@@ -139,6 +141,7 @@ func _process(_delta: float) -> void:
 		_spellbook = (_player as Player).c_spellbook
 
 	if _player == null or skill_pad == null or _spellbook == null:
+		FRAME_PROFILER.add_usec("process.hud.mobile.total", Time.get_ticks_usec() - t_process_total)
 		return
 	var caster := _get_player_caster()
 	var target: Node = null
@@ -157,6 +160,7 @@ func _process(_delta: float) -> void:
 				out_of_range = (not bool(preview.get("ok", false))) and String(preview.get("reason", "")) == "out_of_range"
 		skill_pad.set_slot_cooldown(i, pct)
 		skill_pad.set_slot_range_state(i, has_target, out_of_range)
+	FRAME_PROFILER.add_usec("process.hud.mobile.total", Time.get_ticks_usec() - t_process_total)
 
 func _on_skill_pressed(slot_index: int) -> void:
 	if _player != null and _player.has_method("try_use_ability_slot"):

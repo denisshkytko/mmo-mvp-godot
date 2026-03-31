@@ -1,4 +1,5 @@
 extends Control
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 signal slot_pressed(slot_index: int)
 
@@ -22,7 +23,9 @@ func _ready() -> void:
 			btn.pressed.connect(_on_slot_pressed.bind(i))
 
 func _process(delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
 	if not _assignment_mode:
+		FRAME_PROFILER.add_usec("process.hud.loadout_pad.total", Time.get_ticks_usec() - t_process_total)
 		return
 	_pulse_t += delta * 5.5
 	var pulse := 0.5 + 0.5 * sin(_pulse_t)
@@ -30,6 +33,7 @@ func _process(delta: float) -> void:
 	for btn in _buttons:
 		if btn != null:
 			btn.modulate = c
+	FRAME_PROFILER.add_usec("process.hud.loadout_pad.total", Time.get_ticks_usec() - t_process_total)
 
 func set_assignment_mode(active: bool) -> void:
 	_assignment_mode = active

@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
 # Tooltip should show on release if press <= 1s.
@@ -133,25 +134,31 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	var t_process_total := Time.get_ticks_usec()
 	if panel.visible and (_corpse == null or not is_instance_valid(_corpse)):
 		close()
+		FRAME_PROFILER.add_usec("process.hud.loot.total", Time.get_ticks_usec() - t_process_total)
 		return
 
 	if not panel.visible:
+		FRAME_PROFILER.add_usec("process.hud.loot.total", Time.get_ticks_usec() - t_process_total)
 		return
 
 	if _corpse == null or not is_instance_valid(_corpse):
 		close()
+		FRAME_PROFILER.add_usec("process.hud.loot.total", Time.get_ticks_usec() - t_process_total)
 		return
 
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
 		if _player == null:
 			close()
+			FRAME_PROFILER.add_usec("process.hud.loot.total", Time.get_ticks_usec() - t_process_total)
 			return
 
 	_range_check_timer -= delta
 	if _range_check_timer > 0.0:
+		FRAME_PROFILER.add_usec("process.hud.loot.total", Time.get_ticks_usec() - t_process_total)
 		return
 	_range_check_timer = 0.1
 
@@ -163,9 +170,11 @@ func _process(delta: float) -> void:
 		var radius: float = float(corpse_typed.interact_radius)
 		if player_pos.distance_to(corpse_pos) > radius:
 			close()
+			FRAME_PROFILER.add_usec("process.hud.loot.total", Time.get_ticks_usec() - t_process_total)
 			return
 
 	_refresh()
+	FRAME_PROFILER.add_usec("process.hud.loot.total", Time.get_ticks_usec() - t_process_total)
 
 func open_for_corpse(corpse: Node) -> void:
 	if panel.visible and _corpse == corpse:
