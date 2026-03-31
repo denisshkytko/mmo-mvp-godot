@@ -2,6 +2,7 @@ extends Node2D
 class_name BaseSpawnerGroup
 
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
+const PROFILER_UTILS := preload("res://core/debug/profiler_utils.gd")
 ## SpawnPoint is a global class (class_name). Avoid shadowing.
 
 @export_group("Respawn")
@@ -22,15 +23,18 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var t_total := Time.get_ticks_usec()
+	var respawn_checks: int = 0
 	for i in range(_points.size()):
 		if _waiting_corpse[i]:
 			continue
 		if _waiting_respawn[i]:
+			respawn_checks += 1
 			_respawn_timer[i] -= delta
 			if _respawn_timer[i] <= 0.0:
 				_waiting_respawn[i] = false
 				_spawn_at(i)
 	FRAME_PROFILER.add_usec("process.spawner_group.total", Time.get_ticks_usec() - t_total)
+	PROFILER_UTILS.track_count("spawner_group.respawn_checks", respawn_checks)
 
 
 func _collect_points() -> void:
@@ -59,21 +63,26 @@ func _spawn_all() -> void:
 
 
 func _spawn_at(index: int) -> void:
+	var t_total := Time.get_ticks_usec()
 	if index < 0 or index >= _points.size():
+		FRAME_PROFILER.add_usec("process.spawner_group.spawn_at", Time.get_ticks_usec() - t_total)
 		return
 	var p: SpawnPoint = _points[index]
 	if p == null:
+		FRAME_PROFILER.add_usec("process.spawner_group.spawn_at", Time.get_ticks_usec() - t_total)
 		return
 
 	var scene := _get_spawn_scene()
 	if scene == null:
 		push_error("BaseSpawnerGroup: _get_spawn_scene() returned null")
+		FRAME_PROFILER.add_usec("process.spawner_group.spawn_at", Time.get_ticks_usec() - t_total)
 		return
 
 	var inst := scene.instantiate()
 	var mob := inst as Node
 	if mob == null:
 		push_error("BaseSpawnerGroup: spawn scene root is not Node")
+		FRAME_PROFILER.add_usec("process.spawner_group.spawn_at", Time.get_ticks_usec() - t_total)
 		return
 
 	# Ставим флаг до входа в дерево, чтобы _ready() моба не делал legacy-recalc
@@ -88,15 +97,19 @@ func _spawn_at(index: int) -> void:
 	var ok: bool = _call_apply_spawn_init(mob, p, lvl)
 	if not ok:
 		_release_point(index)
+		FRAME_PROFILER.add_usec("process.spawner_group.spawn_at", Time.get_ticks_usec() - t_total)
 		return
 
 	# died(corpse) is used by spawner groups to detect respawn timing
 	var cb := Callable(self, "_on_mob_died").bind(index)
 	if mob.has_signal("died") and not mob.died.is_connected(cb):
 		mob.died.connect(cb)
+	FRAME_PROFILER.add_usec("process.spawner_group.spawn_at", Time.get_ticks_usec() - t_total)
+	PROFILER_UTILS.track_count("spawner_group.spawned")
 
 
 func _on_mob_died(corpse: Corpse, index: int) -> void:
+	PROFILER_UTILS.track_count("spawner_group.deaths")
 	if index < 0 or index >= _points.size():
 		return
 

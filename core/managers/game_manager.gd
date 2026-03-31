@@ -4,6 +4,7 @@ const FIRST_ENTRY_SPAWN_POINT := preload("res://game/world/spawn/first_entry_spa
 const Y_SORTING := preload("res://core/render/y_sorting.gd")
 const Y_SORT_DEBUG_OVERLAY := preload("res://core/render/y_sort_debug_overlay.gd")
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
+const PROFILER_UTILS := preload("res://core/debug/profiler_utils.gd")
 
 @onready var zone_container: Node = $"../ZoneContainer"
 @onready var world_root: Node = $".."
@@ -64,6 +65,8 @@ var _perf_last_projectile_nodes_count: int = 0
 var _perf_last_runtime_process_line: String = "script.process=n/a"
 var _perf_last_runtime_physics_line: String = "script.physics=n/a"
 var _perf_last_runtime_ai_line: String = "script.ai=n/a"
+var _perf_last_runtime_combat_line: String = "script.combat=n/a"
+var _perf_last_runtime_count_line: String = "script.count=n/a"
 var _perf_last_engine_process_line: String = "engine.process=n/a"
 var _perf_last_frames_count: int = 0
 var _perf_last_physics_frames_count: int = 0
@@ -177,6 +180,17 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 		physics_frames,
 		5
 	)
+	_perf_last_runtime_combat_line = _build_runtime_breakdown_line(
+		runtime_samples,
+		frames,
+		"script.combat",
+		func(key: String) -> bool:
+			return key.find(".combat.") != -1,
+		physics_frames,
+		5
+	)
+	var runtime_counts: Dictionary = FRAME_PROFILER.consume_counts()
+	_perf_last_runtime_count_line = _build_runtime_counts_line(runtime_counts, frames, "script.count", 6)
 	_perf_last_engine_process_line = _build_engine_process_monitors_line()
 	if debug_perf_metrics_enabled:
 		print(
@@ -295,6 +309,41 @@ func _build_runtime_breakdown_line(
 
 func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
 	return float(a.get("frame_ms", 0.0)) > float(b.get("frame_ms", 0.0))
+
+
+func _build_runtime_counts_line(samples: Dictionary, frames: int, label: String, max_parts: int) -> String:
+	if samples.is_empty():
+		return "%s=n/a" % label
+	var frame_count: int = max(1, frames)
+	var entries: Array[Dictionary] = []
+	for key_v in samples.keys():
+		var key: String = String(key_v)
+		var entry_v: Variant = samples.get(key, {})
+		if not (entry_v is Dictionary):
+			continue
+		var entry: Dictionary = entry_v as Dictionary
+		var total_count: float = float(entry.get("total_count", 0.0))
+		entries.append(
+			{
+				"key": key,
+				"count_per_frame": total_count / float(frame_count),
+				"total_count": total_count,
+			}
+		)
+	entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return float(a.get("count_per_frame", 0.0)) > float(b.get("count_per_frame", 0.0))
+	)
+	var parts: Array[String] = []
+	for item in entries:
+		var key: String = String(item.get("key", ""))
+		if key == "":
+			continue
+		parts.append("%s=%.2f/f" % [key, float(item.get("count_per_frame", 0.0))])
+		if parts.size() >= max(1, max_parts):
+			break
+	if parts.is_empty():
+		return "%s=n/a" % label
+	return "%s %s" % [label, ", ".join(parts)]
 
 
 func _update_runtime_tracking_totals(samples: Dictionary, frames: int, physics_frames: int) -> void:
@@ -457,6 +506,8 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "%s\n" % _perf_last_runtime_process_line
 		+ "%s\n" % _perf_last_runtime_physics_line
 		+ "%s\n" % _perf_last_runtime_ai_line
+		+ "%s\n" % _perf_last_runtime_combat_line
+		+ "%s\n" % _perf_last_runtime_count_line
 		+ "%s\n" % _perf_last_engine_process_line
 		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
 		+ "target=%s" % target_state
@@ -999,10 +1050,15 @@ func _attach_node_to_entity_sort_pivot(node: Node2D, runtime: Node2D) -> void:
 
 
 func _sync_entity_sort_pivots() -> void:
+	var t_total := Time.get_ticks_usec()
 	if _entity_sort_pivots.is_empty():
+		FRAME_PROFILER.add_usec("process.gm.y_sort.sync_pivots", Time.get_ticks_usec() - t_total)
 		return
 	var stale_keys: Array[int] = []
+	var scanned_count: int = 0
+	var updated_count: int = 0
 	for key_v in _entity_sort_pivots.keys():
+		scanned_count += 1
 		var key := int(key_v)
 		var pivot := _entity_sort_pivots.get(key, null) as Node2D
 		if pivot == null or not is_instance_valid(pivot):
@@ -1035,6 +1091,7 @@ func _sync_entity_sort_pivots() -> void:
 		if anchor_v is Vector2:
 			anchor_global = anchor_v as Vector2
 		pivot.global_position = anchor_global
+		updated_count += 1
 		if node.global_position != desired_node_global:
 			node.global_position = desired_node_global
 		_entity_pivot_last_node_global[key] = desired_node_global
@@ -1042,6 +1099,10 @@ func _sync_entity_sort_pivots() -> void:
 		_entity_sort_pivots.erase(stale)
 		_node_requires_sort_pivot_cache.erase(stale)
 		_entity_pivot_last_node_global.erase(stale)
+	FRAME_PROFILER.add_usec("process.gm.y_sort.sync_pivots", Time.get_ticks_usec() - t_total)
+	PROFILER_UTILS.track_count("gm.y_sort.sync_pivots.updated", updated_count)
+	PROFILER_UTILS.track_count("gm.y_sort.sync_pivots.scanned", scanned_count)
+	PROFILER_UTILS.track_count("gm.y_sort.sync_pivots.stale", stale_keys.size())
 
 
 func _has_y_sort_entity_ancestor(node: Node) -> bool:
