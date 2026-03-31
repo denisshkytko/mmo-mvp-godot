@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://ui/game/hud/core/minimap_hud.gd" id="1_0mm"]
+[ext_resource type="Script" path="res://ui/game/hud/core/minimap_entity_overlay.gd" id="2_overlay"]
 
 [node name="MinimapHUD" type="Control"]
 layout_mode = 3
@@ -83,6 +84,17 @@ mouse_filter = 2
 metadata/zone_path = "res://game/world/zones/Zone_01.tscn"
 metadata/world_min = Vector2(-2000, -1200)
 metadata/world_size = Vector2(4000, 2400)
+
+
+[node name="EntityOverlay" type="Control" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_overlay")
 
 [node name="PlayerMarker" type="TextureRect" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask"]
 custom_minimum_size = Vector2(6, 6)

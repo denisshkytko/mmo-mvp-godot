@@ -221,15 +221,8 @@ static func _blit_tile_texture(
 		anchor_offset.y + int(round(float(tile_origin.y) * scale_y))
 	)
 
-	var stamp := Image.create(stamp_w, stamp_h, false, Image.FORMAT_RGBA8)
-	stamp.fill(Color(0, 0, 0, 0))
-	for yy in range(stamp_h):
-		var src_v := int(floor((float(yy) / maxf(1.0, float(stamp_h))) * float(region.size.y)))
-		var src_y := region.position.y + clampi(src_v, 0, region.size.y - 1)
-		for xx in range(stamp_w):
-			var src_u := int(floor((float(xx) / maxf(1.0, float(stamp_w))) * float(region.size.x)))
-			var src_x := region.position.x + clampi(src_u, 0, region.size.x - 1)
-			stamp.set_pixel(xx, yy, tex_img.get_pixel(src_x, src_y))
+	var stamp := tex_img.get_region(region)
+	stamp.resize(stamp_w, stamp_h, Image.INTERPOLATE_LANCZOS)
 
 	tile_stamp_cache[stamp_key] = {"image": stamp, "offset": draw_offset}
 	_blend_stamp(image, stamp, Vector2i(px, py) + draw_offset)

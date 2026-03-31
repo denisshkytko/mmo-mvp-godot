@@ -24,6 +24,7 @@ const MINIMAP_BUILDER := preload("res://ui/game/hud/core/minimap_builder.gd")
 
 @onready var map_mask: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask
 @onready var map_stack: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack
+@onready var entity_overlay: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/EntityOverlay
 @onready var tap_zone: Button = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/TapZone
 @onready var player_marker: TextureRect = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/PlayerMarker
 
@@ -60,7 +61,7 @@ func _process(delta: float) -> void:
 		_dot_refresh_timer = entity_dot_refresh_sec
 		_refresh_entity_tracking_cache()
 	_apply_zoom_and_focus()
-	queue_redraw()
+	_update_entity_overlay()
 
 
 func _on_tap_pressed() -> void:
@@ -246,17 +247,18 @@ func _apply_zoom_and_focus() -> void:
 			player_marker.position = marker_pos - (marker_px_size * 0.5)
 
 
-func _draw() -> void:
-	if _active_map == null or not is_instance_valid(_active_map):
+func _update_entity_overlay() -> void:
+	if entity_overlay == null or not is_instance_valid(entity_overlay):
 		return
-	var mask_global := map_mask.global_position
-	var root_global := global_position
-	var mask_origin := mask_global - root_global
+	if _active_map == null or not is_instance_valid(_active_map):
+		if entity_overlay.has_method("set_points"):
+			entity_overlay.call("set_points", [], entity_dot_outline_color)
+		return
 	var mask_size := map_mask.size
 	var dot_radius := maxf(1.0, _last_player_marker_size_px * 0.25)
-	var outline_radius := dot_radius + 1.0
 	var t_sec := float(Time.get_ticks_msec()) * 0.001
 	var blink_on := sin(t_sec * TAU * corpse_blink_hz) >= 0.0
+	var points: Array[Dictionary] = []
 
 	for unit in _tracked_units:
 		if unit == null or not is_instance_valid(unit):
@@ -264,10 +266,11 @@ func _draw() -> void:
 		var p := _world_to_mask_pos(unit.global_position)
 		if p.x < -8.0 or p.y < -8.0 or p.x > mask_size.x + 8.0 or p.y > mask_size.y + 8.0:
 			continue
-		var c := _pick_unit_dot_color(unit)
-		var draw_p := mask_origin + p
-		draw_circle(draw_p, outline_radius, entity_dot_outline_color)
-		draw_circle(draw_p, dot_radius, c)
+		points.append({
+			"pos": p,
+			"radius": dot_radius,
+			"color": _pick_unit_dot_color(unit),
+		})
 
 	for corpse in _tracked_corpses:
 		if corpse == null or not is_instance_valid(corpse):
@@ -282,9 +285,14 @@ func _draw() -> void:
 				can_loot = bool(corpse.call("_can_be_looted_by", _player))
 		if can_loot:
 			corpse_color = corpse_dot_loot_blink_a if blink_on else corpse_dot_loot_blink_b
-		var corpse_draw_p := mask_origin + cp
-		draw_circle(corpse_draw_p, outline_radius, entity_dot_outline_color)
-		draw_circle(corpse_draw_p, dot_radius, corpse_color)
+		points.append({
+			"pos": cp,
+			"radius": dot_radius,
+			"color": corpse_color,
+		})
+
+	if entity_overlay.has_method("set_points"):
+		entity_overlay.call("set_points", points, entity_dot_outline_color)
 
 
 func _refresh_entity_tracking_cache() -> void:
