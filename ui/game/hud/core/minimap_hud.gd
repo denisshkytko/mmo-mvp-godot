@@ -6,11 +6,15 @@ const MINIMAP_BUILDER := preload("res://ui/game/hud/core/minimap_builder.gd")
 @export var follow_player: bool = true
 @export var zone_refresh_sec: float = 0.4
 @export var default_world_rect: Rect2 = Rect2(Vector2(-2000, -1200), Vector2(4000, 2400))
+@export var player_marker_texture: Texture2D = preload("res://icon.svg")
+@export var player_marker_base_world_size: Vector2 = Vector2(32.0, 32.0)
+@export var player_marker_min_px: float = 3.0
+@export var player_marker_max_px: float = 18.0
 
 @onready var map_mask: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask
 @onready var map_stack: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/MapStack
 @onready var tap_zone: Button = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/TapZone
-@onready var player_marker: Control = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/PlayerMarker
+@onready var player_marker: TextureRect = $TopRightAnchor/MapPanel/Padding/MapAspect/MapMask/PlayerMarker
 
 var _zoom_index: int = 0
 var _current_zone_path: String = ""
@@ -23,6 +27,8 @@ var _player: Node2D = null
 
 func _ready() -> void:
 	tap_zone.pressed.connect(_on_tap_pressed)
+	if player_marker != null and is_instance_valid(player_marker):
+		player_marker.texture = player_marker_texture
 	_select_map_for_zone(_get_current_zone_path())
 	_apply_zoom_and_focus()
 
@@ -175,10 +181,29 @@ func _apply_zoom_and_focus() -> void:
 	_active_map.position = (mask_size * 0.5) - (content_size * uv)
 
 	if player_marker != null and is_instance_valid(player_marker):
+		if player_marker.texture != player_marker_texture:
+			player_marker.texture = player_marker_texture
+		var player_scale := Vector2.ONE
+		if _player != null and is_instance_valid(_player):
+			player_scale = _player.global_scale.abs()
+		var marker_world_size := Vector2(
+			maxf(0.001, player_marker_base_world_size.x * player_scale.x),
+			maxf(0.001, player_marker_base_world_size.y * player_scale.y)
+		)
+		var px_per_world := Vector2(
+			(mask_size.x * zoom_value) / _active_world_size.x,
+			(mask_size.y * zoom_value) / _active_world_size.y
+		)
+		var marker_px_size := Vector2(
+			clampf(marker_world_size.x * px_per_world.x, player_marker_min_px, player_marker_max_px),
+			clampf(marker_world_size.y * px_per_world.y, player_marker_min_px, player_marker_max_px)
+		)
+		player_marker.custom_minimum_size = marker_px_size
+		player_marker.size = marker_px_size
 		if follow_player:
-			player_marker.position = (mask_size * 0.5) - (player_marker.size * 0.5)
+			player_marker.position = (mask_size * 0.5) - (marker_px_size * 0.5)
 		else:
-			player_marker.position = Vector2(mask_size.x * uv.x, mask_size.y * uv.y) - (player_marker.size * 0.5)
+			player_marker.position = Vector2(mask_size.x * uv.x, mask_size.y * uv.y) - (marker_px_size * 0.5)
 
 
 func _get_current_zone_path() -> String:

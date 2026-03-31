@@ -48,7 +48,7 @@ size_flags_vertical = 3
 ratio = 1.77778
 stretch_mode = 2
 
-[node name="MapMask" type="PanelContainer" parent="TopRightAnchor/MapPanel/Padding/MapAspect"]
+[node name="MapMask" type="Control" parent="TopRightAnchor/MapPanel/Padding/MapAspect"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -84,16 +84,17 @@ metadata/zone_path = "res://game/world/zones/Zone_01.tscn"
 metadata/world_min = Vector2(-2000, -1200)
 metadata/world_size = Vector2(4000, 2400)
 
-[node name="PlayerMarker" type="ColorRect" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask"]
-custom_minimum_size = Vector2(8, 8)
+[node name="PlayerMarker" type="TextureRect" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask"]
+custom_minimum_size = Vector2(6, 6)
 layout_mode = 1
 anchors_preset = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_right = 6.0
+offset_bottom = 6.0
 grow_horizontal = 0
 grow_vertical = 0
+expand_mode = 1
+stretch_mode = 5
 mouse_filter = 2
-color = Color(0.94, 0.25, 0.2, 1)
 
 [node name="TapZone" type="Button" parent="TopRightAnchor/MapPanel/Padding/MapAspect/MapMask"]
 layout_mode = 1
