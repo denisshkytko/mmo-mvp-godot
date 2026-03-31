@@ -86,6 +86,7 @@ var loot_owner_player_id: int = 0
 var regen_active: bool = false
 const REGEN_PCT_PER_SEC: float = 0.02
 var _spawn_initialized: bool = false
+var _components_dirty: bool = true
 
 # ---------------------------
 # ПРЕСЕТЫ СТАТОВ ПО BODY SIZE
@@ -195,6 +196,7 @@ func _ready() -> void:
 	c_spell_caster.setup(self)
 	if not _spawn_initialized:
 		_apply_to_components()
+		_components_dirty = false
 		_setup_resource_from_class(c_stats.class_id if c_stats != null else "")
 		c_stats.recalculate_for_level(mob_level)
 		c_stats.update_hp_bar(hp_bar)
@@ -275,7 +277,9 @@ func _physics_process(delta: float) -> void:
 		return
 	_set_model_stunned(false)
 
-	_apply_to_components()
+	if _components_dirty:
+		_apply_to_components()
+		_components_dirty = false
 
 	var prev_has_aggr := (aggressor != null and is_instance_valid(aggressor))
 	if aggressor != null and is_instance_valid(aggressor):
@@ -412,6 +416,7 @@ func apply_spawn_init(
 	body_size = body_size_in
 	mob_variant = MOB_VARIANT.clamp_variant(mob_variant_in)
 	attack_mode = AttackMode.RANGED if attack_mode_choice_in == AttackMode.RANGED else AttackMode.MELEE
+	_components_dirty = true
 
 	if c_ai != null:
 		c_ai.behavior = behavior_in
@@ -433,7 +438,7 @@ func apply_spawn_init(
 
 	_setup_resource_from_class(class_id_in)
 	_apply_to_components()
-	c_stats.recalculate_for_level(mob_level)
+	_components_dirty = false
 	c_stats.current_hp = c_stats.max_hp
 	c_stats.update_hp_bar(hp_bar)
 	_spawn_initialized = true
