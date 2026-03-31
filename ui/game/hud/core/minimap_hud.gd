@@ -74,8 +74,19 @@ func _select_map_for_zone(zone_path: String) -> void:
 
 func _apply_zone_texture_and_bounds(target: TextureRect, zone_path: String) -> void:
 	var map_zone_path := zone_path if zone_path != "" else String(target.get_meta("zone_path", ""))
+	if map_zone_path == "" or not map_zone_path.begins_with("res://"):
+		map_zone_path = String(target.get_meta("zone_path", ""))
 	var build_cfg := _build_config_for_zone(map_zone_path)
 	var built: Dictionary = MINIMAP_BUILDER.build_zone_minimap(map_zone_path, build_cfg)
+	if not built.has("texture"):
+		# Retry with permissive config so minimap still appears if zone presets drifted.
+		var fallback_cfg := {
+			"pixels_per_tile": int(build_cfg.get("pixels_per_tile", 2)),
+			"default_color": build_cfg.get("default_color", Color(0.24, 0.36, 0.22, 1.0)),
+			"exclude_name_prefixes": build_cfg.get("exclude_name_prefixes", []),
+			"layer_rules": build_cfg.get("layer_rules", {}),
+		}
+		built = MINIMAP_BUILDER.build_zone_minimap(map_zone_path, fallback_cfg)
 	if built.has("texture"):
 		target.texture = built.get("texture") as Texture2D
 	if built.has("world_rect"):

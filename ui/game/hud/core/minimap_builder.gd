@@ -37,6 +37,8 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 			if found != null:
 				_collect_tile_layers(found, tile_layers)
 	if tile_layers.is_empty():
+		_collect_tile_layers(zone_root, tile_layers)
+	if tile_layers.is_empty():
 		zone_root.queue_free()
 		return {}
 
@@ -128,7 +130,7 @@ static func _collect_tile_layers(root: Node, out_layers: Array[TileMapLayer]) ->
 
 
 static func _pick_layer_rule(layer_name: String, config: Dictionary) -> Dictionary:
-	var lower := layer_name.to_lower()
+	var lower := layer_name.to_lower().replace(",", ".")
 	var excluded_prefixes: Array = config.get("exclude_name_prefixes", []) as Array
 	for raw in excluded_prefixes:
 		var prefix := String(raw).to_lower()
@@ -137,7 +139,7 @@ static func _pick_layer_rule(layer_name: String, config: Dictionary) -> Dictiona
 
 	var rules: Dictionary = config.get("layer_rules", {}) as Dictionary
 	for key_v in rules.keys():
-		var pattern := String(key_v).to_lower()
+		var pattern := String(key_v).to_lower().replace(",", ".")
 		if pattern != "" and lower.find(pattern) != -1:
 			var rv: Variant = rules.get(key_v, {})
 			if rv is Dictionary:
