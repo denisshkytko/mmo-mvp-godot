@@ -1,5 +1,6 @@
 extends Node2D
 class_name AnimatedAbilityEffect
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 signal carrier_layer_changed(new_z_index: int)
 
@@ -29,8 +30,10 @@ func _ready() -> void:
 	_update_follow_position()
 
 func _process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	_sync_follow_target_connections()
 	_update_follow_position()
+	FRAME_PROFILER.add_usec("process.vfx.animated_ability_effect.total", Time.get_ticks_usec() - t_total)
 
 func play_once(name: StringName = &"default") -> void:
 	animation_name = name

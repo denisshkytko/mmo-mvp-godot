@@ -2,6 +2,7 @@ extends Area2D
 class_name Corpse
 
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 signal despawned
 
@@ -245,11 +246,13 @@ func _can_be_looted_by(player_node: Node) -> bool:
 	return player_node.get_instance_id() == loot_owner_player_id
 
 func _process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	# 1) despawn timer
 	_life_timer -= delta
 	if _life_timer <= 0.0:
 		emit_signal("despawned")
 		queue_free()
+		FRAME_PROFILER.add_usec("process.corpse.total", Time.get_ticks_usec() - t_total)
 		return
 
 	# 2) range check fallback (всегда с owner gating)
@@ -283,6 +286,7 @@ func _process(delta: float) -> void:
 		visual.modulate.a = lerp(0.35, 1.0, k)
 	else:
 		visual.modulate.a = 1.0
+	FRAME_PROFILER.add_usec("process.corpse.total", Time.get_ticks_usec() - t_total)
 
 func _update_model_highlight() -> void:
 	if model_highlight == null or not is_instance_valid(model_highlight):

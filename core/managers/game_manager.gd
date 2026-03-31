@@ -498,6 +498,7 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "tracked phys=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_physics_ms_f, untracked_physics_ms]
 		+ "tracked ai=%.2fms/f phys(+ai)=%.2fms/f untracked~%.2fms\n" % [_perf_last_tracked_ai_ms_f, tracked_physics_with_ai_ms, untracked_physics_with_ai_ms]
 		+ "coverage proc=%.1f%% phys=%.1f%% phys(+ai)=%.1f%%\n" % [tracked_process_coverage_pct, tracked_physics_coverage_pct, tracked_physics_with_ai_coverage_pct]
+		+ "note: proc coverage uses TIME_PROCESS (engine + scripts)\n"
 		+ "gm.sync_player=%.3fms\n" % _perf_last_avg_sync_player_ms
 		+ "gm.sync_entities=%.3fms\n" % _perf_last_avg_sync_entities_ms
 		+ "y_sort_entities=%d pivots=%d\n" % [_perf_last_entities_count, _perf_last_pivots_count]

@@ -79,7 +79,8 @@ func _refresh_from_runtime_overlay() -> void:
 		+ "fps=%d frames=%d phys_frames=%d draws=%d nodes=%d\n" % [fps, frames, phys_frames, draws, scene_nodes]
 		+ "process=%.2fms (tracked %.2fms, %.1f%%)\n" % [process_ms, tracked_process_ms, (tracked_process_ms / max(0.001, process_ms)) * 100.0]
 		+ "physics=%.2fms (tracked %.2fms, %.1f%%)\n" % [physics_ms, tracked_physics_ms, (tracked_physics_ms / max(0.001, physics_ms)) * 100.0]
-		+ "untracked process=%.2fms, untracked physics=%.2fms" % [untracked_process_ms, untracked_physics_ms]
+		+ "untracked process=%.2fms, untracked physics=%.2fms\n" % [untracked_process_ms, untracked_physics_ms]
+		+ "(process coverage uses TIME_PROCESS: engine + scripts)"
 	)
 
 	_build_tree(parsed, process_ms, physics_ms, process_ms + physics_ms, untracked_process_ms, untracked_physics_ms)
