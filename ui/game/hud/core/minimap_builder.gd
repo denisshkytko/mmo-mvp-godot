@@ -107,6 +107,8 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 	image.fill(Color(0, 0, 0, 0.0))
 
 	var draw_real_tiles := bool(config.get("draw_tile_textures", true))
+	var atlas_image_cache: Dictionary = {}
+	var tile_stamp_cache: Dictionary = {}
 	for item in included_cells:
 		var world_p: Vector2 = item["world_pos"] as Vector2
 		var world_step: float = float(item["world_step"])
@@ -119,7 +121,7 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 			var source_id_ref := int(item["source_id"])
 			var atlas_ref: Vector2i = item["atlas"] as Vector2i
 			var alt_ref := int(item["alternative"])
-			if _blit_tile_texture(image, px, py, step_px, layer_ref, source_id_ref, atlas_ref, alt_ref):
+			if _blit_tile_texture(image, px, py, step_px, layer_ref, source_id_ref, atlas_ref, alt_ref, atlas_image_cache, tile_stamp_cache):
 				continue
 		_fill_rect(image, px, py, step_px, img_w, img_h, col)
 
@@ -157,25 +159,39 @@ static func _blit_tile_texture(
 		layer: TileMapLayer,
 		source_id: int,
 		atlas: Vector2i,
-		alternative: int
+		alternative: int,
+		atlas_image_cache: Dictionary,
+		tile_stamp_cache: Dictionary
 	) -> bool:
 	if layer == null or source_id < 0:
 		return false
 	var tile_set := layer.tile_set
 	if tile_set == null:
 		return false
+	var tile_set_id := str(tile_set.get_instance_id())
+	var stamp_key := "%s|%d|%d:%d|%d|%d" % [tile_set_id, source_id, atlas.x, atlas.y, alternative, step_px]
+	if tile_stamp_cache.has(stamp_key):
+		var cached_stamp: Image = tile_stamp_cache[stamp_key] as Image
+		if cached_stamp != null and not cached_stamp.is_empty():
+			image.blit_rect(cached_stamp, Rect2i(Vector2i.ZERO, cached_stamp.get_size()), Vector2i(px, py))
+			return true
+
 	var src := tile_set.get_source(source_id)
-	if src == null:
-		return false
-	if not (src is TileSetAtlasSource):
+	if src == null or not (src is TileSetAtlasSource):
 		return false
 	var atlas_src := src as TileSetAtlasSource
 	var tex := atlas_src.texture
 	if tex == null:
 		return false
-	var tex_img := tex.get_image()
-	if tex_img == null or tex_img.is_empty():
-		return false
+
+	var atlas_img_key := "%s|%d" % [tile_set_id, source_id]
+	var tex_img: Image = atlas_image_cache.get(atlas_img_key, null) as Image
+	if tex_img == null:
+		tex_img = tex.get_image()
+		if tex_img == null or tex_img.is_empty():
+			return false
+		atlas_image_cache[atlas_img_key] = tex_img
+
 	var region := Rect2i()
 	if atlas_src.has_method("get_tile_texture_region"):
 		var rr: Variant = atlas_src.call("get_tile_texture_region", atlas, alternative)
@@ -187,24 +203,19 @@ static func _blit_tile_texture(
 			region = rr1 as Rect2i
 	if region.size.x <= 0 or region.size.y <= 0:
 		return false
-	var max_w := image.get_width()
-	var max_h := image.get_height()
+
+	var stamp := Image.create(step_px, step_px, false, Image.FORMAT_RGBA8)
+	stamp.fill(Color(0, 0, 0, 0))
 	for yy in range(step_px):
-		var dst_y := py + yy
-		if dst_y < 0 or dst_y >= max_h:
-			continue
 		var src_v := int(floor((float(yy) / maxf(1.0, float(step_px))) * float(region.size.y)))
 		var src_y := region.position.y + clampi(src_v, 0, region.size.y - 1)
 		for xx in range(step_px):
-			var dst_x := px + xx
-			if dst_x < 0 or dst_x >= max_w:
-				continue
 			var src_u := int(floor((float(xx) / maxf(1.0, float(step_px))) * float(region.size.x)))
 			var src_x := region.position.x + clampi(src_u, 0, region.size.x - 1)
-			var s_col := tex_img.get_pixel(src_x, src_y)
-			if s_col.a <= 0.001:
-				continue
-			image.set_pixel(dst_x, dst_y, s_col)
+			stamp.set_pixel(xx, yy, tex_img.get_pixel(src_x, src_y))
+
+	tile_stamp_cache[stamp_key] = stamp
+	image.blit_rect(stamp, Rect2i(Vector2i.ZERO, stamp.get_size()), Vector2i(px, py))
 	return true
 
 
