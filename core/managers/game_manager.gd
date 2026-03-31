@@ -59,6 +59,7 @@ var _perf_last_projectile_nodes_count: int = 0
 var _perf_last_runtime_process_line: String = "script.process=n/a"
 var _perf_last_runtime_physics_line: String = "script.physics=n/a"
 var _perf_last_runtime_ai_line: String = "script.ai=n/a"
+const RUNTIME_OVERLAY_MAX_LINE_CHARS: int = 220
 var _perf_last_frames_count: int = 0
 var _perf_last_tracked_process_ms_f: float = 0.0
 var _perf_last_tracked_physics_ms_f: float = 0.0
@@ -136,7 +137,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 		"script.process",
 		func(key: String) -> bool:
 			return key.begins_with("process."),
-		8
+		6
 	)
 	_perf_last_runtime_physics_line = _build_runtime_breakdown_line(
 		runtime_samples,
@@ -144,7 +145,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 		"script.physics",
 		func(key: String) -> bool:
 			return key.find(".physics.") != -1,
-		6
+		5
 	)
 	_perf_last_runtime_ai_line = _build_runtime_breakdown_line(
 		runtime_samples,
@@ -152,7 +153,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 		"script.ai",
 		func(key: String) -> bool:
 			return key.find(".ai.") != -1,
-		6
+		5
 	)
 	if debug_perf_metrics_enabled:
 		print(
@@ -262,7 +263,13 @@ func _build_runtime_breakdown_line(
 			break
 	if parts.is_empty():
 		return "%s=n/a" % label
-	return "%s %s" % [label, ", ".join(parts)]
+	return _truncate_runtime_line("%s %s" % [label, ", ".join(parts)])
+
+
+func _truncate_runtime_line(line: String) -> String:
+	if line.length() <= RUNTIME_OVERLAY_MAX_LINE_CHARS:
+		return line
+	return line.substr(0, max(0, RUNTIME_OVERLAY_MAX_LINE_CHARS - 1)) + "…"
 
 
 func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
@@ -308,6 +315,8 @@ func _ensure_runtime_profiler_overlay() -> void:
 		_runtime_profiler_label.offset_bottom = -16.0
 		_runtime_profiler_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_runtime_profiler_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		_runtime_profiler_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_runtime_profiler_label.clip_text = true
 		_runtime_profiler_label.add_theme_font_size_override("font_size", 14)
 		_runtime_profiler_label.add_theme_color_override("font_color", Color(0.9, 1.0, 0.9, 0.95))
 		_runtime_profiler_canvas.add_child.call_deferred(_runtime_profiler_label)
@@ -320,6 +329,9 @@ func _update_runtime_profiler_overlay() -> void:
 		return
 	if _runtime_profiler_label == null or not is_instance_valid(_runtime_profiler_label):
 		return
+	var viewport_size: Vector2i = get_viewport().get_visible_rect().size
+	var max_overlay_width: float = clamp(float(viewport_size.x) * 0.60, 540.0, 1280.0)
+	_runtime_profiler_label.size.x = max_overlay_width
 	var fps: int = int(round(Engine.get_frames_per_second()))
 	var tree_nodes: int = get_tree().get_node_count()
 	var target_state: String = "none"
