@@ -5,6 +5,7 @@ signal impacted(target: Node2D)
 signal impacted_with_result(target: Node2D, dealt_damage: int, dmg_type: String)
 
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 @export var speed: float = 420.0
 @export var hit_distance: float = 10.0
@@ -38,18 +39,24 @@ func setup(target: Node2D, damage: int, source: Node2D = null, texture_override:
 		_sprite.texture = texture_override
 
 func _physics_process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if _hit:
+		FRAME_PROFILER.add_usec("projectile.homing.physics.total", Time.get_ticks_usec() - t_total)
 		return
+	var t_sync := Time.get_ticks_usec()
 	_sync_sort_layer()
+	FRAME_PROFILER.add_usec("projectile.homing.physics.sync_layer", Time.get_ticks_usec() - t_sync)
 
 	_life += delta
 	if _life >= max_lifetime:
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.homing.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	# Если цель пропала — удаляем снаряд
 	if _target == null or not is_instance_valid(_target):
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.homing.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	# Если источник нужен тебе как “контроль жизни снаряда” — оставляем.
@@ -60,6 +67,7 @@ func _physics_process(delta: float) -> void:
 	# Если игрок уже мёртв — не продолжаем
 	if "is_dead" in _target and bool(_target.get("is_dead")):
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.homing.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	# Движение: каждый кадр летим прямо к текущей позиции игрока (100% попадание)
@@ -68,14 +76,18 @@ func _physics_process(delta: float) -> void:
 
 	if dist <= hit_distance:
 		_apply_hit()
+		FRAME_PROFILER.add_usec("projectile.homing.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
+	var t_move := Time.get_ticks_usec()
 	var dir: Vector2 = to_target / dist
 	if _animated_sprite == null:
 		rotation = dir.angle()
 	else:
 		_update_directional_animation(dir)
 	global_position += dir * speed * delta
+	FRAME_PROFILER.add_usec("projectile.homing.physics.move", Time.get_ticks_usec() - t_move)
+	FRAME_PROFILER.add_usec("projectile.homing.physics.total", Time.get_ticks_usec() - t_total)
 
 func _update_directional_animation(dir: Vector2) -> void:
 	if _animated_sprite == null or _animated_sprite.sprite_frames == null:

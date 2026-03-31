@@ -512,7 +512,11 @@ func _physics_process(delta: float) -> void:
 	# validate current target
 	var t_targeting := Time.get_ticks_usec()
 	var need_full_validate: bool = (_target_validate_timer <= 0.0)
-	if current_target == null or not is_instance_valid(current_target):
+	if current_target == null:
+		_target_validate_timer = 0.0
+		# Если цели нет, сохраняем cadence acquire-таймера:
+		# это не даёт делать дорогой _pick_target() каждый physics-тик.
+	elif not is_instance_valid(current_target):
 		current_target = null
 		_target_acquire_timer = 0.0
 		_target_validate_timer = 0.0
@@ -554,9 +558,12 @@ func _physics_process(delta: float) -> void:
 	if current_target == null and proactive_aggro and not is_returning:
 		var should_force_retarget: bool = direct_attackers.size() > 0
 		if should_force_retarget or _target_acquire_timer <= 0.0:
+			FRAME_PROFILER.add_count("npc.physics.targeting.acquire_attempts", 1.0)
 			current_target = _pick_target()
 			_target_acquire_timer = TARGET_ACQUIRE_RECHECK_SEC
 			_target_validate_timer = 0.0
+			if current_target != null and is_instance_valid(current_target):
+				FRAME_PROFILER.add_count("npc.physics.targeting.acquire_success", 1.0)
 	if current_target != null and is_instance_valid(current_target):
 		if "is_dead" in current_target and bool(current_target.get("is_dead")):
 			current_target = null
@@ -568,6 +575,8 @@ func _physics_process(delta: float) -> void:
 		_prev_target = null
 	if current_target != null and not is_instance_valid(current_target):
 		current_target = null
+		_target_acquire_timer = 0.0
+		_target_validate_timer = 0.0
 	_refresh_threat_target()
 
 	if _prev_target != current_target:
@@ -622,11 +631,12 @@ func _pick_target() -> Node2D:
 		home_position,
 		COMBAT_RANGES.LEASH_DISTANCE,
 		radius,
-		direct_attackers
+		direct_attackers,
+		"npc.physics"
 	)
 	if threat_target != null:
 		return threat_target
-	return FactionTargeting.pick_hostile_target(self, faction_id, radius)
+	return FactionTargeting.pick_hostile_target(self, faction_id, radius, "npc.physics")
 
 func take_damage(raw_damage: int) -> void:
 	take_damage_from_typed(raw_damage, null, "physical")
@@ -992,7 +1002,8 @@ func _refresh_threat_target() -> void:
 		home_position,
 		COMBAT_RANGES.LEASH_DISTANCE,
 		COMBAT_RANGES.AGGRO_RADIUS,
-		direct_attackers
+		direct_attackers,
+		"npc.physics"
 	)
 	if threat_target != null and threat_target != current_target:
 		current_target = threat_target

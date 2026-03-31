@@ -1,6 +1,7 @@
 extends RefCounted
 class_name ThreatTargeting
 
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const DANGER_COEFF := 1.0
 const INFLUENCE_DIRECT := 1.0
 const INFLUENCE_COMBAT := 0.75
@@ -15,9 +16,12 @@ static func pick_target_by_threat(
 	home_pos: Vector2,
 	leash_distance: float,
 	aggro_radius: float,
-	direct_attackers: Dictionary
+	direct_attackers: Dictionary,
+	metric_prefix: String = ""
 ) -> Node2D:
+	var t_total := Time.get_ticks_usec()
 	if actor == null or not is_instance_valid(actor):
+		_add_metric(metric_prefix, "threat_total", t_total)
 		return null
 
 	var now_sec: float = float(Time.get_ticks_msec()) / 1000.0
@@ -26,6 +30,7 @@ static func pick_target_by_threat(
 	var leash_distance_sq: float = leash_distance * leash_distance
 	var aggro_radius_sq: float = aggro_radius * aggro_radius
 
+	var t_direct := Time.get_ticks_usec()
 	for attacker_id in direct_attackers.keys():
 		var attacker_obj: Object = instance_from_id(int(attacker_id))
 		if attacker_obj == null or not (attacker_obj is Node2D):
@@ -51,16 +56,22 @@ static func pick_target_by_threat(
 		if threat > best_threat:
 			best_threat = threat
 			best_target = candidate
+	_add_metric(metric_prefix, "threat_direct_scan", t_direct)
+	FRAME_PROFILER.add_count("%s.targeting.direct_attackers_checked" % _metric_root(metric_prefix), float(direct_attackers.size()))
 
+	var t_faction_scan := Time.get_ticks_usec()
 	var units := _get_cached_faction_units(actor.get_tree(), now_sec)
+	var scanned_units: int = 0
 	for u in units:
-		if u == actor:
+		scanned_units += 1
+		var obj: Object = u as Object
+		if obj == null or not is_instance_valid(obj):
 			continue
-		if not (u is Node2D):
+		if obj == actor:
 			continue
-		var candidate := u as Node2D
-		if not is_instance_valid(candidate):
+		if not (obj is Node2D):
 			continue
+		var candidate := obj as Node2D
 		if "is_dead" in candidate and bool(candidate.get("is_dead")):
 			continue
 		if not candidate.has_method("is_in_combat"):
@@ -85,9 +96,13 @@ static func pick_target_by_threat(
 		if threat > best_threat:
 			best_threat = threat
 			best_target = candidate
+	_add_metric(metric_prefix, "threat_faction_scan", t_faction_scan)
+	FRAME_PROFILER.add_count("%s.targeting.faction_units_checked" % _metric_root(metric_prefix), float(scanned_units))
 
 	if best_threat > 0.0:
+		_add_metric(metric_prefix, "threat_total", t_total)
 		return best_target
+	_add_metric(metric_prefix, "threat_total", t_total)
 	return null
 
 
@@ -95,9 +110,24 @@ static func _get_cached_faction_units(tree: SceneTree, now_sec: float) -> Array:
 	if tree == null:
 		return []
 	if now_sec >= _cached_units_until_sec:
-		_cached_units = tree.get_nodes_in_group("faction_units")
+		var raw := tree.get_nodes_in_group("faction_units")
+		var sanitized: Array = []
+		for item in raw:
+			var obj: Object = item as Object
+			if obj == null or not is_instance_valid(obj):
+				continue
+			sanitized.append(obj)
+		_cached_units = sanitized
 		_cached_units_until_sec = now_sec + FACTION_UNITS_CACHE_REFRESH_SEC
 	return _cached_units
+
+static func _metric_root(metric_prefix: String) -> String:
+	if metric_prefix.strip_edges() == "":
+		return "targeting.physics"
+	return metric_prefix
+
+static func _add_metric(metric_prefix: String, suffix: String, started_usec: int) -> void:
+	FRAME_PROFILER.add_usec("%s.%s" % [_metric_root(metric_prefix), suffix], Time.get_ticks_usec() - started_usec)
 
 static func _get_dps(candidate: Node, now_sec: float) -> float:
 	if candidate == null:

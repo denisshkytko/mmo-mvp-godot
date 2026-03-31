@@ -119,6 +119,20 @@ func _build_tree(parsed: Dictionary, process_ms: float, physics_ms: float, total
 			total_ms,
 			"Engine process monitors"
 		)
+	var engine_physics_items := _as_metric_items(parsed.get("engine_physics_items", []))
+	var engine_physics_total_ms: float = 0.0
+	for item in engine_physics_items:
+		engine_physics_total_ms += float(item.get("ms", 0.0))
+	var engine_physics_group := _add_group(root, "Engine physics monitors", engine_physics_total_ms, total_ms, "")
+	for item in engine_physics_items:
+		_add_metric_row(
+			engine_physics_group,
+			String(item.get("metric", "")),
+			float(item.get("ms", 0.0)),
+			max(0.001, engine_physics_total_ms),
+			total_ms,
+			"Engine physics monitors"
+		)
 	var count_items := _as_metric_items(parsed.get("count_items", []))
 	var count_group := _add_group(root, "Event counters", 0.0, max(0.001, total_ms), "")
 	for item in count_items:
@@ -243,6 +257,7 @@ func _parse_runtime_text(text: String) -> Dictionary:
 		"combat_items": [],
 		"count_items": [],
 		"engine_process_items": [],
+		"engine_physics_items": [],
 	}
 	for raw_line in text.split("\n"):
 		var line := raw_line.strip_edges()
@@ -271,6 +286,8 @@ func _parse_runtime_text(text: String) -> Dictionary:
 			result["count_items"] = _parse_count_items(line.trim_prefix("script.count "))
 		elif line.begins_with("engine.process "):
 			result["engine_process_items"] = _parse_metric_items(line.trim_prefix("engine.process "))
+		elif line.begins_with("engine.physics "):
+			result["engine_physics_items"] = _parse_metric_items(line.trim_prefix("engine.physics "))
 		elif line.begins_with("scene_nodes="):
 			result["scene_nodes"] = int(round(_extract_float_after(line, "scene_nodes=")))
 			result["draws"] = int(round(_extract_float_after(line, "draws=")))

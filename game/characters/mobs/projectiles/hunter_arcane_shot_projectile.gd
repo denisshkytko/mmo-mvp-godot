@@ -3,6 +3,8 @@ class_name HunterArcaneShotProjectile
 
 signal impacted(target: Node2D)
 
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
+
 @export var speed: float = 520.0
 @export var hit_distance: float = 10.0
 @export var max_lifetime: float = 4.0
@@ -18,17 +20,23 @@ func setup(target: Node2D, source: Node2D = null) -> void:
 	_sync_sort_layer()
 
 func _physics_process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if _done:
+		FRAME_PROFILER.add_usec("projectile.arcane_shot.physics.total", Time.get_ticks_usec() - t_total)
 		return
+	var t_sync := Time.get_ticks_usec()
 	_sync_sort_layer()
+	FRAME_PROFILER.add_usec("projectile.arcane_shot.physics.sync_layer", Time.get_ticks_usec() - t_sync)
 
 	_life += delta
 	if _life >= max_lifetime:
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.arcane_shot.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	if _target == null or not is_instance_valid(_target):
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.arcane_shot.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	var target_pos: Vector2 = _resolve_target_anchor()
@@ -38,11 +46,15 @@ func _physics_process(delta: float) -> void:
 		_done = true
 		impacted.emit(_target)
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.arcane_shot.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
+	var t_move := Time.get_ticks_usec()
 	var dir: Vector2 = to_target / dist
 	rotation = dir.angle()
 	global_position += dir * speed * delta
+	FRAME_PROFILER.add_usec("projectile.arcane_shot.physics.move", Time.get_ticks_usec() - t_move)
+	FRAME_PROFILER.add_usec("projectile.arcane_shot.physics.total", Time.get_ticks_usec() - t_total)
 
 func _resolve_target_anchor() -> Vector2:
 	if _target == null or not is_instance_valid(_target):
