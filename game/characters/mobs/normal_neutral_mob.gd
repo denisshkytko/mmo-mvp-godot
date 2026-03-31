@@ -290,6 +290,7 @@ func _physics_process(delta: float) -> void:
 	if aggressor != null and not is_instance_valid(aggressor):
 		aggressor = null
 		is_aggressive = false
+		regen_active = true
 	if aggressor == null and c_ai != null and not c_ai.is_returning():
 		_clear_direct_attackers()
 

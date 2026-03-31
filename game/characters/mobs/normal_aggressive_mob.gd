@@ -322,6 +322,8 @@ func _physics_process(delta: float) -> void:
 		_prev_target = null
 	if current_target != null and not is_instance_valid(current_target):
 		current_target = null
+		_target_acquire_timer = 0.0
+		_target_validate_timer = 0.0
 
 	_refresh_threat_target()
 
