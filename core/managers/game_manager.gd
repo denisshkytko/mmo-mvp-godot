@@ -45,9 +45,13 @@ var _perf_metrics_elapsed: float = 0.0
 var _perf_frames_collected: int = 0
 var _perf_sync_player_usec_accum: int = 0
 var _perf_sync_entities_usec_accum: int = 0
+var _perf_process_ms_accum: float = 0.0
+var _perf_physics_ms_accum: float = 0.0
 var _perf_last_interval_sec: float = 0.0
 var _perf_last_avg_sync_player_ms: float = 0.0
 var _perf_last_avg_sync_entities_ms: float = 0.0
+var _perf_last_avg_process_ms: float = 0.0
+var _perf_last_avg_physics_ms: float = 0.0
 var _perf_last_entities_count: int = 0
 var _perf_last_pivots_count: int = 0
 var _perf_last_process_nodes_count: int = 0
@@ -112,6 +116,8 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_frames_collected += 1
 	_perf_sync_player_usec_accum += max(0, sync_player_usec)
 	_perf_sync_entities_usec_accum += max(0, sync_entities_usec)
+	_perf_process_ms_accum += float(Performance.get_monitor(Performance.TIME_PROCESS)) * 1000.0
+	_perf_physics_ms_accum += float(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0
 	var interval: float = max(0.25, debug_perf_metrics_interval_sec)
 	if debug_runtime_profiler_overlay_enabled:
 		interval = min(interval, max(0.25, debug_runtime_profiler_interval_sec))
@@ -120,6 +126,8 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	var frames: int = max(1, _perf_frames_collected)
 	var avg_sync_player_ms := float(_perf_sync_player_usec_accum) / 1000.0 / float(frames)
 	var avg_sync_entities_ms := float(_perf_sync_entities_usec_accum) / 1000.0 / float(frames)
+	var avg_process_ms := _perf_process_ms_accum / float(frames)
+	var avg_physics_ms := _perf_physics_ms_accum / float(frames)
 	var total_entities := get_tree().get_nodes_in_group("y_sort_entities").size()
 	var pivot_count := _entity_sort_pivots.size()
 	_collect_runtime_node_breakdown()
@@ -127,6 +135,8 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_last_frames_count = frames
 	_perf_last_avg_sync_player_ms = avg_sync_player_ms
 	_perf_last_avg_sync_entities_ms = avg_sync_entities_ms
+	_perf_last_avg_process_ms = avg_process_ms
+	_perf_last_avg_physics_ms = avg_physics_ms
 	_perf_last_entities_count = total_entities
 	_perf_last_pivots_count = pivot_count
 	var runtime_samples: Dictionary = FRAME_PROFILER.consume_stats()
@@ -181,6 +191,8 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 	_perf_frames_collected = 0
 	_perf_sync_player_usec_accum = 0
 	_perf_sync_entities_usec_accum = 0
+	_perf_process_ms_accum = 0.0
+	_perf_physics_ms_accum = 0.0
 
 
 func _collect_runtime_node_breakdown() -> void:
@@ -354,8 +366,8 @@ func _update_runtime_profiler_overlay() -> void:
 	var fps: int = int(round(Engine.get_frames_per_second()))
 	var tree_nodes: int = get_tree().get_node_count()
 	var target_state: String = "none"
-	var process_ms: float = float(Performance.get_monitor(Performance.TIME_PROCESS)) * 1000.0
-	var physics_ms: float = float(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0
+	var process_ms: float = _perf_last_avg_process_ms
+	var physics_ms: float = _perf_last_avg_physics_ms
 	var node_count_monitor: int = int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
 	var draw_calls: int = int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
 	if current_target != null and is_instance_valid(current_target):
