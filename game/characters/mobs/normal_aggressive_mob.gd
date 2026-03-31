@@ -294,9 +294,12 @@ func _physics_process(delta: float) -> void:
 	if current_target == null or not is_instance_valid(current_target):
 		var should_force_retarget: bool = direct_attackers.size() > 0
 		if should_force_retarget or _target_acquire_timer <= 0.0:
+			FRAME_PROFILER.add_count("mob_aggressive.physics.targeting.acquire_attempts", 1.0)
 			current_target = _pick_target()
 			_target_acquire_timer = TARGET_ACQUIRE_RECHECK_SEC
 			_target_validate_timer = 0.0
+			if current_target != null and is_instance_valid(current_target):
+				FRAME_PROFILER.add_count("mob_aggressive.physics.targeting.acquire_success", 1.0)
 	elif "is_dead" in current_target and bool(current_target.get("is_dead")):
 		current_target = null
 		_target_acquire_timer = 0.0
