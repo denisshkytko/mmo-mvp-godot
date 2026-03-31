@@ -97,14 +97,9 @@ func _build_tree(
 		total_ms
 	)
 	_add_metric_row(physics_group, "untracked.physics", untracked_physics_ms, physics_ms, total_ms, "Physics")
-	var engine_group: TreeItem = tree.create_item(root)
-	engine_group.set_text(0, "Engine remainder")
-	engine_group.set_text(1, "%.3f" % (untracked_process_ms + untracked_physics_ms))
-	engine_group.set_text(2, "—")
-	engine_group.set_text(3, "%.1f%%" % (((untracked_process_ms + untracked_physics_ms) / max(0.001, total_ms)) * 100.0))
-	_apply_collapsed_state(engine_group, "Engine remainder")
-	_add_metric_row(engine_group, "engine.untracked.process", untracked_process_ms, process_ms, total_ms, "Engine remainder")
-	_add_metric_row(engine_group, "engine.untracked.physics", untracked_physics_ms, physics_ms, total_ms, "Engine remainder")
+	var engine_group: TreeItem = _add_group(root, "Engine process monitors", process_ms, total_ms, "")
+	for item_v in _as_metric_items(parsed.get("engine_process_items", [])):
+		_add_metric_row(engine_group, String(item_v.get("metric", "")), float(item_v.get("ms", 0.0)), process_ms, total_ms, "Engine process monitors")
 
 
 func _add_group(root: TreeItem, group_name: String, group_total_ms: float, total_ms: float, parent_path: String) -> TreeItem:
@@ -179,7 +174,8 @@ func _parse_runtime_text(text: String) -> Dictionary:
 			"process_items": [],
 			"physics_items": [],
 			"ai_items": [],
-	}
+			"engine_process_items": [],
+		}
 	for raw_line in text.split("\n"):
 		var line := raw_line.strip_edges()
 		if line.begins_with("process="):
@@ -199,6 +195,8 @@ func _parse_runtime_text(text: String) -> Dictionary:
 			result["physics_items"] = _parse_metric_items(line.trim_prefix("script.physics "))
 		elif line.begins_with("script.ai "):
 			result["ai_items"] = _parse_metric_items(line.trim_prefix("script.ai "))
+		elif line.begins_with("engine.process "):
+			result["engine_process_items"] = _parse_metric_items(line.trim_prefix("engine.process "))
 	return result
 
 

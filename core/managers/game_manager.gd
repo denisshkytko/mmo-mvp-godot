@@ -64,6 +64,7 @@ var _perf_last_projectile_nodes_count: int = 0
 var _perf_last_runtime_process_line: String = "script.process=n/a"
 var _perf_last_runtime_physics_line: String = "script.physics=n/a"
 var _perf_last_runtime_ai_line: String = "script.ai=n/a"
+var _perf_last_engine_process_line: String = "engine.process=n/a"
 var _perf_last_frames_count: int = 0
 var _perf_last_physics_frames_count: int = 0
 var _perf_last_tracked_process_ms_f: float = 0.0
@@ -176,6 +177,7 @@ func _collect_perf_metrics(delta: float, sync_player_usec: int, sync_entities_us
 		physics_frames,
 		5
 	)
+	_perf_last_engine_process_line = _build_engine_process_monitors_line()
 	if debug_perf_metrics_enabled:
 		print(
 			"[Perf][GameManager] interval=%.2fs frames=%d avg_sync_player=%.3fms avg_sync_entities=%.3fms y_sort_entities=%d pivots=%d process_nodes=%d physics_nodes=%d players=%d mobs=%d npcs=%d projectiles=%d y_sort_dbg=%s tile_dbg=%s"
@@ -342,6 +344,31 @@ func _extract_physics_namespace(key: String) -> String:
 	return String(split_parts[0])
 
 
+func _build_engine_process_monitors_line() -> String:
+	var monitor_names: Array[String] = [
+		"TIME_NAVIGATION_PROCESS",
+		"TIME_ANIMATION_PROCESS",
+		"TIME_AUDIO_PROCESS",
+	]
+	var parts: Array[String] = []
+	for monitor_name in monitor_names:
+		var value_ms: float = _read_performance_monitor_ms(monitor_name)
+		if value_ms < 0.0:
+			continue
+		var short_name := monitor_name.to_lower().replace("time_", "").replace("_process", "")
+		parts.append("%s=%.3fms" % [short_name, value_ms])
+	if parts.is_empty():
+		return "engine.process=n/a"
+	return "engine.process " + ", ".join(parts)
+
+
+func _read_performance_monitor_ms(const_name: String) -> float:
+	if not ClassDB.class_has_integer_constant("Performance", const_name):
+		return -1.0
+	var monitor_id: int = ClassDB.class_get_integer_constant("Performance", const_name)
+	return float(Performance.get_monitor(monitor_id)) * 1000.0
+
+
 func _ensure_runtime_profiler_overlay() -> void:
 	if world_root == null:
 		return
@@ -424,6 +451,7 @@ func _update_runtime_profiler_overlay() -> void:
 		+ "%s\n" % _perf_last_runtime_process_line
 		+ "%s\n" % _perf_last_runtime_physics_line
 		+ "%s\n" % _perf_last_runtime_ai_line
+		+ "%s\n" % _perf_last_engine_process_line
 		+ "scene_nodes=%d monitor_nodes=%d draws=%d\n" % [tree_nodes, node_count_monitor, draw_calls]
 		+ "target=%s" % target_state
 	)
