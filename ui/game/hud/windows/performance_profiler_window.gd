@@ -158,7 +158,7 @@ func _build_process_hierarchy(process_group: TreeItem, process_items: Array[Dict
 			continue
 		var parent_key := _process_parent_key(metric)
 		if parent_rows.has(parent_key):
-			var parent_ms := max(0.001, float(parent_totals_ms.get(parent_key, process_ms)))
+			var parent_ms: float = max(0.001, float(parent_totals_ms.get(parent_key, process_ms)))
 			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), parent_ms, total_ms, "Process/%s" % parent_key)
 		else:
 			_add_metric_row(process_group, metric, float(item.get("ms", 0.0)), process_ms, total_ms, "Process")
@@ -181,7 +181,7 @@ func _build_physics_hierarchy(physics_group: TreeItem, physics_items: Array[Dict
 			continue
 		var parent_key := _physics_parent_key(metric)
 		if parent_rows.has(parent_key):
-			var parent_ms := max(0.001, float(parent_totals_ms.get(parent_key, physics_ms)))
+			var parent_ms: float = max(0.001, float(parent_totals_ms.get(parent_key, physics_ms)))
 			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), parent_ms, total_ms, "Physics/%s" % parent_key)
 		else:
 			_add_metric_row(physics_group, metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics")
@@ -189,7 +189,7 @@ func _build_physics_hierarchy(physics_group: TreeItem, physics_items: Array[Dict
 		var metric := String(item.get("metric", ""))
 		var parent_key := _physics_parent_key(metric)
 		if parent_rows.has(parent_key):
-			var parent_ms := max(0.001, float(parent_totals_ms.get(parent_key, physics_ms)))
+			var parent_ms: float = max(0.001, float(parent_totals_ms.get(parent_key, physics_ms)))
 			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), parent_ms, total_ms, "Physics/%s" % parent_key)
 		else:
 			_add_metric_row(physics_group, metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics")
