@@ -165,20 +165,32 @@ func _apply_zoom_and_focus() -> void:
 		zoom_value = zoom_levels[clamp(_zoom_index, 0, zoom_levels.size() - 1)]
 	zoom_value = clampf(zoom_value, 0.05, 4.0)
 
-	var uv := Vector2(0.5, 0.5)
-	if follow_player:
-		if _player == null or not is_instance_valid(_player):
-			_player = get_tree().get_first_node_in_group("player") as Node2D
-		if _player != null and is_instance_valid(_player):
-			uv.x = (_player.global_position.x - _active_world_min.x) / _active_world_size.x
-			uv.y = (_player.global_position.y - _active_world_min.y) / _active_world_size.y
-	uv.x = clampf(uv.x, 0.0, 1.0)
-	uv.y = clampf(uv.y, 0.0, 1.0)
+	var focus_world := _active_world_min + (_active_world_size * 0.5)
+	if _player == null or not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group("player") as Node2D
+	if follow_player and _player != null and is_instance_valid(_player):
+		focus_world = _player.global_position
 
-	var content_size := mask_size * zoom_value
+	var camera_world_size := _get_camera_world_view_size()
+	var visible_world_size := camera_world_size / zoom_value
+	visible_world_size.x = maxf(1.0, visible_world_size.x)
+	visible_world_size.y = maxf(1.0, visible_world_size.y)
+
+	var px_per_world := Vector2(
+		mask_size.x / visible_world_size.x,
+		mask_size.y / visible_world_size.y
+	)
+	var content_size := Vector2(
+		_active_world_size.x * px_per_world.x,
+		_active_world_size.y * px_per_world.y
+	)
 	_active_map.custom_minimum_size = content_size
 	_active_map.size = content_size
-	_active_map.position = (mask_size * 0.5) - (content_size * uv)
+	var focus_px := Vector2(
+		(focus_world.x - _active_world_min.x) * px_per_world.x,
+		(focus_world.y - _active_world_min.y) * px_per_world.y
+	)
+	_active_map.position = (mask_size * 0.5) - focus_px
 
 	if player_marker != null and is_instance_valid(player_marker):
 		if player_marker.texture != player_marker_texture:
@@ -190,20 +202,34 @@ func _apply_zoom_and_focus() -> void:
 			maxf(0.001, player_marker_base_world_size.x * player_scale.x),
 			maxf(0.001, player_marker_base_world_size.y * player_scale.y)
 		)
-		var px_per_world := Vector2(
-			(mask_size.x * zoom_value) / _active_world_size.x,
-			(mask_size.y * zoom_value) / _active_world_size.y
-		)
+		var px_per_world_marker := px_per_world
 		var marker_px_size := Vector2(
-			clampf(marker_world_size.x * px_per_world.x, player_marker_min_px, player_marker_max_px),
-			clampf(marker_world_size.y * px_per_world.y, player_marker_min_px, player_marker_max_px)
+			clampf(marker_world_size.x * px_per_world_marker.x, player_marker_min_px, player_marker_max_px),
+			clampf(marker_world_size.y * px_per_world_marker.y, player_marker_min_px, player_marker_max_px)
 		)
 		player_marker.custom_minimum_size = marker_px_size
 		player_marker.size = marker_px_size
 		if follow_player:
 			player_marker.position = (mask_size * 0.5) - (marker_px_size * 0.5)
 		else:
-			player_marker.position = Vector2(mask_size.x * uv.x, mask_size.y * uv.y) - (marker_px_size * 0.5)
+			var marker_pos := Vector2(
+				(focus_world.x - _active_world_min.x) * px_per_world_marker.x,
+				(focus_world.y - _active_world_min.y) * px_per_world_marker.y
+			)
+			player_marker.position = marker_pos - (marker_px_size * 0.5)
+
+
+func _get_camera_world_view_size() -> Vector2:
+	var vp := get_viewport()
+	if vp == null:
+		return Vector2(1280.0, 720.0)
+	var view_size := vp.get_visible_rect().size
+	if view_size.x <= 1.0 or view_size.y <= 1.0:
+		view_size = Vector2(1280.0, 720.0)
+	var cam := vp.get_camera_2d()
+	if cam != null and is_instance_valid(cam):
+		return Vector2(view_size.x * cam.zoom.x, view_size.y * cam.zoom.y)
+	return view_size
 
 
 func _get_current_zone_path() -> String:

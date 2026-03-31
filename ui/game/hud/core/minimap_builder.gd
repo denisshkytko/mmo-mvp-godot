@@ -43,11 +43,10 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 		return {}
 
 	var included_cells: Array[Dictionary] = []
-	var min_cell := Vector2i(2147483647, 2147483647)
-	var max_cell := Vector2i(-2147483647, -2147483647)
 	var world_min := Vector2(1e20, 1e20)
 	var world_max := Vector2(-1e20, -1e20)
 	var has_world_bounds := false
+	var min_world_step := 1e20
 
 	for layer in tile_layers:
 		var layer_name := String(layer.name)
@@ -60,25 +59,30 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 			var atlas: Vector2i = layer.get_cell_atlas_coords(cell)
 			if not _passes_filters(source_id, atlas, rule):
 				continue
+			var world_p := layer.to_global(layer.map_to_local(cell))
+			var world_px := layer.to_global(layer.map_to_local(cell + Vector2i(1, 0)))
+			var world_py := layer.to_global(layer.map_to_local(cell + Vector2i(0, 1)))
+			var step_x := maxf(0.001, (world_px - world_p).length())
+			var step_y := maxf(0.001, (world_py - world_p).length())
+			var world_step := maxf(0.001, minf(step_x, step_y))
+			var half_step := world_step * 0.5
+
 			included_cells.append({
-				"cell": cell,
+				"world_pos": world_p,
+				"world_step": world_step,
 				"color": layer_color,
 			})
-			min_cell.x = mini(min_cell.x, cell.x)
-			min_cell.y = mini(min_cell.y, cell.y)
-			max_cell.x = maxi(max_cell.x, cell.x)
-			max_cell.y = maxi(max_cell.y, cell.y)
+			min_world_step = minf(min_world_step, world_step)
 
-			var world_p := layer.to_global(layer.map_to_local(cell))
 			if not has_world_bounds:
-				world_min = world_p
-				world_max = world_p
+				world_min = Vector2(world_p.x - half_step, world_p.y - half_step)
+				world_max = Vector2(world_p.x + half_step, world_p.y + half_step)
 				has_world_bounds = true
 			else:
-				world_min.x = minf(world_min.x, world_p.x)
-				world_min.y = minf(world_min.y, world_p.y)
-				world_max.x = maxf(world_max.x, world_p.x)
-				world_max.y = maxf(world_max.y, world_p.y)
+				world_min.x = minf(world_min.x, world_p.x - half_step)
+				world_min.y = minf(world_min.y, world_p.y - half_step)
+				world_max.x = maxf(world_max.x, world_p.x + half_step)
+				world_max.y = maxf(world_max.y, world_p.y + half_step)
 
 	zone_root.queue_free()
 	if included_cells.is_empty():
@@ -86,21 +90,31 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 
 	var px_per_tile: int = int(config.get("pixels_per_tile", 2))
 	px_per_tile = maxi(1, px_per_tile)
-	var width_tiles: int = (max_cell.x - min_cell.x) + 1
-	var height_tiles: int = (max_cell.y - min_cell.y) + 1
-	var img_w := maxi(1, width_tiles * px_per_tile)
-	var img_h := maxi(1, height_tiles * px_per_tile)
+	if min_world_step >= 1e19:
+		min_world_step = 1.0
+	var world_size := world_max - world_min
+	world_size.x = maxf(1.0, world_size.x)
+	world_size.y = maxf(1.0, world_size.y)
+	var px_per_world := float(px_per_tile) / maxf(0.001, min_world_step)
+	var img_w := maxi(1, int(ceil(world_size.x * px_per_world)))
+	var img_h := maxi(1, int(ceil(world_size.y * px_per_world)))
 
 	var image := Image.create(img_w, img_h, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0.0))
 
 	for item in included_cells:
-		var c: Vector2i = item["cell"] as Vector2i
+		var world_p: Vector2 = item["world_pos"] as Vector2
+		var world_step: float = float(item["world_step"])
 		var col: Color = item["color"] as Color
-		var px := (c.x - min_cell.x) * px_per_tile
-		var py := (c.y - min_cell.y) * px_per_tile
-		for yy in range(py, py + px_per_tile):
-			for xx in range(px, px + px_per_tile):
+		var px := int(floor((world_p.x - world_min.x) * px_per_world))
+		var py := int(floor((world_p.y - world_min.y) * px_per_world))
+		var step_px := maxi(1, int(round(world_step * px_per_world)))
+		for yy in range(py, py + step_px):
+			if yy < 0 or yy >= img_h:
+				continue
+			for xx in range(px, px + step_px):
+				if xx < 0 or xx >= img_w:
+					continue
 				image.set_pixel(xx, yy, col)
 
 	var tex := ImageTexture.create_from_image(image)
@@ -112,8 +126,8 @@ static func build_zone_minimap(zone_path: String, config: Dictionary) -> Diction
 	var result := {
 		"texture": tex,
 		"world_rect": world_rect,
-		"tile_min": min_cell,
-		"tile_max": max_cell,
+		"tile_min": Vector2i.ZERO,
+		"tile_max": Vector2i.ZERO,
 	}
 	_zone_cache[zone_path] = result
 	return result
