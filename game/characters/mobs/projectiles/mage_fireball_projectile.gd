@@ -5,6 +5,7 @@ signal impacted(target: Node2D)
 signal impacted_with_result(target: Node2D, dealt_damage: int, dmg_type: String)
 
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 @export var speed: float = 420.0
 @export var hit_distance: float = 10.0
@@ -44,17 +45,23 @@ func setup(target: Node2D, damage: int, source: Node2D = null) -> void:
 	_update_initial_visual_rotation()
 
 func _physics_process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if _hit:
+		FRAME_PROFILER.add_usec("projectile.fireball.physics.total", Time.get_ticks_usec() - t_total)
 		return
+	var t_sync := Time.get_ticks_usec()
 	_sync_sort_layer()
+	FRAME_PROFILER.add_usec("projectile.fireball.physics.sync_layer", Time.get_ticks_usec() - t_sync)
 
 	_life += delta
 	if _life >= max_lifetime:
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.fireball.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	if _target == null or not is_instance_valid(_target):
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.fireball.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	if _source != null and not is_instance_valid(_source):
@@ -62,17 +69,21 @@ func _physics_process(delta: float) -> void:
 
 	if _is_target_dead(_target):
 		queue_free()
+		FRAME_PROFILER.add_usec("projectile.fireball.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	if _curve_enabled:
+		var t_curve := Time.get_ticks_usec()
 		_curve_t = clampf(_curve_t + (speed * delta) / maxf(1.0, _curve_total_dist), 0.0, 1.0)
 		var pos: Vector2 = _bezier_point(_curve_t)
 		var tangent: Vector2 = _bezier_tangent(_curve_t)
 		if tangent.length_squared() > 0.0001:
 			rotation = tangent.angle() + deg_to_rad(visual_rotation_offset_deg)
 		global_position = pos
+		FRAME_PROFILER.add_usec("projectile.fireball.physics.curve_move", Time.get_ticks_usec() - t_curve)
 		if _curve_t >= 1.0:
 			_apply_hit()
+		FRAME_PROFILER.add_usec("projectile.fireball.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
 	var target_anchor: Vector2 = _resolve_target_anchor()
@@ -80,11 +91,15 @@ func _physics_process(delta: float) -> void:
 	var dist: float = to_target.length()
 	if dist <= hit_distance:
 		_apply_hit()
+		FRAME_PROFILER.add_usec("projectile.fireball.physics.total", Time.get_ticks_usec() - t_total)
 		return
 
+	var t_move := Time.get_ticks_usec()
 	var dir: Vector2 = to_target / maxf(0.001, dist)
 	rotation = dir.angle() + deg_to_rad(visual_rotation_offset_deg)
 	global_position += dir * speed * delta
+	FRAME_PROFILER.add_usec("projectile.fireball.physics.move", Time.get_ticks_usec() - t_move)
+	FRAME_PROFILER.add_usec("projectile.fireball.physics.total", Time.get_ticks_usec() - t_total)
 
 func refresh_path_from_current_target() -> void:
 	var target_anchor: Vector2 = _resolve_target_anchor()

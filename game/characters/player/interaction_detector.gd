@@ -3,6 +3,8 @@ class_name InteractionDetector
 
 signal interactable_changed(available: bool, target: Node)
 
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
+
 @export var max_distance: float = 80.0
 
 var current_interactable: Node = null
@@ -21,7 +23,9 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	_update_current_interactable()
+	FRAME_PROFILER.add_usec("player.interaction.physics.total", Time.get_ticks_usec() - t_total)
 
 
 func try_interact(player_node: Node) -> void:
@@ -64,9 +68,11 @@ func _remove_candidate(node: Node2D) -> void:
 
 
 func _update_current_interactable() -> void:
+	var t_pick := Time.get_ticks_usec()
 	if _player == null or not is_instance_valid(_player):
 		_player = get_parent() as Node2D
 	if _player == null:
+		FRAME_PROFILER.add_usec("player.interaction.physics.pick_target", Time.get_ticks_usec() - t_pick)
 		return
 
 	var best_node: Node = null
@@ -92,6 +98,7 @@ func _update_current_interactable() -> void:
 		current_interactable = best_node
 		interact_available = available
 		emit_signal("interactable_changed", interact_available, current_interactable)
+	FRAME_PROFILER.add_usec("player.interaction.physics.pick_target", Time.get_ticks_usec() - t_pick)
 
 
 func _can_interact_with(node: Node, player_node: Node) -> bool:
