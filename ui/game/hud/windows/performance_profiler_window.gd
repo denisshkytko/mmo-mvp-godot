@@ -54,7 +54,7 @@ func _refresh_from_runtime_overlay() -> void:
 	var label: Label = _find_runtime_label()
 	if label == null:
 		summary_label.text = "[b]Runtime profiler data is not available yet[/b]"
-		_build_tree({}, 0.0, 0.0, 0.0)
+		_build_tree({}, 0.0, 0.0, 0.0, 0.0)
 		return
 	var parsed: Dictionary = _parse_runtime_text(label.text)
 	_remember_group_collapsed_state()
