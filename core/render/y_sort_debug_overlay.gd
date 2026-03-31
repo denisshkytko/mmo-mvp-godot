@@ -1,4 +1,5 @@
 extends Node2D
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 var manager: Node = null
 
@@ -13,21 +14,32 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if manager == null or not is_instance_valid(manager):
 		visible = false
+		FRAME_PROFILER.add_usec("process.y_sort_debug_overlay.total", Time.get_ticks_usec() - t_total)
 		return
 	var enabled := bool(manager.get("debug_draw_y_sort_markers"))
 	visible = enabled
 	if not enabled:
+		FRAME_PROFILER.add_usec("process.y_sort_debug_overlay.total", Time.get_ticks_usec() - t_total)
 		return
 	queue_redraw()
+	FRAME_PROFILER.add_usec("process.y_sort_debug_overlay.total", Time.get_ticks_usec() - t_total)
 
 
 func _draw() -> void:
+	var t_total := Time.get_ticks_usec()
 	if manager == null or not is_instance_valid(manager):
+		FRAME_PROFILER.add_usec("process.y_sort_debug_overlay.draw", Time.get_ticks_usec() - t_total)
 		return
+	var t_entities := Time.get_ticks_usec()
 	_draw_entity_markers()
+	FRAME_PROFILER.add_usec("process.y_sort_debug_overlay.draw_entities", Time.get_ticks_usec() - t_entities)
+	var t_tiles := Time.get_ticks_usec()
 	_draw_tile_markers()
+	FRAME_PROFILER.add_usec("process.y_sort_debug_overlay.draw_tiles", Time.get_ticks_usec() - t_tiles)
+	FRAME_PROFILER.add_usec("process.y_sort_debug_overlay.draw", Time.get_ticks_usec() - t_total)
 
 
 func _draw_entity_markers() -> void:
