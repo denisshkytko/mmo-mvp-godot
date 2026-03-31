@@ -4,6 +4,10 @@ class_name ThreatTargeting
 const DANGER_COEFF := 1.0
 const INFLUENCE_DIRECT := 1.0
 const INFLUENCE_COMBAT := 0.75
+const FACTION_UNITS_CACHE_REFRESH_SEC: float = 0.20
+
+static var _cached_units: Array = []
+static var _cached_units_until_sec: float = 0.0
 
 static func pick_target_by_threat(
 	actor: Node2D,
@@ -19,6 +23,8 @@ static func pick_target_by_threat(
 	var now_sec: float = float(Time.get_ticks_msec()) / 1000.0
 	var best_target: Node2D = null
 	var best_threat: float = 0.0
+	var leash_distance_sq: float = leash_distance * leash_distance
+	var aggro_radius_sq: float = aggro_radius * aggro_radius
 
 	for attacker_id in direct_attackers.keys():
 		var attacker_obj: Object = instance_from_id(int(attacker_id))
@@ -37,7 +43,7 @@ static func pick_target_by_threat(
 		if rel != FactionRules.Relation.HOSTILE:
 			continue
 
-		if candidate.global_position.distance_to(home_pos) > leash_distance:
+		if home_pos.distance_squared_to(candidate.global_position) > leash_distance_sq:
 			continue
 
 		var dps := _get_dps(candidate, now_sec)
@@ -46,7 +52,7 @@ static func pick_target_by_threat(
 			best_threat = threat
 			best_target = candidate
 
-	var units := actor.get_tree().get_nodes_in_group("faction_units")
+	var units := _get_cached_faction_units(actor.get_tree(), now_sec)
 	for u in units:
 		if u == actor:
 			continue
@@ -69,9 +75,9 @@ static func pick_target_by_threat(
 		if rel != FactionRules.Relation.HOSTILE:
 			continue
 
-		if actor.global_position.distance_to(candidate.global_position) > aggro_radius:
+		if actor.global_position.distance_squared_to(candidate.global_position) > aggro_radius_sq:
 			continue
-		if candidate.global_position.distance_to(home_pos) > leash_distance:
+		if home_pos.distance_squared_to(candidate.global_position) > leash_distance_sq:
 			continue
 
 		var dps := _get_dps(candidate, now_sec)
@@ -83,6 +89,15 @@ static func pick_target_by_threat(
 	if best_threat > 0.0:
 		return best_target
 	return null
+
+
+static func _get_cached_faction_units(tree: SceneTree, now_sec: float) -> Array:
+	if tree == null:
+		return []
+	if now_sec >= _cached_units_until_sec:
+		_cached_units = tree.get_nodes_in_group("faction_units")
+		_cached_units_until_sec = now_sec + FACTION_UNITS_CACHE_REFRESH_SEC
+	return _cached_units
 
 static func _get_dps(candidate: Node, now_sec: float) -> float:
 	if candidate == null:

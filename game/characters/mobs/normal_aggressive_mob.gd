@@ -161,7 +161,11 @@ var last_attacker: Node2D = null
 var loot_owner_player_id: int = 0
 
 const THREAT_RECHECK_SEC: float = 0.25
+const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
+const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
 var _threat_recheck_timer: float = 0.0
+var _target_acquire_timer: float = 0.0
+var _target_validate_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -284,20 +288,30 @@ func _physics_process(delta: float) -> void:
 
 	var t_targeting := Time.get_ticks_usec()
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
+	_target_acquire_timer = max(0.0, _target_acquire_timer - delta)
+	_target_validate_timer = max(0.0, _target_validate_timer - delta)
 
 	if current_target == null or not is_instance_valid(current_target):
-		current_target = _pick_target()
-	else:
-		if "is_dead" in current_target and bool(current_target.get("is_dead")):
+		var should_force_retarget: bool = direct_attackers.size() > 0
+		if should_force_retarget or _target_acquire_timer <= 0.0:
+			current_target = _pick_target()
+			_target_acquire_timer = TARGET_ACQUIRE_RECHECK_SEC
+			_target_validate_timer = 0.0
+	elif "is_dead" in current_target and bool(current_target.get("is_dead")):
+		current_target = null
+		_target_acquire_timer = 0.0
+		_target_validate_timer = 0.0
+		regen_active = true
+	elif _target_validate_timer <= 0.0:
+		_target_validate_timer = TARGET_VALIDATE_RECHECK_SEC
+		# если цель стала не-hostile — сбрасываем
+		var tf := ""
+		if current_target.has_method("get_faction_id"):
+			tf = String(current_target.call("get_faction_id"))
+		if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
 			current_target = null
-			regen_active = true
-		else:
-			# если цель стала не-hostile — сбрасываем
-			var tf := ""
-			if current_target.has_method("get_faction_id"):
-				tf = String(current_target.call("get_faction_id"))
-			if FactionRules.relation(faction_id, tf) != FactionRules.Relation.HOSTILE:
-				current_target = null
+			_target_acquire_timer = 0.0
+			_target_validate_timer = 0.0
 	if current_target != null and c_ai != null and c_ai.is_returning():
 		current_target = null
 		regen_active = true

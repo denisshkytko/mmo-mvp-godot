@@ -79,7 +79,8 @@ func _refresh_from_runtime_overlay() -> void:
 		+ "fps=%d frames=%d phys_frames=%d draws=%d nodes=%d\n" % [fps, frames, phys_frames, draws, scene_nodes]
 		+ "process=%.2fms (tracked %.2fms, %.1f%%)\n" % [process_ms, tracked_process_ms, (tracked_process_ms / max(0.001, process_ms)) * 100.0]
 		+ "physics=%.2fms (tracked %.2fms, %.1f%%)\n" % [physics_ms, tracked_physics_ms, (tracked_physics_ms / max(0.001, physics_ms)) * 100.0]
-		+ "untracked process=%.2fms, untracked physics=%.2fms" % [untracked_process_ms, untracked_physics_ms]
+		+ "untracked process=%.2fms, untracked physics=%.2fms\n" % [untracked_process_ms, untracked_physics_ms]
+		+ "(process coverage uses TIME_PROCESS: engine + scripts)"
 	)
 
 	_build_tree(parsed, process_ms, physics_ms, process_ms + physics_ms, untracked_process_ms, untracked_physics_ms)
@@ -98,6 +99,7 @@ func _build_tree(parsed: Dictionary, process_ms: float, physics_ms: float, total
 		physics_group,
 		_as_metric_items(parsed.get("physics_items", [])),
 		_as_metric_items(parsed.get("ai_items", [])),
+		_as_metric_items(parsed.get("combat_items", [])),
 		physics_ms,
 		total_ms
 	)
@@ -117,6 +119,14 @@ func _build_tree(parsed: Dictionary, process_ms: float, physics_ms: float, total
 			total_ms,
 			"Engine process monitors"
 		)
+	var count_items := _as_metric_items(parsed.get("count_items", []))
+	var count_group := _add_group(root, "Event counters", 0.0, max(0.001, total_ms), "")
+	for item in count_items:
+		var row := tree.create_item(count_group)
+		row.set_text(0, String(item.get("metric", "")))
+		row.set_text(1, "%.2f/f" % float(item.get("count_per_frame", 0.0)))
+		row.set_text(2, "n/a")
+		row.set_text(3, "n/a")
 
 
 func _add_group(parent: TreeItem, name: String, group_ms: float, total_ms: float, parent_path: String) -> TreeItem:
@@ -164,7 +174,14 @@ func _build_process_hierarchy(process_group: TreeItem, process_items: Array[Dict
 			_add_metric_row(process_group, metric, float(item.get("ms", 0.0)), process_ms, total_ms, "Process")
 
 
-func _build_physics_hierarchy(physics_group: TreeItem, physics_items: Array[Dictionary], ai_items: Array[Dictionary], physics_ms: float, total_ms: float) -> void:
+func _build_physics_hierarchy(
+	physics_group: TreeItem,
+	physics_items: Array[Dictionary],
+	ai_items: Array[Dictionary],
+	combat_items: Array[Dictionary],
+	physics_ms: float,
+	total_ms: float
+) -> void:
 	var parent_rows: Dictionary = {}
 	var parent_totals_ms: Dictionary = {}
 	for item in physics_items:
@@ -186,6 +203,14 @@ func _build_physics_hierarchy(physics_group: TreeItem, physics_items: Array[Dict
 		else:
 			_add_metric_row(physics_group, metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics")
 	for item in ai_items:
+		var metric := String(item.get("metric", ""))
+		var parent_key := _physics_parent_key(metric)
+		if parent_rows.has(parent_key):
+			var parent_ms: float = max(0.001, float(parent_totals_ms.get(parent_key, physics_ms)))
+			_add_metric_row(parent_rows[parent_key], metric, float(item.get("ms", 0.0)), parent_ms, total_ms, "Physics/%s" % parent_key)
+		else:
+			_add_metric_row(physics_group, metric, float(item.get("ms", 0.0)), physics_ms, total_ms, "Physics")
+	for item in combat_items:
 		var metric := String(item.get("metric", ""))
 		var parent_key := _physics_parent_key(metric)
 		if parent_rows.has(parent_key):
@@ -215,6 +240,8 @@ func _parse_runtime_text(text: String) -> Dictionary:
 		"process_items": [],
 		"physics_items": [],
 		"ai_items": [],
+		"combat_items": [],
+		"count_items": [],
 		"engine_process_items": [],
 	}
 	for raw_line in text.split("\n"):
@@ -238,6 +265,10 @@ func _parse_runtime_text(text: String) -> Dictionary:
 			result["physics_items"] = _parse_metric_items(line.trim_prefix("script.physics "))
 		elif line.begins_with("script.ai "):
 			result["ai_items"] = _parse_metric_items(line.trim_prefix("script.ai "))
+		elif line.begins_with("script.combat "):
+			result["combat_items"] = _parse_metric_items(line.trim_prefix("script.combat "))
+		elif line.begins_with("script.count "):
+			result["count_items"] = _parse_count_items(line.trim_prefix("script.count "))
 		elif line.begins_with("engine.process "):
 			result["engine_process_items"] = _parse_metric_items(line.trim_prefix("engine.process "))
 		elif line.begins_with("scene_nodes="):
@@ -258,6 +289,22 @@ func _parse_metric_items(payload: String) -> Array[Dictionary]:
 		items.append({"metric": metric, "ms": ms})
 	items.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return float(a.get("ms", 0.0)) > float(b.get("ms", 0.0))
+	)
+	return items
+
+
+func _parse_count_items(payload: String) -> Array[Dictionary]:
+	var items: Array[Dictionary] = []
+	for part in payload.split(", "):
+		var eq_idx := part.find("=")
+		if eq_idx <= 0:
+			continue
+		var metric := part.substr(0, eq_idx)
+		var value_part := part.substr(eq_idx + 1)
+		var count_per_frame := _extract_float_before(value_part, "/f")
+		items.append({"metric": metric, "count_per_frame": count_per_frame})
+	items.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return float(a.get("count_per_frame", 0.0)) > float(b.get("count_per_frame", 0.0))
 	)
 	return items
 

@@ -5,6 +5,7 @@ signal leash_return_started
 const MOVE_SPEED := preload("res://core/movement/move_speed.gd")
 const COMBAT_RANGES := preload("res://core/combat/combat_ranges.gd")
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
+const PROFILER_UTILS := preload("res://core/debug/profiler_utils.gd")
 const COMBAT_SPACING_BUFFER: float = 32.0
 const PATROL_SEPARATION_DISTANCE: float = 28.0
 const PATROL_SEPARATION_REFRESH_SEC: float = 0.30
@@ -61,6 +62,7 @@ func is_returning() -> bool:
 	return _state == AIState.RETURN
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
+	var t_tick_total := Time.get_ticks_usec()
 	_current_lod_level = _resolve_lod_level(actor, target)
 	# выключение CHASE по leash_distance
 	var t_leash := Time.get_ticks_usec()
@@ -75,6 +77,7 @@ func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAg
 		var t_return := Time.get_ticks_usec()
 		_do_return(delta, actor)
 		FRAME_PROFILER.add_usec("mob_aggressive.ai.return", Time.get_ticks_usec() - t_return)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.tick_total", Time.get_ticks_usec() - t_tick_total)
 		return
 
 	# включаем CHASE только если цель вошла в агро-радиус
@@ -90,17 +93,20 @@ func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAg
 		var t_chase := Time.get_ticks_usec()
 		_do_chase(actor, target, combat)
 		FRAME_PROFILER.add_usec("mob_aggressive.ai.chase", Time.get_ticks_usec() - t_chase)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.tick_total", Time.get_ticks_usec() - t_tick_total)
 		return
 
 	# IDLE
 	if not _should_run_idle_patrol_tick(actor):
 		_idle_tick_counter += 1
 		_idle_noop(actor)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.tick_total", Time.get_ticks_usec() - t_tick_total)
 		return
 	_idle_tick_counter += 1
 	var t_idle := Time.get_ticks_usec()
 	_do_idle(delta, actor)
 	FRAME_PROFILER.add_usec("mob_aggressive.ai.idle", Time.get_ticks_usec() - t_idle)
+	FRAME_PROFILER.add_usec("mob_aggressive.ai.tick_total", Time.get_ticks_usec() - t_tick_total)
 
 func on_took_damage(attacker: Node2D) -> void:
 	if attacker == null or not is_instance_valid(attacker):
@@ -332,10 +338,12 @@ func _steer_around_obstacles(actor: CharacterBody2D, desired_dir: Vector2) -> Ve
 	if desired_dir.length_squared() <= 0.0001:
 		return Vector2.ZERO
 	var base_dir: Vector2 = desired_dir.normalized()
+	PROFILER_UTILS.track_count("mob_aggressive.ai.obstacle_checks")
 	if not _is_motion_blocked(actor, base_dir):
 		return base_dir
 	for angle in OBSTACLE_AVOID_ANGLES:
 		var candidate := base_dir.rotated(float(angle))
+		PROFILER_UTILS.track_count("mob_aggressive.ai.obstacle_checks")
 		if not _is_motion_blocked(actor, candidate):
 			return candidate
 	return Vector2.ZERO

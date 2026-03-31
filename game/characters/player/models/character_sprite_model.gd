@@ -1,6 +1,7 @@
 @tool
 extends Node2D
 class_name CharacterSpriteModel
+const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 signal death_pose_ready(snapshot: Dictionary)
 
@@ -110,16 +111,21 @@ func _ready() -> void:
 	_sync_model_highlight_profile()
 
 func _process(delta: float) -> void:
+	var t_total := Time.get_ticks_usec()
 	if animated_sprite == null:
+		FRAME_PROFILER.add_usec("process.character_sprite_model.total", Time.get_ticks_usec() - t_total)
 		return
 	if _is_dead or _is_moving or _one_shot_lock_active:
 		_reset_idle_liveliness_timer()
+		FRAME_PROFILER.add_usec("process.character_sprite_model.total", Time.get_ticks_usec() - t_total)
 		return
 	_idle_liveliness_timer_sec = max(0.0, _idle_liveliness_timer_sec - delta)
 	if _idle_liveliness_timer_sec > 0.0:
+		FRAME_PROFILER.add_usec("process.character_sprite_model.total", Time.get_ticks_usec() - t_total)
 		return
 	animated_sprite.flip_h = not animated_sprite.flip_h
 	_reset_idle_liveliness_timer()
+	FRAME_PROFILER.add_usec("process.character_sprite_model.total", Time.get_ticks_usec() - t_total)
 
 func set_move_direction(dir: Vector2) -> void:
 	set_move_direction_mode(dir, false)
