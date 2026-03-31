@@ -59,7 +59,6 @@ var _perf_last_projectile_nodes_count: int = 0
 var _perf_last_runtime_process_line: String = "script.process=n/a"
 var _perf_last_runtime_physics_line: String = "script.physics=n/a"
 var _perf_last_runtime_ai_line: String = "script.ai=n/a"
-const RUNTIME_OVERLAY_MAX_LINE_CHARS: int = 220
 var _perf_last_frames_count: int = 0
 var _perf_last_tracked_process_ms_f: float = 0.0
 var _perf_last_tracked_physics_ms_f: float = 0.0
@@ -263,13 +262,7 @@ func _build_runtime_breakdown_line(
 			break
 	if parts.is_empty():
 		return "%s=n/a" % label
-	return _truncate_runtime_line("%s %s" % [label, ", ".join(parts)])
-
-
-func _truncate_runtime_line(line: String) -> String:
-	if line.length() <= RUNTIME_OVERLAY_MAX_LINE_CHARS:
-		return line
-	return line.substr(0, max(0, RUNTIME_OVERLAY_MAX_LINE_CHARS - 1)) + "…"
+	return "%s %s" % [label, ", ".join(parts)]
 
 
 func _sort_runtime_breakdown_desc(a: Dictionary, b: Dictionary) -> bool:
