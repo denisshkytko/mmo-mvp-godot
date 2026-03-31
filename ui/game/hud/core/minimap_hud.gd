@@ -2,7 +2,7 @@ extends Control
 
 const MINIMAP_BUILDER := preload("res://ui/game/hud/core/minimap_builder.gd")
 
-@export var zoom_levels: PackedFloat32Array = PackedFloat32Array([1.0, 0.5, 0.25, 2.0])
+@export var zoom_levels: PackedFloat32Array = PackedFloat32Array([1.0, 0.5, 0.25, 0.125])
 @export var follow_player: bool = true
 @export var zone_refresh_sec: float = 0.4
 @export var default_world_rect: Rect2 = Rect2(Vector2(-2000, -1200), Vector2(4000, 2400))
