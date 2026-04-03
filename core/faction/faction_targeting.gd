@@ -29,12 +29,15 @@ static func pick_hostile_target(self_node: Node2D, self_faction_id: String, radi
 	var scanned_units: int = 0
 	for u in units:
 		scanned_units += 1
-		if u == self_node:
+		var obj: Object = u as Object
+		if obj == null or not is_instance_valid(obj):
 			continue
-		if not (u is Node2D):
+		if obj == self_node:
 			continue
-		var n := u as Node2D
-		if not is_instance_valid(n):
+		if not (obj is Node2D):
+			continue
+		var n := obj as Node2D
+		if n == null or not is_instance_valid(n):
 			continue
 		if "is_dead" in n and bool(n.get("is_dead")):
 			continue
@@ -59,7 +62,14 @@ static func _get_cached_faction_units(tree: SceneTree, now_sec: float) -> Array:
 	if tree == null:
 		return []
 	if now_sec >= _cached_units_until_sec:
-		_cached_units = tree.get_nodes_in_group("faction_units")
+		var raw := tree.get_nodes_in_group("faction_units")
+		var sanitized: Array = []
+		for item in raw:
+			var obj: Object = item as Object
+			if obj == null or not is_instance_valid(obj):
+				continue
+			sanitized.append(obj)
+		_cached_units = sanitized
 		_cached_units_until_sec = now_sec + FACTION_UNITS_CACHE_REFRESH_SEC
 	return _cached_units
 
