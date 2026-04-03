@@ -33,10 +33,12 @@ static func pick_target_by_threat(
 	var t_direct := Time.get_ticks_usec()
 	for attacker_id in direct_attackers.keys():
 		var attacker_obj: Object = instance_from_id(int(attacker_id))
-		if attacker_obj == null or not (attacker_obj is Node2D):
+		if attacker_obj == null or not is_instance_valid(attacker_obj):
+			continue
+		if not (attacker_obj is Node2D):
 			continue
 		var candidate := attacker_obj as Node2D
-		if not is_instance_valid(candidate):
+		if candidate == null or not is_instance_valid(candidate):
 			continue
 		if "is_dead" in candidate and bool(candidate.get("is_dead")):
 			continue
