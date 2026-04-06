@@ -1,6 +1,8 @@
 extends Node
 class_name NormalAggresiveMobStats
 
+signal status_effects_presence_changed(active: bool)
+
 const STAT_CALC := preload("res://core/stats/stat_calculator.gd")
 const PROG := preload("res://core/stats/progression.gd")
 const MOB_VARIANT := preload("res://core/stats/mob_variant.gd")
@@ -139,6 +141,7 @@ func setup_primary_profile(
 
 
 var _status_effects: Dictionary = {}
+var _status_effects_presence_emitted: bool = false
 
 func tick_status_effects(delta: float) -> void:
 	if _status_effects.is_empty():
@@ -235,6 +238,7 @@ func add_or_refresh_buff(id: String, duration_sec: float, data: Dictionary = {},
 		"ability_id": ability_id if ability_id != "" else String(data_dict.get("ability_id", "")),
 		"source": src,
 	}
+	_emit_status_effects_presence_if_changed()
 
 
 
@@ -243,6 +247,14 @@ func _erase_status_effect(id: String) -> void:
 		return
 	_cleanup_status_effect_runtime_data(_status_effects[id] as Dictionary)
 	_status_effects.erase(id)
+	_emit_status_effects_presence_if_changed()
+
+func _emit_status_effects_presence_if_changed() -> void:
+	var has_effects := not _status_effects.is_empty()
+	if has_effects == _status_effects_presence_emitted:
+		return
+	_status_effects_presence_emitted = has_effects
+	emit_signal("status_effects_presence_changed", has_effects)
 
 func _cleanup_status_effect_runtime_data(entry: Dictionary) -> void:
 	var data: Dictionary = entry.get("data", {}) as Dictionary

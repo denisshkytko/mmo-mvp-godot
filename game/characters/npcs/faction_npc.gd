@@ -85,8 +85,8 @@ const THREAT_RECHECK_SEC: float = 0.25
 const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
 const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
 const VISUAL_SYNC_RECHECK_SEC: float = 0.20
-const LOD_NEAR_DISTANCE: float = 700.0
-const LOD_FAR_DISTANCE: float = 1300.0
+const LOD_VISIBLE_RADIUS_SCALE_X025: float = 4.0
+const LOD_MID_RADIUS_MULTIPLIER: float = 1.75
 const LOD_MID_TICK_SEC: float = 0.10
 const LOD_FAR_TICK_SEC: float = 0.22
 var _threat_recheck_timer: float = 0.0
@@ -95,6 +95,7 @@ var _target_validate_timer: float = 0.0
 var _visual_sync_timer: float = 0.0
 var _lod_tick_timer: float = 0.0
 var _player_cached: Node2D = null
+var _has_active_status_effects: bool = false
 
 # -----------------------------
 # Inspector (Common)
@@ -200,6 +201,10 @@ func _ready() -> void:
 	var cb := Callable(self, "_on_leash_return_started")
 	if c_ai.has_signal("leash_return_started") and not c_ai.leash_return_started.is_connected(cb):
 		c_ai.leash_return_started.connect(cb)
+	if c_stats != null and c_stats.has_signal("status_effects_presence_changed"):
+		var status_cb := Callable(self, "_on_status_effects_presence_changed")
+		if not c_stats.status_effects_presence_changed.is_connected(status_cb):
+			c_stats.status_effects_presence_changed.connect(status_cb)
 	_visual_sync_timer = randf() * VISUAL_SYNC_RECHECK_SEC
 	_lod_tick_timer = randf() * LOD_FAR_TICK_SEC
 	_player_cached = NodeCache.get_player(get_tree()) as Node2D
@@ -410,7 +415,8 @@ func _process(_delta: float) -> void:
 	var t_process_total := Time.get_ticks_usec()
 	if _player_cached != null and is_instance_valid(_player_cached):
 		var dist_sq := global_position.distance_squared_to(_player_cached.global_position)
-		if dist_sq > LOD_FAR_DISTANCE * LOD_FAR_DISTANCE:
+		var visible_radius := _resolve_visible_activity_radius()
+		if dist_sq > visible_radius * visible_radius:
 			if target_marker != null and is_instance_valid(target_marker):
 				target_marker.visible = false
 			if model_highlight != null and is_instance_valid(model_highlight):
@@ -494,7 +500,7 @@ func _physics_process(delta: float) -> void:
 		FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 
-	if c_stats != null and c_stats.has_method("tick_status_effects"):
+	if _has_active_status_effects and c_stats != null and c_stats.has_method("tick_status_effects"):
 		var t_status_effects := Time.get_ticks_usec()
 		c_stats.call("tick_status_effects", delta)
 		FRAME_PROFILER.add_usec("npc.physics.status_effects", Time.get_ticks_usec() - t_status_effects)
@@ -1080,12 +1086,26 @@ func _is_high_priority_simulation() -> bool:
 func _resolve_lod_tick_interval() -> float:
 	if _player_cached == null or not is_instance_valid(_player_cached):
 		return 0.0
+	var visible_radius := _resolve_visible_activity_radius()
 	var dist_sq := global_position.distance_squared_to(_player_cached.global_position)
-	if dist_sq <= LOD_NEAR_DISTANCE * LOD_NEAR_DISTANCE:
+	if dist_sq <= visible_radius * visible_radius:
 		return 0.0
-	if dist_sq <= LOD_FAR_DISTANCE * LOD_FAR_DISTANCE:
+	var mid_radius := visible_radius * LOD_MID_RADIUS_MULTIPLIER
+	if dist_sq <= mid_radius * mid_radius:
 		return LOD_MID_TICK_SEC
 	return LOD_FAR_TICK_SEC
+
+func _resolve_visible_activity_radius() -> float:
+	var vp := get_viewport()
+	if vp == null:
+		return 1200.0
+	var cam := vp.get_camera_2d()
+	var zoom := cam.zoom if cam != null else Vector2.ONE
+	var half := vp.get_visible_rect().size * 0.5 * zoom
+	return max(half.x, half.y) * LOD_VISIBLE_RADIUS_SCALE_X025
+
+func _on_status_effects_presence_changed(active: bool) -> void:
+	_has_active_status_effects = active
 
 func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:
