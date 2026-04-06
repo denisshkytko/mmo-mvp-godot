@@ -175,6 +175,7 @@ var _target_validate_timer: float = 0.0
 var _visual_sync_timer: float = 0.0
 var _lod_tick_timer: float = 0.0
 var _has_active_status_effects: bool = false
+var _activity_tier: int = 0
 
 
 func _ready() -> void:
@@ -224,14 +225,12 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	var t_process_total := Time.get_ticks_usec()
-	if player != null and is_instance_valid(player):
-		var dist_sq := global_position.distance_squared_to(player.global_position)
-		var visible_radius := _resolve_visible_activity_radius()
-		if dist_sq > visible_radius * visible_radius:
-			if target_marker != null and is_instance_valid(target_marker):
-				target_marker.visible = false
-			FRAME_PROFILER.add_usec("process.mob_aggressive.total", Time.get_ticks_usec() - t_process_total)
-			return
+	_activity_tier = EntityActivityManager.get_activity_tier_for(self)
+	if _activity_tier != EntityActivityManager.ActivityTier.FULL:
+		if target_marker != null and is_instance_valid(target_marker):
+			target_marker.visible = false
+		FRAME_PROFILER.add_usec("process.mob_aggressive.total", Time.get_ticks_usec() - t_process_total)
+		return
 	var t_marker := Time.get_ticks_usec()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
 	FRAME_PROFILER.add_usec("process.mob_aggressive.target_marker", Time.get_ticks_usec() - t_marker)
@@ -318,6 +317,9 @@ func _physics_process(delta: float) -> void:
 
 	if player == null or not is_instance_valid(player):
 		player = NodeCache.get_player(get_tree()) as Node2D
+	_activity_tier = EntityActivityManager.get_activity_tier_for(self)
+	if c_ai != null and c_ai.has_method("set_activity_tier"):
+		c_ai.call("set_activity_tier", _activity_tier)
 	var lod_tick_sec := _resolve_lod_tick_interval()
 	if lod_tick_sec > 0.0 and not _is_high_priority_simulation():
 		_lod_tick_timer = max(0.0, _lod_tick_timer - delta)
@@ -929,25 +931,11 @@ func _is_high_priority_simulation() -> bool:
 	return false
 
 func _resolve_lod_tick_interval() -> float:
-	if player == null or not is_instance_valid(player):
+	if _activity_tier == EntityActivityManager.ActivityTier.FULL:
 		return 0.0
-	var visible_radius := _resolve_visible_activity_radius()
-	var dist_sq := global_position.distance_squared_to(player.global_position)
-	if dist_sq <= visible_radius * visible_radius:
-		return 0.0
-	var mid_radius := visible_radius * LOD_MID_RADIUS_MULTIPLIER
-	if dist_sq <= mid_radius * mid_radius:
+	if _activity_tier == EntityActivityManager.ActivityTier.SIM:
 		return LOD_MID_TICK_SEC
 	return LOD_FAR_TICK_SEC
-
-func _resolve_visible_activity_radius() -> float:
-	var vp := get_viewport()
-	if vp == null:
-		return 1200.0
-	var cam := vp.get_camera_2d()
-	var zoom := cam.zoom if cam != null else Vector2.ONE
-	var half := vp.get_visible_rect().size * 0.5 * zoom
-	return max(half.x, half.y) * LOD_VISIBLE_RADIUS_SCALE_X025
 
 func _on_status_effects_presence_changed(active: bool) -> void:
 	_has_active_status_effects = active
