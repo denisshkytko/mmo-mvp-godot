@@ -4,7 +4,7 @@ class_name FactionTargeting
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 const FACTION_UNITS_CACHE_REFRESH_SEC: float = 0.20
 
-static var _cached_units: Array = []
+static var _cached_unit_ids: Array[int] = []
 static var _cached_units_until_sec: float = 0.0
 
 # ------------------------------------------------------------
@@ -25,11 +25,11 @@ static func pick_hostile_target(self_node: Node2D, self_faction_id: String, radi
 	var radius_sq: float = radius * radius
 	var now_sec: float = float(Time.get_ticks_msec()) / 1000.0
 
-	var units := _get_cached_faction_units(self_node.get_tree(), now_sec)
+	var unit_ids := _get_cached_faction_unit_ids(self_node.get_tree(), now_sec)
 	var scanned_units: int = 0
-	for u in units:
+	for unit_id in unit_ids:
 		scanned_units += 1
-		var obj: Object = u as Object
+		var obj := instance_from_id(unit_id)
 		if obj == null or not is_instance_valid(obj):
 			continue
 		if obj == self_node:
@@ -58,20 +58,20 @@ static func pick_hostile_target(self_node: Node2D, self_faction_id: String, radi
 	return best
 
 
-static func _get_cached_faction_units(tree: SceneTree, now_sec: float) -> Array:
+static func _get_cached_faction_unit_ids(tree: SceneTree, now_sec: float) -> Array[int]:
 	if tree == null:
 		return []
 	if now_sec >= _cached_units_until_sec:
 		var raw := tree.get_nodes_in_group("faction_units")
-		var sanitized: Array = []
+		var sanitized: Array[int] = []
 		for item in raw:
-			var obj: Object = item as Object
+			var obj := item as Object
 			if obj == null or not is_instance_valid(obj):
 				continue
-			sanitized.append(obj)
-		_cached_units = sanitized
+			sanitized.append(obj.get_instance_id())
+		_cached_unit_ids = sanitized
 		_cached_units_until_sec = now_sec + FACTION_UNITS_CACHE_REFRESH_SEC
-	return _cached_units
+	return _cached_unit_ids
 
 static func _metric_root(metric_prefix: String) -> String:
 	if metric_prefix.strip_edges() == "":

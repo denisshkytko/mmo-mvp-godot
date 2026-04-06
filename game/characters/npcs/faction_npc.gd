@@ -578,6 +578,7 @@ func _physics_process(delta: float) -> void:
 		_target_acquire_timer = 0.0
 		_target_validate_timer = 0.0
 	_refresh_threat_target()
+	current_target = _sanitize_target_ref(current_target)
 
 	if _prev_target != current_target:
 		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
@@ -595,21 +596,23 @@ func _physics_process(delta: float) -> void:
 
 	# AI tick
 	var t_ai_tick := Time.get_ticks_usec()
-	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
+	var ai_target := _sanitize_target_ref(current_target)
+	current_target = ai_target
+	c_ai.tick(delta, self, ai_target, c_combat, proactive_aggro)
 	FRAME_PROFILER.add_usec("npc.physics.ai_tick", Time.get_ticks_usec() - t_ai_tick)
 
 	# combat tick
-	if current_target != null and is_instance_valid(current_target):
+	if ai_target != null:
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		if not c_spell_caster.should_block_auto_attack():
 			var t_combat_tick := Time.get_ticks_usec()
-			c_combat.tick(delta, self, current_target, snap)
+			c_combat.tick(delta, self, ai_target, snap)
 			FRAME_PROFILER.add_usec("npc.physics.combat_tick", Time.get_ticks_usec() - t_combat_tick)
 		var t_spell_tick := Time.get_ticks_usec()
-		c_spell_caster.tick(delta, current_target)
+		c_spell_caster.tick(delta, ai_target)
 		FRAME_PROFILER.add_usec("npc.physics.spell_tick", Time.get_ticks_usec() - t_spell_tick)
 
-	if (current_target == null or not is_instance_valid(current_target)) and c_spell_caster != null and c_spell_caster.is_casting():
+	if ai_target == null and c_spell_caster != null and c_spell_caster.is_casting():
 		c_spell_caster.interrupt_cast("lost_target")
 
 	var t_cast_bar := Time.get_ticks_usec()
@@ -991,6 +994,7 @@ func _now_sec() -> float:
 func _refresh_threat_target() -> void:
 	if c_ai == null or c_ai.state != FactionNPCAI.State.CHASE:
 		return
+	current_target = _sanitize_target_ref(current_target)
 	if current_target == null:
 		return
 	if _threat_recheck_timer > 0.0:
@@ -1005,8 +1009,16 @@ func _refresh_threat_target() -> void:
 		direct_attackers,
 		"npc.physics"
 	)
+	threat_target = _sanitize_target_ref(threat_target)
 	if threat_target != null and threat_target != current_target:
 		current_target = threat_target
+
+func _sanitize_target_ref(target: Node2D) -> Node2D:
+	if target == null or not is_instance_valid(target):
+		return null
+	if "is_dead" in target and bool(target.get("is_dead")):
+		return null
+	return target
 
 func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:
