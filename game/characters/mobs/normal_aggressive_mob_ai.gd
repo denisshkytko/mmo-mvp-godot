@@ -54,6 +54,7 @@ var _activity_tier: int = 0
 var _nav_path: Array[Vector2] = []
 var _nav_path_index: int = 0
 var _nav_repath_timer: float = 0.0
+var _nav_allow_direct_fallback: bool = true
 
 func set_activity_tier(value: int) -> void:
 	_activity_tier = value
@@ -326,27 +327,34 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 	if actor == null or not is_instance_valid(actor):
 		_nav_path.clear()
 		_nav_path_index = 0
+		_nav_allow_direct_fallback = true
 		return
 	var world := actor.get_world_2d()
 	if world == null:
 		_nav_path = [destination]
 		_nav_path_index = 0
+		_nav_allow_direct_fallback = true
 		return
 	var map := world.navigation_map
 	if not NavigationServer2D.map_is_active(map):
 		_nav_path = [destination]
 		_nav_path_index = 0
+		_nav_allow_direct_fallback = true
+		return
+	if NavigationServer2D.map_get_iteration_id(map) <= 0:
+		_nav_path.clear()
+		_nav_path_index = 0
+		_nav_allow_direct_fallback = false
 		return
 	var start := NavigationServer2D.map_get_closest_point(map, actor.global_position)
 	var goal := NavigationServer2D.map_get_closest_point(map, destination)
 	var points := NavigationServer2D.map_get_path(map, start, goal, true)
+	_nav_allow_direct_fallback = false
 	_nav_path.clear()
 	for p in points:
 		if p is Vector2:
 			_nav_path.append(p as Vector2)
-	if _nav_path.is_empty():
-		_nav_path = [destination]
-	elif goal.distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
+	if not _nav_path.is_empty() and goal.distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
 		_nav_path.append(destination)
 	_nav_path_index = 0
 	_advance_path_index(actor.global_position)
@@ -361,7 +369,9 @@ func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_s
 	_build_path(actor, destination, repath_sec)
 	if _nav_path_index >= _nav_path.size():
 		var to_direct := destination - actor.global_position
-		return to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO
+		if _nav_allow_direct_fallback:
+			return to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO
+		return Vector2.ZERO
 	var waypoint := _nav_path[_nav_path_index]
 	var to_waypoint := waypoint - actor.global_position
 	if to_waypoint.length_squared() <= 0.0001:
@@ -373,6 +383,7 @@ func _clear_nav_path() -> void:
 	_nav_path.clear()
 	_nav_path_index = 0
 	_nav_repath_timer = 0.0
+	_nav_allow_direct_fallback = true
 
 func _should_run_idle_patrol_tick(actor: CharacterBody2D) -> bool:
 	if _state != AIState.IDLE:
