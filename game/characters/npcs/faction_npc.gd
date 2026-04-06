@@ -84,9 +84,11 @@ const REGEN_PCT_PER_SEC: float = 0.02
 const THREAT_RECHECK_SEC: float = 0.25
 const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
 const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
+const VISUAL_SYNC_RECHECK_SEC: float = 0.20
 var _threat_recheck_timer: float = 0.0
 var _target_acquire_timer: float = 0.0
 var _target_validate_timer: float = 0.0
+var _visual_sync_timer: float = 0.0
 
 # -----------------------------
 # Inspector (Common)
@@ -192,6 +194,7 @@ func _ready() -> void:
 	var cb := Callable(self, "_on_leash_return_started")
 	if c_ai.has_signal("leash_return_started") and not c_ai.leash_return_started.is_connected(cb):
 		c_ai.leash_return_started.connect(cb)
+	_visual_sync_timer = randf() * VISUAL_SYNC_RECHECK_SEC
 
 	_update_faction_color()
 	_apply_interaction_visual()
@@ -464,7 +467,10 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 func _physics_process(delta: float) -> void:
 	var t_physics_total := Time.get_ticks_usec()
 	var t_precheck := Time.get_ticks_usec()
-	_update_visual_render_order()
+	_visual_sync_timer = max(0.0, _visual_sync_timer - delta)
+	if _visual_sync_timer <= 0.0:
+		_visual_sync_timer = VISUAL_SYNC_RECHECK_SEC
+		_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
@@ -472,7 +478,9 @@ func _physics_process(delta: float) -> void:
 		return
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
+		var t_status_effects := Time.get_ticks_usec()
 		c_stats.call("tick_status_effects", delta)
+		FRAME_PROFILER.add_usec("npc.physics.status_effects", Time.get_ticks_usec() - t_status_effects)
 	if not c_stats.is_dead and c_stats.current_hp <= 0:
 		_die()
 		FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
@@ -520,6 +528,7 @@ func _physics_process(delta: float) -> void:
 		current_target = null
 		_target_acquire_timer = 0.0
 		_target_validate_timer = 0.0
+		regen_active = true
 		# если потеряли цель — чистим retaliation (иначе yellow будет "залипать")
 		retaliation_active = false
 		retaliation_target_id = 0
@@ -572,6 +581,8 @@ func _physics_process(delta: float) -> void:
 			regen_active = true
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
+		if current_target == null:
+			regen_active = true
 		_prev_target = null
 	if current_target != null and not is_instance_valid(current_target):
 		current_target = null

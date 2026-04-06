@@ -272,7 +272,9 @@ func _physics_process(delta: float) -> void:
 		return
 
 	if c_stats != null and c_stats.has_method("tick_status_effects"):
+		var t_status_effects := Time.get_ticks_usec()
 		c_stats.call("tick_status_effects", delta)
+		FRAME_PROFILER.add_usec("mob_aggressive.physics.status_effects", Time.get_ticks_usec() - t_status_effects)
 	if not c_stats.is_dead and c_stats.current_hp <= 0:
 		_die()
 		FRAME_PROFILER.add_usec("mob_aggressive.physics.precheck", Time.get_ticks_usec() - t_precheck)
@@ -301,6 +303,8 @@ func _physics_process(delta: float) -> void:
 	_target_validate_timer = max(0.0, _target_validate_timer - delta)
 
 	if current_target == null or not is_instance_valid(current_target):
+		if current_target != null and not is_instance_valid(current_target):
+			regen_active = true
 		var should_force_retarget: bool = direct_attackers.size() > 0
 		if should_force_retarget or _target_acquire_timer <= 0.0:
 			FRAME_PROFILER.add_count("mob_aggressive.physics.targeting.acquire_attempts", 1.0)
@@ -335,6 +339,8 @@ func _physics_process(delta: float) -> void:
 		_clear_direct_attackers()
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
+		if current_target == null:
+			regen_active = true
 		_prev_target = null
 	if current_target != null and not is_instance_valid(current_target):
 		current_target = null
@@ -366,10 +372,6 @@ func _physics_process(delta: float) -> void:
 
 	if player == null or not is_instance_valid(player):
 		player = NodeCache.get_player(get_tree()) as Node2D
-
-	var t_mode_sync := Time.get_ticks_usec()
-	_apply_mode_to_components()
-	FRAME_PROFILER.add_usec("mob_aggressive.physics.mode_sync", Time.get_ticks_usec() - t_mode_sync)
 
 	var t_ai_tick := Time.get_ticks_usec()
 	var ai_target := _sanitize_target_ref(current_target)
