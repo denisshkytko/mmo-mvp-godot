@@ -85,10 +85,16 @@ const THREAT_RECHECK_SEC: float = 0.25
 const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
 const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
 const VISUAL_SYNC_RECHECK_SEC: float = 0.20
+const LOD_NEAR_DISTANCE: float = 700.0
+const LOD_FAR_DISTANCE: float = 1300.0
+const LOD_MID_TICK_SEC: float = 0.10
+const LOD_FAR_TICK_SEC: float = 0.22
 var _threat_recheck_timer: float = 0.0
 var _target_acquire_timer: float = 0.0
 var _target_validate_timer: float = 0.0
 var _visual_sync_timer: float = 0.0
+var _lod_tick_timer: float = 0.0
+var _player_cached: Node2D = null
 
 # -----------------------------
 # Inspector (Common)
@@ -195,6 +201,8 @@ func _ready() -> void:
 	if c_ai.has_signal("leash_return_started") and not c_ai.leash_return_started.is_connected(cb):
 		c_ai.leash_return_started.connect(cb)
 	_visual_sync_timer = randf() * VISUAL_SYNC_RECHECK_SEC
+	_lod_tick_timer = randf() * LOD_FAR_TICK_SEC
+	_player_cached = NodeCache.get_player(get_tree()) as Node2D
 
 	_update_faction_color()
 	_apply_interaction_visual()
@@ -400,6 +408,15 @@ func _place_world_collider_at_spawn(spawn_pos: Vector2) -> void:
 
 func _process(_delta: float) -> void:
 	var t_process_total := Time.get_ticks_usec()
+	if _player_cached != null and is_instance_valid(_player_cached):
+		var dist_sq := global_position.distance_squared_to(_player_cached.global_position)
+		if dist_sq > LOD_FAR_DISTANCE * LOD_FAR_DISTANCE:
+			if target_marker != null and is_instance_valid(target_marker):
+				target_marker.visible = false
+			if model_highlight != null and is_instance_valid(model_highlight):
+				model_highlight.visible = false
+			FRAME_PROFILER.add_usec("process.npc.total", Time.get_ticks_usec() - t_process_total)
+			return
 	var t_marker := Time.get_ticks_usec()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
 	FRAME_PROFILER.add_usec("process.npc.target_marker", Time.get_ticks_usec() - t_marker)
@@ -503,6 +520,24 @@ func _physics_process(delta: float) -> void:
 		return
 	_set_model_stunned(false)
 	FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
+
+	if _player_cached == null or not is_instance_valid(_player_cached):
+		_player_cached = NodeCache.get_player(get_tree()) as Node2D
+	var lod_tick_sec := _resolve_lod_tick_interval()
+	if lod_tick_sec > 0.0 and not _is_high_priority_simulation():
+		_lod_tick_timer = max(0.0, _lod_tick_timer - delta)
+		if _lod_tick_timer > 0.0:
+			if regen_active and c_stats.current_hp < c_stats.max_hp:
+				c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
+				_update_hp()
+				if c_stats.current_hp >= c_stats.max_hp:
+					regen_active = false
+			FRAME_PROFILER.add_usec("npc.physics.lod_skip", Time.get_ticks_usec() - t_physics_total)
+			FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
+			return
+		_lod_tick_timer = lod_tick_sec
+	else:
+		_lod_tick_timer = 0.0
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 	_target_acquire_timer = max(0.0, _target_acquire_timer - delta)
@@ -1030,6 +1065,27 @@ func _sanitize_target_ref(target: Node2D) -> Node2D:
 	if "is_dead" in target and bool(target.get("is_dead")):
 		return null
 	return target
+
+func _is_high_priority_simulation() -> bool:
+	if current_target != null and is_instance_valid(current_target):
+		return true
+	if direct_attackers.size() > 0:
+		return true
+	if c_ai != null and c_ai.state == FactionNPCAI.State.RETURN:
+		return true
+	if c_spell_caster != null and c_spell_caster.is_casting():
+		return true
+	return false
+
+func _resolve_lod_tick_interval() -> float:
+	if _player_cached == null or not is_instance_valid(_player_cached):
+		return 0.0
+	var dist_sq := global_position.distance_squared_to(_player_cached.global_position)
+	if dist_sq <= LOD_NEAR_DISTANCE * LOD_NEAR_DISTANCE:
+		return 0.0
+	if dist_sq <= LOD_FAR_DISTANCE * LOD_FAR_DISTANCE:
+		return LOD_MID_TICK_SEC
+	return LOD_FAR_TICK_SEC
 
 func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:
