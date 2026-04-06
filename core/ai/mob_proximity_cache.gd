@@ -24,10 +24,10 @@ func _rebuild_cache() -> void:
 	var tree := get_tree()
 	if tree == null:
 		return
-	for mob in tree.get_nodes_in_group("mobs"):
-		if mob == null or not is_instance_valid(mob) or not (mob is Node2D):
+	for unit in tree.get_nodes_in_group("faction_units"):
+		if unit == null or not is_instance_valid(unit) or not (unit is Node2D):
 			continue
-		_add_to_spatial_hash(mob as Node2D)
+		_add_to_spatial_hash(unit as Node2D)
 
 
 func _add_to_spatial_hash(mob: Node2D) -> void:
@@ -38,11 +38,14 @@ func _add_to_spatial_hash(mob: Node2D) -> void:
 	if not _spatial_hash.has(key):
 		_spatial_hash[key] = []
 	var bucket: Array = _spatial_hash[key]
-	bucket.append(mob)
+	bucket.append(mob.get_instance_id())
 	_spatial_hash[key] = bucket
 
 
 func get_nearby_mobs(center: Node2D, radius: float, group_name: String = "mobs") -> Array[Node2D]:
+	return get_nearby_faction_units(center, radius, group_name)
+
+func get_nearby_faction_units(center: Node2D, radius: float, group_name: String = "faction_units") -> Array[Node2D]:
 	var result: Array[Node2D] = []
 	if center == null or not is_instance_valid(center):
 		return result
@@ -57,10 +60,17 @@ func get_nearby_mobs(center: Node2D, radius: float, group_name: String = "mobs")
 			if not _spatial_hash.has(key):
 				continue
 			var bucket: Array = _spatial_hash[key]
-			for mob_v in bucket:
-				if not (mob_v is Node2D):
+			for mob_id_v in bucket:
+				var mob_obj: Object = null
+				if mob_id_v is int:
+					mob_obj = instance_from_id(int(mob_id_v))
+				elif mob_id_v is Object:
+					mob_obj = mob_id_v as Object
+				if mob_obj == null or not is_instance_valid(mob_obj):
 					continue
-				var mob := mob_v as Node2D
+				if not (mob_obj is Node2D):
+					continue
+				var mob := mob_obj as Node2D
 				if mob == center or not is_instance_valid(mob):
 					continue
 				if group_name != "" and not mob.is_in_group(group_name):

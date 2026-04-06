@@ -24,6 +24,8 @@ DataDB="*res://core/data/data_db.gd"
 LootSystem="*res://core/data/loot_system.gd"
 AbilityDB="*res://core/abilities/ability_database.gd"
 MobProximityCache="*res://core/ai/mob_proximity_cache.gd"
+EntityActivityManager="*res://core/ai/entity_activity_manager.gd"
+NavPathManager="*res://core/navigation/nav_path_manager.gd"
 
 [display]
 

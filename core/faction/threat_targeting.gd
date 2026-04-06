@@ -7,7 +7,7 @@ const INFLUENCE_DIRECT := 1.0
 const INFLUENCE_COMBAT := 0.75
 const FACTION_UNITS_CACHE_REFRESH_SEC: float = 0.20
 
-static var _cached_units: Array = []
+static var _cached_unit_ids: Array[int] = []
 static var _cached_units_until_sec: float = 0.0
 
 static func pick_target_by_threat(
@@ -29,6 +29,7 @@ static func pick_target_by_threat(
 	var best_threat: float = 0.0
 	var leash_distance_sq: float = leash_distance * leash_distance
 	var aggro_radius_sq: float = aggro_radius * aggro_radius
+	var actor_pos: Vector2 = actor.global_position
 
 	var t_direct := Time.get_ticks_usec()
 	for attacker_id in direct_attackers.keys():
@@ -62,23 +63,19 @@ static func pick_target_by_threat(
 	FRAME_PROFILER.add_count("%s.targeting.direct_attackers_checked" % _metric_root(metric_prefix), float(direct_attackers.size()))
 
 	var t_faction_scan := Time.get_ticks_usec()
-	var units := _get_cached_faction_units(actor.get_tree(), now_sec)
+	var nearby_units := _get_nearby_faction_units(actor, aggro_radius, now_sec)
 	var scanned_units: int = 0
-	for u in units:
+	for candidate in nearby_units:
 		scanned_units += 1
-		var obj: Object = u as Object
-		if obj == null or not is_instance_valid(obj):
+		if candidate == actor:
 			continue
-		if obj == actor:
+		if candidate == null or not is_instance_valid(candidate):
 			continue
-		if not (obj is Node2D):
-			continue
-		var candidate := obj as Node2D
 		if "is_dead" in candidate and bool(candidate.get("is_dead")):
 			continue
-		if not candidate.has_method("is_in_combat"):
+		if home_pos.distance_squared_to(candidate.global_position) > leash_distance_sq:
 			continue
-		if not bool(candidate.call("is_in_combat")):
+		if actor_pos.distance_squared_to(candidate.global_position) > aggro_radius_sq:
 			continue
 
 		var tf: String = ""
@@ -87,10 +84,9 @@ static func pick_target_by_threat(
 		var rel := FactionRules.relation(actor_faction_id, tf)
 		if rel != FactionRules.Relation.HOSTILE:
 			continue
-
-		if actor.global_position.distance_squared_to(candidate.global_position) > aggro_radius_sq:
+		if not candidate.has_method("is_in_combat"):
 			continue
-		if home_pos.distance_squared_to(candidate.global_position) > leash_distance_sq:
+		if not bool(candidate.call("is_in_combat")):
 			continue
 
 		var dps := _get_dps(candidate, now_sec)
@@ -107,21 +103,49 @@ static func pick_target_by_threat(
 	_add_metric(metric_prefix, "threat_total", t_total)
 	return null
 
+static func _get_nearby_faction_units(actor: Node2D, radius: float, now_sec: float) -> Array[Node2D]:
+	if actor == null or not is_instance_valid(actor):
+		return []
+	var tree := actor.get_tree()
+	if tree == null or tree.root == null:
+		return _resolve_units_from_ids(_get_cached_faction_unit_ids(tree, now_sec))
+	var cache := tree.root.get_node_or_null("MobProximityCache")
+	if cache != null and cache.has_method("get_nearby_faction_units"):
+		var nearby_v: Variant = cache.call("get_nearby_faction_units", actor, radius, "faction_units")
+		if nearby_v is Array:
+			var nearby_arr := nearby_v as Array
+			var typed: Array[Node2D] = []
+			for item in nearby_arr:
+				if item is Node2D:
+					typed.append(item as Node2D)
+			return typed
+	return _resolve_units_from_ids(_get_cached_faction_unit_ids(tree, now_sec))
 
-static func _get_cached_faction_units(tree: SceneTree, now_sec: float) -> Array:
+static func _resolve_units_from_ids(unit_ids: Array[int]) -> Array[Node2D]:
+	var out: Array[Node2D] = []
+	for unit_id in unit_ids:
+		var obj := instance_from_id(unit_id)
+		if obj == null or not is_instance_valid(obj):
+			continue
+		if obj is Node2D:
+			out.append(obj as Node2D)
+	return out
+
+
+static func _get_cached_faction_unit_ids(tree: SceneTree, now_sec: float) -> Array[int]:
 	if tree == null:
 		return []
 	if now_sec >= _cached_units_until_sec:
 		var raw := tree.get_nodes_in_group("faction_units")
-		var sanitized: Array = []
+		var sanitized: Array[int] = []
 		for item in raw:
-			var obj: Object = item as Object
+			var obj := item as Object
 			if obj == null or not is_instance_valid(obj):
 				continue
-			sanitized.append(obj)
-		_cached_units = sanitized
+			sanitized.append(obj.get_instance_id())
+		_cached_unit_ids = sanitized
 		_cached_units_until_sec = now_sec + FACTION_UNITS_CACHE_REFRESH_SEC
-	return _cached_units
+	return _cached_unit_ids
 
 static func _metric_root(metric_prefix: String) -> String:
 	if metric_prefix.strip_edges() == "":

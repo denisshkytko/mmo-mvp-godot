@@ -13,11 +13,18 @@ const OBSTACLE_AVOID_LOOKAHEAD: float = 18.0
 const OBSTACLE_AVOID_ANGLES := [0.35, -0.35, 0.7, -0.7, 1.2, -1.2]
 const PATROL_SOFT_STUCK_SEC: float = 0.8
 const PATROL_HARD_STUCK_SEC: float = 1.6
+const CHASE_SOFT_STUCK_SEC: float = 0.8
+const CHASE_HARD_STUCK_SEC: float = 1.4
 const PATROL_UNSTUCK_STEP_OPTIONS := [16.0, 24.0, 32.0]
 const IDLE_STAGGER_DIVISOR: int = 3
-const LOD_FULL_DISTANCE: float = 450.0
-const LOD_REDUCED_DISTANCE: float = 900.0
-const LOD_MINIMAL_DISTANCE: float = 1300.0
+const NAV_REPATH_PATROL_SEC: float = 0.65
+const NAV_REPATH_CHASE_SEC: float = 0.20
+const NAV_REPATH_RETURN_SEC: float = 0.25
+const NAV_POINT_REACHED_DISTANCE: float = 8.0
+const SEPARATION_CRITICAL_DISTANCE: float = 12.0
+const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
+const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
+const DETOUR_REACHED_DISTANCE: float = 10.0
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -44,6 +51,19 @@ var _patrol_separation_vector: Vector2 = Vector2.ZERO
 var _idle_tick_counter: int = 0
 var _idle_stagger_offset: int = -1
 var _current_lod_level: int = 0
+var _chase_last_position: Vector2 = Vector2.ZERO
+var _chase_has_last_position: bool = false
+var _chase_stuck_time: float = 0.0
+var _activity_tier: int = 0
+var _nav_path: Array[Vector2] = []
+var _nav_path_index: int = 0
+var _nav_repath_timer: float = 0.0
+var _nav_allow_direct_fallback: bool = true
+var _has_detour_point: bool = false
+var _detour_point: Vector2 = Vector2.ZERO
+
+func set_activity_tier(value: int) -> void:
+	_activity_tier = value
 
 func reset_to_idle() -> void:
 	_state = AIState.IDLE
@@ -53,6 +73,9 @@ func reset_to_idle() -> void:
 	_patrol_stuck_time = 0.0
 	_patrol_separation_refresh = 0.0
 	_patrol_separation_vector = Vector2.ZERO
+	_chase_has_last_position = false
+	_chase_stuck_time = 0.0
+	_clear_nav_path()
 
 func force_return() -> void:
 	_state = AIState.RETURN
@@ -63,6 +86,7 @@ func is_returning() -> bool:
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	var t_tick_total := Time.get_ticks_usec()
+	_nav_repath_timer = max(0.0, _nav_repath_timer - delta)
 	_current_lod_level = _resolve_lod_level(actor, target)
 	# выключение CHASE по leash_distance
 	var t_leash := Time.get_ticks_usec()
@@ -91,7 +115,7 @@ func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAg
 	# CHASE
 	if _state == AIState.CHASE:
 		var t_chase := Time.get_ticks_usec()
-		_do_chase(actor, target, combat)
+		_do_chase(delta, actor, target, combat)
 		FRAME_PROFILER.add_usec("mob_aggressive.ai.chase", Time.get_ticks_usec() - t_chase)
 		FRAME_PROFILER.add_usec("mob_aggressive.ai.tick_total", Time.get_ticks_usec() - t_tick_total)
 		return
@@ -124,8 +148,9 @@ func _do_idle(delta: float, actor: CharacterBody2D) -> void:
 		_do_patrol(delta, actor)
 		FRAME_PROFILER.add_usec("mob_aggressive.ai.idle_patrol", Time.get_ticks_usec() - t_idle_patrol)
 	else:
+		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
-		if actor.has_method("update_movement_animation"):
+		if _should_play_animation() and actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 
 func _pick_new_patrol_target() -> void:
@@ -138,13 +163,14 @@ func _pick_new_patrol_target() -> void:
 func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	if _current_lod_level >= 2:
 		actor.velocity = Vector2.ZERO
+		_clear_nav_path()
 		return
 	if _patrol_wait > 0.0:
 		_patrol_wait -= delta
 		actor.velocity = Vector2.ZERO
 		_patrol_has_last_position = false
 		_patrol_stuck_time = 0.0
-		if actor.has_method("update_movement_animation"):
+		if _should_play_animation() and actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 		return
 
@@ -158,7 +184,7 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		actor.velocity = Vector2.ZERO
 		_patrol_has_last_position = false
 		_patrol_stuck_time = 0.0
-		if actor.has_method("update_movement_animation"):
+		if _should_play_animation() and actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 		return
 
@@ -180,7 +206,7 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	_patrol_last_position = actor.global_position
 	_patrol_has_last_position = true
 
-	var patrol_dir: Vector2 = (_patrol_target - actor.global_position).normalized()
+	var patrol_dir: Vector2 = _next_path_direction(actor, _patrol_target, NAV_REPATH_PATROL_SEC)
 	var separation_dir: Vector2 = Vector2.ZERO
 	if _current_lod_level == 0:
 		var t_patrol_separation := Time.get_ticks_usec()
@@ -200,7 +226,7 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		return
 	else:
 		actor.velocity = final_dir * patrol_speed
-	if actor.has_method("update_movement_animation"):
+	if _should_play_animation() and actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity, true)
 	var t_patrol_move := Time.get_ticks_usec()
 	actor.move_and_slide()
@@ -222,7 +248,11 @@ func _compute_patrol_separation(actor: CharacterBody2D) -> Vector2:
 
 
 func _compute_patrol_separation_cached(actor: CharacterBody2D, cache: Node) -> Vector2:
-	var nearby_v: Variant = cache.call("get_nearby_mobs", actor, PATROL_SEPARATION_DISTANCE, "mobs")
+	var nearby_v: Variant
+	if cache.has_method("get_nearby_faction_units"):
+		nearby_v = cache.call("get_nearby_faction_units", actor, PATROL_SEPARATION_DISTANCE, "faction_units")
+	else:
+		nearby_v = cache.call("get_nearby_mobs", actor, PATROL_SEPARATION_DISTANCE, "mobs")
 	if not (nearby_v is Array):
 		return Vector2.ZERO
 	var nearby: Array = nearby_v as Array
@@ -237,6 +267,10 @@ func _compute_patrol_separation_cached(actor: CharacterBody2D, cache: Node) -> V
 		var dist: float = offset.length()
 		if dist <= 0.001 or dist >= PATROL_SEPARATION_DISTANCE:
 			continue
+		if dist < SEPARATION_CRITICAL_DISTANCE:
+			repel += (offset / max(0.001, dist)) * 2.0
+			nearby_count += 1
+			continue
 		var strength: float = (PATROL_SEPARATION_DISTANCE - dist) / PATROL_SEPARATION_DISTANCE
 		repel += (offset / dist) * strength
 		nearby_count += 1
@@ -244,7 +278,9 @@ func _compute_patrol_separation_cached(actor: CharacterBody2D, cache: Node) -> V
 			break
 	if repel.length_squared() <= 0.0001:
 		return Vector2.ZERO
-	return repel.normalized() * min(1.0, repel.length())
+	if nearby_count > 3:
+		repel *= 1.5
+	return repel.normalized() * min(2.0, repel.length())
 
 
 func _compute_patrol_separation_legacy(actor: CharacterBody2D) -> Vector2:
@@ -255,7 +291,7 @@ func _compute_patrol_separation_legacy(actor: CharacterBody2D) -> Vector2:
 		return Vector2.ZERO
 	var repel := Vector2.ZERO
 	var nearby_count: int = 0
-	for n in tree.get_nodes_in_group("mobs"):
+	for n in tree.get_nodes_in_group("faction_units"):
 		if not (n is Node2D):
 			continue
 		var other := n as Node2D
@@ -267,6 +303,10 @@ func _compute_patrol_separation_legacy(actor: CharacterBody2D) -> Vector2:
 		var dist: float = offset.length()
 		if dist <= 0.001 or dist >= PATROL_SEPARATION_DISTANCE:
 			continue
+		if dist < SEPARATION_CRITICAL_DISTANCE:
+			repel += (offset / max(0.001, dist)) * 2.0
+			nearby_count += 1
+			continue
 		var strength: float = (PATROL_SEPARATION_DISTANCE - dist) / PATROL_SEPARATION_DISTANCE
 		repel += (offset / dist) * strength
 		nearby_count += 1
@@ -274,7 +314,9 @@ func _compute_patrol_separation_legacy(actor: CharacterBody2D) -> Vector2:
 			break
 	if repel.length_squared() <= 0.0001:
 		return Vector2.ZERO
-	return repel.normalized() * min(1.0, repel.length())
+	if nearby_count > 3:
+		repel *= 1.5
+	return repel.normalized() * min(2.0, repel.length())
 
 
 func _get_proximity_cache(actor: CharacterBody2D) -> Node:
@@ -287,24 +329,123 @@ func _get_proximity_cache(actor: CharacterBody2D) -> Node:
 
 
 func _resolve_lod_level(actor: CharacterBody2D, target: Node2D) -> int:
-	var ref: Node2D = null
-	if target != null and is_instance_valid(target) and target is Node2D:
-		ref = target as Node2D
-	else:
-		var p := actor.get_tree().get_first_node_in_group("player")
-		if p is Node2D:
-			ref = p as Node2D
-	if ref == null:
-		return 2
-	var dist := actor.global_position.distance_to(ref.global_position)
-	if dist <= LOD_FULL_DISTANCE:
+	if _activity_tier == EntityActivityManager.ActivityTier.FULL:
 		return 0
-	if dist <= LOD_REDUCED_DISTANCE:
+	if _activity_tier == EntityActivityManager.ActivityTier.SIM:
 		return 1
-	if dist <= LOD_MINIMAL_DISTANCE:
-		return 2
 	return 2
 
+func _should_play_animation() -> bool:
+	return _activity_tier == EntityActivityManager.ActivityTier.FULL
+
+func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float) -> void:
+	if _nav_repath_timer > 0.0 and _nav_path_index < _nav_path.size():
+		return
+	_nav_repath_timer = repath_sec
+	if actor == null or not is_instance_valid(actor):
+		_nav_path.clear()
+		_nav_path_index = 0
+		_nav_allow_direct_fallback = true
+		return
+	var world := actor.get_world_2d()
+	if world == null:
+		_nav_path = [destination]
+		_nav_path_index = 0
+		_nav_allow_direct_fallback = true
+		return
+	var map := world.navigation_map
+	var points := NavPathManager.request_path(map, actor.global_position, destination, true)
+	_nav_path.clear()
+	for p in points:
+		if p is Vector2:
+			_nav_path.append(p as Vector2)
+	_nav_allow_direct_fallback = _nav_path.is_empty()
+	if not _nav_path.is_empty() and _nav_path[_nav_path.size() - 1].distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
+		_nav_path.append(destination)
+	_nav_path_index = 0
+	_advance_path_index(actor.global_position)
+
+func _advance_path_index(current_pos: Vector2) -> void:
+	while _nav_path_index < _nav_path.size():
+		if current_pos.distance_to(_nav_path[_nav_path_index]) > NAV_POINT_REACHED_DISTANCE:
+			return
+		_nav_path_index += 1
+
+func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_sec: float) -> Vector2:
+	_build_path(actor, destination, repath_sec)
+	if _nav_path_index >= _nav_path.size():
+		if _nav_allow_direct_fallback:
+			return _next_fallback_direction(actor, destination)
+		return Vector2.ZERO
+	_has_detour_point = false
+	var waypoint := _nav_path[_nav_path_index]
+	var to_waypoint := waypoint - actor.global_position
+	if to_waypoint.length_squared() <= 0.0001:
+		_nav_path_index += 1
+		return _next_path_direction(actor, destination, repath_sec)
+	return to_waypoint.normalized()
+
+func _clear_nav_path() -> void:
+	_nav_path.clear()
+	_nav_path_index = 0
+	_nav_repath_timer = 0.0
+	_nav_allow_direct_fallback = true
+	_has_detour_point = false
+
+func _next_fallback_direction(actor: CharacterBody2D, destination: Vector2) -> Vector2:
+	if actor == null or not is_instance_valid(actor):
+		return Vector2.ZERO
+	if not _is_segment_blocked(actor, actor.global_position, destination):
+		_has_detour_point = false
+		var to_direct := destination - actor.global_position
+		return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+	if _has_detour_point:
+		if actor.global_position.distance_to(_detour_point) <= DETOUR_REACHED_DISTANCE:
+			_has_detour_point = false
+		elif not _is_segment_blocked(actor, actor.global_position, _detour_point):
+			var to_detour := _detour_point - actor.global_position
+			return _steer_around_obstacles(actor, to_detour.normalized() if to_detour.length_squared() > 0.0001 else Vector2.ZERO)
+	var new_detour := _pick_detour_point(actor, destination)
+	if new_detour != Vector2.ZERO:
+		_detour_point = new_detour
+		_has_detour_point = true
+		var to_new := _detour_point - actor.global_position
+		return _steer_around_obstacles(actor, to_new.normalized() if to_new.length_squared() > 0.0001 else Vector2.ZERO)
+	var to_direct := destination - actor.global_position
+	return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+
+func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
+	var base := (destination - actor.global_position).normalized()
+	if base.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	var best: Vector2 = Vector2.ZERO
+	var best_score: float = INF
+	for distance_v in DETOUR_SCAN_DISTANCES:
+		var distance := float(distance_v)
+		for angle_v in DETOUR_SCAN_ANGLES:
+			var dir := base.rotated(float(angle_v))
+			var candidate := actor.global_position + dir * distance
+			if _is_segment_blocked(actor, actor.global_position, candidate):
+				continue
+			var score := candidate.distance_to(destination) + actor.global_position.distance_to(candidate) * 0.2
+			if score < best_score:
+				best_score = score
+				best = candidate
+	return best
+
+func _is_segment_blocked(actor: CharacterBody2D, from_pos: Vector2, to_pos: Vector2) -> bool:
+	var segment := to_pos - from_pos
+	var length := segment.length()
+	if length <= 0.001:
+		return false
+	var dir := segment / length
+	var step := OBSTACLE_AVOID_LOOKAHEAD
+	var probe := step
+	while probe < length:
+		if actor.test_move(actor.global_transform, dir * probe):
+			return true
+		probe += step
+	return actor.test_move(actor.global_transform, segment)
 
 func _should_run_idle_patrol_tick(actor: CharacterBody2D) -> bool:
 	if _state != AIState.IDLE:
@@ -324,7 +465,7 @@ func _idle_noop(actor: CharacterBody2D) -> void:
 		return
 	if actor.velocity.length_squared() > 0.0001:
 		actor.velocity = Vector2.ZERO
-		if actor.has_method("update_movement_animation"):
+		if _should_play_animation() and actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 
 func _is_patrol_friendly(actor: CharacterBody2D, other: Node2D) -> bool:
@@ -367,13 +508,16 @@ func _force_unstuck_position(actor: CharacterBody2D) -> void:
 			actor.global_position += motion
 			return
 
-func _do_chase(actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
+func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	if target == null or not is_instance_valid(target):
 		_state = AIState.IDLE
+		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
 		_patrol_has_last_position = false
 		_patrol_stuck_time = 0.0
-		if actor.has_method("update_movement_animation"):
+		_chase_has_last_position = false
+		_chase_stuck_time = 0.0
+		if _should_play_animation() and actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
 		return
@@ -384,19 +528,19 @@ func _do_chase(actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMo
 	var stop_distance: float = max(0.0, combat.get_stop_distance())
 	var spacing_distance: float = max(0.0, stop_distance - COMBAT_SPACING_BUFFER)
 	if dist > stop_distance:
-		var chase_dir := _steer_around_obstacles(actor, to_target.normalized())
+		var chase_dir := _next_path_direction(actor, target.global_position, NAV_REPATH_CHASE_SEC)
 		actor.velocity = chase_dir * speed if chase_dir.length_squared() > 0.0001 else Vector2.ZERO
 	elif dist < spacing_distance:
+		_clear_nav_path()
 		var backstep_dir := _steer_around_obstacles(actor, (-to_target).normalized())
 		actor.velocity = backstep_dir * (speed * 0.5) if backstep_dir.length_squared() > 0.0001 else Vector2.ZERO
 	else:
+		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
-	if actor.has_method("update_movement_animation"):
-		var anim_dir: Vector2 = actor.velocity
-		if anim_dir.length_squared() <= 0.0001 and dist > 0.001:
-			anim_dir = to_target.normalized() * 0.02
-		actor.call("update_movement_animation", anim_dir, false)
+	if _should_play_animation() and actor.has_method("update_movement_animation"):
+		actor.call("update_movement_animation", actor.velocity, false)
 	actor.move_and_slide()
+	_track_chase_stuck(delta, actor, dist, stop_distance)
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 	var to_home: Vector2 = home_position - actor.global_position
@@ -404,21 +548,48 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 
 	if dist <= 6.0:
 		_state = AIState.IDLE
+		_clear_nav_path()
 		_has_patrol_target = false
 		_patrol_wait = patrol_pause_seconds
 		actor.velocity = Vector2.ZERO
 		_patrol_has_last_position = false
 		_patrol_stuck_time = 0.0
-		if actor.has_method("update_movement_animation"):
+		_chase_has_last_position = false
+		_chase_stuck_time = 0.0
+		if _should_play_animation() and actor.has_method("update_movement_animation"):
 			actor.call("update_movement_animation", Vector2.ZERO, false)
 		actor.move_and_slide()
 		return
 
-	var return_dir := _steer_around_obstacles(actor, to_home.normalized())
+	var return_dir := _next_path_direction(actor, home_position, NAV_REPATH_RETURN_SEC)
 	actor.velocity = return_dir * speed if return_dir.length_squared() > 0.0001 else Vector2.ZERO
-	if actor.has_method("update_movement_animation"):
-		var anim_dir: Vector2 = actor.velocity
-		if anim_dir.length_squared() <= 0.0001 and dist > 0.001:
-			anim_dir = to_home.normalized() * 0.02
-		actor.call("update_movement_animation", anim_dir, false)
+	if _should_play_animation() and actor.has_method("update_movement_animation"):
+		actor.call("update_movement_animation", actor.velocity, false)
 	actor.move_and_slide()
+	_track_chase_stuck(_delta, actor, dist, 6.0)
+
+func _track_chase_stuck(delta: float, actor: CharacterBody2D, distance_to_goal: float, stop_distance: float) -> void:
+	if actor == null or not is_instance_valid(actor):
+		return
+	if actor.velocity.length_squared() <= 0.001:
+		_chase_has_last_position = false
+		_chase_stuck_time = 0.0
+		return
+	if distance_to_goal <= stop_distance + 2.0:
+		_chase_has_last_position = false
+		_chase_stuck_time = 0.0
+		return
+	if _chase_has_last_position:
+		var progress := actor.global_position.distance_to(_chase_last_position)
+		if progress < 0.45:
+			_chase_stuck_time += delta
+			if _chase_stuck_time >= CHASE_HARD_STUCK_SEC:
+				_force_unstuck_position(actor)
+				_chase_stuck_time = 0.0
+				_chase_has_last_position = false
+			elif _chase_stuck_time >= CHASE_SOFT_STUCK_SEC:
+				_chase_stuck_time = CHASE_SOFT_STUCK_SEC
+		else:
+			_chase_stuck_time = 0.0
+	_chase_last_position = actor.global_position
+	_chase_has_last_position = true

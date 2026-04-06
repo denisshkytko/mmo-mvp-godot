@@ -84,9 +84,19 @@ const REGEN_PCT_PER_SEC: float = 0.02
 const THREAT_RECHECK_SEC: float = 0.25
 const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
 const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
+const VISUAL_SYNC_RECHECK_SEC: float = 0.20
+const LOD_VISIBLE_RADIUS_SCALE_X025: float = 8.0
+const LOD_MID_RADIUS_MULTIPLIER: float = 1.75
+const LOD_MID_TICK_SEC: float = 0.10
+const LOD_FAR_TICK_SEC: float = 0.22
 var _threat_recheck_timer: float = 0.0
 var _target_acquire_timer: float = 0.0
 var _target_validate_timer: float = 0.0
+var _visual_sync_timer: float = 0.0
+var _lod_tick_timer: float = 0.0
+var _player_cached: Node2D = null
+var _has_active_status_effects: bool = false
+var _activity_tier: int = 0
 
 # -----------------------------
 # Inspector (Common)
@@ -192,6 +202,13 @@ func _ready() -> void:
 	var cb := Callable(self, "_on_leash_return_started")
 	if c_ai.has_signal("leash_return_started") and not c_ai.leash_return_started.is_connected(cb):
 		c_ai.leash_return_started.connect(cb)
+	if c_stats != null and c_stats.has_signal("status_effects_presence_changed"):
+		var status_cb := Callable(self, "_on_status_effects_presence_changed")
+		if not c_stats.status_effects_presence_changed.is_connected(status_cb):
+			c_stats.status_effects_presence_changed.connect(status_cb)
+	_visual_sync_timer = randf() * VISUAL_SYNC_RECHECK_SEC
+	_lod_tick_timer = randf() * LOD_FAR_TICK_SEC
+	_player_cached = NodeCache.get_player(get_tree()) as Node2D
 
 	_update_faction_color()
 	_apply_interaction_visual()
@@ -397,6 +414,14 @@ func _place_world_collider_at_spawn(spawn_pos: Vector2) -> void:
 
 func _process(_delta: float) -> void:
 	var t_process_total := Time.get_ticks_usec()
+	_activity_tier = EntityActivityManager.get_activity_tier_for(self)
+	if _activity_tier != EntityActivityManager.ActivityTier.FULL:
+		if target_marker != null and is_instance_valid(target_marker):
+			target_marker.visible = false
+		if model_highlight != null and is_instance_valid(model_highlight):
+			model_highlight.visible = false
+		FRAME_PROFILER.add_usec("process.npc.total", Time.get_ticks_usec() - t_process_total)
+		return
 	var t_marker := Time.get_ticks_usec()
 	TargetMarkerHelper.set_marker_visible(target_marker, self)
 	FRAME_PROFILER.add_usec("process.npc.target_marker", Time.get_ticks_usec() - t_marker)
@@ -464,15 +489,20 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 func _physics_process(delta: float) -> void:
 	var t_physics_total := Time.get_ticks_usec()
 	var t_precheck := Time.get_ticks_usec()
-	_update_visual_render_order()
+	_visual_sync_timer = max(0.0, _visual_sync_timer - delta)
+	if _visual_sync_timer <= 0.0:
+		_visual_sync_timer = VISUAL_SYNC_RECHECK_SEC
+		_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
 		FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
 		return
 
-	if c_stats != null and c_stats.has_method("tick_status_effects"):
+	if _has_active_status_effects and c_stats != null and c_stats.has_method("tick_status_effects"):
+		var t_status_effects := Time.get_ticks_usec()
 		c_stats.call("tick_status_effects", delta)
+		FRAME_PROFILER.add_usec("npc.physics.status_effects", Time.get_ticks_usec() - t_status_effects)
 	if not c_stats.is_dead and c_stats.current_hp <= 0:
 		_die()
 		FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
@@ -495,6 +525,27 @@ func _physics_process(delta: float) -> void:
 		return
 	_set_model_stunned(false)
 	FRAME_PROFILER.add_usec("npc.physics.precheck", Time.get_ticks_usec() - t_precheck)
+
+	if _player_cached == null or not is_instance_valid(_player_cached):
+		_player_cached = NodeCache.get_player(get_tree()) as Node2D
+	_activity_tier = EntityActivityManager.get_activity_tier_for(self)
+	if c_ai != null and c_ai.has_method("set_activity_tier"):
+		c_ai.call("set_activity_tier", _activity_tier)
+	var lod_tick_sec := _resolve_lod_tick_interval()
+	if lod_tick_sec > 0.0 and not _is_high_priority_simulation():
+		_lod_tick_timer = max(0.0, _lod_tick_timer - delta)
+		if _lod_tick_timer > 0.0:
+			if regen_active and c_stats.current_hp < c_stats.max_hp:
+				c_stats.current_hp = RegenHelper.tick_regen(c_stats.current_hp, c_stats.max_hp, delta, REGEN_PCT_PER_SEC)
+				_update_hp()
+				if c_stats.current_hp >= c_stats.max_hp:
+					regen_active = false
+			FRAME_PROFILER.add_usec("npc.physics.lod_skip", Time.get_ticks_usec() - t_physics_total)
+			FRAME_PROFILER.add_usec("npc.physics.total", Time.get_ticks_usec() - t_physics_total)
+			return
+		_lod_tick_timer = lod_tick_sec
+	else:
+		_lod_tick_timer = 0.0
 
 	_threat_recheck_timer = max(0.0, _threat_recheck_timer - delta)
 	_target_acquire_timer = max(0.0, _target_acquire_timer - delta)
@@ -520,6 +571,7 @@ func _physics_process(delta: float) -> void:
 		current_target = null
 		_target_acquire_timer = 0.0
 		_target_validate_timer = 0.0
+		regen_active = true
 		# если потеряли цель — чистим retaliation (иначе yellow будет "залипать")
 		retaliation_active = false
 		retaliation_target_id = 0
@@ -572,12 +624,15 @@ func _physics_process(delta: float) -> void:
 			regen_active = true
 
 	if _prev_target != null and not is_instance_valid(_prev_target):
+		if current_target == null:
+			regen_active = true
 		_prev_target = null
 	if current_target != null and not is_instance_valid(current_target):
 		current_target = null
 		_target_acquire_timer = 0.0
 		_target_validate_timer = 0.0
 	_refresh_threat_target()
+	current_target = _sanitize_target_ref(current_target)
 
 	if _prev_target != current_target:
 		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
@@ -595,21 +650,23 @@ func _physics_process(delta: float) -> void:
 
 	# AI tick
 	var t_ai_tick := Time.get_ticks_usec()
-	c_ai.tick(delta, self, current_target, c_combat, proactive_aggro)
+	var ai_target := _sanitize_target_ref(current_target)
+	current_target = ai_target
+	c_ai.tick(delta, self, ai_target, c_combat, proactive_aggro)
 	FRAME_PROFILER.add_usec("npc.physics.ai_tick", Time.get_ticks_usec() - t_ai_tick)
 
 	# combat tick
-	if current_target != null and is_instance_valid(current_target):
+	if ai_target != null:
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		if not c_spell_caster.should_block_auto_attack():
 			var t_combat_tick := Time.get_ticks_usec()
-			c_combat.tick(delta, self, current_target, snap)
+			c_combat.tick(delta, self, ai_target, snap)
 			FRAME_PROFILER.add_usec("npc.physics.combat_tick", Time.get_ticks_usec() - t_combat_tick)
 		var t_spell_tick := Time.get_ticks_usec()
-		c_spell_caster.tick(delta, current_target)
+		c_spell_caster.tick(delta, ai_target)
 		FRAME_PROFILER.add_usec("npc.physics.spell_tick", Time.get_ticks_usec() - t_spell_tick)
 
-	if (current_target == null or not is_instance_valid(current_target)) and c_spell_caster != null and c_spell_caster.is_casting():
+	if ai_target == null and c_spell_caster != null and c_spell_caster.is_casting():
 		c_spell_caster.interrupt_cast("lost_target")
 
 	var t_cast_bar := Time.get_ticks_usec()
@@ -991,6 +1048,7 @@ func _now_sec() -> float:
 func _refresh_threat_target() -> void:
 	if c_ai == null or c_ai.state != FactionNPCAI.State.CHASE:
 		return
+	current_target = _sanitize_target_ref(current_target)
 	if current_target == null:
 		return
 	if _threat_recheck_timer > 0.0:
@@ -1005,8 +1063,37 @@ func _refresh_threat_target() -> void:
 		direct_attackers,
 		"npc.physics"
 	)
+	threat_target = _sanitize_target_ref(threat_target)
 	if threat_target != null and threat_target != current_target:
 		current_target = threat_target
+
+func _sanitize_target_ref(target: Node2D) -> Node2D:
+	if target == null or not is_instance_valid(target):
+		return null
+	if "is_dead" in target and bool(target.get("is_dead")):
+		return null
+	return target
+
+func _is_high_priority_simulation() -> bool:
+	if current_target != null and is_instance_valid(current_target):
+		return true
+	if direct_attackers.size() > 0:
+		return true
+	if c_ai != null and c_ai.state == FactionNPCAI.State.RETURN:
+		return true
+	if c_spell_caster != null and c_spell_caster.is_casting():
+		return true
+	return false
+
+func _resolve_lod_tick_interval() -> float:
+	if _activity_tier == EntityActivityManager.ActivityTier.FULL:
+		return 0.0
+	if _activity_tier == EntityActivityManager.ActivityTier.SIM:
+		return LOD_MID_TICK_SEC
+	return LOD_FAR_TICK_SEC
+
+func _on_status_effects_presence_changed(active: bool) -> void:
+	_has_active_status_effects = active
 
 func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:
