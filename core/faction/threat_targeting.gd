@@ -29,6 +29,7 @@ static func pick_target_by_threat(
 	var best_threat: float = 0.0
 	var leash_distance_sq: float = leash_distance * leash_distance
 	var aggro_radius_sq: float = aggro_radius * aggro_radius
+	var actor_pos: Vector2 = actor.global_position
 
 	var t_direct := Time.get_ticks_usec()
 	for attacker_id in direct_attackers.keys():
@@ -76,9 +77,9 @@ static func pick_target_by_threat(
 		var candidate := obj as Node2D
 		if "is_dead" in candidate and bool(candidate.get("is_dead")):
 			continue
-		if not candidate.has_method("is_in_combat"):
+		if home_pos.distance_squared_to(candidate.global_position) > leash_distance_sq:
 			continue
-		if not bool(candidate.call("is_in_combat")):
+		if actor_pos.distance_squared_to(candidate.global_position) > aggro_radius_sq:
 			continue
 
 		var tf: String = ""
@@ -87,10 +88,9 @@ static func pick_target_by_threat(
 		var rel := FactionRules.relation(actor_faction_id, tf)
 		if rel != FactionRules.Relation.HOSTILE:
 			continue
-
-		if actor.global_position.distance_squared_to(candidate.global_position) > aggro_radius_sq:
+		if not candidate.has_method("is_in_combat"):
 			continue
-		if home_pos.distance_squared_to(candidate.global_position) > leash_distance_sq:
+		if not bool(candidate.call("is_in_combat")):
 			continue
 
 		var dps := _get_dps(candidate, now_sec)

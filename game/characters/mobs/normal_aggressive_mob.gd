@@ -160,13 +160,15 @@ var last_attacker: Node2D = null
 
 var loot_owner_player_id: int = 0
 
-const THREAT_RECHECK_SEC: float = 0.25
-const TARGET_ACQUIRE_RECHECK_SEC: float = 0.20
-const TARGET_ACQUIRE_IDLE_RECHECK_SEC: float = 0.45
-const TARGET_VALIDATE_RECHECK_SEC: float = 0.12
+const THREAT_RECHECK_SEC: float = 0.35
+const TARGET_ACQUIRE_RECHECK_SEC: float = 0.30
+const TARGET_ACQUIRE_IDLE_RECHECK_SEC: float = 0.80
+const TARGET_VALIDATE_RECHECK_SEC: float = 0.20
+const VISUAL_SYNC_RECHECK_SEC: float = 0.20
 var _threat_recheck_timer: float = 0.0
 var _target_acquire_timer: float = 0.0
 var _target_validate_timer: float = 0.0
+var _visual_sync_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -188,6 +190,9 @@ func _ready() -> void:
 
 	if home_position == Vector2.ZERO:
 		home_position = global_position
+	_target_acquire_timer = randf() * TARGET_ACQUIRE_IDLE_RECHECK_SEC
+	_target_validate_timer = randf() * TARGET_VALIDATE_RECHECK_SEC
+	_visual_sync_timer = randf() * VISUAL_SYNC_RECHECK_SEC
 
 	# If the mob is placed manually in the scene, apply Common params to AI.
 	if c_ai != null:
@@ -256,7 +261,10 @@ func _apply_y_sort_origin(origin_y: float) -> void:
 func _physics_process(delta: float) -> void:
 	var t_physics_total := Time.get_ticks_usec()
 	var t_precheck := Time.get_ticks_usec()
-	_update_visual_render_order()
+	_visual_sync_timer = max(0.0, _visual_sync_timer - delta)
+	if _visual_sync_timer <= 0.0:
+		_visual_sync_timer = VISUAL_SYNC_RECHECK_SEC
+		_update_visual_render_order()
 	if c_stats.is_dead or c_stats.current_hp <= 0:
 		_die()
 		FRAME_PROFILER.add_usec("mob_aggressive.physics.precheck", Time.get_ticks_usec() - t_precheck)
@@ -334,6 +342,7 @@ func _physics_process(delta: float) -> void:
 		_target_validate_timer = 0.0
 
 	_refresh_threat_target()
+	current_target = _sanitize_target_ref(current_target)
 
 	if _prev_target != current_target:
 		var prev_valid := (_prev_target != null and is_instance_valid(_prev_target))
@@ -363,20 +372,22 @@ func _physics_process(delta: float) -> void:
 	FRAME_PROFILER.add_usec("mob_aggressive.physics.mode_sync", Time.get_ticks_usec() - t_mode_sync)
 
 	var t_ai_tick := Time.get_ticks_usec()
-	c_ai.tick(delta, self, current_target, c_combat)
+	var ai_target := _sanitize_target_ref(current_target)
+	current_target = ai_target
+	c_ai.tick(delta, self, ai_target, c_combat)
 	FRAME_PROFILER.add_usec("mob_aggressive.physics.ai_tick", Time.get_ticks_usec() - t_ai_tick)
 
-	if current_target != null and is_instance_valid(current_target):
+	if ai_target != null:
 		var snap: Dictionary = c_stats.get_stats_snapshot()
 		if not c_spell_caster.should_block_auto_attack():
 			var t_combat_tick := Time.get_ticks_usec()
-			c_combat.tick(delta, self, current_target, snap)
+			c_combat.tick(delta, self, ai_target, snap)
 			FRAME_PROFILER.add_usec("mob_aggressive.physics.combat_tick", Time.get_ticks_usec() - t_combat_tick)
 		var t_spell_tick := Time.get_ticks_usec()
-		c_spell_caster.tick(delta, current_target)
+		c_spell_caster.tick(delta, ai_target)
 		FRAME_PROFILER.add_usec("mob_aggressive.physics.spell_tick", Time.get_ticks_usec() - t_spell_tick)
 
-	if (current_target == null or not is_instance_valid(current_target)) and c_spell_caster != null and c_spell_caster.is_casting():
+	if ai_target == null and c_spell_caster != null and c_spell_caster.is_casting():
 		c_spell_caster.interrupt_cast("lost_target")
 
 	var t_cast_bar := Time.get_ticks_usec()
@@ -844,6 +855,7 @@ func _now_sec() -> float:
 func _refresh_threat_target() -> void:
 	if c_ai == null or c_ai.is_returning():
 		return
+	current_target = _sanitize_target_ref(current_target)
 	if current_target == null:
 		return
 	if _threat_recheck_timer > 0.0:
@@ -858,8 +870,16 @@ func _refresh_threat_target() -> void:
 		direct_attackers,
 		"mob_aggressive.physics"
 	)
+	threat_target = _sanitize_target_ref(threat_target)
 	if threat_target != null and threat_target != current_target:
 		current_target = threat_target
+
+func _sanitize_target_ref(target: Node2D) -> Node2D:
+	if target == null or not is_instance_valid(target):
+		return null
+	if "is_dead" in target and bool(target.get("is_dead")):
+		return null
+	return target
 
 func _clear_direct_attackers() -> void:
 	if direct_attackers.size() > 0:

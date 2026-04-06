@@ -24,6 +24,7 @@ static func pick_hostile_target(self_node: Node2D, self_faction_id: String, radi
 	var best_d: float = INF
 	var radius_sq: float = radius * radius
 	var now_sec: float = float(Time.get_ticks_msec()) / 1000.0
+	var self_pos: Vector2 = self_node.global_position
 
 	var unit_ids := _get_cached_faction_unit_ids(self_node.get_tree(), now_sec)
 	var scanned_units: int = 0
@@ -42,15 +43,14 @@ static func pick_hostile_target(self_node: Node2D, self_faction_id: String, radi
 		if "is_dead" in n and bool(n.get("is_dead")):
 			continue
 
-		var tf: String = ""
-		if n.has_method("get_faction_id"):
-			tf = String(n.call("get_faction_id"))
-		var rel := FactionRules.relation(self_faction_id, tf)
-		if rel != FactionRules.Relation.HOSTILE:
-			continue
-
-		var d_sq := self_node.global_position.distance_squared_to(n.global_position)
+		var d_sq := self_pos.distance_squared_to(n.global_position)
 		if d_sq <= radius_sq and d_sq < best_d:
+			var tf: String = ""
+			if n.has_method("get_faction_id"):
+				tf = String(n.call("get_faction_id"))
+			var rel := FactionRules.relation(self_faction_id, tf)
+			if rel != FactionRules.Relation.HOSTILE:
+				continue
 			best_d = d_sq
 			best = n
 	FRAME_PROFILER.add_count("%s.targeting.faction_pick_units_checked" % _metric_root(metric_prefix), float(scanned_units))

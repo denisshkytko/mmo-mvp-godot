@@ -84,10 +84,6 @@ static func die_and_spawn(
 		return null
 
 	var resolved_owner_player_id := loot_owner_player_id
-	if resolved_owner_player_id == 0:
-		var fallback_player := NODE_CACHE.get_player(self_node.get_tree())
-		if fallback_player != null and fallback_player.is_in_group("player"):
-			resolved_owner_player_id = fallback_player.get_instance_id()
 
 	var corpse := spawn_corpse(self_node.get_parent(), self_node.global_position)
 	if corpse != null:
