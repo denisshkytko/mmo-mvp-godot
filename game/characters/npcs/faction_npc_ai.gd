@@ -22,6 +22,7 @@ const NAV_REPATH_PATROL_SEC: float = 0.65
 const NAV_REPATH_CHASE_SEC: float = 0.20
 const NAV_REPATH_RETURN_SEC: float = 0.25
 const NAV_POINT_REACHED_DISTANCE: float = 8.0
+const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
@@ -224,6 +225,10 @@ func _compute_patrol_separation(actor: CharacterBody2D) -> Vector2:
 		var dist: float = offset.length()
 		if dist <= 0.001 or dist >= PATROL_SEPARATION_DISTANCE:
 			continue
+		if dist < SEPARATION_CRITICAL_DISTANCE:
+			repel += (offset / max(0.001, dist)) * 2.0
+			nearby_count += 1
+			continue
 		var strength: float = (PATROL_SEPARATION_DISTANCE - dist) / PATROL_SEPARATION_DISTANCE
 		repel += (offset / dist) * strength
 		nearby_count += 1
@@ -231,7 +236,9 @@ func _compute_patrol_separation(actor: CharacterBody2D) -> Vector2:
 			break
 	if repel.length_squared() <= 0.0001:
 		return Vector2.ZERO
-	return repel.normalized() * min(1.0, repel.length())
+	if nearby_count > 3:
+		repel *= 1.5
+	return repel.normalized() * min(2.0, repel.length())
 
 func _compute_patrol_separation_cached(actor: CharacterBody2D, cache: Node) -> Vector2:
 	var nearby_v: Variant = cache.call("get_nearby_faction_units", actor, PATROL_SEPARATION_DISTANCE, "faction_units")
@@ -249,6 +256,10 @@ func _compute_patrol_separation_cached(actor: CharacterBody2D, cache: Node) -> V
 		var dist: float = offset.length()
 		if dist <= 0.001 or dist >= PATROL_SEPARATION_DISTANCE:
 			continue
+		if dist < SEPARATION_CRITICAL_DISTANCE:
+			repel += (offset / max(0.001, dist)) * 2.0
+			nearby_count += 1
+			continue
 		var strength: float = (PATROL_SEPARATION_DISTANCE - dist) / PATROL_SEPARATION_DISTANCE
 		repel += (offset / dist) * strength
 		nearby_count += 1
@@ -256,7 +267,9 @@ func _compute_patrol_separation_cached(actor: CharacterBody2D, cache: Node) -> V
 			break
 	if repel.length_squared() <= 0.0001:
 		return Vector2.ZERO
-	return repel.normalized() * min(1.0, repel.length())
+	if nearby_count > 3:
+		repel *= 1.5
+	return repel.normalized() * min(2.0, repel.length())
 
 func _get_proximity_cache(actor: CharacterBody2D) -> Node:
 	if actor == null or not is_instance_valid(actor):
@@ -283,25 +296,13 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 		_nav_allow_direct_fallback = true
 		return
 	var map := world.navigation_map
-	if not NavigationServer2D.map_is_active(map):
-		_nav_path = [destination]
-		_nav_path_index = 0
-		_nav_allow_direct_fallback = true
-		return
-	if NavigationServer2D.map_get_iteration_id(map) <= 0:
-		_nav_path.clear()
-		_nav_path_index = 0
-		_nav_allow_direct_fallback = true
-		return
-	var start := NavigationServer2D.map_get_closest_point(map, actor.global_position)
-	var goal := NavigationServer2D.map_get_closest_point(map, destination)
-	var points := NavigationServer2D.map_get_path(map, start, goal, true)
+	var points := NavPathManager.request_path(map, actor.global_position, destination, true)
 	_nav_path.clear()
 	for p in points:
 		if p is Vector2:
 			_nav_path.append(p as Vector2)
 	_nav_allow_direct_fallback = _nav_path.is_empty()
-	if not _nav_path.is_empty() and goal.distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
+	if not _nav_path.is_empty() and _nav_path[_nav_path.size() - 1].distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
 		_nav_path.append(destination)
 	_nav_path_index = 0
 	_advance_path_index(actor.global_position)
