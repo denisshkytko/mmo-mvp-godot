@@ -22,6 +22,9 @@ const NAV_REPATH_CHASE_SEC: float = 0.20
 const NAV_REPATH_RETURN_SEC: float = 0.25
 const NAV_POINT_REACHED_DISTANCE: float = 8.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
+const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
+const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
+const DETOUR_REACHED_DISTANCE: float = 10.0
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -56,6 +59,8 @@ var _nav_path: Array[Vector2] = []
 var _nav_path_index: int = 0
 var _nav_repath_timer: float = 0.0
 var _nav_allow_direct_fallback: bool = true
+var _has_detour_point: bool = false
+var _detour_point: Vector2 = Vector2.ZERO
 
 func set_activity_tier(value: int) -> void:
 	_activity_tier = value
@@ -369,11 +374,10 @@ func _advance_path_index(current_pos: Vector2) -> void:
 func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_sec: float) -> Vector2:
 	_build_path(actor, destination, repath_sec)
 	if _nav_path_index >= _nav_path.size():
-		var to_direct := destination - actor.global_position
 		if _nav_allow_direct_fallback:
-			var direct_dir := to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO
-			return _steer_around_obstacles(actor, direct_dir)
+			return _next_fallback_direction(actor, destination)
 		return Vector2.ZERO
+	_has_detour_point = false
 	var waypoint := _nav_path[_nav_path_index]
 	var to_waypoint := waypoint - actor.global_position
 	if to_waypoint.length_squared() <= 0.0001:
@@ -386,6 +390,62 @@ func _clear_nav_path() -> void:
 	_nav_path_index = 0
 	_nav_repath_timer = 0.0
 	_nav_allow_direct_fallback = true
+	_has_detour_point = false
+
+func _next_fallback_direction(actor: CharacterBody2D, destination: Vector2) -> Vector2:
+	if actor == null or not is_instance_valid(actor):
+		return Vector2.ZERO
+	if not _is_segment_blocked(actor, actor.global_position, destination):
+		_has_detour_point = false
+		var to_direct := destination - actor.global_position
+		return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+	if _has_detour_point:
+		if actor.global_position.distance_to(_detour_point) <= DETOUR_REACHED_DISTANCE:
+			_has_detour_point = false
+		elif not _is_segment_blocked(actor, actor.global_position, _detour_point):
+			var to_detour := _detour_point - actor.global_position
+			return _steer_around_obstacles(actor, to_detour.normalized() if to_detour.length_squared() > 0.0001 else Vector2.ZERO)
+	var new_detour := _pick_detour_point(actor, destination)
+	if new_detour != Vector2.ZERO:
+		_detour_point = new_detour
+		_has_detour_point = true
+		var to_new := _detour_point - actor.global_position
+		return _steer_around_obstacles(actor, to_new.normalized() if to_new.length_squared() > 0.0001 else Vector2.ZERO)
+	var to_direct := destination - actor.global_position
+	return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+
+func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
+	var base := (destination - actor.global_position).normalized()
+	if base.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	var best: Vector2 = Vector2.ZERO
+	var best_score: float = INF
+	for distance_v in DETOUR_SCAN_DISTANCES:
+		var distance := float(distance_v)
+		for angle_v in DETOUR_SCAN_ANGLES:
+			var dir := base.rotated(float(angle_v))
+			var candidate := actor.global_position + dir * distance
+			if _is_segment_blocked(actor, actor.global_position, candidate):
+				continue
+			var score := candidate.distance_to(destination) + actor.global_position.distance_to(candidate) * 0.2
+			if score < best_score:
+				best_score = score
+				best = candidate
+	return best
+
+func _is_segment_blocked(actor: CharacterBody2D, from_pos: Vector2, to_pos: Vector2) -> bool:
+	var segment := to_pos - from_pos
+	var length := segment.length()
+	if length <= 0.001:
+		return false
+	var dir := segment / length
+	var step := OBSTACLE_AVOID_LOOKAHEAD
+	var probe := step
+	while probe < length:
+		if actor.test_move(actor.global_transform, dir * probe):
+			return true
+		probe += step
+	return actor.test_move(actor.global_transform, segment)
 
 func _should_run_idle_patrol_tick(actor: CharacterBody2D) -> bool:
 	if _state != AIState.IDLE:
