@@ -1,5 +1,4 @@
 extends Node
-class_name NavPathManager
 
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
