@@ -291,7 +291,7 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 	if NavigationServer2D.map_get_iteration_id(map) <= 0:
 		_nav_path.clear()
 		_nav_path_index = 0
-		_nav_allow_direct_fallback = false
+		_nav_allow_direct_fallback = true
 		return
 	var start := NavigationServer2D.map_get_closest_point(map, actor.global_position)
 	var goal := NavigationServer2D.map_get_closest_point(map, destination)
@@ -317,7 +317,8 @@ func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_s
 	if _nav_path_index >= _nav_path.size():
 		var to_direct := destination - actor.global_position
 		if _nav_allow_direct_fallback:
-			return to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO
+			var direct_dir := to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO
+			return _steer_around_obstacles(actor, direct_dir)
 		return Vector2.ZERO
 	var waypoint := _nav_path[_nav_path_index]
 	var to_waypoint := waypoint - actor.global_position
@@ -404,10 +405,7 @@ func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: Fac
 		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
 	if _should_play_animation() and actor.has_method("update_movement_animation"):
-		var anim_dir: Vector2 = actor.velocity
-		if anim_dir.length_squared() <= 0.0001 and dist > 0.001:
-			anim_dir = to.normalized() * 0.02
-		actor.call("update_movement_animation", anim_dir, false)
+		actor.call("update_movement_animation", actor.velocity, false)
 	actor.move_and_slide()
 	_track_chase_stuck(actor, dist, stop, delta)
 
@@ -439,10 +437,7 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 	var return_dir := _next_path_direction(actor, home_position, NAV_REPATH_RETURN_SEC)
 	actor.velocity = return_dir * speed if return_dir.length_squared() > 0.0001 else Vector2.ZERO
 	if _should_play_animation() and actor.has_method("update_movement_animation"):
-		var anim_dir: Vector2 = actor.velocity
-		if anim_dir.length_squared() <= 0.0001 and dist_home > 0.001:
-			anim_dir = to.normalized() * 0.02
-		actor.call("update_movement_animation", anim_dir, false)
+		actor.call("update_movement_animation", actor.velocity, false)
 	actor.move_and_slide()
 	_track_chase_stuck(actor, dist_home, 6.0, _delta)
 
