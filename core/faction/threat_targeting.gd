@@ -63,18 +63,14 @@ static func pick_target_by_threat(
 	FRAME_PROFILER.add_count("%s.targeting.direct_attackers_checked" % _metric_root(metric_prefix), float(direct_attackers.size()))
 
 	var t_faction_scan := Time.get_ticks_usec()
-	var unit_ids := _get_cached_faction_unit_ids(actor.get_tree(), now_sec)
+	var nearby_units := _get_nearby_faction_units(actor, aggro_radius, now_sec)
 	var scanned_units: int = 0
-	for unit_id in unit_ids:
+	for candidate in nearby_units:
 		scanned_units += 1
-		var obj := instance_from_id(unit_id)
-		if obj == null or not is_instance_valid(obj):
+		if candidate == actor:
 			continue
-		if obj == actor:
+		if candidate == null or not is_instance_valid(candidate):
 			continue
-		if not (obj is Node2D):
-			continue
-		var candidate := obj as Node2D
 		if "is_dead" in candidate and bool(candidate.get("is_dead")):
 			continue
 		if home_pos.distance_squared_to(candidate.global_position) > leash_distance_sq:
@@ -106,6 +102,34 @@ static func pick_target_by_threat(
 		return best_target
 	_add_metric(metric_prefix, "threat_total", t_total)
 	return null
+
+static func _get_nearby_faction_units(actor: Node2D, radius: float, now_sec: float) -> Array[Node2D]:
+	if actor == null or not is_instance_valid(actor):
+		return []
+	var tree := actor.get_tree()
+	if tree == null or tree.root == null:
+		return _resolve_units_from_ids(_get_cached_faction_unit_ids(tree, now_sec))
+	var cache := tree.root.get_node_or_null("MobProximityCache")
+	if cache != null and cache.has_method("get_nearby_faction_units"):
+		var nearby_v: Variant = cache.call("get_nearby_faction_units", actor, radius, "faction_units")
+		if nearby_v is Array:
+			var nearby_arr := nearby_v as Array
+			var typed: Array[Node2D] = []
+			for item in nearby_arr:
+				if item is Node2D:
+					typed.append(item as Node2D)
+			return typed
+	return _resolve_units_from_ids(_get_cached_faction_unit_ids(tree, now_sec))
+
+static func _resolve_units_from_ids(unit_ids: Array[int]) -> Array[Node2D]:
+	var out: Array[Node2D] = []
+	for unit_id in unit_ids:
+		var obj := instance_from_id(unit_id)
+		if obj == null or not is_instance_valid(obj):
+			continue
+		if obj is Node2D:
+			out.append(obj as Node2D)
+	return out
 
 
 static func _get_cached_faction_unit_ids(tree: SceneTree, now_sec: float) -> Array[int]:

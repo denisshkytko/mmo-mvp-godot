@@ -333,13 +333,21 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 		_nav_path_index = 0
 		return
 	var map := world.navigation_map
-	var points := NavigationServer2D.map_get_path(map, actor.global_position, destination, true)
+	if not NavigationServer2D.map_is_active(map):
+		_nav_path = [destination]
+		_nav_path_index = 0
+		return
+	var start := NavigationServer2D.map_get_closest_point(map, actor.global_position)
+	var goal := NavigationServer2D.map_get_closest_point(map, destination)
+	var points := NavigationServer2D.map_get_path(map, start, goal, true)
 	_nav_path.clear()
 	for p in points:
 		if p is Vector2:
 			_nav_path.append(p as Vector2)
 	if _nav_path.is_empty():
 		_nav_path = [destination]
+	elif goal.distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
+		_nav_path.append(destination)
 	_nav_path_index = 0
 	_advance_path_index(actor.global_position)
 
