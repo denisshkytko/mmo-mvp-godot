@@ -354,9 +354,8 @@ func _next_fallback_direction(actor: CharacterBody2D, destination: Vector2) -> V
 		return Vector2.ZERO
 	if not _is_segment_blocked(actor, actor.global_position, destination):
 		_clear_fallback_path()
-		_has_detour_point = false
 		var to_direct := destination - actor.global_position
-		return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+		return to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO
 	var fallback_dir := _follow_fallback_path(actor)
 	if fallback_dir != Vector2.ZERO:
 		return fallback_dir
@@ -366,20 +365,7 @@ func _next_fallback_direction(actor: CharacterBody2D, destination: Vector2) -> V
 	fallback_dir = _follow_fallback_path(actor)
 	if fallback_dir != Vector2.ZERO:
 		return fallback_dir
-	if _has_detour_point:
-		if actor.global_position.distance_to(_detour_point) <= DETOUR_REACHED_DISTANCE:
-			_has_detour_point = false
-		elif not _is_segment_blocked(actor, actor.global_position, _detour_point):
-			var to_detour := _detour_point - actor.global_position
-			return _steer_around_obstacles(actor, to_detour.normalized() if to_detour.length_squared() > 0.0001 else Vector2.ZERO)
-	var new_detour := _pick_detour_point(actor, destination)
-	if new_detour != Vector2.ZERO:
-		_detour_point = new_detour
-		_has_detour_point = true
-		var to_new := _detour_point - actor.global_position
-		return _steer_around_obstacles(actor, to_new.normalized() if to_new.length_squared() > 0.0001 else Vector2.ZERO)
-	var to_direct := destination - actor.global_position
-	return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+	return Vector2.ZERO
 
 func _clear_fallback_path() -> void:
 	_fallback_path.clear()
