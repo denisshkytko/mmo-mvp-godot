@@ -30,6 +30,8 @@ const LOCAL_FALLBACK_GRID_MARGIN: float = 128.0
 const LOCAL_FALLBACK_GRID_MAX_CELLS: int = 36
 const LOCAL_FALLBACK_REPATH_SEC: float = 0.45
 const LOCAL_FALLBACK_POINT_REACHED_DISTANCE: float = 10.0
+const LOCAL_FALLBACK_GRID_STEPS := [32.0, 40.0, 56.0]
+const LOCAL_FALLBACK_GRID_MARGINS := [128.0, 224.0, 352.0]
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -437,12 +439,19 @@ func _follow_fallback_path(actor: CharacterBody2D) -> Vector2:
 func _build_local_fallback_path(actor: CharacterBody2D, destination: Vector2) -> void:
 	_fallback_path.clear()
 	_fallback_path_index = 0
+	var attempts := mini(LOCAL_FALLBACK_GRID_STEPS.size(), LOCAL_FALLBACK_GRID_MARGINS.size())
+	for i in range(attempts):
+		var step: float = float(LOCAL_FALLBACK_GRID_STEPS[i])
+		var margin: float = float(LOCAL_FALLBACK_GRID_MARGINS[i])
+		if _try_build_local_fallback_path(actor, destination, step, margin):
+			return
+
+func _try_build_local_fallback_path(actor: CharacterBody2D, destination: Vector2, step: float, margin: float) -> bool:
 	var start: Vector2 = actor.global_position
-	var min_x: float = minf(start.x, destination.x) - LOCAL_FALLBACK_GRID_MARGIN
-	var min_y: float = minf(start.y, destination.y) - LOCAL_FALLBACK_GRID_MARGIN
-	var max_x: float = maxf(start.x, destination.x) + LOCAL_FALLBACK_GRID_MARGIN
-	var max_y: float = maxf(start.y, destination.y) + LOCAL_FALLBACK_GRID_MARGIN
-	var step: float = LOCAL_FALLBACK_GRID_STEP
+	var min_x: float = minf(start.x, destination.x) - margin
+	var min_y: float = minf(start.y, destination.y) - margin
+	var max_x: float = maxf(start.x, destination.x) + margin
+	var max_y: float = maxf(start.y, destination.y) + margin
 	var max_span := float(LOCAL_FALLBACK_GRID_MAX_CELLS - 1) * step
 	if max_x - min_x > max_span:
 		var cx := (start.x + destination.x) * 0.5
@@ -481,14 +490,14 @@ func _build_local_fallback_path(actor: CharacterBody2D, destination: Vector2) ->
 					if not astar.are_points_connected(id, nid):
 						astar.connect_points(id, nid, false)
 	if astar.get_point_count() <= 1:
-		return
+		return false
 	var start_id := astar.get_closest_point(start)
 	var goal_id := astar.get_closest_point(destination)
 	if start_id < 0 or goal_id < 0:
-		return
+		return false
 	var id_path := astar.get_id_path(start_id, goal_id)
 	if id_path.is_empty():
-		return
+		return false
 	for id_v in id_path:
 		var pid := int(id_v)
 		if not astar.has_point(pid):
@@ -498,9 +507,10 @@ func _build_local_fallback_path(actor: CharacterBody2D, destination: Vector2) ->
 			continue
 		_fallback_path.append(p)
 	if _fallback_path.is_empty():
-		return
+		return false
 	if _fallback_path[_fallback_path.size() - 1].distance_to(destination) > LOCAL_FALLBACK_POINT_REACHED_DISTANCE:
 		_fallback_path.append(destination)
+	return true
 
 func _is_probe_walkable(actor: CharacterBody2D, point: Vector2) -> bool:
 	var world := actor.get_world_2d()
