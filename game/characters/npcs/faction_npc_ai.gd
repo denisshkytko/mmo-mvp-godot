@@ -26,6 +26,11 @@ const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
 const DETOUR_REACHED_DISTANCE: float = 10.0
+const LOCAL_FALLBACK_GRID_STEP: float = 32.0
+const LOCAL_FALLBACK_GRID_MARGIN: float = 128.0
+const LOCAL_FALLBACK_GRID_MAX_CELLS: int = 36
+const LOCAL_FALLBACK_REPATH_SEC: float = 0.45
+const LOCAL_FALLBACK_POINT_REACHED_DISTANCE: float = 10.0
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
@@ -57,6 +62,9 @@ var _nav_repath_timer: float = 0.0
 var _nav_allow_direct_fallback: bool = true
 var _has_detour_point: bool = false
 var _detour_point: Vector2 = Vector2.ZERO
+var _fallback_path: Array[Vector2] = []
+var _fallback_path_index: int = 0
+var _fallback_repath_timer: float = 0.0
 
 func set_activity_tier(value: int) -> void:
 	_activity_tier = value
@@ -85,6 +93,7 @@ func on_took_damage(attacker: Node2D) -> void:
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat, proactive: bool) -> void:
 	_nav_repath_timer = max(0.0, _nav_repath_timer - delta)
+	_fallback_repath_timer = max(0.0, _fallback_repath_timer - delta)
 	var t_leash := Time.get_ticks_usec()
 	var dist_home: float = actor.global_position.distance_to(home_position)
 	if state == State.CHASE and dist_home > leash_distance:
@@ -338,14 +347,25 @@ func _clear_nav_path() -> void:
 	_nav_repath_timer = 0.0
 	_nav_allow_direct_fallback = true
 	_has_detour_point = false
+	_clear_fallback_path()
 
 func _next_fallback_direction(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	if actor == null or not is_instance_valid(actor):
 		return Vector2.ZERO
 	if not _is_segment_blocked(actor, actor.global_position, destination):
+		_clear_fallback_path()
 		_has_detour_point = false
 		var to_direct := destination - actor.global_position
 		return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+	var fallback_dir := _follow_fallback_path(actor)
+	if fallback_dir != Vector2.ZERO:
+		return fallback_dir
+	if _fallback_repath_timer <= 0.0:
+		_build_local_fallback_path(actor, destination)
+	_fallback_repath_timer = LOCAL_FALLBACK_REPATH_SEC
+	fallback_dir = _follow_fallback_path(actor)
+	if fallback_dir != Vector2.ZERO:
+		return fallback_dir
 	if _has_detour_point:
 		if actor.global_position.distance_to(_detour_point) <= DETOUR_REACHED_DISTANCE:
 			_has_detour_point = false
@@ -360,6 +380,104 @@ func _next_fallback_direction(actor: CharacterBody2D, destination: Vector2) -> V
 		return _steer_around_obstacles(actor, to_new.normalized() if to_new.length_squared() > 0.0001 else Vector2.ZERO)
 	var to_direct := destination - actor.global_position
 	return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
+
+func _clear_fallback_path() -> void:
+	_fallback_path.clear()
+	_fallback_path_index = 0
+	_fallback_repath_timer = 0.0
+
+func _follow_fallback_path(actor: CharacterBody2D) -> Vector2:
+	while _fallback_path_index < _fallback_path.size():
+		var waypoint := _fallback_path[_fallback_path_index]
+		if actor.global_position.distance_to(waypoint) > LOCAL_FALLBACK_POINT_REACHED_DISTANCE:
+			var to_waypoint := waypoint - actor.global_position
+			return _steer_around_obstacles(actor, to_waypoint.normalized() if to_waypoint.length_squared() > 0.0001 else Vector2.ZERO)
+		_fallback_path_index += 1
+	return Vector2.ZERO
+
+func _build_local_fallback_path(actor: CharacterBody2D, destination: Vector2) -> void:
+	_fallback_path.clear()
+	_fallback_path_index = 0
+	var start := actor.global_position
+	var min_x := min(start.x, destination.x) - LOCAL_FALLBACK_GRID_MARGIN
+	var min_y := min(start.y, destination.y) - LOCAL_FALLBACK_GRID_MARGIN
+	var max_x := max(start.x, destination.x) + LOCAL_FALLBACK_GRID_MARGIN
+	var max_y := max(start.y, destination.y) + LOCAL_FALLBACK_GRID_MARGIN
+	var step := LOCAL_FALLBACK_GRID_STEP
+	var max_span := float(LOCAL_FALLBACK_GRID_MAX_CELLS - 1) * step
+	if max_x - min_x > max_span:
+		var cx := (start.x + destination.x) * 0.5
+		min_x = cx - max_span * 0.5
+		max_x = cx + max_span * 0.5
+	if max_y - min_y > max_span:
+		var cy := (start.y + destination.y) * 0.5
+		min_y = cy - max_span * 0.5
+		max_y = cy + max_span * 0.5
+	var cols := maxi(2, int(ceil((max_x - min_x) / step)) + 1)
+	var rows := maxi(2, int(ceil((max_y - min_y) / step)) + 1)
+	var astar := AStar2D.new()
+	for gy in range(rows):
+		for gx in range(cols):
+			var point := Vector2(min_x + float(gx) * step, min_y + float(gy) * step)
+			if not _is_probe_walkable(actor, point):
+				continue
+			var id := gy * cols + gx
+			astar.add_point(id, point)
+	for gy in range(rows):
+		for gx in range(cols):
+			var id := gy * cols + gx
+			if not astar.has_point(id):
+				continue
+			for oy in range(-1, 2):
+				for ox in range(-1, 2):
+					if ox == 0 and oy == 0:
+						continue
+					var nx := gx + ox
+					var ny := gy + oy
+					if nx < 0 or ny < 0 or nx >= cols or ny >= rows:
+						continue
+					var nid := ny * cols + nx
+					if not astar.has_point(nid):
+						continue
+					if not astar.are_points_connected(id, nid):
+						astar.connect_points(id, nid, false)
+	if astar.get_point_count() <= 1:
+		return
+	var start_id := astar.get_closest_point(start)
+	var goal_id := astar.get_closest_point(destination)
+	if start_id < 0 or goal_id < 0:
+		return
+	var id_path := astar.get_id_path(start_id, goal_id)
+	if id_path.is_empty():
+		return
+	for id_v in id_path:
+		var pid := int(id_v)
+		if not astar.has_point(pid):
+			continue
+		var p := astar.get_point_position(pid)
+		if p.distance_to(start) <= LOCAL_FALLBACK_POINT_REACHED_DISTANCE:
+			continue
+		_fallback_path.append(p)
+	if _fallback_path.is_empty():
+		return
+	if _fallback_path[_fallback_path.size() - 1].distance_to(destination) > LOCAL_FALLBACK_POINT_REACHED_DISTANCE:
+		_fallback_path.append(destination)
+
+func _is_probe_walkable(actor: CharacterBody2D, point: Vector2) -> bool:
+	var world := actor.get_world_2d()
+	if world == null:
+		return false
+	var space := world.direct_space_state
+	if space == null:
+		return false
+	var probe := CircleShape2D.new()
+	probe.radius = max(6.0, OBSTACLE_AVOID_LOOKAHEAD * 0.6)
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = probe
+	query.transform = Transform2D(0.0, point)
+	query.exclude = [actor.get_rid()]
+	query.collision_mask = actor.collision_mask
+	return space.intersect_shape(query, 1).is_empty()
 
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
