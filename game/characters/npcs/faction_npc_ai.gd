@@ -398,12 +398,12 @@ func _follow_fallback_path(actor: CharacterBody2D) -> Vector2:
 func _build_local_fallback_path(actor: CharacterBody2D, destination: Vector2) -> void:
 	_fallback_path.clear()
 	_fallback_path_index = 0
-	var start := actor.global_position
-	var min_x := min(start.x, destination.x) - LOCAL_FALLBACK_GRID_MARGIN
-	var min_y := min(start.y, destination.y) - LOCAL_FALLBACK_GRID_MARGIN
-	var max_x := max(start.x, destination.x) + LOCAL_FALLBACK_GRID_MARGIN
-	var max_y := max(start.y, destination.y) + LOCAL_FALLBACK_GRID_MARGIN
-	var step := LOCAL_FALLBACK_GRID_STEP
+	var start: Vector2 = actor.global_position
+	var min_x: float = minf(start.x, destination.x) - LOCAL_FALLBACK_GRID_MARGIN
+	var min_y: float = minf(start.y, destination.y) - LOCAL_FALLBACK_GRID_MARGIN
+	var max_x: float = maxf(start.x, destination.x) + LOCAL_FALLBACK_GRID_MARGIN
+	var max_y: float = maxf(start.y, destination.y) + LOCAL_FALLBACK_GRID_MARGIN
+	var step: float = LOCAL_FALLBACK_GRID_STEP
 	var max_span := float(LOCAL_FALLBACK_GRID_MAX_CELLS - 1) * step
 	if max_x - min_x > max_span:
 		var cx := (start.x + destination.x) * 0.5
