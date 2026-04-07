@@ -6,6 +6,7 @@
 texture = ExtResource("1_dhqgt")
 texture_region_size = Vector2i(256, 256)
 0:0/0 = 0
+0:0/0/navigation_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 0:0/0/terrain_set = 0
 0:0/0/terrain = 0
 0:0/0/terrains_peering_bit/right_side = 0
@@ -29,6 +30,7 @@ texture_region_size = Vector2i(256, 256)
 1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-112.19499, 11.196175, -128, 9.330139, -128, 5.1315765, -107.063416, 6.0645943, -110.79547, 25.191391, -99.13279, 48.983265, -102.86485, 69.50958, -99.5993, 83.50481, -107.063416, 104.03113, -109.86246, 128, -116.56384, 128, -112.04806, 116.28162, -112.70168, 104.93226, -104.145424, 85.800026, -108.66121, 71.68818, -104.26438, 53.64834, -116.39357, 34.05503, -117.20721, 22.88414)
 1:1/0/physics_layer_0/polygon_1/points = PackedVector2Array(-128, -119.42586, -107.52992, -118.95935, -107.52992, -128, -128, -128)
 2:1/0 = 0
+2:1/0/navigation_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 2:1/0/terrain_set = 0
 2:1/0/terrain = 0
 2:1/0/terrains_peering_bit/right_side = 0
@@ -70,6 +72,7 @@ texture_region_size = Vector2i(256, 256)
 
 [resource]
 tile_size = Vector2i(256, 256)
+navigation_layer_0/layers = 1
 physics_layer_0/collision_layer = 1
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "ground"
