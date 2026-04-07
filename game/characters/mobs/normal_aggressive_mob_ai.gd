@@ -417,11 +417,12 @@ func _next_fallback_direction(actor: CharacterBody2D, destination: Vector2) -> V
 		return fallback_dir
 	if _fallback_repath_timer <= 0.0:
 		_build_local_fallback_path(actor, destination)
-	_fallback_repath_timer = LOCAL_FALLBACK_REPATH_SEC
+	_fallback_repath_timer = LOCAL_FALLBACK_REPATH_SEC if not _fallback_path.is_empty() else 0.05
 	fallback_dir = _follow_fallback_path(actor)
 	if fallback_dir != Vector2.ZERO:
 		return fallback_dir
-	return Vector2.ZERO
+	var to_direct := destination - actor.global_position
+	return _steer_around_obstacles(actor, to_direct.normalized() if to_direct.length_squared() > 0.0001 else Vector2.ZERO)
 
 func _clear_fallback_path() -> void:
 	_fallback_path.clear()
