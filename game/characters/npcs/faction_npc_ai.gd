@@ -34,6 +34,7 @@ const LOCAL_FALLBACK_POINT_REACHED_DISTANCE: float = 10.0
 const LOCAL_FALLBACK_MAX_EXPANSIONS: int = 24
 const LOCAL_FALLBACK_MARGIN_GROWTH_MULT: float = 4.0
 const LOCAL_FALLBACK_MAX_STEP: float = 96.0
+const LOCAL_FALLBACK_AGENT_CLEARANCE: float = 4.0
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
@@ -477,8 +478,9 @@ func _is_probe_walkable(actor: CharacterBody2D, point: Vector2) -> bool:
 	var space := world.direct_space_state
 	if space == null:
 		return false
+	var probe_radius: float = _get_agent_probe_radius(actor) + LOCAL_FALLBACK_AGENT_CLEARANCE
 	var probe := CircleShape2D.new()
-	probe.radius = max(6.0, OBSTACLE_AVOID_LOOKAHEAD * 0.6)
+	probe.radius = max(6.0, probe_radius)
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = probe
 	query.transform = Transform2D(0.0, point)
@@ -493,10 +495,37 @@ func _is_probe_segment_walkable(actor: CharacterBody2D, from_pos: Vector2, to_po
 	var space := world.direct_space_state
 	if space == null:
 		return false
-	var query := PhysicsRayQueryParameters2D.create(from_pos, to_pos)
-	query.exclude = [actor.get_rid()]
-	query.collision_mask = actor.collision_mask
-	return space.intersect_ray(query).is_empty()
+	var dir := to_pos - from_pos
+	if dir.length_squared() <= 0.0001:
+		return true
+	var normal := dir.normalized().orthogonal()
+	var probe_radius: float = _get_agent_probe_radius(actor) + LOCAL_FALLBACK_AGENT_CLEARANCE
+	var offsets := [0.0, probe_radius * 0.6, -probe_radius * 0.6]
+	for off_v in offsets:
+		var off: float = float(off_v)
+		var query := PhysicsRayQueryParameters2D.create(from_pos + normal * off, to_pos + normal * off)
+		query.exclude = [actor.get_rid()]
+		query.collision_mask = actor.collision_mask
+		if not space.intersect_ray(query).is_empty():
+			return false
+	return true
+
+func _get_agent_probe_radius(actor: CharacterBody2D) -> float:
+	var radius: float = 8.0
+	for child in actor.get_children():
+		if child is CollisionShape2D:
+			var cs := child as CollisionShape2D
+			if cs.disabled or cs.shape == null:
+				continue
+			if cs.shape is CircleShape2D:
+				radius = maxf(radius, (cs.shape as CircleShape2D).radius)
+			elif cs.shape is RectangleShape2D:
+				var ext := (cs.shape as RectangleShape2D).size * 0.5
+				radius = maxf(radius, maxf(ext.x, ext.y))
+			elif cs.shape is CapsuleShape2D:
+				var cap := cs.shape as CapsuleShape2D
+				radius = maxf(radius, cap.radius + cap.height * 0.5)
+	return radius
 
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
