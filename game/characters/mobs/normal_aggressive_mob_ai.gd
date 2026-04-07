@@ -30,8 +30,9 @@ const LOCAL_FALLBACK_GRID_MARGIN: float = 128.0
 const LOCAL_FALLBACK_GRID_MAX_CELLS: int = 36
 const LOCAL_FALLBACK_REPATH_SEC: float = 0.45
 const LOCAL_FALLBACK_POINT_REACHED_DISTANCE: float = 10.0
-const LOCAL_FALLBACK_GRID_STEPS := [32.0, 40.0, 56.0]
-const LOCAL_FALLBACK_GRID_MARGINS := [128.0, 224.0, 352.0]
+const LOCAL_FALLBACK_MAX_EXPANSIONS: int = 24
+const LOCAL_FALLBACK_MARGIN_GROWTH_MULT: float = 4.0
+const LOCAL_FALLBACK_MAX_STEP: float = 96.0
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -439,12 +440,16 @@ func _follow_fallback_path(actor: CharacterBody2D) -> Vector2:
 func _build_local_fallback_path(actor: CharacterBody2D, destination: Vector2) -> void:
 	_fallback_path.clear()
 	_fallback_path_index = 0
-	var attempts := mini(LOCAL_FALLBACK_GRID_STEPS.size(), LOCAL_FALLBACK_GRID_MARGINS.size())
-	for i in range(attempts):
-		var step: float = float(LOCAL_FALLBACK_GRID_STEPS[i])
-		var margin: float = float(LOCAL_FALLBACK_GRID_MARGINS[i])
+	var step: float = LOCAL_FALLBACK_GRID_STEP
+	var margin: float = LOCAL_FALLBACK_GRID_MARGIN
+	var attempts: int = 0
+	while attempts < LOCAL_FALLBACK_MAX_EXPANSIONS:
 		if _try_build_local_fallback_path(actor, destination, step, margin):
 			return
+		margin += step * LOCAL_FALLBACK_MARGIN_GROWTH_MULT
+		if attempts % 2 == 1:
+			step = minf(LOCAL_FALLBACK_MAX_STEP, step + 8.0)
+		attempts += 1
 
 func _try_build_local_fallback_path(actor: CharacterBody2D, destination: Vector2, step: float, margin: float) -> bool:
 	var start: Vector2 = actor.global_position
