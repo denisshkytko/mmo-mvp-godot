@@ -432,6 +432,9 @@ func _clear_fallback_path() -> void:
 func _follow_fallback_path(actor: CharacterBody2D) -> Vector2:
 	while _fallback_path_index < _fallback_path.size():
 		var waypoint := _fallback_path[_fallback_path_index]
+		if _is_segment_blocked(actor, actor.global_position, waypoint):
+			_clear_fallback_path()
+			return Vector2.ZERO
 		if actor.global_position.distance_to(waypoint) > LOCAL_FALLBACK_POINT_REACHED_DISTANCE:
 			var to_waypoint := waypoint - actor.global_position
 			return _steer_around_obstacles(actor, to_waypoint.normalized() if to_waypoint.length_squared() > 0.0001 else Vector2.ZERO)
@@ -493,6 +496,8 @@ func _try_build_local_fallback_path(actor: CharacterBody2D, destination: Vector2
 					var nid := ny * cols + nx
 					if not astar.has_point(nid):
 						continue
+					if not _is_probe_segment_walkable(actor, astar.get_point_position(id), astar.get_point_position(nid)):
+						continue
 					if not astar.are_points_connected(id, nid):
 						astar.connect_points(id, nid, false)
 	if astar.get_point_count() <= 1:
@@ -533,6 +538,18 @@ func _is_probe_walkable(actor: CharacterBody2D, point: Vector2) -> bool:
 	query.exclude = [actor.get_rid()]
 	query.collision_mask = actor.collision_mask
 	return space.intersect_shape(query, 1).is_empty()
+
+func _is_probe_segment_walkable(actor: CharacterBody2D, from_pos: Vector2, to_pos: Vector2) -> bool:
+	var world := actor.get_world_2d()
+	if world == null:
+		return false
+	var space := world.direct_space_state
+	if space == null:
+		return false
+	var query := PhysicsRayQueryParameters2D.create(from_pos, to_pos)
+	query.exclude = [actor.get_rid()]
+	query.collision_mask = actor.collision_mask
+	return space.intersect_ray(query).is_empty()
 
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
