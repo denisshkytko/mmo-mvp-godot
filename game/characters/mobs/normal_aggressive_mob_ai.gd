@@ -24,6 +24,8 @@ const NAV_POINT_REACHED_DISTANCE: float = 12.0
 const NAV_MOVE_EPSILON: float = 0.05
 const NAV_TARGET_UPDATE_DISTANCE: float = 6.0
 const NAV_OFF_MESH_RECOVER_DISTANCE: float = 6.0
+const NAV_ON_MESH_TOLERANCE: float = 2.0
+const NAV_SAFE_CANDIDATE_TOLERANCE: float = 4.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
@@ -342,6 +344,8 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 		should_update = true
 	if not should_update:
 		return
+	# Expensive navmesh closest-point checks are only needed when path is actually rebuilt.
+	_snap_to_navmesh_if_needed(actor, NAV_OFF_MESH_RECOVER_DISTANCE)
 	_nav_repath_timer = repath_sec
 	_nav_target = destination
 	agent.target_position = destination
@@ -422,6 +426,42 @@ func _recover_to_navmesh(actor: CharacterBody2D) -> void:
 	if actor.global_position.distance_to(closest) > NAV_OFF_MESH_RECOVER_DISTANCE:
 		actor.global_position = closest
 
+func _is_point_on_navmesh(nav_map: RID, point: Vector2, tolerance: float = NAV_ON_MESH_TOLERANCE) -> bool:
+	if not nav_map.is_valid():
+		return false
+	if not NavigationServer2D.map_is_active(nav_map):
+		return false
+	if NavigationServer2D.map_get_iteration_id(nav_map) <= 0:
+		return false
+	var closest := NavigationServer2D.map_get_closest_point(nav_map, point)
+	return point.distance_to(closest) <= tolerance
+
+func _snap_to_navmesh_if_needed(actor: CharacterBody2D, snap_distance: float) -> void:
+	if actor == null or not is_instance_valid(actor):
+		return
+	var world := actor.get_world_2d()
+	if world == null:
+		return
+	var nav_map := world.navigation_map
+	if not nav_map.is_valid():
+		return
+	if not NavigationServer2D.map_is_active(nav_map):
+		return
+	if NavigationServer2D.map_get_iteration_id(nav_map) <= 0:
+		return
+	var closest := NavigationServer2D.map_get_closest_point(nav_map, actor.global_position)
+	var distance_to_nav := actor.global_position.distance_to(closest)
+	if distance_to_nav <= NAV_ON_MESH_TOLERANCE:
+		return
+	# Avoid large teleports (can make mobs appear to "disappear" from their spawn zone).
+	if distance_to_nav > snap_distance:
+		return
+	if not is_finite(closest.x) or not is_finite(closest.y):
+		return
+	if closest.length_squared() > 1.0e14:
+		return
+	actor.global_position = closest
+
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
 	if base.length_squared() <= 0.0001:
@@ -487,13 +527,26 @@ func _steer_around_obstacles(actor: CharacterBody2D, desired_dir: Vector2) -> Ve
 	if desired_dir.length_squared() <= 0.0001:
 		return Vector2.ZERO
 	var base_dir: Vector2 = desired_dir.normalized()
+	var world := actor.get_world_2d()
+	var nav_map := world.navigation_map if world != null else RID()
 	PROFILER_UTILS.track_count("mob_aggressive.ai.obstacle_checks")
 	if not _is_motion_blocked(actor, base_dir):
-		return base_dir
+		if nav_map.is_valid():
+			var test_pos := actor.global_position + base_dir * OBSTACLE_AVOID_LOOKAHEAD
+			if not _is_point_on_navmesh(nav_map, test_pos, NAV_SAFE_CANDIDATE_TOLERANCE):
+				pass
+			else:
+				return base_dir
+		else:
+			return base_dir
 	for angle in OBSTACLE_AVOID_ANGLES:
 		var candidate := base_dir.rotated(float(angle))
 		PROFILER_UTILS.track_count("mob_aggressive.ai.obstacle_checks")
 		if not _is_motion_blocked(actor, candidate):
+			if nav_map.is_valid():
+				var test_pos := actor.global_position + candidate * OBSTACLE_AVOID_LOOKAHEAD
+				if not _is_point_on_navmesh(nav_map, test_pos, NAV_SAFE_CANDIDATE_TOLERANCE):
+					continue
 			return candidate
 	return Vector2.ZERO
 
@@ -506,6 +559,8 @@ func _is_motion_blocked(actor: CharacterBody2D, direction: Vector2) -> bool:
 func _force_unstuck_position(actor: CharacterBody2D) -> void:
 	if actor == null or not is_instance_valid(actor):
 		return
+	var world := actor.get_world_2d()
+	var nav_map := world.navigation_map if world != null else RID()
 	for step_v in PATROL_UNSTUCK_STEP_OPTIONS:
 		var step_len := float(step_v)
 		for angle in OBSTACLE_AVOID_ANGLES:
@@ -513,8 +568,13 @@ func _force_unstuck_position(actor: CharacterBody2D) -> void:
 			var motion := dir * step_len
 			if actor.test_move(actor.global_transform, motion):
 				continue
+			if nav_map.is_valid():
+				var new_pos := actor.global_position + motion
+				if not _is_point_on_navmesh(nav_map, new_pos, NAV_SAFE_CANDIDATE_TOLERANCE):
+					continue
 			actor.global_position += motion
 			return
+	_snap_to_navmesh_if_needed(actor, NAV_OFF_MESH_RECOVER_DISTANCE)
 
 func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	if target == null or not is_instance_valid(target):
@@ -595,11 +655,17 @@ func _try_soft_nudge_toward_target(actor: CharacterBody2D, target_pos: Vector2) 
 	var base := (target_pos - actor.global_position).normalized()
 	if base.length_squared() <= 0.0001:
 		return false
+	var world := actor.get_world_2d()
+	var nav_map := world.navigation_map if world != null else RID()
 	for angle_v in SOFT_NUDGE_ANGLES:
 		var dir := base.rotated(float(angle_v))
 		var motion := dir * SOFT_NUDGE_STEP
 		if actor.test_move(actor.global_transform, motion):
 			continue
+		if nav_map.is_valid():
+			var new_pos := actor.global_position + motion
+			if not _is_point_on_navmesh(nav_map, new_pos, NAV_SAFE_CANDIDATE_TOLERANCE):
+				continue
 		actor.global_position += motion
 		return true
 	return false
