@@ -23,6 +23,7 @@ const NAV_REPATH_RETURN_SEC: float = 0.25
 const NAV_POINT_REACHED_DISTANCE: float = 12.0
 const NAV_MOVE_EPSILON: float = 0.05
 const NAV_TARGET_UPDATE_DISTANCE: float = 6.0
+const NAV_OFF_MESH_RECOVER_DISTANCE: float = 6.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
@@ -335,6 +336,8 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 	var should_update: bool = _nav_repath_timer <= 0.0
 	if _nav_target == Vector2.INF or _nav_target.distance_to(destination) > NAV_TARGET_UPDATE_DISTANCE:
 		should_update = true
+	elif agent.is_navigation_finished() and actor.global_position.distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
+		should_update = true
 	if not should_update:
 		return
 	_nav_repath_timer = repath_sec
@@ -363,6 +366,13 @@ func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_s
 	if agent == null:
 		return Vector2.ZERO
 	if agent.is_navigation_finished():
+		if actor.global_position.distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
+			_nav_repath_timer = 0.0
+			_build_path(actor, destination, repath_sec)
+			if not agent.is_navigation_finished():
+				var retry_waypoint := agent.get_next_path_position()
+				var retry_vec := retry_waypoint - actor.global_position
+				return retry_vec.normalized() if retry_vec.length_squared() > 0.0001 else Vector2.ZERO
 		return Vector2.ZERO
 	var waypoint := agent.get_next_path_position()
 	var to_waypoint := waypoint - actor.global_position
@@ -385,12 +395,30 @@ func _ensure_nav_agent(actor: CharacterBody2D) -> NavigationAgent2D:
 	_nav_agent = actor.get_node_or_null("NavAgent") as NavigationAgent2D
 	if _nav_agent == null:
 		return null
-	_nav_agent.path_desired_distance = NAV_POINT_REACHED_DISTANCE
-	_nav_agent.target_desired_distance = NAV_POINT_REACHED_DISTANCE
+	_nav_agent.path_desired_distance = 8.0
+	_nav_agent.target_desired_distance = 4.0
+	_nav_agent.avoidance_enabled = false
 	var world := actor.get_world_2d()
 	if world != null:
 		_nav_agent.set_navigation_map(world.navigation_map)
 	return _nav_agent
+
+func _recover_to_navmesh(actor: CharacterBody2D) -> void:
+	if actor == null or not is_instance_valid(actor):
+		return
+	var world := actor.get_world_2d()
+	if world == null:
+		return
+	var nav_map := world.navigation_map
+	if not nav_map.is_valid():
+		return
+	if not NavigationServer2D.map_is_active(nav_map):
+		return
+	if NavigationServer2D.map_get_iteration_id(nav_map) <= 0:
+		return
+	var closest := NavigationServer2D.map_get_closest_point(nav_map, actor.global_position)
+	if actor.global_position.distance_to(closest) > NAV_OFF_MESH_RECOVER_DISTANCE:
+		actor.global_position = closest
 
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
@@ -543,7 +571,10 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 
 func _move_with_animation(actor: CharacterBody2D, moving_animation: bool) -> bool:
 	var before := actor.global_position
+	var intended_velocity := actor.velocity
 	actor.move_and_slide()
+	if intended_velocity.length_squared() > 0.0001 and actor.global_position.distance_to(before) <= NAV_MOVE_EPSILON:
+		_recover_to_navmesh(actor)
 	var moved: bool = actor.global_position.distance_to(before) > NAV_MOVE_EPSILON
 	if not moved:
 		actor.velocity = Vector2.ZERO

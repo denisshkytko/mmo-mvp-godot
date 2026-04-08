@@ -36,10 +36,10 @@ shape = SubResource("RectangleShape2D_k85i5")
 shape = SubResource("RectangleShape2D_ex06h")
 
 [node name="NavAgent" type="NavigationAgent2D" parent="."]
-path_desired_distance = 12.0
-target_desired_distance = 10.0
+path_desired_distance = 8.0
+target_desired_distance = 4.0
 radius = 12.0
-avoidance_enabled = true
+avoidance_enabled = false
 
 [node name="Components" type="Node" parent="."]
 
