@@ -24,6 +24,7 @@ const NAV_REPATH_RETURN_SEC: float = 0.25
 const NAV_POINT_REACHED_DISTANCE: float = 12.0
 const NAV_MOVE_EPSILON: float = 0.05
 const NAV_TARGET_REPATH_DISTANCE: float = 6.0
+const NAV_OFF_MESH_SNAP_DISTANCE: float = 18.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
@@ -88,6 +89,7 @@ func on_took_damage(attacker: Node2D) -> void:
 
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: FactionNPCCombat, proactive: bool) -> void:
 	_nav_repath_timer = max(0.0, _nav_repath_timer - delta)
+	_snap_actor_to_navmesh(actor)
 	var t_leash := Time.get_ticks_usec()
 	var dist_home: float = actor.global_position.distance_to(home_position)
 	if state == State.CHASE and dist_home > leash_distance:
@@ -356,6 +358,23 @@ func _ensure_nav_agent(actor: CharacterBody2D) -> NavigationAgent2D:
 		_nav_agent.set_navigation_map(world.navigation_map)
 	return _nav_agent
 
+func _snap_actor_to_navmesh(actor: CharacterBody2D) -> void:
+	if actor == null or not is_instance_valid(actor):
+		return
+	var world := actor.get_world_2d()
+	if world == null:
+		return
+	var nav_map := world.navigation_map
+	if not nav_map.is_valid():
+		return
+	if not NavigationServer2D.map_is_active(nav_map):
+		return
+	if NavigationServer2D.map_get_iteration_id(nav_map) <= 0:
+		return
+	var closest := NavigationServer2D.map_get_closest_point(nav_map, actor.global_position)
+	if actor.global_position.distance_to(closest) > NAV_OFF_MESH_SNAP_DISTANCE:
+		actor.global_position = closest
+
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
 	if base.length_squared() <= 0.0001:
@@ -496,6 +515,7 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 func _move_with_animation(actor: CharacterBody2D, moving_animation: bool) -> bool:
 	var before := actor.global_position
 	actor.move_and_slide()
+	_snap_actor_to_navmesh(actor)
 	var moved: bool = actor.global_position.distance_to(before) > NAV_MOVE_EPSILON
 	if not moved:
 		actor.velocity = Vector2.ZERO
