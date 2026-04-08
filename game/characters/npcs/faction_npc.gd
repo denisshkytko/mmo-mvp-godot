@@ -1067,12 +1067,17 @@ func _refresh_threat_target() -> void:
 	if threat_target != null and threat_target != current_target:
 		current_target = threat_target
 
-func _sanitize_target_ref(target: Node2D) -> Node2D:
-	if target == null or not is_instance_valid(target):
+func _sanitize_target_ref(target: Variant) -> Node2D:
+	if target == null:
 		return null
-	if "is_dead" in target and bool(target.get("is_dead")):
+	if not is_instance_valid(target):
 		return null
-	return target
+	if not (target is Node2D):
+		return null
+	var node := target as Node2D
+	if "is_dead" in node and bool(node.get("is_dead")):
+		return null
+	return node
 
 func _is_high_priority_simulation() -> bool:
 	if current_target != null and is_instance_valid(current_target):
