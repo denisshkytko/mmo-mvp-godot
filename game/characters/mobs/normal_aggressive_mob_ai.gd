@@ -28,8 +28,8 @@ const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
 const DETOUR_REACHED_DISTANCE: float = 10.0
-const SOFT_NUDGE_STEP: float = 10.0
-const SOFT_NUDGE_ANGLES := [0.0, 0.6, -0.6, 1.2, -1.2]
+const SOFT_NUDGE_STEP: float = 14.0
+const SOFT_NUDGE_ANGLES := [PI * 0.5, -PI * 0.5, 2.4, -2.4, PI]
 
 enum AIState { IDLE, CHASE, RETURN }
 enum Behavior { GUARD, PATROL }
@@ -544,11 +544,13 @@ func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: Nor
 	else:
 		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
-	var chase_moved := _move_with_animation(actor, false)
-	if not chase_moved and dist > stop_distance + 2.0:
+	_move_with_animation(actor, false)
+	_track_chase_stuck(delta, actor, dist, stop_distance)
+	if dist > stop_distance + 2.0 and _chase_stuck_time >= CHASE_SOFT_STUCK_SEC:
 		if _try_soft_nudge_toward_target(actor, target.global_position):
 			_nav_repath_timer = 0.0
-	_track_chase_stuck(delta, actor, dist, stop_distance)
+			_chase_stuck_time = 0.0
+			_chase_has_last_position = false
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 	var to_home: Vector2 = home_position - actor.global_position
