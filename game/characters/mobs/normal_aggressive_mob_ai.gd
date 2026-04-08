@@ -23,6 +23,7 @@ const NAV_REPATH_RETURN_SEC: float = 0.25
 const NAV_POINT_REACHED_DISTANCE: float = 12.0
 const NAV_MOVE_EPSILON: float = 0.05
 const NAV_STUCK_REPATH_FORCE_SEC: float = 0.0
+const NAV_TARGET_REPATH_DISTANCE: float = 6.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
@@ -60,6 +61,8 @@ var _activity_tier: int = 0
 var _nav_path: Array[Vector2] = []
 var _nav_path_index: int = 0
 var _nav_repath_timer: float = 0.0
+var _nav_last_target: Vector2 = Vector2.INF
+var _nav_agent: NavigationAgent2D = null
 var _has_detour_point: bool = false
 var _detour_point: Vector2 = Vector2.ZERO
 
@@ -339,28 +342,29 @@ func _should_play_animation() -> bool:
 	return _activity_tier == EntityActivityManager.ActivityTier.FULL
 
 func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float) -> void:
-	if _nav_repath_timer > 0.0 and _nav_path_index < _nav_path.size():
+	var agent := _ensure_nav_agent(actor)
+	if agent == null:
+		_nav_path.clear()
+		_nav_path_index = 0
+		return
+	var should_repath: bool = _nav_repath_timer <= 0.0
+	if _nav_last_target == Vector2.INF:
+		should_repath = true
+	elif _nav_last_target.distance_to(destination) > NAV_TARGET_REPATH_DISTANCE:
+		should_repath = true
+	elif agent.is_navigation_finished():
+		should_repath = true
+	if not should_repath:
 		return
 	_nav_repath_timer = repath_sec
-	if actor == null or not is_instance_valid(actor):
-		_nav_path.clear()
-		_nav_path_index = 0
-		return
-	var world := actor.get_world_2d()
-	if world == null:
-		_nav_path.clear()
-		_nav_path_index = 0
-		return
-	var map := world.navigation_map
-	var points := NavPathManager.request_path(map, actor.global_position, destination, true)
+	agent.target_position = destination
+	_nav_last_target = destination
 	_nav_path.clear()
-	for p in points:
+	var nav_path := agent.get_current_navigation_path()
+	for p in nav_path:
 		if p is Vector2:
 			_nav_path.append(p as Vector2)
-	if not _nav_path.is_empty() and _nav_path[_nav_path.size() - 1].distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
-		_nav_path.append(destination)
 	_nav_path_index = 0
-	_advance_path_index(actor.global_position)
 
 func _advance_path_index(current_pos: Vector2) -> void:
 	while _nav_path_index < _nav_path.size():
@@ -380,21 +384,41 @@ func _advance_path_index(current_pos: Vector2) -> void:
 
 func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_sec: float) -> Vector2:
 	_build_path(actor, destination, repath_sec)
-	if _nav_path_index >= _nav_path.size():
+	var agent := _ensure_nav_agent(actor)
+	if agent == null:
 		return Vector2.ZERO
-	_has_detour_point = false
-	var waypoint := _nav_path[_nav_path_index]
+	if agent.is_navigation_finished():
+		return Vector2.ZERO
+	var waypoint := agent.get_next_path_position()
 	var to_waypoint := waypoint - actor.global_position
 	if to_waypoint.length_squared() <= 0.0001:
-		_nav_path_index += 1
-		return _next_path_direction(actor, destination, repath_sec)
+		return Vector2.ZERO
 	return to_waypoint.normalized()
 
 func _clear_nav_path() -> void:
 	_nav_path.clear()
 	_nav_path_index = 0
 	_nav_repath_timer = 0.0
+	_nav_last_target = Vector2.INF
+	if _nav_agent != null and is_instance_valid(_nav_agent):
+		_nav_agent.target_position = _nav_agent.global_position
 	_has_detour_point = false
+
+func _ensure_nav_agent(actor: CharacterBody2D) -> NavigationAgent2D:
+	if actor == null or not is_instance_valid(actor):
+		return null
+	if _nav_agent != null and is_instance_valid(_nav_agent):
+		return _nav_agent
+	_nav_agent = actor.get_node_or_null("NavAgent") as NavigationAgent2D
+	if _nav_agent == null:
+		return null
+	_nav_agent.avoidance_enabled = false
+	_nav_agent.path_desired_distance = NAV_POINT_REACHED_DISTANCE
+	_nav_agent.target_desired_distance = NAV_POINT_REACHED_DISTANCE
+	var world := actor.get_world_2d()
+	if world != null:
+		_nav_agent.set_navigation_map(world.navigation_map)
+	return _nav_agent
 
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
