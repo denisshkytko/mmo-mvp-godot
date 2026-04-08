@@ -26,7 +26,6 @@ const NAV_TARGET_UPDATE_DISTANCE: float = 6.0
 const NAV_OFF_MESH_RECOVER_DISTANCE: float = 6.0
 const NAV_ON_MESH_TOLERANCE: float = 2.0
 const NAV_SAFE_CANDIDATE_TOLERANCE: float = 4.0
-const NAVMESH_SNAP_INTERVAL_SEC: float = 1.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
@@ -70,7 +69,6 @@ var _nav_agent: NavigationAgent2D = null
 var _nav_target: Vector2 = Vector2.INF
 var _has_detour_point: bool = false
 var _detour_point: Vector2 = Vector2.ZERO
-var _navmesh_snap_timer: float = 0.0
 
 func set_activity_tier(value: int) -> void:
 	_activity_tier = value
@@ -97,10 +95,6 @@ func is_returning() -> bool:
 func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	var t_tick_total := Time.get_ticks_usec()
 	_nav_repath_timer = max(0.0, _nav_repath_timer - delta)
-	_navmesh_snap_timer = max(0.0, _navmesh_snap_timer - delta)
-	if _navmesh_snap_timer <= 0.0:
-		_navmesh_snap_timer = NAVMESH_SNAP_INTERVAL_SEC
-		_snap_to_navmesh_if_needed(actor, NAV_OFF_MESH_RECOVER_DISTANCE)
 	_current_lod_level = _resolve_lod_level(actor, target)
 	# выключение CHASE по leash_distance
 	var t_leash := Time.get_ticks_usec()
@@ -455,8 +449,17 @@ func _snap_to_navmesh_if_needed(actor: CharacterBody2D, snap_distance: float) ->
 	if NavigationServer2D.map_get_iteration_id(nav_map) <= 0:
 		return
 	var closest := NavigationServer2D.map_get_closest_point(nav_map, actor.global_position)
-	if actor.global_position.distance_to(closest) > snap_distance:
-		actor.global_position = closest
+	var distance_to_nav := actor.global_position.distance_to(closest)
+	if distance_to_nav <= NAV_ON_MESH_TOLERANCE:
+		return
+	# Avoid large teleports (can make mobs appear to "disappear" from their spawn zone).
+	if distance_to_nav > snap_distance:
+		return
+	if not is_finite(closest.x) or not is_finite(closest.y):
+		return
+	if closest.length_squared() > 1.0e14:
+		return
+	actor.global_position = closest
 
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
@@ -530,8 +533,11 @@ func _steer_around_obstacles(actor: CharacterBody2D, desired_dir: Vector2) -> Ve
 		if nav_map.is_valid():
 			var test_pos := actor.global_position + base_dir * OBSTACLE_AVOID_LOOKAHEAD
 			if not _is_point_on_navmesh(nav_map, test_pos, NAV_SAFE_CANDIDATE_TOLERANCE):
-				return Vector2.ZERO
-		return base_dir
+				pass
+			else:
+				return base_dir
+		else:
+			return base_dir
 	for angle in OBSTACLE_AVOID_ANGLES:
 		var candidate := base_dir.rotated(float(angle))
 		PROFILER_UTILS.track_count("mob_aggressive.ai.obstacle_checks")
@@ -567,7 +573,7 @@ func _force_unstuck_position(actor: CharacterBody2D) -> void:
 					continue
 			actor.global_position += motion
 			return
-	_snap_to_navmesh_if_needed(actor, NAV_ON_MESH_TOLERANCE)
+	_snap_to_navmesh_if_needed(actor, NAV_OFF_MESH_RECOVER_DISTANCE)
 
 func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAggresiveMobCombat) -> void:
 	if target == null or not is_instance_valid(target):
