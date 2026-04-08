@@ -29,6 +29,8 @@ const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
 const DETOUR_REACHED_DISTANCE: float = 10.0
+const SOFT_NUDGE_STEP: float = 10.0
+const SOFT_NUDGE_ANGLES := [0.0, 0.6, -0.6, 1.2, -1.2]
 
 var behavior: int = Behavior.GUARD
 var state: int = State.IDLE
@@ -472,7 +474,10 @@ func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: Fac
 	else:
 		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
-	_move_with_animation(actor, false)
+	var chase_moved := _move_with_animation(actor, false)
+	if not chase_moved and dist > stop + 2.0:
+		if _try_soft_nudge_toward_target(actor, target.global_position):
+			_nav_repath_timer = 0.0
 	_track_chase_stuck(actor, dist, stop, delta)
 
 func _should_backstep_from_target(target: Node2D) -> bool:
@@ -517,6 +522,21 @@ func _move_with_animation(actor: CharacterBody2D, moving_animation: bool) -> boo
 	if _should_play_animation() and actor.has_method("update_movement_animation"):
 		actor.call("update_movement_animation", actor.velocity if moved else Vector2.ZERO, moving_animation and moved)
 	return moved
+
+func _try_soft_nudge_toward_target(actor: CharacterBody2D, target_pos: Vector2) -> bool:
+	if actor == null or not is_instance_valid(actor):
+		return false
+	var base := (target_pos - actor.global_position).normalized()
+	if base.length_squared() <= 0.0001:
+		return false
+	for angle_v in SOFT_NUDGE_ANGLES:
+		var dir := base.rotated(float(angle_v))
+		var motion := dir * SOFT_NUDGE_STEP
+		if actor.test_move(actor.global_transform, motion):
+			continue
+		actor.global_position += motion
+		return true
+	return false
 
 func _track_chase_stuck(actor: CharacterBody2D, distance_to_goal: float, stop_distance: float, delta: float) -> void:
 	if actor == null or not is_instance_valid(actor):
