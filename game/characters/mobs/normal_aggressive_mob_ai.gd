@@ -337,7 +337,6 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 	var agent := _ensure_nav_agent(actor)
 	if agent == null:
 		return
-	_snap_to_navmesh_if_needed(actor, NAV_OFF_MESH_RECOVER_DISTANCE)
 	var should_update: bool = _nav_repath_timer <= 0.0
 	if _nav_target == Vector2.INF or _nav_target.distance_to(destination) > NAV_TARGET_UPDATE_DISTANCE:
 		should_update = true
@@ -345,6 +344,8 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 		should_update = true
 	if not should_update:
 		return
+	# Expensive navmesh closest-point checks are only needed when path is actually rebuilt.
+	_snap_to_navmesh_if_needed(actor, NAV_OFF_MESH_RECOVER_DISTANCE)
 	_nav_repath_timer = repath_sec
 	_nav_target = destination
 	agent.target_position = destination
