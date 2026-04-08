@@ -22,8 +22,7 @@ const NAV_REPATH_CHASE_SEC: float = 0.20
 const NAV_REPATH_RETURN_SEC: float = 0.25
 const NAV_POINT_REACHED_DISTANCE: float = 12.0
 const NAV_MOVE_EPSILON: float = 0.05
-const NAV_TARGET_REPATH_DISTANCE: float = 6.0
-const NAV_OFF_MESH_SNAP_DISTANCE: float = 18.0
+const NAV_STUCK_REPATH_FORCE_SEC: float = 0.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
 const DETOUR_SCAN_DISTANCES := [48.0, 80.0, 120.0, 160.0]
@@ -61,8 +60,6 @@ var _activity_tier: int = 0
 var _nav_path: Array[Vector2] = []
 var _nav_path_index: int = 0
 var _nav_repath_timer: float = 0.0
-var _nav_last_target: Vector2 = Vector2.INF
-var _nav_agent: NavigationAgent2D = null
 var _has_detour_point: bool = false
 var _detour_point: Vector2 = Vector2.ZERO
 
@@ -92,7 +89,6 @@ func tick(delta: float, actor: CharacterBody2D, target: Node2D, combat: NormalAg
 	var t_tick_total := Time.get_ticks_usec()
 	_nav_repath_timer = max(0.0, _nav_repath_timer - delta)
 	_current_lod_level = _resolve_lod_level(actor, target)
-	_snap_actor_to_navmesh(actor)
 	# выключение CHASE по leash_distance
 	var t_leash := Time.get_ticks_usec()
 	var dist_to_home: float = actor.global_position.distance_to(home_position)
@@ -222,6 +218,10 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		final_dir = final_dir.normalized()
 	else:
 		final_dir = patrol_dir
+	if _current_lod_level == 0:
+		var t_patrol_steer := Time.get_ticks_usec()
+		final_dir = _steer_around_obstacles(actor, final_dir)
+		FRAME_PROFILER.add_usec("mob_aggressive.ai.patrol_steer", Time.get_ticks_usec() - t_patrol_steer)
 	if final_dir.length_squared() <= 0.0001:
 		actor.velocity = Vector2.ZERO
 		if _should_play_animation() and actor.has_method("update_movement_animation"):
@@ -230,7 +230,10 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	else:
 		actor.velocity = final_dir * patrol_speed
 	var t_patrol_move := Time.get_ticks_usec()
-	_move_with_animation(actor, true)
+	var had_patrol_intent := actor.velocity.length_squared() > 0.0001
+	var moved := _move_with_animation(actor, true)
+	if not moved and had_patrol_intent:
+		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
 	FRAME_PROFILER.add_usec("mob_aggressive.ai.patrol_move", Time.get_ticks_usec() - t_patrol_move)
 
 func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vector2:
@@ -340,21 +343,28 @@ func _should_play_animation() -> bool:
 	return _activity_tier == EntityActivityManager.ActivityTier.FULL
 
 func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float) -> void:
-	var agent := _ensure_nav_agent(actor)
-	if agent == null:
+	if _nav_repath_timer > 0.0 and _nav_path_index < _nav_path.size():
+		return
+	_nav_repath_timer = repath_sec
+	if actor == null or not is_instance_valid(actor):
 		_nav_path.clear()
 		_nav_path_index = 0
 		return
-	var should_repath: bool = _nav_repath_timer <= 0.0
-	if _nav_last_target == Vector2.INF:
-		should_repath = true
-	elif _nav_last_target.distance_to(destination) > NAV_TARGET_REPATH_DISTANCE:
-		should_repath = true
-	if not should_repath:
+	var world := actor.get_world_2d()
+	if world == null:
+		_nav_path.clear()
+		_nav_path_index = 0
 		return
-	_nav_repath_timer = repath_sec
-	agent.target_position = destination
-	_nav_last_target = destination
+	var map := world.navigation_map
+	var points := NavPathManager.request_path(map, actor.global_position, destination, true)
+	_nav_path.clear()
+	for p in points:
+		if p is Vector2:
+			_nav_path.append(p as Vector2)
+	if not _nav_path.is_empty() and _nav_path[_nav_path.size() - 1].distance_to(destination) > NAV_POINT_REACHED_DISTANCE:
+		_nav_path.append(destination)
+	_nav_path_index = 0
+	_advance_path_index(actor.global_position)
 
 func _advance_path_index(current_pos: Vector2) -> void:
 	while _nav_path_index < _nav_path.size():
@@ -374,56 +384,27 @@ func _advance_path_index(current_pos: Vector2) -> void:
 
 func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_sec: float) -> Vector2:
 	_build_path(actor, destination, repath_sec)
-	var agent := _ensure_nav_agent(actor)
-	if agent == null:
+	if _nav_path_index >= _nav_path.size():
 		return Vector2.ZERO
-	if agent.is_navigation_finished():
-		return Vector2.ZERO
-	var waypoint := agent.get_next_path_position()
+	_has_detour_point = false
+	var waypoint := _nav_path[_nav_path_index]
 	var to_waypoint := waypoint - actor.global_position
 	if to_waypoint.length_squared() <= 0.0001:
+		_nav_path_index += 1
+		return _next_path_direction(actor, destination, repath_sec)
+	var steered := _steer_around_obstacles(actor, to_waypoint.normalized())
+	if steered.length_squared() <= 0.0001:
+		if to_waypoint.length() <= NAV_POINT_REACHED_DISTANCE * 1.5:
+			_nav_path_index += 1
+		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
 		return Vector2.ZERO
-	return to_waypoint.normalized()
+	return steered
 
 func _clear_nav_path() -> void:
 	_nav_path.clear()
 	_nav_path_index = 0
 	_nav_repath_timer = 0.0
-	_nav_last_target = Vector2.INF
 	_has_detour_point = false
-
-func _ensure_nav_agent(actor: CharacterBody2D) -> NavigationAgent2D:
-	if actor == null or not is_instance_valid(actor):
-		return null
-	if _nav_agent != null and is_instance_valid(_nav_agent):
-		return _nav_agent
-	_nav_agent = actor.get_node_or_null("NavAgent") as NavigationAgent2D
-	if _nav_agent == null:
-		return null
-	_nav_agent.avoidance_enabled = false
-	_nav_agent.path_desired_distance = NAV_POINT_REACHED_DISTANCE
-	_nav_agent.target_desired_distance = NAV_POINT_REACHED_DISTANCE
-	var world := actor.get_world_2d()
-	if world != null:
-		_nav_agent.set_navigation_map(world.navigation_map)
-	return _nav_agent
-
-func _snap_actor_to_navmesh(actor: CharacterBody2D) -> void:
-	if actor == null or not is_instance_valid(actor):
-		return
-	var world := actor.get_world_2d()
-	if world == null:
-		return
-	var nav_map := world.navigation_map
-	if not nav_map.is_valid():
-		return
-	if not NavigationServer2D.map_is_active(nav_map):
-		return
-	if NavigationServer2D.map_get_iteration_id(nav_map) <= 0:
-		return
-	var closest := NavigationServer2D.map_get_closest_point(nav_map, actor.global_position)
-	if actor.global_position.distance_to(closest) > NAV_OFF_MESH_SNAP_DISTANCE:
-		actor.global_position = closest
 
 func _pick_detour_point(actor: CharacterBody2D, destination: Vector2) -> Vector2:
 	var base := (destination - actor.global_position).normalized()
@@ -548,7 +529,10 @@ func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: Nor
 	else:
 		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
-	_move_with_animation(actor, false)
+	var had_chase_intent := actor.velocity.length_squared() > 0.0001
+	var chase_moved := _move_with_animation(actor, false)
+	if not chase_moved and had_chase_intent:
+		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
 	_track_chase_stuck(delta, actor, dist, stop_distance)
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
@@ -572,13 +556,15 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 
 	var return_dir := _next_path_direction(actor, home_position, NAV_REPATH_RETURN_SEC)
 	actor.velocity = return_dir * speed if return_dir.length_squared() > 0.0001 else Vector2.ZERO
-	_move_with_animation(actor, false)
+	var had_return_intent := actor.velocity.length_squared() > 0.0001
+	var return_moved := _move_with_animation(actor, false)
+	if not return_moved and had_return_intent:
+		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
 	_track_chase_stuck(_delta, actor, dist, 6.0)
 
 func _move_with_animation(actor: CharacterBody2D, moving_animation: bool) -> bool:
 	var before := actor.global_position
 	actor.move_and_slide()
-	_snap_actor_to_navmesh(actor)
 	var moved: bool = actor.global_position.distance_to(before) > NAV_MOVE_EPSILON
 	if not moved:
 		actor.velocity = Vector2.ZERO

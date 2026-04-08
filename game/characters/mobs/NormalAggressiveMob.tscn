@@ -36,11 +36,6 @@ shape = SubResource("RectangleShape2D_k85i5")
 [node name="BodyHitbox" type="CollisionShape2D" parent="BodyHitboxArea"]
 shape = SubResource("RectangleShape2D_ex06h")
 
-[node name="NavAgent" type="NavigationAgent2D" parent="."]
-path_desired_distance = 12.0
-target_desired_distance = 12.0
-radius = 12.0
-
 [node name="Components" type="Node" parent="."]
 
 [node name="AI" type="Node" parent="Components"]
