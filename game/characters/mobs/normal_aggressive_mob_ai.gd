@@ -22,7 +22,6 @@ const NAV_REPATH_CHASE_SEC: float = 0.20
 const NAV_REPATH_RETURN_SEC: float = 0.25
 const NAV_POINT_REACHED_DISTANCE: float = 12.0
 const NAV_MOVE_EPSILON: float = 0.05
-const NAV_STUCK_REPATH_FORCE_SEC: float = 0.0
 const NAV_TARGET_REPATH_DISTANCE: float = 6.0
 const SEPARATION_CRITICAL_DISTANCE: float = 12.0
 const DETOUR_SCAN_ANGLES := [-1.8, -1.4, -1.0, -0.7, -0.45, 0.45, 0.7, 1.0, 1.4, 1.8]
@@ -229,10 +228,7 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 	else:
 		actor.velocity = final_dir * patrol_speed
 	var t_patrol_move := Time.get_ticks_usec()
-	var had_patrol_intent := actor.velocity.length_squared() > 0.0001
-	var moved := _move_with_animation(actor, true)
-	if not moved and had_patrol_intent:
-		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
+	_move_with_animation(actor, true)
 	FRAME_PROFILER.add_usec("mob_aggressive.ai.patrol_move", Time.get_ticks_usec() - t_patrol_move)
 
 func _get_patrol_separation_vector(delta: float, actor: CharacterBody2D) -> Vector2:
@@ -352,19 +348,11 @@ func _build_path(actor: CharacterBody2D, destination: Vector2, repath_sec: float
 		should_repath = true
 	elif _nav_last_target.distance_to(destination) > NAV_TARGET_REPATH_DISTANCE:
 		should_repath = true
-	elif agent.is_navigation_finished():
-		should_repath = true
 	if not should_repath:
 		return
 	_nav_repath_timer = repath_sec
 	agent.target_position = destination
 	_nav_last_target = destination
-	_nav_path.clear()
-	var nav_path := agent.get_current_navigation_path()
-	for p in nav_path:
-		if p is Vector2:
-			_nav_path.append(p as Vector2)
-	_nav_path_index = 0
 
 func _advance_path_index(current_pos: Vector2) -> void:
 	while _nav_path_index < _nav_path.size():
@@ -543,10 +531,7 @@ func _do_chase(delta: float, actor: CharacterBody2D, target: Node2D, combat: Nor
 	else:
 		_clear_nav_path()
 		actor.velocity = Vector2.ZERO
-	var had_chase_intent := actor.velocity.length_squared() > 0.0001
-	var chase_moved := _move_with_animation(actor, false)
-	if not chase_moved and had_chase_intent:
-		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
+	_move_with_animation(actor, false)
 	_track_chase_stuck(delta, actor, dist, stop_distance)
 
 func _do_return(_delta: float, actor: CharacterBody2D) -> void:
@@ -570,10 +555,7 @@ func _do_return(_delta: float, actor: CharacterBody2D) -> void:
 
 	var return_dir := _next_path_direction(actor, home_position, NAV_REPATH_RETURN_SEC)
 	actor.velocity = return_dir * speed if return_dir.length_squared() > 0.0001 else Vector2.ZERO
-	var had_return_intent := actor.velocity.length_squared() > 0.0001
-	var return_moved := _move_with_animation(actor, false)
-	if not return_moved and had_return_intent:
-		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
+	_move_with_animation(actor, false)
 	_track_chase_stuck(_delta, actor, dist, 6.0)
 
 func _move_with_animation(actor: CharacterBody2D, moving_animation: bool) -> bool:
