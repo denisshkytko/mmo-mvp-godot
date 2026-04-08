@@ -218,10 +218,6 @@ func _do_patrol(delta: float, actor: CharacterBody2D) -> void:
 		final_dir = final_dir.normalized()
 	else:
 		final_dir = patrol_dir
-	if _current_lod_level == 0:
-		var t_patrol_steer := Time.get_ticks_usec()
-		final_dir = _steer_around_obstacles(actor, final_dir)
-		FRAME_PROFILER.add_usec("mob_aggressive.ai.patrol_steer", Time.get_ticks_usec() - t_patrol_steer)
 	if final_dir.length_squared() <= 0.0001:
 		actor.velocity = Vector2.ZERO
 		if _should_play_animation() and actor.has_method("update_movement_animation"):
@@ -392,13 +388,7 @@ func _next_path_direction(actor: CharacterBody2D, destination: Vector2, repath_s
 	if to_waypoint.length_squared() <= 0.0001:
 		_nav_path_index += 1
 		return _next_path_direction(actor, destination, repath_sec)
-	var steered := _steer_around_obstacles(actor, to_waypoint.normalized())
-	if steered.length_squared() <= 0.0001:
-		if to_waypoint.length() <= NAV_POINT_REACHED_DISTANCE * 1.5:
-			_nav_path_index += 1
-		_nav_repath_timer = NAV_STUCK_REPATH_FORCE_SEC
-		return Vector2.ZERO
-	return steered
+	return to_waypoint.normalized()
 
 func _clear_nav_path() -> void:
 	_nav_path.clear()
