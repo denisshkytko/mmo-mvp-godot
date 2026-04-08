@@ -388,8 +388,6 @@ func _clear_nav_path() -> void:
 	_nav_path_index = 0
 	_nav_repath_timer = 0.0
 	_nav_last_target = Vector2.INF
-	if _nav_agent != null and is_instance_valid(_nav_agent):
-		_nav_agent.target_position = _nav_agent.global_position
 	_has_detour_point = false
 
 func _ensure_nav_agent(actor: CharacterBody2D) -> NavigationAgent2D:
