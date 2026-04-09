@@ -530,6 +530,10 @@ func apply_spawn_init(
 			"hybrid":
 				chosen_mode = AttackMode.RANGED if randi() % 2 == 0 else AttackMode.MELEE
 
+	var class_id_clean := String(class_id_in).to_lower().strip_edges()
+	if model_group_id == "bandits" and class_id_clean == "hunter":
+		ranged_projectile_scene = BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
+
 	attack_mode = chosen_mode
 	if c_combat != null:
 		var base_melee := Progression.get_base_melee_attack_interval_for_class(class_id_in)
