@@ -141,6 +141,9 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node, item_
 						cd_line = TranslationServer.translate("ui.tooltip.cooldown_left").format({"seconds": int(cd_total), "left": "%.1f" % left})
 				lines.append(cd_line)
 
+	var has_footer: bool = req_line != "" or int(meta.get("vendor_price_bronze", 0)) > 0
+	if has_footer and not lines.is_empty() and lines[lines.size() - 1] != "":
+		lines.append("")
 	if req_line != "":
 		lines.append(req_line)
 	var price: int = int(meta.get("vendor_price_bronze", 0))
