@@ -8,6 +8,10 @@ signal hud_visibility_changed(is_open: bool)
 
 const BUY_PRICE_MULTIPLIER: float = 1.25
 const TOOLTIP_HOLD_MAX_MS: int = 1000
+const TOOLTIP_FONT_SIZE: int = 22
+const TOOLTIP_BUTTON_HEIGHT: float = 44.0
+const TOOLTIP_CLOSE_SIZE: float = 48.0
+const TOOLTIP_CLOSE_GAP: float = 8.0
 
 @onready var panel: Panel = $Root/Panel
 @onready var title_label: Label = $Root/Panel/Title
@@ -86,8 +90,12 @@ func _ready() -> void:
 		tooltip_panel.add_theme_stylebox_override("panel", sb)
 	if tooltip_label != null:
 		tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tooltip_label.add_theme_font_size_override("normal_font_size", TOOLTIP_FONT_SIZE)
+		tooltip_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	if tooltip_close_button != null:
 		tooltip_close_button.mouse_filter = Control.MOUSE_FILTER_STOP
+		tooltip_close_button.custom_minimum_size = Vector2(TOOLTIP_CLOSE_SIZE, TOOLTIP_CLOSE_SIZE)
+		tooltip_close_button.add_theme_font_size_override("font_size", TOOLTIP_FONT_SIZE)
 	if close_button != null and not close_button.pressed.is_connected(close):
 		close_button.pressed.connect(close)
 	if tooltip_use_btn != null:
@@ -96,6 +104,10 @@ func _ready() -> void:
 		tooltip_equip_btn.visible = false
 	if tooltip_unequip_btn != null:
 		tooltip_unequip_btn.visible = false
+	for btn in [tooltip_use_btn, tooltip_equip_btn, tooltip_unequip_btn]:
+		if btn != null:
+			btn.add_theme_font_size_override("font_size", TOOLTIP_FONT_SIZE)
+			btn.custom_minimum_size = Vector2(btn.custom_minimum_size.x, TOOLTIP_BUTTON_HEIGHT)
 	if tooltip_close_button != null and not tooltip_close_button.pressed.is_connected(_hide_tooltip):
 		tooltip_close_button.pressed.connect(_hide_tooltip)
 	if qty_ok != null:
@@ -711,7 +723,7 @@ func _show_tooltip(item_id: String, count: int, global_pos: Vector2) -> void:
 	var meta: Dictionary = {}
 	if db != null and db.has_method("get_item"):
 		meta = db.call("get_item", item_id) as Dictionary
-	var text := TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player)
+	var text := TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player, item_id)
 	if String(text).strip_edges().is_empty():
 		return
 	tooltip_label.text = text
@@ -738,10 +750,11 @@ func _resize_tooltip_to_content() -> void:
 	var prev_mod := tooltip_panel.modulate
 	tooltip_panel.visible = true
 	tooltip_panel.modulate = Color(prev_mod.r, prev_mod.g, prev_mod.b, 0.0)
-	var width: float = 360.0
+	var width: float = _compute_tooltip_width()
+	var text_width: float = max(120.0, width - 20.0 - TOOLTIP_CLOSE_SIZE - TOOLTIP_CLOSE_GAP)
 	tooltip_panel.size = Vector2(width, 10)
 	tooltip_panel.custom_minimum_size = Vector2(width, 0)
-	tooltip_label.custom_minimum_size = Vector2(width - 20.0, 0)
+	tooltip_label.custom_minimum_size = Vector2(text_width, 0)
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var label_min := tooltip_label.get_combined_minimum_size()
@@ -762,6 +775,18 @@ func _resize_tooltip_to_content() -> void:
 	tooltip_panel.modulate = prev_mod
 	if not prev_visible:
 		tooltip_panel.visible = false
+
+func _compute_tooltip_width() -> float:
+	var text_w: float = 0.0
+	if tooltip_label != null and tooltip_label.has_method("get_content_width"):
+		text_w = float(tooltip_label.call("get_content_width"))
+	if text_w <= 1.0 and tooltip_label != null:
+		text_w = tooltip_label.get_combined_minimum_size().x
+	var close_w: float = TOOLTIP_CLOSE_SIZE
+	if tooltip_close_button != null:
+		close_w = max(close_w, tooltip_close_button.get_combined_minimum_size().x)
+	var width: float = ceil(text_w + TOOLTIP_CLOSE_GAP + close_w + 4.0)
+	return clamp(width, 280.0, 900.0)
 
 func _position_tooltip_left_of_point(p: Vector2) -> void:
 	if tooltip_panel == null:

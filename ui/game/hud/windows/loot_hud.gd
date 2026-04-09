@@ -4,6 +4,9 @@ const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
+const TOOLTIP_FONT_SIZE: int = 22
+const TOOLTIP_CLOSE_SIZE: float = 48.0
+const TOOLTIP_CLOSE_GAP: float = 8.0
 # Tooltip should show on release if press <= 1s.
 const TOOLTIP_HOLD_MAX_MS: int = 1000
 # LootHUD for Corpse v2 loot (loot_gold + loot_slots).
@@ -68,6 +71,8 @@ func _ready() -> void:
 	_reset_tooltip_scroll()
 	tooltip_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	tooltip_text.add_theme_font_size_override("normal_font_size", TOOLTIP_FONT_SIZE)
+	tooltip_text.autowrap_mode = TextServer.AUTOWRAP_OFF
 
 	# Make tooltip styling stable and readable
 	var sb := StyleBoxFlat.new()
@@ -93,6 +98,8 @@ func _ready() -> void:
 		loot_all_button.text = tr("ui.common.loot_all")
 	if tooltip_close_button != null:
 		tooltip_close_button.pressed.connect(_hide_tooltip)
+		tooltip_close_button.custom_minimum_size = Vector2(TOOLTIP_CLOSE_SIZE, TOOLTIP_CLOSE_SIZE)
+		tooltip_close_button.add_theme_font_size_override("font_size", TOOLTIP_FONT_SIZE)
 
 	# Bind slot UI
 	_ensure_slots()
@@ -663,14 +670,13 @@ func _hide_tooltip() -> void:
 
 
 func _apply_tooltip_layout() -> void:
-	# Fixed width tooltip; height grows to fit text.
-	var width: float = 360.0
+	var width: float = _compute_tooltip_width()
+	var text_width: float = max(120.0, width - 20.0 - TOOLTIP_CLOSE_SIZE - TOOLTIP_CLOSE_GAP)
 	tooltip_panel.size = Vector2(width, 10)
 	tooltip_panel.custom_minimum_size = Vector2(width, 0)
 
-	# Ensure the label wraps within the tooltip width.
-	tooltip_text.autowrap_mode = TextServer.AUTOWRAP_WORD
-	tooltip_text.custom_minimum_size = Vector2(width - 20.0, 0)
+	tooltip_text.autowrap_mode = TextServer.AUTOWRAP_OFF
+	tooltip_text.custom_minimum_size = Vector2(text_width, 0)
 
 	# Ask Godot for the wrapped text height and apply padding.
 	# RichTextLabel exposes content height.
@@ -681,6 +687,18 @@ func _apply_tooltip_layout() -> void:
 	var min_from_label := tooltip_text.get_combined_minimum_size().y
 	var height: float = max(32.0, max(content_h, min_from_label) + 16.0)
 	tooltip_panel.size = Vector2(width, height)
+
+func _compute_tooltip_width() -> float:
+	var text_w: float = 0.0
+	if tooltip_text != null and tooltip_text.has_method("get_content_width"):
+		text_w = float(tooltip_text.call("get_content_width"))
+	if text_w <= 1.0 and tooltip_text != null:
+		text_w = tooltip_text.get_combined_minimum_size().x
+	var close_w: float = TOOLTIP_CLOSE_SIZE
+	if tooltip_close_button != null:
+		close_w = max(close_w, tooltip_close_button.get_combined_minimum_size().x)
+	var width: float = ceil(text_w + TOOLTIP_CLOSE_GAP + close_w + 4.0)
+	return clamp(width, 280.0, 900.0)
 
 func _reset_tooltip_scroll() -> void:
 	# RichTextLabel can keep a previous scroll offset. Ensure it is reset.
@@ -734,4 +752,4 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _build_item_tooltip_text(item: Dictionary) -> String:
-	return TOOLTIP_BUILDER.build_item_tooltip(item, 1, _player)
+	return TOOLTIP_BUILDER.build_item_tooltip(item, 1, _player, String(item.get("id", "")))

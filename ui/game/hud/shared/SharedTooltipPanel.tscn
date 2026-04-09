@@ -1,4 +1,16 @@
-[gd_scene format=3 uid="uid://bt2tbslwfrutf"]
+[gd_scene load_steps=2 format=3 uid="uid://bt2tbslwfrutf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tooltip_button_outline"]
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.9)
+bg_color = Color(0, 0, 0, 0.35)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="TooltipPanel" type="Panel"]
 visible = false
@@ -21,46 +33,95 @@ layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-autowrap_mode = 2
+autowrap_mode = 0
+theme_override_font_sizes/normal_font_size = 22
 
 [node name="UseButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "Использовать"
 
 [node name="EquipButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "Экипировать"
 
 [node name="SellButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "Продать"
 
 [node name="SellAllButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "Продать всё"
 
 [node name="QuickSlotButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "В быстрый слот"
 
 [node name="BagButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "Экипировать"
 
 [node name="DropButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "Выбросить"
 
 [node name="UnequipButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "Снять"
 
 [node name="CloseButton" type="Button" parent="."]
@@ -68,8 +129,13 @@ z_index = 1
 layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -22.0
+offset_left = -52.0
 offset_top = 4.0
 offset_right = -4.0
-offset_bottom = 22.0
+offset_bottom = 52.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tooltip_button_outline")
+theme_override_font_sizes/font_size = 22
 text = "×"
