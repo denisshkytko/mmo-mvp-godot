@@ -530,10 +530,6 @@ func apply_spawn_init(
 			"hybrid":
 				chosen_mode = AttackMode.RANGED if randi() % 2 == 0 else AttackMode.MELEE
 
-	var class_id_clean := String(class_id_in).to_lower().strip_edges()
-	if model_group_id == "bandits" and class_id_clean == "hunter":
-		ranged_projectile_scene = BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
-
 	attack_mode = chosen_mode
 	if c_combat != null:
 		var base_melee := Progression.get_base_melee_attack_interval_for_class(class_id_in)
@@ -553,9 +549,7 @@ func apply_spawn_init(
 
 
 func _resolve_ranged_projectile_scene_for_model(group_id: String, id: String) -> PackedScene:
-	var gid := String(group_id).to_lower().strip_edges()
-	var model_id := String(id).to_lower().strip_edges().replace("-", "_").replace(" ", "_")
-	if gid in ["bandits", "bandit"] and model_id.begins_with("hunter"):
+	if group_id == "bandits" and id == "hunter_ranged":
 		return BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
 	return null
 
@@ -767,16 +761,7 @@ func _apply_mode_to_components() -> void:
 	c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 	if not _spawn_initialized:
 		c_combat.ranged_cooldown = ranged_attack_cooldown
-	var resolved_ranged_projectile: PackedScene = ranged_projectile_scene
-	var model_projectile := _resolve_ranged_projectile_scene_for_model(model_group_id, model_id)
-	if model_projectile != null:
-		resolved_ranged_projectile = model_projectile
-	else:
-		var class_id_clean := String(c_stats.class_id if c_stats != null else "").to_lower().strip_edges()
-		if model_group_id == "bandits" and class_id_clean == "hunter":
-			resolved_ranged_projectile = BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
-	ranged_projectile_scene = resolved_ranged_projectile
-	c_combat.ranged_projectile_scene = resolved_ranged_projectile
+	c_combat.ranged_projectile_scene = ranged_projectile_scene
 
 	c_stats.mob_level = mob_level
 
