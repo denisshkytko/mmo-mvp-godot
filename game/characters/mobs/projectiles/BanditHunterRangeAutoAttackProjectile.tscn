@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bo8prpe51b663" path="res://assets/projectiles/mobs/Bandits/Hunter - Range/auto_attacks.png" id="2_tex"]
 
 [node name="BanditHunterRangeAutoAttackProjectile" type="Node2D"]
+scale = Vector2(0.2, 0.2)
 script = ExtResource("1_script")
 default_visual_scale = Vector2(0.8, 0.8)
 
