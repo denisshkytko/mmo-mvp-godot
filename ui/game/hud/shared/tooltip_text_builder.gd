@@ -44,7 +44,7 @@ static func format_money_bbcode(bronze_total: int) -> String:
 static func _money_part(_value: int, text: String, color: String) -> String:
 	return "[color=%s]%s[/color]" % [color, text]
 
-static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> String:
+static func build_item_tooltip(meta: Dictionary, count: int, player: Node, item_id: String = "") -> String:
 	if meta.is_empty():
 		return ""
 
@@ -122,6 +122,8 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		for k in sm.keys():
 			lines.append("%s: %+d" % [String(k), int(sm[k])])
 
+	_append_equipment_comparison(lines, meta, item_id, player)
+
 	if meta.has("consumable") and meta.get("consumable") is Dictionary:
 		var c: Dictionary = meta.get("consumable") as Dictionary
 		if not c.is_empty():
@@ -146,6 +148,153 @@ static func build_item_tooltip(meta: Dictionary, count: int, player: Node) -> St
 		lines.append(TranslationServer.translate("ui.terms.price_with_value").format({"value": format_money_bbcode(price)}))
 
 	return "\n".join(lines)
+
+static func _append_equipment_comparison(lines: Array[String], meta: Dictionary, item_id: String, player: Node) -> void:
+	if lines == null:
+		return
+	var typ: String = String(meta.get("type", "")).to_lower()
+	if typ not in ["weapon", "armor", "accessory", "offhand", "shield"]:
+		return
+	var equipped_meta := _resolve_equipped_item_meta_for_compare(meta, item_id, player)
+	var current_vals := _collect_compare_values(meta)
+	var equipped_vals := _collect_compare_values(equipped_meta)
+	if current_vals.is_empty():
+		return
+	var stat_order: Array[String] = []
+	for key in current_vals.keys():
+		stat_order.append(String(key))
+	for key in equipped_vals.keys():
+		var key_s := String(key)
+		if not stat_order.has(key_s):
+			stat_order.append(key_s)
+	stat_order.sort()
+	var has_deltas: bool = false
+	var delta_lines: Array[String] = []
+	for stat_key in stat_order:
+		var new_value := float(current_vals.get(stat_key, 0.0))
+		var old_value := float(equipped_vals.get(stat_key, 0.0))
+		var delta := new_value - old_value
+		if absf(delta) <= 0.0001:
+			continue
+		has_deltas = true
+		var line_label := _compare_stat_label(stat_key)
+		var sign := "+" if delta > 0.0 else ""
+		var value_text := sign + _format_compare_number(delta)
+		var color := "#4ce06a" if delta > 0.0 else "#ff6b6b"
+		delta_lines.append("%s: [color=%s]%s[/color]" % [line_label, color, value_text])
+	if not has_deltas:
+		return
+	lines.append("")
+	lines.append(TranslationServer.translate("ui.tooltip.comparison").strip_edges() if TranslationServer.translate("ui.tooltip.comparison").strip_edges() != "ui.tooltip.comparison" else "Comparison")
+	lines.append_array(delta_lines)
+
+static func _resolve_equipped_item_meta_for_compare(meta: Dictionary, item_id: String, player: Node) -> Dictionary:
+	if player == null or not is_instance_valid(player):
+		return {}
+	if not player.has_method("get_equipment_snapshot"):
+		return {}
+	var equip_v: Variant = player.call("get_equipment_snapshot")
+	if not (equip_v is Dictionary):
+		return {}
+	var equip: Dictionary = equip_v as Dictionary
+	if equip.is_empty():
+		return {}
+	var candidate_slots: Array[String] = []
+	if item_id != "" and player.has_method("get_preferred_equipment_slot"):
+		var preferred_slot := String(player.call("get_preferred_equipment_slot", item_id))
+		if preferred_slot != "":
+			candidate_slots.append(preferred_slot)
+	var typ: String = String(meta.get("type", "")).to_lower()
+	match typ:
+		"armor":
+			var armor_slot := String((meta.get("armor", {}) as Dictionary).get("slot", ""))
+			if armor_slot != "" and not candidate_slots.has(armor_slot):
+				candidate_slots.append(armor_slot)
+		"weapon":
+			if not candidate_slots.has("weapon_r"):
+				candidate_slots.append("weapon_r")
+		"offhand", "shield":
+			if not candidate_slots.has("weapon_l"):
+				candidate_slots.append("weapon_l")
+		"accessory":
+			var acc_slot := String((meta.get("accessory", {}) as Dictionary).get("slot", ""))
+			if acc_slot == "ring":
+				if not candidate_slots.has("ring1"):
+					candidate_slots.append("ring1")
+				if not candidate_slots.has("ring2"):
+					candidate_slots.append("ring2")
+			elif acc_slot != "" and not candidate_slots.has(acc_slot):
+				candidate_slots.append(acc_slot)
+	for slot_id in candidate_slots:
+		var equipped_v: Variant = equip.get(slot_id, null)
+		if not (equipped_v is Dictionary):
+			continue
+		var equipped_d: Dictionary = equipped_v as Dictionary
+		var equipped_id := String(equipped_d.get("id", ""))
+		if equipped_id == "":
+			continue
+		var equipped_meta := _get_item_meta(player, equipped_id)
+		if not equipped_meta.is_empty():
+			return equipped_meta
+	return {}
+
+static func _get_item_meta(player: Node, item_id: String) -> Dictionary:
+	if item_id == "":
+		return {}
+	var db := player.get_node_or_null("/root/DataDB")
+	if db == null or not db.has_method("get_item"):
+		return {}
+	var meta_v: Variant = db.call("get_item", item_id)
+	if meta_v is Dictionary:
+		return meta_v as Dictionary
+	return {}
+
+static func _collect_compare_values(meta: Dictionary) -> Dictionary:
+	if meta.is_empty():
+		return {}
+	var out: Dictionary = {}
+	if meta.has("weapon") and meta.get("weapon") is Dictionary:
+		var w: Dictionary = meta.get("weapon") as Dictionary
+		var dmg := float(w.get("damage", 0))
+		var interval := max(0.001, float(w.get("attack_interval", 1.0)))
+		if dmg > 0.0:
+			out["damage"] = dmg
+			out["dps"] = dmg / interval
+	if meta.has("armor") and meta.get("armor") is Dictionary:
+		var a: Dictionary = meta.get("armor") as Dictionary
+		out["physical_armor"] = float(a.get("physical_armor", 0))
+		out["magic_armor"] = float(a.get("magic_armor", 0))
+	if meta.has("offhand") and meta.get("offhand") is Dictionary:
+		var oh: Dictionary = meta.get("offhand") as Dictionary
+		out["physical_armor"] = float(out.get("physical_armor", 0.0)) + float(oh.get("physical_armor", 0))
+		out["magic_armor"] = float(out.get("magic_armor", 0.0)) + float(oh.get("magic_armor", 0))
+	if meta.has("shield") and meta.get("shield") is Dictionary:
+		var sh: Dictionary = meta.get("shield") as Dictionary
+		out["physical_armor"] = float(out.get("physical_armor", 0.0)) + float(sh.get("physical_armor", 0))
+		out["magic_armor"] = float(out.get("magic_armor", 0.0)) + float(sh.get("magic_armor", 0))
+	if meta.has("stats_modifiers") and meta.get("stats_modifiers") is Dictionary:
+		var sm: Dictionary = meta.get("stats_modifiers") as Dictionary
+		for k in sm.keys():
+			out[String(k)] = float(sm.get(k, 0))
+	return out
+
+static func _compare_stat_label(stat_key: String) -> String:
+	match stat_key:
+		"damage":
+			return "Damage"
+		"dps":
+			return "DPS"
+		"physical_armor":
+			return "Physical defense"
+		"magic_armor":
+			return "Magic defense"
+		_:
+			return stat_key
+
+static func _format_compare_number(value: float) -> String:
+	if absf(value - round(value)) <= 0.0001:
+		return str(int(round(value)))
+	return "%.1f" % value
 
 static func _slot_label(meta: Dictionary, typ: String) -> String:
 	match typ:

@@ -734,4 +734,4 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _build_item_tooltip_text(item: Dictionary) -> String:
-	return TOOLTIP_BUILDER.build_item_tooltip(item, 1, _player)
+	return TOOLTIP_BUILDER.build_item_tooltip(item, 1, _player, String(item.get("id", "")))

@@ -1757,8 +1757,9 @@ func _update_bag_buttons(bag_slot_items: Array) -> void:
 			btn.disabled = false
 
 func show_bag_full(message: String = tr("ui.common.bag_full")) -> void:
-	bag_full_dialog.dialog_text = message
-	bag_full_dialog.popup_centered()
+	show_center_toast(message)
+	if bag_full_dialog != null:
+		bag_full_dialog.hide()
 
 # --- Helpers ---
 
@@ -1869,7 +1870,7 @@ func _build_tooltip_text(id: String, count: int) -> String:
 	var meta: Dictionary = {}
 	if db != null and db.has_method("get_item"):
 		meta = db.call("get_item", id) as Dictionary
-	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, player)
+	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, player, id)
 
 
 

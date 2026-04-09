@@ -711,7 +711,7 @@ func _show_tooltip(item_id: String, count: int, global_pos: Vector2) -> void:
 	var meta: Dictionary = {}
 	if db != null and db.has_method("get_item"):
 		meta = db.call("get_item", item_id) as Dictionary
-	var text := TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player)
+	var text := TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player, item_id)
 	if String(text).strip_edges().is_empty():
 		return
 	tooltip_label.text = text
