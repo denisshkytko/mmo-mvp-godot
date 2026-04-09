@@ -517,14 +517,18 @@ func _compute_tooltip_width() -> float:
 	return clamp(width, 280.0, 900.0)
 
 func _compute_bbcode_widest_line_width(bbcode_text: String) -> float:
-	var stripped := ""
+	var source := ""
 	if tooltip_rich != null and tooltip_rich.has_method("get_parsed_text"):
-		stripped = String(tooltip_rich.call("get_parsed_text"))
-	if stripped.strip_edges() == "" and bbcode_text.strip_edges() != "":
-		var plain := RegEx.new()
-		var err := plain.compile("\\[[^\\]]+\\]")
-		if err == OK:
-			stripped = plain.sub(bbcode_text, "", true)
+		source = String(tooltip_rich.call("get_parsed_text"))
+	if source.strip_edges() == "":
+		source = bbcode_text
+	if source.strip_edges() == "":
+		return 0.0
+	var stripped := source
+	var plain := RegEx.new()
+	var err := plain.compile("\\[[^\\]]+\\]")
+	if err == OK:
+		stripped = plain.sub(source, "", true)
 	if stripped.strip_edges() == "":
 		return 0.0
 	var font: Font = tooltip_rich.get_theme_font("normal_font") if tooltip_rich != null else null

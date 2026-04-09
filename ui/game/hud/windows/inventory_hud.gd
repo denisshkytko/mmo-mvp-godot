@@ -896,14 +896,18 @@ func _compute_tooltip_width(label: RichTextLabel, close_btn: Button) -> float:
 func _compute_bbcode_widest_line_width(label: RichTextLabel, bbcode_text: String) -> float:
 	if label == null:
 		return 0.0
-	var stripped := ""
+	var source := ""
 	if label.has_method("get_parsed_text"):
-		stripped = String(label.call("get_parsed_text"))
-	if stripped.strip_edges() == "" and bbcode_text.strip_edges() != "":
-		var plain := RegEx.new()
-		var err := plain.compile("\\[[^\\]]+\\]")
-		if err == OK:
-			stripped = plain.sub(bbcode_text, "", true)
+		source = String(label.call("get_parsed_text"))
+	if source.strip_edges() == "":
+		source = bbcode_text
+	if source.strip_edges() == "":
+		return 0.0
+	var stripped := source
+	var plain := RegEx.new()
+	var err := plain.compile("\\[[^\\]]+\\]")
+	if err == OK:
+		stripped = plain.sub(source, "", true)
 	if stripped.strip_edges() == "":
 		return 0.0
 	var font: Font = label.get_theme_font("normal_font")
