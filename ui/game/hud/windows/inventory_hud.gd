@@ -884,9 +884,7 @@ func _resize_tooltip_to_content() -> void:
 func _compute_tooltip_width(label: RichTextLabel, close_btn: Button) -> float:
 	if label == null:
 		return 360.0
-	var text_w: float = 0.0
-	if label.has_method("get_content_width"):
-		text_w = float(label.call("get_content_width"))
+	var text_w: float = _compute_bbcode_widest_line_width(label, label.text)
 	if text_w <= 1.0:
 		text_w = label.get_combined_minimum_size().x
 	var close_w: float = TOOLTIP_CLOSE_SIZE
@@ -894,6 +892,41 @@ func _compute_tooltip_width(label: RichTextLabel, close_btn: Button) -> float:
 		close_w = max(close_w, close_btn.get_combined_minimum_size().x)
 	var width: float = ceil(text_w + TOOLTIP_CLOSE_GAP + close_w + 4.0)
 	return clamp(width, 280.0, 900.0)
+
+func _compute_bbcode_widest_line_width(label: RichTextLabel, bbcode_text: String) -> float:
+	if label == null:
+		return 0.0
+	var source := ""
+	if label.has_method("get_parsed_text"):
+		source = String(label.call("get_parsed_text"))
+	if source.strip_edges() == "":
+		source = bbcode_text
+	if source.strip_edges() == "":
+		return 0.0
+	var stripped := source
+	var plain := RegEx.new()
+	var err := plain.compile("\\[[^\\]]+\\]")
+	if err == OK:
+		stripped = plain.sub(source, "", true)
+	if stripped.strip_edges() == "":
+		return 0.0
+	var font: Font = label.get_theme_font("normal_font")
+	if font == null:
+		font = label.get_theme_font("font")
+	if font == null:
+		return 0.0
+	var font_size: int = label.get_theme_font_size("normal_font_size")
+	if font_size <= 0:
+		font_size = label.get_theme_font_size("font_size")
+	if font_size <= 0:
+		font_size = TOOLTIP_FONT_SIZE
+	var widest: float = 0.0
+	for line in stripped.split("\n"):
+		var clean_line := line.replace("\r", "").replace("\u200b", "").replace("\u200c", "").replace("\u200d", "").replace("\ufeff", "").replace("\t", "    ").strip_edges(false, true)
+		var line_w := font.get_string_size(clean_line, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+		if line_w > widest:
+			widest = line_w
+	return widest
 
 func _position_tooltip_left_of_point(p: Vector2) -> void:
 	if _tooltip_panel == null:

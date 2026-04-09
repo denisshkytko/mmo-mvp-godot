@@ -8,8 +8,8 @@ const UI_TEXT := preload("res://ui/game/hud/shared/ui_text.gd")
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 signal hud_visibility_changed(is_open: bool)
 
-const TOOLTIP_MIN_W: float = 260.0
-const TOOLTIP_MAX_W: float = 420.0
+const TOOLTIP_CLOSE_SIZE: float = 48.0
+const TOOLTIP_CLOSE_GAP: float = 8.0
 const TOOLTIP_OFFSET := Vector2(12, 10)
 const TOOLTIP_MARGIN: float = 8.0
 
@@ -91,7 +91,7 @@ func _ready() -> void:
 	tooltip_rich.bbcode_enabled = true
 	tooltip_rich.fit_content = true
 	tooltip_rich.scroll_active = false
-	tooltip_rich.autowrap_mode = TextServer.AUTOWRAP_WORD
+	tooltip_rich.autowrap_mode = TextServer.AUTOWRAP_OFF
 	tooltip_panel.visible = false
 	tooltip_rich.text = ""
 	_style_tooltip_panel()
@@ -447,7 +447,7 @@ func _build_item_tooltip_text(item_id: String, count: int) -> String:
 	var meta: Dictionary = db.call("get_item", item_id) as Dictionary
 	if meta.is_empty():
 		return ""
-	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player)
+	return TOOLTIP_BUILDER.build_item_tooltip(meta, count, _player, item_id)
 
 func _show_tooltip_text(text: String, show_unequip: bool, anchor_pos: Vector2) -> void:
 	if tooltip_panel == null or tooltip_rich == null:
@@ -475,15 +475,11 @@ func _resize_tooltip_to_content() -> void:
 	var prev_modulate := tooltip_panel.modulate
 	tooltip_panel.visible = true
 	tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
-	tooltip_panel.custom_minimum_size = Vector2(TOOLTIP_MIN_W, 0.0)
-	tooltip_panel.size = Vector2(TOOLTIP_MAX_W, 10.0)
-	await get_tree().process_frame
-	await get_tree().process_frame
-	var min_size: Vector2 = tooltip_panel.get_combined_minimum_size()
-	var target_w: float = clamp(min_size.x, TOOLTIP_MIN_W, TOOLTIP_MAX_W)
-	tooltip_panel.custom_minimum_size = Vector2(target_w, 0.0)
-	tooltip_panel.size = Vector2(target_w, 10.0)
-	tooltip_rich.custom_minimum_size = Vector2(max(0.0, target_w - 20.0), 0.0)
+	var width: float = _compute_tooltip_width()
+	var text_width: float = max(120.0, width - 20.0 - TOOLTIP_CLOSE_SIZE - TOOLTIP_CLOSE_GAP)
+	tooltip_panel.custom_minimum_size = Vector2(width, 0.0)
+	tooltip_panel.size = Vector2(width, 10.0)
+	tooltip_rich.custom_minimum_size = Vector2(max(0.0, text_width), 0.0)
 	await get_tree().process_frame
 	var label_min: Vector2 = tooltip_rich.get_combined_minimum_size()
 	if label_min.y <= 1.0:
@@ -495,12 +491,12 @@ func _resize_tooltip_to_content() -> void:
 		btn_h = max(32.0, tooltip_unequip.get_combined_minimum_size().y)
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
-	tooltip_panel.custom_minimum_size = Vector2(target_w, min_h)
-	tooltip_panel.size = Vector2(target_w, min_h)
+	tooltip_panel.custom_minimum_size = Vector2(width, min_h)
+	tooltip_panel.size = Vector2(width, min_h)
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var final_size: Vector2 = tooltip_panel.get_combined_minimum_size()
-	final_size.x = target_w
+	final_size.x = width
 	if final_size.y < min_h:
 		final_size.y = min_h
 	tooltip_panel.custom_minimum_size = final_size
@@ -508,6 +504,50 @@ func _resize_tooltip_to_content() -> void:
 	tooltip_panel.modulate = prev_modulate
 	if not was_visible:
 		tooltip_panel.visible = false
+
+func _compute_tooltip_width() -> float:
+	var parsed_w: float = _compute_bbcode_widest_line_width(tooltip_rich.text if tooltip_rich != null else "")
+	var text_w: float = parsed_w
+	if text_w <= 1.0 and tooltip_rich != null:
+		text_w = tooltip_rich.get_combined_minimum_size().x
+	var close_w: float = TOOLTIP_CLOSE_SIZE
+	if tooltip_close_button != null:
+		close_w = max(close_w, tooltip_close_button.get_combined_minimum_size().x)
+	var width: float = ceil(text_w + TOOLTIP_CLOSE_GAP + close_w + 4.0)
+	return clamp(width, 280.0, 900.0)
+
+func _compute_bbcode_widest_line_width(bbcode_text: String) -> float:
+	var source := ""
+	if tooltip_rich != null and tooltip_rich.has_method("get_parsed_text"):
+		source = String(tooltip_rich.call("get_parsed_text"))
+	if source.strip_edges() == "":
+		source = bbcode_text
+	if source.strip_edges() == "":
+		return 0.0
+	var stripped := source
+	var plain := RegEx.new()
+	var err := plain.compile("\\[[^\\]]+\\]")
+	if err == OK:
+		stripped = plain.sub(source, "", true)
+	if stripped.strip_edges() == "":
+		return 0.0
+	var font: Font = tooltip_rich.get_theme_font("normal_font") if tooltip_rich != null else null
+	if font == null and tooltip_rich != null:
+		font = tooltip_rich.get_theme_font("font")
+	if font == null:
+		return 0.0
+	var font_size: int = tooltip_rich.get_theme_font_size("normal_font_size") if tooltip_rich != null else 22
+	if tooltip_rich != null and font_size <= 0:
+		font_size = tooltip_rich.get_theme_font_size("font_size")
+	if font_size <= 0:
+		font_size = 22
+	var widest: float = 0.0
+	for line in stripped.split("\n"):
+		var clean_line := line.replace("\r", "").replace("\u200b", "").replace("\u200c", "").replace("\u200d", "").replace("\ufeff", "").replace("\t", "    ").strip_edges(false, true)
+		var line_w := font.get_string_size(clean_line, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+		if line_w > widest:
+			widest = line_w
+	return widest
 
 func _close_tooltip_on_outside_click(global_pos: Vector2) -> void:
 	if not tooltip_panel.visible:
