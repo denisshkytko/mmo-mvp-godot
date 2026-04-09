@@ -508,8 +508,6 @@ func _resize_tooltip_to_content() -> void:
 func _compute_tooltip_width() -> float:
 	var parsed_w: float = _compute_bbcode_widest_line_width(tooltip_rich.text if tooltip_rich != null else "")
 	var text_w: float = parsed_w
-	if text_w <= 1.0 and tooltip_rich != null and tooltip_rich.has_method("get_content_width"):
-		text_w = float(tooltip_rich.call("get_content_width"))
 	if text_w <= 1.0 and tooltip_rich != null:
 		text_w = tooltip_rich.get_combined_minimum_size().x
 	var close_w: float = TOOLTIP_CLOSE_SIZE
@@ -519,13 +517,16 @@ func _compute_tooltip_width() -> float:
 	return clamp(width, 280.0, 900.0)
 
 func _compute_bbcode_widest_line_width(bbcode_text: String) -> float:
-	if bbcode_text.strip_edges() == "":
+	var stripped := ""
+	if tooltip_rich != null and tooltip_rich.has_method("get_parsed_text"):
+		stripped = String(tooltip_rich.call("get_parsed_text"))
+	if stripped.strip_edges() == "" and bbcode_text.strip_edges() != "":
+		var plain := RegEx.new()
+		var err := plain.compile("\\[[^\\]]+\\]")
+		if err == OK:
+			stripped = plain.sub(bbcode_text, "", true)
+	if stripped.strip_edges() == "":
 		return 0.0
-	var plain := RegEx.new()
-	var err := plain.compile("\\[[^\\]]+\\]")
-	if err != OK:
-		return 0.0
-	var stripped: String = plain.sub(bbcode_text, "", true)
 	var font: Font = tooltip_rich.get_theme_font("normal_font") if tooltip_rich != null else null
 	if font == null and tooltip_rich != null:
 		font = tooltip_rich.get_theme_font("font")
