@@ -13,6 +13,7 @@ const MERCHANT_MODEL_SCENE := preload("res://game/characters/npcs/models/Merchan
 const TRAINER_MODEL_SCENE := preload("res://game/characters/npcs/models/TrainerModel.tscn")
 const OVERLAY_COLORS := preload("res://game/characters/shared/overlay_relation_colors.gd")
 const DAMAGE_HELPER := preload("res://game/characters/shared/damage_helper.gd")
+const BANDIT_HUNTER_RANGED_PROJECTILE_SCENE: PackedScene = preload("res://game/characters/mobs/projectiles/BanditHunterRangeAutoAttackProjectile.tscn")
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
 
 signal died(corpse: Corpse)
@@ -381,7 +382,10 @@ func apply_spawn_init(
 				c_combat.ranged_cooldown = base_ranged
 
 				var proj: PackedScene = projectile_scene_in
-				if proj == null:
+				var class_id_clean := String(class_id_in).to_lower().strip_edges()
+				if class_id_clean == "hunter":
+					proj = BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
+				elif proj == null:
 					proj = mage_projectile_scene
 				c_combat.ranged_projectile_scene = proj
 			else:
