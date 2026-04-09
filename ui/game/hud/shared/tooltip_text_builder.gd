@@ -256,7 +256,7 @@ static func _collect_compare_values(meta: Dictionary) -> Dictionary:
 	if meta.has("weapon") and meta.get("weapon") is Dictionary:
 		var w: Dictionary = meta.get("weapon") as Dictionary
 		var dmg := float(w.get("damage", 0))
-		var interval := max(0.001, float(w.get("attack_interval", 1.0)))
+		var interval: float = max(0.001, float(w.get("attack_interval", 1.0)))
 		if dmg > 0.0:
 			out["damage"] = dmg
 			out["dps"] = dmg / interval

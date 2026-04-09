@@ -28,7 +28,6 @@ signal hud_visibility_changed(is_open: bool)
 @onready var bag_slot3: Button = $Root/Panel/Content/BagSlots/BagSlot3
 @onready var bag_slot4: Button = $Root/Panel/Content/BagSlots/BagSlot4
 
-@onready var bag_full_dialog: AcceptDialog = $Root/BagFullDialog
 
 # Tooltip is defined in the scene (like LootHUD), not created dynamically.
 @onready var tooltip_panel_scene: Panel = $Root/InvTooltip
@@ -157,9 +156,6 @@ func _ready() -> void:
 		split_ok.text = tr("ui.common.accept")
 	if split_cancel != null:
 		split_cancel.text = tr("ui.terms.cancel")
-	if bag_full_dialog != null:
-		bag_full_dialog.title = tr("ui.common.inventory_title")
-		bag_full_dialog.dialog_text = tr("ui.common.bag_full")
 
 	if bag_button != null:
 		bag_button.pressed.connect(_on_bag_button_pressed)
@@ -1758,8 +1754,6 @@ func _update_bag_buttons(bag_slot_items: Array) -> void:
 
 func show_bag_full(message: String = tr("ui.common.bag_full")) -> void:
 	show_center_toast(message)
-	if bag_full_dialog != null:
-		bag_full_dialog.hide()
 
 # --- Helpers ---
 
@@ -2076,11 +2070,6 @@ func _ensure_support_ui() -> void:
 		tsb.content_margin_top = 6
 		tsb.content_margin_bottom = 6
 		_toast_label.add_theme_stylebox_override("normal", tsb)
-
-	if bag_full_dialog != null:
-		_ensure_error_layer()
-		if bag_full_dialog.get_parent() != _error_layer:
-			bag_full_dialog.reparent(_error_layer)
 
 	if _settings_button == null:
 		_settings_button = settings_button_scene

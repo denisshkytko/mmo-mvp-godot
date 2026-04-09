@@ -522,11 +522,6 @@ offset_right = 190.0
 offset_bottom = 120.0
 text = "Отменить"
 
-[node name="BagFullDialog" type="AcceptDialog" parent="Root"]
-oversampling_override = 1.0
-title = "Инвентарь"
-dialog_text = "Сумка полна"
-
 [node name="DropConfirmDialog" type="ConfirmationDialog" parent="Root"]
 title = "Подтверждение"
 ok_button_text = "Выбросить"
