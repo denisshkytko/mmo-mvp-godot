@@ -811,7 +811,8 @@ func _compute_bbcode_widest_line_width(label: RichTextLabel, bbcode_text: String
 		font_size = TOOLTIP_FONT_SIZE
 	var widest: float = 0.0
 	for line in stripped.split("\n"):
-		var line_w := font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+		var clean_line := line.replace("\r", "").replace("\u200b", "").replace("\u200c", "").replace("\u200d", "").replace("\ufeff", "").replace("\t", "    ").strip_edges(false, true)
+		var line_w := font.get_string_size(clean_line, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
 		if line_w > widest:
 			widest = line_w
 	return widest
