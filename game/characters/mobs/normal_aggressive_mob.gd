@@ -555,7 +555,7 @@ func apply_spawn_init(
 func _resolve_ranged_projectile_scene_for_model(group_id: String, id: String) -> PackedScene:
 	var gid := String(group_id).to_lower().strip_edges()
 	var model_id := String(id).to_lower().strip_edges().replace("-", "_").replace(" ", "_")
-	if gid == "bandits" and model_id in ["hunter_ranged", "hunter_re"]:
+	if gid in ["bandits", "bandit"] and model_id.begins_with("hunter"):
 		return BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
 	return null
 
