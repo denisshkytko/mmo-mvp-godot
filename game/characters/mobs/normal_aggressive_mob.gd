@@ -767,7 +767,16 @@ func _apply_mode_to_components() -> void:
 	c_combat.ranged_attack_range = COMBAT_RANGES.RANGED_ATTACK_RANGE_BASE
 	if not _spawn_initialized:
 		c_combat.ranged_cooldown = ranged_attack_cooldown
-	c_combat.ranged_projectile_scene = ranged_projectile_scene
+	var resolved_ranged_projectile: PackedScene = ranged_projectile_scene
+	var model_projectile := _resolve_ranged_projectile_scene_for_model(model_group_id, model_id)
+	if model_projectile != null:
+		resolved_ranged_projectile = model_projectile
+	else:
+		var class_id_clean := String(c_stats.class_id if c_stats != null else "").to_lower().strip_edges()
+		if model_group_id == "bandits" and class_id_clean == "hunter":
+			resolved_ranged_projectile = BANDIT_HUNTER_RANGED_PROJECTILE_SCENE
+	ranged_projectile_scene = resolved_ranged_projectile
+	c_combat.ranged_projectile_scene = resolved_ranged_projectile
 
 	c_stats.mob_level = mob_level
 
