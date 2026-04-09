@@ -21,46 +21,63 @@ layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-autowrap_mode = 2
+autowrap_mode = 0
+theme_override_font_sizes/normal_font_size = 22
 
 [node name="UseButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Использовать"
 
 [node name="EquipButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Экипировать"
 
 [node name="SellButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Продать"
 
 [node name="SellAllButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Продать всё"
 
 [node name="QuickSlotButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "В быстрый слот"
 
 [node name="BagButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Экипировать"
 
 [node name="DropButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Выбросить"
 
 [node name="UnequipButton" type="Button" parent="Margin/VBox"]
 visible = false
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Снять"
 
 [node name="CloseButton" type="Button" parent="."]
@@ -68,8 +85,9 @@ z_index = 1
 layout_mode = 0
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -22.0
+offset_left = -52.0
 offset_top = 4.0
 offset_right = -4.0
-offset_bottom = 22.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 22
 text = "×"

@@ -62,4 +62,8 @@ msgstr "Мана +{value}"
 msgid "ui.tooltip.over_seconds"
 msgstr "в течение {seconds}с"
 
+
+msgid "ui.tooltip.comparison"
+msgstr "Сравнение"
+
 # Character HUD

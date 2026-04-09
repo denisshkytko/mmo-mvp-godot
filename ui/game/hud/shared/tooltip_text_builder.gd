@@ -167,7 +167,9 @@ static func _append_equipment_comparison(lines: Array[String], meta: Dictionary,
 		var key_s := String(key)
 		if not stat_order.has(key_s):
 			stat_order.append(key_s)
-	stat_order.sort()
+	stat_order.sort_custom(func(a: String, b: String) -> bool:
+		return _comparison_stat_priority(a) < _comparison_stat_priority(b)
+	)
 	var has_deltas: bool = false
 	var delta_lines: Array[String] = []
 	for stat_key in stat_order:
@@ -185,8 +187,9 @@ static func _append_equipment_comparison(lines: Array[String], meta: Dictionary,
 	if not has_deltas:
 		return
 	lines.append("")
-	lines.append(TranslationServer.translate("ui.tooltip.comparison").strip_edges() if TranslationServer.translate("ui.tooltip.comparison").strip_edges() != "ui.tooltip.comparison" else "Comparison")
+	lines.append(TranslationServer.translate("ui.tooltip.comparison"))
 	lines.append_array(delta_lines)
+	lines.append("")
 
 static func _resolve_equipped_item_meta_for_compare(meta: Dictionary, item_id: String, player: Node) -> Dictionary:
 	if player == null or not is_instance_valid(player):
@@ -285,11 +288,42 @@ static func _compare_stat_label(stat_key: String) -> String:
 		"dps":
 			return "DPS"
 		"physical_armor":
-			return "Physical defense"
+			return TranslationServer.translate("ui.tooltip.physical_defense").format({"value": ""}).trim_suffix(": ")
 		"magic_armor":
-			return "Magic defense"
+			return TranslationServer.translate("ui.tooltip.magic_defense").format({"value": ""}).trim_suffix(": ")
 		_:
 			return stat_key
+
+static func _comparison_stat_priority(stat_key: String) -> int:
+	var order := {
+		"physical_armor": 0,
+		"magic_armor": 1,
+		"str": 10,
+		"agi": 11,
+		"end": 12,
+		"int": 13,
+		"per": 14,
+		"damage": 20,
+		"dps": 21,
+		"hp": 30,
+		"mana": 31,
+		"hp_regen": 32,
+		"mana_regen": 33,
+		"attack_power": 34,
+		"spell_power": 35,
+		"defense": 36,
+		"resistance": 37,
+		"speed": 38,
+		"crit": 39,
+		"crit_damage": 40,
+		"haste": 41,
+		"evade": 42,
+		"block_chance": 43,
+		"block_value": 44,
+	}
+	if order.has(stat_key):
+		return int(order[stat_key])
+	return 1000
 
 static func _format_compare_number(value: float) -> String:
 	if absf(value - round(value)) <= 0.0001:

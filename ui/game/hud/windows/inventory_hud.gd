@@ -2,6 +2,10 @@ extends CanvasLayer
 
 const TOOLTIP_BUILDER := preload("res://ui/game/hud/shared/tooltip_text_builder.gd")
 const FRAME_PROFILER := preload("res://core/debug/frame_profiler.gd")
+const TOOLTIP_FONT_SIZE: int = 22
+const TOOLTIP_BUTTON_HEIGHT: float = 44.0
+const TOOLTIP_CLOSE_SIZE: float = 48.0
+const TOOLTIP_CLOSE_GAP: float = 8.0
 const COOLDOWN_FILL_SHADER_CODE := "shader_type canvas_item;\n\nuniform float fill_pct : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tif (UV.y < (1.0 - fill_pct)) {\n\t\tdiscard;\n\t}\n\tCOLOR = vec4(0.0, 0.0, 0.0, 0.65);\n}\n"
 signal hud_visibility_changed(is_open: bool)
 @onready var panel: Control = $Root/Panel
@@ -832,11 +836,12 @@ func _resize_tooltip_to_content() -> void:
 	var prev_modulate := _tooltip_panel.modulate
 	_tooltip_panel.visible = true
 	_tooltip_panel.modulate = Color(prev_modulate.r, prev_modulate.g, prev_modulate.b, 0.0)
-	# Align layout sizing with LootHUD so the first show measures correctly.
-	var width: float = 360.0
+	# Width = widest line + gap + close button + right offset margin.
+	var width: float = _compute_tooltip_width(_tooltip_label, _tooltip_close_btn)
+	var text_width: float = max(120.0, width - 20.0 - TOOLTIP_CLOSE_SIZE - TOOLTIP_CLOSE_GAP)
 	_tooltip_panel.size = Vector2(width, 10)
 	_tooltip_panel.custom_minimum_size = Vector2(width, 0)
-	_tooltip_label.custom_minimum_size = Vector2(width - 20.0, 0)
+	_tooltip_label.custom_minimum_size = Vector2(text_width, 0)
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var label_min := _tooltip_label.get_combined_minimum_size()
@@ -846,19 +851,19 @@ func _resize_tooltip_to_content() -> void:
 	var content_h: float = max(float(_tooltip_label.get_content_height()), label_min.y)
 	var btn_h: float = 0.0
 	if _tooltip_use_btn != null and _tooltip_use_btn.visible:
-		btn_h = max(32.0, _tooltip_use_btn.get_combined_minimum_size().y)
+		btn_h = max(TOOLTIP_BUTTON_HEIGHT, _tooltip_use_btn.get_combined_minimum_size().y)
 	if _tooltip_equip_btn != null and _tooltip_equip_btn.visible:
-		btn_h += max(32.0, _tooltip_equip_btn.get_combined_minimum_size().y)
+		btn_h += max(TOOLTIP_BUTTON_HEIGHT, _tooltip_equip_btn.get_combined_minimum_size().y)
 	if _tooltip_sell_btn != null and _tooltip_sell_btn.visible:
-		btn_h += max(32.0, _tooltip_sell_btn.get_combined_minimum_size().y)
+		btn_h += max(TOOLTIP_BUTTON_HEIGHT, _tooltip_sell_btn.get_combined_minimum_size().y)
 	if _tooltip_sell_all_btn != null and _tooltip_sell_all_btn.visible:
-		btn_h += max(32.0, _tooltip_sell_all_btn.get_combined_minimum_size().y)
+		btn_h += max(TOOLTIP_BUTTON_HEIGHT, _tooltip_sell_all_btn.get_combined_minimum_size().y)
 	if _tooltip_quick_btn != null and _tooltip_quick_btn.visible:
-		btn_h += max(32.0, _tooltip_quick_btn.get_combined_minimum_size().y)
+		btn_h += max(TOOLTIP_BUTTON_HEIGHT, _tooltip_quick_btn.get_combined_minimum_size().y)
 	if _tooltip_bag_btn != null and _tooltip_bag_btn.visible:
-		btn_h += max(32.0, _tooltip_bag_btn.get_combined_minimum_size().y)
+		btn_h += max(TOOLTIP_BUTTON_HEIGHT, _tooltip_bag_btn.get_combined_minimum_size().y)
 	if _tooltip_drop_btn != null and _tooltip_drop_btn.visible:
-		btn_h += max(32.0, _tooltip_drop_btn.get_combined_minimum_size().y)
+		btn_h += max(TOOLTIP_BUTTON_HEIGHT, _tooltip_drop_btn.get_combined_minimum_size().y)
 	# label + optional button + small spacing
 	var extra_spacing: float = 8.0 if btn_h > 0.0 else 0.0
 	var min_h: float = max(32.0, content_h + btn_h + extra_spacing + 16.0)
@@ -875,6 +880,20 @@ func _resize_tooltip_to_content() -> void:
 	_tooltip_panel.modulate = prev_modulate
 	if not was_visible:
 		_tooltip_panel.visible = false
+
+func _compute_tooltip_width(label: RichTextLabel, close_btn: Button) -> float:
+	if label == null:
+		return 360.0
+	var text_w: float = 0.0
+	if label.has_method("get_content_width"):
+		text_w = float(label.call("get_content_width"))
+	if text_w <= 1.0:
+		text_w = label.get_combined_minimum_size().x
+	var close_w: float = TOOLTIP_CLOSE_SIZE
+	if close_btn != null:
+		close_w = max(close_w, close_btn.get_combined_minimum_size().x)
+	var width: float = ceil(text_w + TOOLTIP_CLOSE_GAP + close_w + 4.0)
+	return clamp(width, 280.0, 900.0)
 
 func _position_tooltip_left_of_point(p: Vector2) -> void:
 	if _tooltip_panel == null:
@@ -2002,8 +2021,13 @@ func _ensure_support_ui() -> void:
 			_tooltip_label.bbcode_enabled = true
 			_tooltip_label.fit_content = true
 			_tooltip_label.scroll_active = false
-			_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+			_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 			_tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_tooltip_label.add_theme_font_size_override("normal_font_size", TOOLTIP_FONT_SIZE)
+		for btn in [_tooltip_use_btn, _tooltip_equip_btn, _tooltip_sell_btn, _tooltip_sell_all_btn, _tooltip_quick_btn, _tooltip_bag_btn, _tooltip_drop_btn]:
+			if btn != null:
+				btn.add_theme_font_size_override("font_size", TOOLTIP_FONT_SIZE)
+				btn.custom_minimum_size = Vector2(btn.custom_minimum_size.x, TOOLTIP_BUTTON_HEIGHT)
 		if _tooltip_use_btn != null and not _tooltip_use_btn.pressed.is_connected(_on_tooltip_use_pressed):
 			_tooltip_use_btn.pressed.connect(_on_tooltip_use_pressed)
 		if _tooltip_equip_btn != null and not _tooltip_equip_btn.pressed.is_connected(_on_tooltip_equip_pressed):
@@ -2020,6 +2044,9 @@ func _ensure_support_ui() -> void:
 			_tooltip_drop_btn.pressed.connect(_on_tooltip_drop_pressed)
 		if _tooltip_close_btn != null and not _tooltip_close_btn.pressed.is_connected(_hide_tooltip):
 			_tooltip_close_btn.pressed.connect(_hide_tooltip)
+		if _tooltip_close_btn != null:
+			_tooltip_close_btn.custom_minimum_size = Vector2(TOOLTIP_CLOSE_SIZE, TOOLTIP_CLOSE_SIZE)
+			_tooltip_close_btn.add_theme_font_size_override("font_size", TOOLTIP_FONT_SIZE)
 
 	if drop_confirm_dialog != null and not drop_confirm_dialog.confirmed.is_connected(_on_drop_confirmed):
 		drop_confirm_dialog.confirmed.connect(_on_drop_confirmed)
@@ -2059,6 +2086,7 @@ func _ensure_support_ui() -> void:
 		_toast_label.offset_right = 180
 		_toast_label.offset_bottom = 20
 		_toast_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+		_toast_label.add_theme_font_size_override("font_size", TOOLTIP_FONT_SIZE)
 		var tsb := StyleBoxFlat.new()
 		tsb.bg_color = Color(0, 0, 0, 0.75)
 		tsb.corner_radius_top_left = 8
@@ -2171,7 +2199,8 @@ func _style_inventory_tooltip() -> void:
 		_tooltip_label.bbcode_enabled = true
 		_tooltip_label.fit_content = true
 		_tooltip_label.scroll_active = false
-		_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+		_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		_tooltip_label.add_theme_font_size_override("normal_font_size", TOOLTIP_FONT_SIZE)
 
 
 func _ensure_quick_button_visuals(b: Button) -> void:
