@@ -43,7 +43,7 @@ position = Vector2(0, -24)
 sprite_frames = ExtResource("2_frames")
 animation = &"Idle Blinking"
 autoplay = "Idle Blinking"
-frame_progress = 0.15060739
+frame_progress = 0.7530084
 flip_h = true
 
 [node name="CollisionProfile" type="Area2D" parent="."]
