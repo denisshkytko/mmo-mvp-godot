@@ -777,10 +777,9 @@ func _resize_tooltip_to_content() -> void:
 		tooltip_panel.visible = false
 
 func _compute_tooltip_width() -> float:
-	var text_w: float = 0.0
-	if tooltip_label != null and tooltip_label.has_method("get_content_width"):
+	var text_w: float = _compute_bbcode_widest_line_width(tooltip_label, tooltip_label.text if tooltip_label != null else "")
+	if text_w <= 1.0 and tooltip_label != null and tooltip_label.has_method("get_content_width"):
 		text_w = float(tooltip_label.call("get_content_width"))
-	text_w = max(text_w, _compute_bbcode_widest_line_width(tooltip_label, tooltip_label.text if tooltip_label != null else ""))
 	if text_w <= 1.0 and tooltip_label != null:
 		text_w = tooltip_label.get_combined_minimum_size().x
 	var close_w: float = TOOLTIP_CLOSE_SIZE

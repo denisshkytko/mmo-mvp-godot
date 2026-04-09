@@ -884,10 +884,9 @@ func _resize_tooltip_to_content() -> void:
 func _compute_tooltip_width(label: RichTextLabel, close_btn: Button) -> float:
 	if label == null:
 		return 360.0
-	var text_w: float = 0.0
-	if label.has_method("get_content_width"):
+	var text_w: float = _compute_bbcode_widest_line_width(label, label.text)
+	if text_w <= 1.0 and label.has_method("get_content_width"):
 		text_w = float(label.call("get_content_width"))
-	text_w = max(text_w, _compute_bbcode_widest_line_width(label, label.text))
 	if text_w <= 1.0:
 		text_w = label.get_combined_minimum_size().x
 	var close_w: float = TOOLTIP_CLOSE_SIZE
